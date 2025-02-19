@@ -4,7 +4,7 @@ import {
   CommonActions,
 } from '@react-navigation/native';
 
-const navigationRef = createNavigationContainerRef();
+export const navigationRef = createNavigationContainerRef();
 
 const prepareNavigation = () => navigationRef.isReady();
 

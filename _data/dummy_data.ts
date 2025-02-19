@@ -11,7 +11,8 @@ const sampleProducts: Product[] = [
   {
     id: '101',
     name: 'Rice',
-    image: null,
+    image: undefined,
+    totalSold:34,
     basePrice: '50',
     discountedPrice: '45',
     quantity: '5',
@@ -22,7 +23,8 @@ const sampleProducts: Product[] = [
   {
     id: '102',
     name: 'Milk',
-    image: null,
+    image: undefined,
+    totalSold:34,
     basePrice: '60',
     discountedPrice: '55',
     quantity: '2',
@@ -33,7 +35,8 @@ const sampleProducts: Product[] = [
   {
     id: '103',
     name: 'Sugar',
-    image: null,
+    image: undefined,
+    totalSold:34,
     basePrice: '40',
     discountedPrice: '38',
     quantity: '3',
@@ -47,17 +50,17 @@ const d:DummyData = {
   totalSales: '3240',
   totalUdhars: '980',
   customers: [
-    { id: '1', fullName: 'Rohit Kumar', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '2', fullName: 'Amit Sharma', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '3', fullName: 'Neha Verma', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '4', fullName: 'Vikas Gupta', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '5', fullName: 'Priya Singh', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '6', fullName: 'Manish Yadav', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '7', fullName: 'Anjali Mehta', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '8', fullName: 'Suresh Patel', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '9', fullName: 'Ritu Chawla', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '10', fullName: 'Sanjay Thakur', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
-    { id: '11', fullName: 'Kavita Joshi', image: null, unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '1', fullName: 'Rohit Kumar', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '2', fullName: 'Amit Sharma', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '3', fullName: 'Neha Verma', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '4', fullName: 'Vikas Gupta', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '5', fullName: 'Priya Singh', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '6', fullName: 'Manish Yadav', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '7', fullName: 'Anjali Mehta', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '8', fullName: 'Suresh Patel', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '9', fullName: 'Ritu Chawla', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '10', fullName: 'Sanjay Thakur', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
+    { id: '11', fullName: 'Kavita Joshi', image: undefined, shopkeeperId:"1", unpaidPayments: sampleProducts, paidPayments: [], createdAt: new Date(), updatedAt: new Date() },
   ]
 };
 

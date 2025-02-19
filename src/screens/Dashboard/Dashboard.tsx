@@ -1,72 +1,77 @@
-import {View, Text, ScrollView, FlatList} from 'react-native';
-import React, {Dispatch, SetStateAction, useState} from 'react';
+import {View, FlatList, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
-import {d} from '../../../_data/dummy_data';
 import DashboardHeader from '../../components/DashboardHeader';
 import Tab from './components/Tab';
 import {RootState} from '../../../store/store';
 import {useSelector} from 'react-redux';
 import CreateButton from '../../components/CreateButton';
+import SlideupContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
+import EmptyListMessage from './components/EmptyListMessage';
+import {Theme} from '../../utils/Constants';
+import {navigate, prepareNavigation} from '../../utils/nagivationUtils';
+
+const currentTheme = Theme[0];
 
 const Dashboard = () => {
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
-  const state = useSelector((s: RootState) => s.shopkeeper);
-  const searchResults = state.app.serchResults;
-  const c = d.customers;
+  const customers = useSelector(
+    (s: RootState) => s.shopkeeper.shopkeeper.customers,
+  );
+  const searchResults = useSelector(
+    (s: RootState) => s.shopkeeper.app.serchResults,
+  );
 
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
 
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
 
+  useEffect(() => {
+    prepareNavigation();
+  }, []);
+
   return (
-    <View style={{flex: 1}}>
-      <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
-      <Header name="Dashboard" />
-      <View style={{flex: 1, paddingHorizontal: 10}}>
+    <View style={{flex: 1, backgroundColor: currentTheme.bgColor}}>
+      {!openCreateCustomer && (
+        <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
+      )}
+      <Header name="Dashboard" menuButton />
+      <View style={styles.contentContainer}>
         <View style={{flex: 1}}>
-          {c.length === 0 ? (
-            <FlatList
-              data={searchResults.length !== 0 ? searchResults : c}
-              ListHeaderComponent={DashboardHeader}
-              keyExtractor={s => s.id.toString()}
-              nestedScrollEnabled
-              renderItem={({item}) => <Tab i={item} />}
-            />
+          {customers.length !== 0 ? (
+            <>
+              <DashboardHeader flex={false} />
+              <FlatList
+                data={searchResults.length !== 0 ? searchResults : customers}
+                keyExtractor={s => s.id.toString()}
+                nestedScrollEnabled
+                renderItem={({item, index}) => <Tab i={item} />}
+                style={{flex: 1}}
+                showsVerticalScrollIndicator={false}
+              />
+            </>
           ) : (
             <View style={{flex: 1}}>
               <DashboardHeader searchBar={false} flex={false} />
-              <View>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    marginTop: 20,
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                  }}>
-                  Hurray! No Udhars.
-                </Text>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    marginTop: 20,
-                    fontSize: 24,
-                    fontWeight: '400',
-                    paddingHorizontal: 20,
-                  }}>
-                  Click on create button to create Udhar.
-                </Text>
-              </View>
+              <EmptyListMessage />
             </View>
           )}
         </View>
       </View>
-      <CreateCustomer
-        open={openCreateCustomer}
-        close={handleCloseCreateCustomer}
-      />
+      {openCreateCustomer && (
+        <SlideupContainer
+          open={openCreateCustomer}
+          close={handleCloseCreateCustomer}>
+          <CreateCustomer callback={handleCloseCreateCustomer} />
+        </SlideupContainer>
+      )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  contentContainer: {flex: 1, paddingHorizontal: 10},
+});
 
 export default Dashboard;

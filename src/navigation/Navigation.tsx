@@ -2,19 +2,37 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Dashboard from '../screens/Dashboard/Dashboard';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import MenuContent from '../components/sub-components/MenuContent';
+import Settings from '../screens/Settings/Settings';
+import { navigationRef } from '../utils/nagivationUtils';
 
 const stack = createNativeStackNavigator();
+const drawer = createDrawerNavigator();
+
+const StackNav = () => {
+  return (
+    <stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <stack.Screen name="Dashboard" component={Dashboard}/>
+      <stack.Screen name="Settings" component={Settings}/>
+    </stack.Navigator>
+  );
+};
 
 const Navigation = () => {
   return (
-      <NavigationContainer>
-        <stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <stack.Screen name="Dashboard" component={Dashboard}></stack.Screen>
-        </stack.Navigator>
-      </NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
+      <drawer.Navigator
+      drawerContent={(props)=><MenuContent {...props}/>}
+      screenOptions={{
+        headerShown: false}}
+      >
+        <drawer.Screen name="Home" component={StackNav} />
+      </drawer.Navigator>
+    </NavigationContainer>
   );
 };
 

@@ -11,19 +11,22 @@ import {AppDispatch, RootState} from '../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {setSearchResult} from '../../store/slices/shopkeeper';
 import {Customer} from '../../types';
+import {Theme} from '../utils/Constants';
+
+const currentTheme = Theme[0];
 
 type DashboardHeaderProps = {
   searchBar?: boolean;
-  flex?:boolean
+  flex?: boolean;
 };
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   searchBar = true,
-  flex=true
+  flex = true,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
-  const s = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const c = s.customers;
+  const c = useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers);
+  const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
   const [query, setQuery] = useState<string>('');
   const handleSearchQuery = () => {
     let result: Customer[] = [];
@@ -46,13 +49,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           <View style={styles.innerBox}>
             <View style={styles.infoContainer}>
               <Text style={styles.textLabel}>This Month</Text>
-              <Text style={styles.textInfo}>₹{`18273`}</Text>
+              <Text style={styles.textInfo}>{`${currencyType}18273`}</Text>
             </View>
           </View>
           <View style={styles.innerBox}>
             <View style={styles.infoContainer}>
               <Text style={styles.textLabel}>Today</Text>
-              <Text style={styles.textInfo}>₹{`1297`}</Text>
+              <Text style={styles.textInfo}>{`${currencyType}1297`}</Text>
             </View>
           </View>
         </View>
@@ -73,17 +76,17 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 };
 
 const styles = StyleSheet.create({
-  parent: {marginBottom: 10},
+  parent: {marginBottom: 20, gap: 6},
   container: {
-    // padding: 10,
     justifyContent: 'space-between',
     flexDirection: 'row',
     marginBottom: 10,
+    backgroundColor:currentTheme.bgColor
   },
   innerBox: {
     height: 90,
     width: 160,
-    backgroundColor: 'purple',
+    backgroundColor: currentTheme.baseColor,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -95,17 +98,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   textLabel: {
-    color: '#fff',
+    color: currentTheme.contrastColor,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  textInfo: {color: '#fff', fontSize: 22, textAlign: 'center'},
+  textInfo: {
+    color: currentTheme.contrastColor,
+    fontSize: 22,
+    textAlign: 'center',
+  },
   searchQueryContainer: {},
   searchQueryInput: {
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: 'purple',
+    borderColor: currentTheme.baseColor,
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,

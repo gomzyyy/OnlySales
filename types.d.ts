@@ -1,18 +1,32 @@
-import { BusinessType, QuantityType } from "./enums";
+import {AdminRole, BusinessType, QuantityType,AppThemeName} from './enums';
 
-export interface App{
-  serchResults:Customer[]
+export interface AppTheme {
+  name:AppThemeName
+  baseColor: string;
+  fadeColor: string;
+  tapColor: string;
+  borderColor: string;
+  textColor: string;
+  contrastColor: string;
+  bgColor: string;
+}
+
+export interface App {
+  serchResults: Customer[];
+  currency: string;
+  currentTheme:AppThemeName
 }
 
 export interface Shopkeeper {
   id: string;
   name: string;
-  image?: string | null;
+  role: AdminRole;
+  image?: string | undefined;
   businessType: BusinessType;
   shelf: Product[];
   starProducts?: Product[];
   customers: Customer[];
-  // *sessionPasscode,
+  sessionPasscode: string | undefined;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +34,8 @@ export interface Shopkeeper {
 export interface Product {
   id: string;
   name: string;
-  image?: string | null;
+  image?: string | undefined;
+  totalSold: number;
   basePrice: string;
   discountedPrice?: string;
   quantity: string;
@@ -32,7 +47,9 @@ export interface Customer {
   id: string;
   fullName: string;
   phoneNumber?: string;
-  image?: string | null;
+  image?: string | undefined;
+  address?: string;
+  shopkeeperId: string;
   unpaidPayments: Product[];
   paidPayments: Product[];
   createdAt: Date;

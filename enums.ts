@@ -14,3 +14,18 @@ export enum QuantityType {
   PACK = 'pack',
   DOZENS = 'dozen',
 }
+export enum AdminRole {
+  SHOPKEEPER = "shopkeeper",
+  CUSTOMER = "customer"
+}
+export enum AppThemeName{
+  PURPLE = 'Purple',
+    RED = 'Red',
+    YELLOW = 'Yellow',
+    GREEN = 'Green',
+    BLUE = 'Blue',
+    ROYAL_BLUE = 'Royal_Blue',
+    BLACK = 'Black',
+    DARK = 'Dark'
+}
+
