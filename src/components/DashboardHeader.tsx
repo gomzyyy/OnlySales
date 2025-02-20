@@ -5,6 +5,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  FlatList,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {AppDispatch, RootState} from '../../store/store';
@@ -12,6 +13,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setSearchResult} from '../../store/slices/shopkeeper';
 import {Customer} from '../../types';
 import {Theme} from '../utils/Constants';
+import {dashboardHeaderTabs} from '../utils/Constants';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const currentTheme = Theme[0];
 
@@ -25,8 +28,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   flex = true,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
+  const app = useSelector((s: RootState) => s.shopkeeper.app);
   const c = useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers);
-  const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
   const [query, setQuery] = useState<string>('');
   const handleSearchQuery = () => {
     let result: Customer[] = [];
@@ -45,20 +48,25 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       style={{flex: flex ? 1 : 0}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.parent}>
-        <View style={styles.container}>
-          <View style={styles.innerBox}>
-            <View style={styles.infoContainer}>
-              <Text style={styles.textLabel}>This Month</Text>
-              <Text style={styles.textInfo}>{`${currencyType}18273`}</Text>
-            </View>
-          </View>
-          <View style={styles.innerBox}>
-            <View style={styles.infoContainer}>
-              <Text style={styles.textLabel}>Today</Text>
-              <Text style={styles.textInfo}>{`${currencyType}1297`}</Text>
-            </View>
-          </View>
-        </View>
+        <ScrollView
+          horizontal={true}
+          style={styles.container}
+          contentContainerStyle={{gap:20}}
+          showsVerticalScrollIndicator={false}
+          >
+          {dashboardHeaderTabs.map((t,i) => (
+              <View key={t.name} style={styles.innerBox}>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.textLabel}>{t.name}</Text>
+                  <Text
+                    style={
+                      styles.textInfo
+                    }>{`${app.currency}${t.data.amount}`}</Text>
+                </View>
+              </View>
+          ))}
+        </ScrollView>
+        {/* </View> */}
         {searchBar && (
           <View style={styles.searchQueryContainer}>
             <TextInput
@@ -78,10 +86,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 const styles = StyleSheet.create({
   parent: {marginBottom: 20, gap: 6},
   container: {
-    justifyContent: 'space-between',
     flexDirection: 'row',
     marginBottom: 10,
-    backgroundColor:currentTheme.bgColor
   },
   innerBox: {
     height: 90,

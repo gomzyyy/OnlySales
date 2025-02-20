@@ -1,5 +1,6 @@
 import {Alert} from 'react-native';
 import Toast from 'react-native-toast-message';
+import {Product} from '../../types';
 
 type ShowToastFunction = {
   type: 'success' | 'error' | 'info';

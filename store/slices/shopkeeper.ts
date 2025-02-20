@@ -1,8 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {d} from '../../_data/dummy_data';
-import {Shopkeeper, App, Customer} from '../../types';
+import {Shopkeeper, App, Customer, Product} from '../../types';
 import {AdminRole, AppThemeName, BusinessType} from '../../enums';
-import {AppState} from 'react-native';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -16,7 +15,7 @@ const initialState: ShopkeeperInitialStateType = {
     role: AdminRole.SHOPKEEPER,
     image: undefined,
     businessType: BusinessType.RETAIL,
-    shelf: [],
+    menu: [],
     starProducts: [],
     sessionPasscode: undefined,
     customers: d.customers,
@@ -40,9 +39,21 @@ const shopkeeperSlice = createSlice({
     resetSearchResults: state => {
       state.app.serchResults = [];
     },
-    createCustomers: (state, action: PayloadAction<Customer>) => {
+    createCustomers: (
+      state,
+      action: PayloadAction<{
+        fullName: string;
+        phoneNumber: string;
+        address: string;
+      }>,
+    ) => {
       const currentCustomers: Customer[] = state.shopkeeper.customers;
-      const newCustomer: Customer = action.payload;
+      const newCustomer: Customer = {
+        ...action.payload,
+        id: crypto.randomUUID.toString(),
+        shopkeeperId: state.shopkeeper.id,
+        createdAt: new Date(Date.now()),
+      };
 
       state.shopkeeper.customers = [newCustomer, ...currentCustomers];
     },
@@ -59,9 +70,24 @@ const shopkeeperSlice = createSlice({
       );
     },
     setTheme: (state, action: PayloadAction<AppThemeName>) => {
-      const choosedTheme:AppThemeName = action.payload;
+      const choosedTheme: AppThemeName = action.payload;
       state.app.currentTheme = choosedTheme;
     },
+    addProduct: (
+      state,
+      action: PayloadAction<{customer: Customer; product: Product}>,
+    ) => {},
+    removeProduct: (
+      state,
+      action: PayloadAction<{customer: Customer; product: Product}>,
+    ) => {},
+    setToPaid: (state, action: PayloadAction<{customer: Customer}>) => {},
+    setToUnpaid: (state, action: PayloadAction<{customer: Customer}>) => {},
+    addProductToShelf: (state, action: PayloadAction<{product: Product}>) => {},
+    removeProductFromShelf: (
+      state,
+      action: PayloadAction<{product: Product}>,
+    ) => {},
   },
 });
 export const {
@@ -70,5 +96,9 @@ export const {
   removeCustomer,
   setSearchResult,
   resetSearchResults,
+  addProduct,
+  removeProduct,
+  setToPaid,
+  setToUnpaid,
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;

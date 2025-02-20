@@ -38,7 +38,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     <TouchableOpacity
       activeOpacity={0.8}
       style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}
-      onPress={()=>navigate("Settings")}
+      onPress={()=>navigate("Customer",{customer:i})}
       >
       <Text style={styles.customerName}>{i.fullName}</Text>
       <TouchableOpacity onPress={handleDeleteCustomer}>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.baseColor,
+    backgroundColor: currentTheme.tabColor,
     borderRadius: 8,
   },
   customerName: {

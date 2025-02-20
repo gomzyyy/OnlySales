@@ -6,6 +6,9 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import MenuContent from '../components/sub-components/MenuContent';
 import Settings from '../screens/Settings/Settings';
 import { navigationRef } from '../utils/nagivationUtils';
+import Customer from '../screens/Customer/Customer';
+import UnpaidUdhars from '../screens/Customer/UnpaidUdhars';
+import MyMenu from '../screens/MyShelf/MyMenu';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -18,6 +21,9 @@ const StackNav = () => {
       }}>
       <stack.Screen name="Dashboard" component={Dashboard}/>
       <stack.Screen name="Settings" component={Settings}/>
+      <stack.Screen name="Customer" component={Customer}/>
+      <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars}/>
+      <stack.Screen name="MyMenu" component={MyMenu}/>
     </stack.Navigator>
   );
 };

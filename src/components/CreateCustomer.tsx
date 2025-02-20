@@ -10,23 +10,39 @@ import {
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {Theme} from '../utils/Constants';
-import { showToast } from '../service/fn';
+import {showToast} from '../service/fn';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../store/store';
+import {createCustomers} from '../../store/slices/shopkeeper';
 
 const currentTheme = Theme[0];
 
-type CreateCustomerProps={
- callback:()=>void
-}
+type CreateCustomerProps = {
+  callback: () => void;
+};
 
-const CreateCustomer:React.FC<CreateCustomerProps> = ({callback}):React.JSX.Element => {
+const CreateCustomer: React.FC<CreateCustomerProps> = ({
+  callback,
+}): React.JSX.Element => {
+  const dispatch = useDispatch<AppDispatch>();
   const [fullName, setFullName] = useState<string>('');
   const [phoneNumber, setphoneNumber] = useState<string>('');
-  const [image, setImage] = useState<string>('');
+  // const [image, setImage] = useState<string>('');
   const [address, setAddress] = useState<string>('');
 
   const handleSaveBtn = () => {
-    showToast({type:"success",text1:"Customer created Successfully.", text2:"Pleas add products to create Udhars."})
-    callback()
+    const customerData = {
+      fullName,
+      phoneNumber,
+      address,
+    };
+    dispatch(createCustomers(customerData));
+    showToast({
+      type: 'success',
+      text1: 'Customer created Successfully.',
+      text2: 'Pleas add products to create Udhars.',
+    });
+    callback();
   };
 
   return (

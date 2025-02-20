@@ -1,6 +1,6 @@
 import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import {persistStore, persistReducer} from 'redux-persist';
-import {Provider,useDispatch,useSelector} from 'react-redux';
+import {Provider} from 'react-redux';
 import {mmkv} from '../src/storage/mmkv';
 import React from 'react';
 import {PersistGate} from 'redux-persist/integration/react';

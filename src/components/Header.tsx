@@ -3,18 +3,24 @@ import React from 'react';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
-import { back } from '../utils/nagivationUtils';
+import {back} from '../utils/nagivationUtils';
 
 type HeaderProps = {
   name: string;
   backButtom?: boolean;
   menuButton?: boolean;
+  customComponent?: boolean;
+  renderItem?:React.ReactNode;
+  customAction?:()=>void
 };
 
 const Header: React.FC<HeaderProps> = ({
   name,
   backButtom = false,
   menuButton = false,
+  customComponent = false,
+  renderItem = <></>,
+  customAction=()=>{}
 }): React.JSX.Element => {
   const navigation = useNavigation();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
@@ -34,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({
         </Pressable>
       )}
       {backButtom && !menuButton && (
-        <Pressable style={styles.leftActionBtn} onPress={()=>back()}>
+        <Pressable style={styles.leftActionBtn} onPress={() => back()}>
           <Icon1 name="left" size={24} color={'black'} />
         </Pressable>
       )}
@@ -45,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({
         }}>
         {name}
       </Text>
-      <View />
+      {customComponent && <Pressable onPress={customAction} style={styles.rightCustomBtn} >{renderItem}</Pressable>}
     </View>
   );
 };
@@ -55,6 +61,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
   },
+  rightCustomBtn:{
+    position: 'absolute',
+    right: 20,
+  }
 });
 
 export default Header;

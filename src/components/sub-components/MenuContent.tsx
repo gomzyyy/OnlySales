@@ -16,8 +16,6 @@ const NoProfile = require('../../assets/images/no-profile.jpg');
 
 const currentTheme = Theme[0];
 
-const c = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXZCudplKin4I15_ojf--FRxrbIrrDB9S9rg&s`
-
 type menuNavContent = {
   name: string;
   navigateTo: string;
@@ -37,6 +35,13 @@ const menuNav: menuNavContent[] = [
     navigateTo: 'Settings',
     icon: () => (
       <Icon1 name="settings" color={currentTheme.contrastColor} size={26} />
+    ),
+  },
+  {
+    name: 'Menu',
+    navigateTo: 'MyMenu',
+    icon: () => (
+      <Icon1 name="fast-food" color={currentTheme.contrastColor} size={26} />
     ),
   },
 ];
@@ -62,7 +67,12 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
           <View style={styles.infoContainer}>
             <View style={styles.profileImageContainer}>
               <Image
-                source={shopkeeper.image ? shopkeeper.image?.trim().length!==0 ? {uri:shopkeeper.image} : NoProfile : NoProfile}
+                source={
+                  shopkeeper.image
+                    && shopkeeper.image?.trim().length !== 0
+                      ? {uri: shopkeeper.image}
+                      : NoProfile
+                }
                 style={styles.profileImage}
               />
             </View>
@@ -93,6 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 30,
     paddingHorizontal: 5,
+    backgroundColor:currentTheme.bgColor
   },
   innterContainer: {},
   infoContainer: {

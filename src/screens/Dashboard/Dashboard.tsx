@@ -10,7 +10,7 @@ import SlideupContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
 import EmptyListMessage from './components/EmptyListMessage';
 import {Theme} from '../../utils/Constants';
-import {navigate, prepareNavigation} from '../../utils/nagivationUtils';
+import { prepareNavigation} from '../../utils/nagivationUtils';
 
 const currentTheme = Theme[0];
 

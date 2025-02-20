@@ -5,7 +5,6 @@ import 'react-native-gesture-handler';
 import ReduxProvider from '../store/store';
 import Navigation from './navigation/Navigation';
 
-
 function App(): React.JSX.Element {
   return (
     <ReduxProvider>
