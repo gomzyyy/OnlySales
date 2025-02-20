@@ -10,7 +10,7 @@ const currentTheme = Theme[0];
 import {sampleProducts} from '../../../_data/dummy_data';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import {Product} from '../../../types';
-import EditProduct from './components/EditProduct';
+import EditProduct from './components/EditCreateProduct';
 
 const MyMenu = () => {
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);

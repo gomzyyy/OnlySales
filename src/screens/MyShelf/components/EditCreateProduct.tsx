@@ -3,18 +3,20 @@ import React, { useState } from 'react'
 import { deviceHeight, Theme } from '../../../utils/Constants'
 import { TextInput } from 'react-native-gesture-handler'
 import { Product } from '../../../../types'
+import { Picker } from '@react-native-picker/picker'
+import { QuantityType } from '../../../../enums'
 const currentTheme = Theme[0]
 
 type EditProductProps={
     product:Product
 }
 
-const EditProduct:React.FC<EditProductProps> = ({product}):React.JSX.Element => {
+const EditCreateProduct:React.FC<EditProductProps> = ({product}):React.JSX.Element => {
     const [name,setName]=useState<string>(product.name)
     const [price,setPrice]=useState<string>(product.basePrice)
     const [discountedPrice,setDiscountedPrice]=useState<string>(product.discountedPrice ?? "")
     const [quantity,setQuantity]=useState<string>(product.quantity)
-    const [measurementType,setMeasurementType]=useState<string>(product.measurementType)
+    const [measurementType,setMeasurementType]=useState<QuantityType>(product.measurementType)
   return (
      <KeyboardAvoidingView
           style={styles.createCustomerContainer}
@@ -63,13 +65,20 @@ const EditProduct:React.FC<EditProductProps> = ({product}):React.JSX.Element => 
             </View>
             <View style={styles.inputTitleContainer}>
               <Text style={styles.inputLabel}>Product measurement type</Text>
-              <TextInput
-                value={measurementType}
-                onChangeText={setMeasurementType}
-                style={styles.inputText}
-                placeholder="Enter address"
-                placeholderTextColor={'purple'}
-              />
+              <Picker
+              selectedValue={measurementType}
+              onValueChange={(value)=>setMeasurementType(value)}
+              dropdownIconColor={"#000"}
+              style={styles.dropdown}
+              >
+              <Picker.Item label='Ml' value={"ml"}/>
+              <Picker.Item label='Litre' value={"litre"}/>
+              <Picker.Item label='Kilograms' value={"kilograms"}/>
+              <Picker.Item label='Grams' value={"grams"}/>
+              <Picker.Item label='Pcs' value={"pcs"}/>
+              <Picker.Item label='Pack' value={"pack"}/>
+              <Picker.Item label='Dozen' value={"dozen"}/>
+              </Picker>
             </View>
             <TouchableOpacity
               style={styles.saveButton}
@@ -117,6 +126,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingHorizontal: 12,
   },
+  dropdown:{
+    color:"#000",
+    backgroundColor:currentTheme.bgColor,
+  },
   saveButton: {
     backgroundColor: 'purple',
     paddingVertical: 16,
@@ -130,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProduct
+export default EditCreateProduct
