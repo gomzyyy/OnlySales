@@ -1,4 +1,4 @@
-import {View, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
@@ -9,10 +9,8 @@ import CreateButton from '../../components/CreateButton';
 import SlideupContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
 import EmptyListMessage from './components/EmptyListMessage';
-import {Theme} from '../../utils/Constants';
-import { prepareNavigation} from '../../utils/nagivationUtils';
-
-const currentTheme = Theme[0];
+import {currentTheme} from '../../utils/Constants';
+import {prepareNavigation} from '../../utils/nagivationUtils';
 
 const Dashboard = () => {
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
@@ -20,7 +18,7 @@ const Dashboard = () => {
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
   const searchResults = useSelector(
-    (s: RootState) => s.shopkeeper.app.serchResults,
+    (s: RootState) => s.shopkeeper.app.searchResults,
   );
 
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
@@ -32,7 +30,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.bgColor}}>
+    <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>
       {!openCreateCustomer && (
         <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
       )}
@@ -43,10 +41,10 @@ const Dashboard = () => {
             <>
               <DashboardHeader flex={false} />
               <FlatList
-                data={searchResults.length !== 0 ? searchResults : customers}
+                data={customers}
                 keyExtractor={s => s.id.toString()}
                 nestedScrollEnabled
-                renderItem={({item, index}) => <Tab i={item} />}
+                renderItem={({item}) => <Tab i={item} />}
                 style={{flex: 1}}
                 showsVerticalScrollIndicator={false}
               />

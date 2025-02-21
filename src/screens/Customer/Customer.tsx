@@ -1,32 +1,30 @@
-import {View, Text, StyleSheet, Image, FlatList, Pressable} from 'react-native';
+import {View, StyleSheet, Pressable} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
-import {Customer as CustomerType, Product} from '../../../types';
-const NoProfile = require('../../assets/images/no-profile.jpg');
+import {Customer as CustomerType} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import Tab, {ToogleButton} from './components/Tab';
-import {Theme} from '../../utils/Constants';
+import {ToogleButton} from './components/Tab';
+import {currentTheme} from '../../utils/Constants';
 import {ProductsByDate} from '../../components/shared/ProductByDate';
 import CustomerInfo from './components/CustomerInfo';
+import EmptyListMessage from '../../components/EmptyListMessage';
+import SlideUpContainer from '../../components/SlideUpContainer';
+import AddUdhar from './components/AddUdhar';
 
-const currentTheme = Theme[0];
 
 type RouteParams = {
   customer: CustomerType;
 };
-type ToogleBtnArrType = {name: string; value: 'PAID' | 'UNPAID'};
-
-const toogleBtnArr: ToogleBtnArrType[] = [
-  {name: 'Unpaid Udhars', value: 'UNPAID'},
-  {name: 'Paid Udhars', value: 'PAID'},
-];
-
 const Customer = () => {
   const params = useRoute().params;
   const {customer} = params as RouteParams;
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
+  const [addUdhar, setAddUdhar] = useState<boolean>(false);
 
+  const openAddUdharModal=()=>setAddUdhar(true)
+  const closeAddUdharModal=()=>setAddUdhar(false)
+  
   return (
     <View style={styles.parent}>
       <Header
@@ -34,9 +32,10 @@ const Customer = () => {
         backButtom
         customComponent={true}
         renderItem={<Icon name="plus" color={'black'} size={24} />}
+        customAction={openAddUdharModal}
       />
       <View style={styles.contentContainer}>
-      <CustomerInfo customer={customer} />
+        <CustomerInfo customer={customer} />
         <View style={styles.contentToggleContainer}>
           <Pressable onPress={() => setContent('UNPAID')} style={{flex: 1}}>
             <ToogleButton
@@ -48,22 +47,34 @@ const Customer = () => {
           <Pressable onPress={() => setContent('PAID')} style={{flex: 1}}>
             <ToogleButton
               title="Paid Udhars"
-              bgcolor={content === 'PAID' ? currentTheme.tabColor : ''}
+              bgcolor={content === 'PAID' ? currentTheme.toggleBtn.bgActive : ''}
               textColor={content === 'PAID' ? currentTheme.contrastColor : ''}
             />
           </Pressable>
         </View>
         <View style={styles.dataContainer}>
-          <ProductsByDate
-          customer={customer}
-            ArrWithDate={
-              content === 'UNPAID'
-                ? customer.unpaidPayments
-                : customer.paidPayments
-            }
-          />
+          {content === 'UNPAID' ? (
+            customer.unpaidPayments && customer.unpaidPayments.length !== 0 ? (
+              <ProductsByDate
+                customer={customer}
+                ArrWithDate={customer.unpaidPayments}
+              />
+            ) : (
+              <EmptyListMessage title="Oops! No unpaid payments." />
+            )
+          ) : customer.paidPayments && customer.paidPayments.length !== 0 ? (
+            <ProductsByDate
+              customer={customer}
+              ArrWithDate={customer.paidPayments}
+            />
+          ) : (
+            <EmptyListMessage title="Oops! No paid payments." />
+          )}
         </View>
       </View>
+      <SlideUpContainer open={addUdhar} close={closeAddUdharModal}>
+      <AddUdhar />
+      </SlideUpContainer>
     </View>
   );
 };
@@ -94,7 +105,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 60,
-    marginTop: 20,
+    marginTop: 40,
     gap: 10,
   },
   toogleBtnText: {

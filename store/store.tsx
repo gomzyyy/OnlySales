@@ -7,7 +7,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import shopkeeperSliceFunction from "./slices/shopkeeper"
 
 const persistConfig = {
-  key: 'khataa',
+  key: 'MyApp',
   storage: mmkv,
 };
 
@@ -27,11 +27,12 @@ const store = configureStore({
 
 export type RootState=ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+export const persistor = persistStore(store)
 
 
 const ReduxProvider = ({children}: {children: React.ReactNode}) => {
     return (
-        <PersistGate loading={null} persistor={persistStore(store)}>
+        <PersistGate loading={null} persistor={persistor}>
         <Provider store={store}>{children}</Provider>
       </PersistGate>
     )

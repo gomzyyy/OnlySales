@@ -2,8 +2,8 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import {Customer} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
-import {Theme} from '../../../utils/Constants';
-const currentTheme = Theme[0];
+import {currentTheme} from '../../../utils/Constants';
+import LinearGradient from 'react-native-linear-gradient';
 
 type CustomerInfoProps = {
   customer: Customer;
@@ -13,7 +13,9 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
   customer,
 }): React.JSX.Element => {
   return (
-    <View style={styles.customerInfoContainer}>
+    <LinearGradient
+      colors={[currentTheme.baseColor,currentTheme.fadeColor, currentTheme.bgColor]}
+      style={styles.customerInfoContainer}>
       <View style={styles.profileImageContainer}>
         <Image
           source={
@@ -24,7 +26,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
           style={styles.profileImage}
         />
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -33,7 +35,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     alignItems: 'center',
     backgroundColor: currentTheme.fadeColor,
-    borderRadius:10
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
   },
   profileImageContainer: {
     height: 90,

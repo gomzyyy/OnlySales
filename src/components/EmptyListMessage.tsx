@@ -1,14 +1,14 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 
-type EmptyListMessageProps = {title: string; context: string};
+type EmptyListMessageProps = {title: string; context?: string};
 
 const EmptyListMessage: React.FC<EmptyListMessageProps> = ({
   title,
-  context,
+  context="",
 }): React.JSX.Element => {
   return (
-    <View style={styles.contaienr}>
+    <View style={styles.container}>
       <Text style={styles.textBold}>{title}</Text>
       <Text style={styles.textLight}>
        {context}
@@ -18,8 +18,7 @@ const EmptyListMessage: React.FC<EmptyListMessageProps> = ({
 };
 
 const styles = StyleSheet.create({
-  contaienr: {
-    flex: 1,
+  container: {
   },
   textBold: {
     textAlign: 'center',

@@ -9,13 +9,11 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
-import {Theme} from '../utils/Constants';
+import {currentTheme} from '../utils/Constants';
 import {showToast} from '../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
 import {createCustomers} from '../../store/slices/shopkeeper';
-
-const currentTheme = Theme[0];
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -58,7 +56,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             onChangeText={setFullName}
             style={styles.inputText}
             placeholder="Enter name"
-            placeholderTextColor={'purple'}
+            placeholderTextColor={currentTheme.modal.inputText}
           />
         </View>
         <View style={styles.inputTitleContainer}>
@@ -68,7 +66,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             onChangeText={setphoneNumber}
             style={styles.inputText}
             placeholder="Enter phone number"
-            placeholderTextColor={'purple'}
+            placeholderTextColor={currentTheme.modal.inputText}
           />
         </View>
         <View style={styles.inputTitleContainer}>
@@ -78,7 +76,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             onChangeText={setAddress}
             style={styles.inputText}
             placeholder="Enter address"
-            placeholderTextColor={'purple'}
+            placeholderTextColor={currentTheme.modal.inputText}
           />
         </View>
         <TouchableOpacity
@@ -96,7 +94,7 @@ const styles = StyleSheet.create({
   createCustomerContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    backgroundColor: 'rgba(255,255,255,1)',
+    backgroundColor: currentTheme.contrastColor,
     height: deviceHeight * 0.51,
     borderTopStartRadius: 20,
     borderTopEndRadius: 20,
@@ -105,6 +103,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
+    color:currentTheme.modal.title
   },
   formContainer: {
     marginTop: 20,
@@ -117,18 +116,18 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     fontSize: 18,
     fontWeight: '400',
-    color: currentTheme.baseColor,
+    color: currentTheme.modal.title,
   },
   inputText: {
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: 'purple',
+    borderColor:currentTheme.modal.inputBorder,
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,
   },
   saveButton: {
-    backgroundColor: 'purple',
+    backgroundColor: currentTheme.modal.saveBtnbg,
     paddingVertical: 16,
     borderRadius: 8,
   },
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#fff',
+    color: currentTheme.modal.saveBtnText,
   },
 });
 

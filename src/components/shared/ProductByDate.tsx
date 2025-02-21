@@ -1,9 +1,8 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Customer, Product} from '../../../types';
-import {Theme} from '../../utils/Constants';
+import {currentTheme} from '../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../utils/nagivationUtils';
-const currentTheme = Theme[0];
 
 type ProductsByDateProps = {
   ArrWithDate: Product[];
@@ -45,7 +44,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
         onPress={() => navigate('UnpaidUdhars', {products: i, customer, date})}>
         <Text style={styles.date}>{date}</Text>
         <TouchableOpacity>
-          <Icon name="right" color={'#fff'} size={22} />
+          <Icon name="right" color={currentTheme.tab.icon} size={22} />
         </TouchableOpacity>
       </TouchableOpacity>
     );
@@ -67,12 +66,12 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tabColor,
+    backgroundColor: currentTheme.tab.bg,
     borderRadius: 8,
   },
   date: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.contrastColor,
+    color: currentTheme.tab.value,
   },
 });

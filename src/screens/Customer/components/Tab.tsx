@@ -3,16 +3,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Pressable,
 } from 'react-native';
-import React, {Dispatch, SetStateAction} from 'react';
-import {Theme} from '../../../utils/Constants';
+import React from 'react';
+import {currentTheme} from '../../../utils/Constants';
 import {Product} from '../../../../types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
-
-const currentTheme = Theme[0];
 
 type TabProps = {
   i: Product;
@@ -59,10 +56,10 @@ const Tab: React.FC<TabProps> = ({i, lastIndex}): React.JSX.Element => {
       </View>
       <View style={styles.tabActionContainer}>
         <TouchableOpacity style={styles.MarkAsPaid}>
-          <Text style={styles.MarkAsPaidText}>Mark as 'Paid'</Text>
+          <Text style={styles.MarkAsPaidText}>Mark as *Paid</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Icon name="delete" color={'#fff'} size={24} />
+          <Icon name="delete" color={currentTheme.tab.icon} size={24} />
         </TouchableOpacity>
       </View>
     </View>
@@ -75,7 +72,7 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tabColor,
+    backgroundColor: currentTheme.tab.bg,
     borderRadius: 8,
   },
   tabInfo: {
@@ -89,11 +86,11 @@ const styles = StyleSheet.create({
   customerName: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.contrastColor,
+    color: currentTheme.tab.label,
   },
   productAmount: {
     fontSize: 20,
-    color: currentTheme.textColor,
+    color: currentTheme.tab.value,
   },
   tabActionContainer: {
     flexDirection: 'row',
@@ -109,6 +106,7 @@ const styles = StyleSheet.create({
   },
   MarkAsPaidText: {
     fontWeight: '600',
+    color:currentTheme.textAlt
   },
   contentToggleContainer: {
     flexDirection: 'row',

@@ -5,6 +5,8 @@ import {useRoute} from '@react-navigation/native';
 import {Customer, Product} from '../../../types';
 import Header from '../../components/Header';
 import Tab from './components/Tab';
+import CustomerHeader from '../../components/CustomerHeader';
+import { currentTheme } from '../../utils/Constants';
 
 type RouteType = {
   customer: Customer;
@@ -20,6 +22,9 @@ const UnpaidUdhars = () => {
       <Header name={date} backButtom={true} />
       <View style={styles.container}>
         <CustomerInfo customer={customer} />
+        <View style={styles.customerHeader}>
+          <CustomerHeader flex={false} />
+        </View>
         <View style={styles.itemListContainer}>
           <FlatList
             data={products}
@@ -40,8 +45,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
+  customerHeader:{
+    marginTop:40
+  },
   itemListContainer: {
-    marginTop:20
+    // marginTop: 20,
   },
 });
 

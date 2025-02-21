@@ -8,13 +8,11 @@ import Icon1 from 'react-native-vector-icons/Ionicons';
 import {navigate} from '../../utils/nagivationUtils';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import {Theme} from '../../utils/Constants';
+import {currentTheme} from '../../utils/Constants';
 import {useNavigation} from '@react-navigation/native';
 import {DrawerActions} from '@react-navigation/native';
 import {navigationRef} from '../../utils/nagivationUtils';
 const NoProfile = require('../../assets/images/no-profile.jpg');
-
-const currentTheme = Theme[0];
 
 type menuNavContent = {
   name: string;
@@ -103,7 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 30,
     paddingHorizontal: 5,
-    backgroundColor:currentTheme.bgColor
+    backgroundColor:currentTheme.contrastColor
   },
   innterContainer: {},
   infoContainer: {

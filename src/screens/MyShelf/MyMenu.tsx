@@ -1,20 +1,21 @@
-import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {deviceWidth, Theme} from '../../utils/Constants';
+import {deviceWidth, currentTheme} from '../../utils/Constants';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
-const currentTheme = Theme[0];
 import {sampleProducts} from '../../../_data/dummy_data';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import {Product} from '../../../types';
 import EditProduct from './components/EditCreateProduct';
+import AddProduct from './components/AddProduct';
 
 const MyMenu = () => {
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
+  const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>(
     undefined,
   );
@@ -23,15 +24,20 @@ const MyMenu = () => {
     setSelectedProduct(product);
     setOpenEditing(true);
   };
+  const handleAddButton = () => {
+    setOpenAddProduct(true);
+  };
 
   const arr = sampleProducts;
+
   return (
     <View style={styles.parent}>
       <Header
-        name="My Menu"
+        name={`${shopkeeper.name}`}
         backButtom
         customComponent={true}
-        renderItem={<Icon name="plus" color={'black'} size={24} />}
+        renderItem={<Icon name="plus" color={currentTheme.textColor} size={24} />}
+        customAction={handleAddButton}
       />
       <View style={styles.contentContainer}>
         <ScrollView
@@ -50,7 +56,14 @@ const MyMenu = () => {
         <SlideUpContainer
           open={openEditing}
           close={() => setOpenEditing(false)}>
-          <EditProduct product={selectedProduct} />
+          <EditProduct product={selectedProduct} close={() => setOpenEditing(false)} />
+        </SlideUpContainer>
+      )}
+       {openAddProduct && (
+        <SlideUpContainer
+          open={openAddProduct}
+          close={() => setOpenAddProduct(false)}>
+          <AddProduct close={() => setOpenAddProduct(false)} />
         </SlideUpContainer>
       )}
     </View>
@@ -60,7 +73,7 @@ const MyMenu = () => {
 const styles = StyleSheet.create({
   parent: {
     flex: 1,
-    backgroundColor: currentTheme.bgColor,
+    backgroundColor: currentTheme.contrastColor,
   },
   contentContainer: {
     paddingHorizontal: 10,

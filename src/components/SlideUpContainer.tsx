@@ -24,7 +24,9 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
           onRequestClose={close}
           style={styles.modal}>
           <Pressable style={styles.childredContainer} onPress={close}>
-            <Pressable onPress={e => e.stopPropagation()}>{children}</Pressable>
+            <Pressable onPress={e => e.stopPropagation()}>
+              {children}
+              </Pressable>
           </Pressable>
         </Modal>
       </SafeAreaView>

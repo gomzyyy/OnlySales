@@ -2,6 +2,8 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {d} from '../../_data/dummy_data';
 import {Shopkeeper, App, Customer, Product} from '../../types';
 import {AdminRole, AppThemeName, BusinessType} from '../../enums';
+import 'react-native-get-random-values';
+import {v4 as uuid} from 'uuid';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -19,12 +21,12 @@ const initialState: ShopkeeperInitialStateType = {
     starProducts: [],
     sessionPasscode: undefined,
     customers: d.customers,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toDateString(),
+    updatedAt: new Date().toDateString(),
   },
   app: {
     currency: 'Rs.',
-    serchResults: [],
+    searchResults: [],
     currentTheme: AppThemeName.PURPLE,
   },
 };
@@ -34,10 +36,10 @@ const shopkeeperSlice = createSlice({
   initialState,
   reducers: {
     setSearchResult: (state, action: PayloadAction<Customer[]>) => {
-      state.app.serchResults = action.payload;
+      state.app.searchResults = action.payload;
     },
     resetSearchResults: state => {
-      state.app.serchResults = [];
+      state.app.searchResults = [];
     },
     createCustomers: (
       state,
@@ -50,9 +52,10 @@ const shopkeeperSlice = createSlice({
       const currentCustomers: Customer[] = state.shopkeeper.customers;
       const newCustomer: Customer = {
         ...action.payload,
-        id: crypto.randomUUID.toString(),
+        id: Date.now().toString(),
         shopkeeperId: state.shopkeeper.id,
-        createdAt: new Date(Date.now()),
+        createdAt: new Date(Date.now()).toDateString(),
+        updatedAt: new Date(Date.now()).toDateString(),
       };
 
       state.shopkeeper.customers = [newCustomer, ...currentCustomers];
@@ -60,7 +63,7 @@ const shopkeeperSlice = createSlice({
     updateCustomers: (state, action: PayloadAction<Customer>) => {
       const updatedCustomer = action.payload;
       state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
-        s.id === updatedCustomer.id ? {...s, ...updateCustomers} : s,
+        s.id === updatedCustomer.id ? {...s, ...updatedCustomer} : s,
       );
     },
     removeCustomer: (state, action: PayloadAction<Customer>) => {
@@ -81,9 +84,11 @@ const shopkeeperSlice = createSlice({
       state,
       action: PayloadAction<{customer: Customer; product: Product}>,
     ) => {},
+
     setToPaid: (state, action: PayloadAction<{customer: Customer}>) => {},
     setToUnpaid: (state, action: PayloadAction<{customer: Customer}>) => {},
     addProductToShelf: (state, action: PayloadAction<{product: Product}>) => {},
+    editShelfProduct: (state, action: PayloadAction<{product: Product}>) => {},
     removeProductFromShelf: (
       state,
       action: PayloadAction<{product: Product}>,
@@ -100,5 +105,8 @@ export const {
   removeProduct,
   setToPaid,
   setToUnpaid,
+  addProductToShelf,
+  editShelfProduct,
+  removeProductFromShelf,
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;

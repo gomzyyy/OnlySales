@@ -15,34 +15,25 @@ import {QuantityType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {editShelfProduct} from '../../../../store/slices/shopkeeper';
-import {showToast} from '../../../service/fn';
+import { showToast } from '../../../service/fn';
 
 type EditProductProps = {
-  product: Product;
   close: () => void;
 };
 
-const EditCreateProduct: React.FC<EditProductProps> = ({
-  product,
-  close
-}): React.JSX.Element => {
+const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
-  const [name, setName] = useState<string>(product.name);
-  const [price, setPrice] = useState<string>(product.basePrice);
-  const [discountedPrice, setDiscountedPrice] = useState<string>(
-    product.discountedPrice ?? '',
-  );
-  const [quantity, setQuantity] = useState<string>(product.quantity);
-  const [measurementType, setMeasurementType] = useState<QuantityType>(
-    product.measurementType
-  );
+  const [name, setName] = useState<string>('');
+  const [price, setPrice] = useState<string>('');
+  const [discountedPrice, setDiscountedPrice] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('');
+  const [measurementType, setMeasurementType] = useState<QuantityType>(QuantityType.GRAMS);
 
   const handleOnSubmit = () => {
-    // dispatch(editShelfProduct({product}))
     close();
     showToast({
       type: 'success',
-      text1: `Product Edited successfully: ${product.name}`,
+      text1: `Product Created successfully`,
     });
   };
 
@@ -50,7 +41,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
     <KeyboardAvoidingView
       style={styles.createCustomerContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <Text style={styles.formTitle}>Edit Product: {product.name}</Text>
+      <Text style={styles.formTitle}>Add new Product</Text>
       <View style={styles.formContainer}>
         <View style={styles.inputTitleContainer}>
           <Text style={styles.inputLabel}>Product name*</Text>
@@ -172,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditCreateProduct;
+export default AddProduct;

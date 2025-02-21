@@ -9,10 +9,39 @@ export interface AppTheme {
   textColor: string;
   contrastColor: string;
   bgColor: string;
+  textAlt:string
+  modal:ModalTheme,
+  toggleBtn:ToogleBtnTheme,
+  tab:TabTheme
 }
 
+export interface ModalTheme{
+  title:string;
+  inputbg: string;
+  inputBorder: string;
+  inputText: string;
+  pickerbg: string;
+  pickerText:string;
+  saveBtnbg: string;
+  saveBtnText: string;
+}
+
+export interface ToogleBtnTheme{
+  bgActive: string;
+  bgInactive: string;
+  textActive: string;
+  textInactive: string;
+}
+export interface TabTheme{
+  label: string;
+  bg: string;
+  value: string;
+  btnBg: string;
+  btnText: string;
+  icon: string;
+}
 export interface App {
-  serchResults: Customer[];
+  searchResults: Customer[];
   currency: string;
   currentTheme: AppThemeName;
 }
@@ -27,8 +56,8 @@ export interface Shopkeeper {
   starProducts?: Product[];
   customers: Customer[];
   sessionPasscode: string | undefined;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface Product {
   id: string;
@@ -39,8 +68,8 @@ export interface Product {
   discountedPrice?: string;
   quantity: string;
   measurementType: QuantityType;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface Customer {
   id: string;
@@ -51,7 +80,7 @@ export interface Customer {
   shopkeeperId: string;
   unpaidPayments?: Product[];
   paidPayments?: Product[];
-  createdAt: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt?: string;
 }
 

@@ -9,6 +9,7 @@ import { navigationRef } from '../utils/nagivationUtils';
 import Customer from '../screens/Customer/Customer';
 import UnpaidUdhars from '../screens/Customer/UnpaidUdhars';
 import MyMenu from '../screens/MyShelf/MyMenu';
+import Search from '../screens/Search/Search';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -24,6 +25,7 @@ const StackNav = () => {
       <stack.Screen name="Customer" component={Customer}/>
       <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars}/>
       <stack.Screen name="MyMenu" component={MyMenu}/>
+      <stack.Screen name="Search" component={Search}/>
     </stack.Navigator>
   );
 };

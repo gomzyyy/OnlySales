@@ -6,21 +6,23 @@ import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {back} from '../utils/nagivationUtils';
 
 type HeaderProps = {
-  name: string;
+  name?: string;
+  showTitle?: boolean;
   backButtom?: boolean;
   menuButton?: boolean;
   customComponent?: boolean;
-  renderItem?:React.ReactNode;
-  customAction?:()=>void
+  renderItem?: React.ReactNode;
+  customAction?: () => void;
 };
 
 const Header: React.FC<HeaderProps> = ({
-  name,
+  name="",
+  showTitle = true,
   backButtom = false,
   menuButton = false,
   customComponent = false,
   renderItem = <></>,
-  customAction=()=>{}
+  customAction = () => {},
 }): React.JSX.Element => {
   const navigation = useNavigation();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
@@ -44,14 +46,20 @@ const Header: React.FC<HeaderProps> = ({
           <Icon1 name="left" size={24} color={'black'} />
         </Pressable>
       )}
-      <Text
-        style={{
-          fontSize: 22,
-          fontWeight: 'bold',
-        }}>
-        {name}
-      </Text>
-      {customComponent && <Pressable onPress={customAction} style={styles.rightCustomBtn} >{renderItem}</Pressable>}
+      {showTitle && (
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: 'bold',
+          }}>
+          {name}
+        </Text>
+      )}
+      {customComponent && (
+        <Pressable onPress={customAction} style={styles.rightCustomBtn}>
+          {renderItem}
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -61,10 +69,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
   },
-  rightCustomBtn:{
+  rightCustomBtn: {
     position: 'absolute',
     right: 20,
-  }
+  },
 });
 
 export default Header;

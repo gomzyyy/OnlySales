@@ -1,22 +1,17 @@
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  FlatList,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {AppDispatch, RootState} from '../../store/store';
-import {useDispatch, useSelector} from 'react-redux';
-import {setSearchResult} from '../../store/slices/shopkeeper';
-import {Customer} from '../../types';
-import {Theme} from '../utils/Constants';
+import React from 'react';
+import {RootState} from '../../store/store';
+import {useSelector} from 'react-redux';
+import {currentTheme} from '../utils/Constants';
 import {dashboardHeaderTabs} from '../utils/Constants';
-import {ScrollView} from 'react-native-gesture-handler';
-
-const currentTheme = Theme[0];
+import {Pressable, ScrollView} from 'react-native-gesture-handler';
+import {navigate} from '../utils/nagivationUtils';
 
 type DashboardHeaderProps = {
   searchBar?: boolean;
@@ -27,22 +22,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   searchBar = true,
   flex = true,
 }): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
   const app = useSelector((s: RootState) => s.shopkeeper.app);
-  const c = useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers);
-  const [query, setQuery] = useState<string>('');
-  const handleSearchQuery = () => {
-    let result: Customer[] = [];
-    if (c.length !== 0) {
-      result = c.filter(s =>
-        s.fullName.trim().toLowerCase().includes(query.trim().toLowerCase()),
-      );
-    }
-    result.length !== 0 && dispatch(setSearchResult(result));
-  };
-  useEffect(() => {
-    handleSearchQuery();
-  }, [query]);
   return (
     <KeyboardAvoidingView
       style={{flex: flex ? 1 : 0}}
@@ -51,32 +31,28 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <ScrollView
           horizontal={true}
           style={styles.container}
-          contentContainerStyle={{gap:20}}
-          showsVerticalScrollIndicator={false}
-          >
-          {dashboardHeaderTabs.map((t,i) => (
-              <View key={t.name} style={styles.innerBox}>
-                <View style={styles.infoContainer}>
-                  <Text style={styles.textLabel}>{t.name}</Text>
-                  <Text
-                    style={
-                      styles.textInfo
-                    }>{`${app.currency}${t.data.amount}`}</Text>
-                </View>
+          contentContainerStyle={{gap: 20}}
+          showsVerticalScrollIndicator={false}>
+          {dashboardHeaderTabs.map((t, i) => (
+            <View key={t.name} style={styles.innerBox}>
+              <View style={styles.infoContainer}>
+                <Text style={styles.textLabel}>{t.name}</Text>
+                <Text
+                  style={
+                    styles.textInfo
+                  }>{`${app.currency}${t.data.amount}`}</Text>
               </View>
+            </View>
           ))}
         </ScrollView>
-        {/* </View> */}
         {searchBar && (
-          <View style={styles.searchQueryContainer}>
-            <TextInput
-              style={styles.searchQueryInput}
-              value={query}
-              onChangeText={setQuery}
-              placeholder="Search by name"
-              placeholderTextColor={'purple'}
-            />
-          </View>
+          <Pressable
+            style={styles.searchQueryContainer}
+            onPress={() => navigate('Search')}>
+            <View style={styles.searchQueryInput}>
+              <Text style={styles.searchQueryInputText}>Search by name</Text>
+            </View>
+          </Pressable>
         )}
       </View>
     </KeyboardAvoidingView>
@@ -122,6 +98,11 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,
+    justifyContent: 'center',
+  },
+  searchQueryInputText: {
+    color: currentTheme.textColor,
+    fontSize: 18,
   },
 });
 
