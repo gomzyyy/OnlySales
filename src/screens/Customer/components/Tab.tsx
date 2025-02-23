@@ -6,13 +6,13 @@ import {
 } from 'react-native';
 import React from 'react';
 import {currentTheme} from '../../../utils/Constants';
-import {Product} from '../../../../types';
+import {newUdharProduct, Product} from '../../../../types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 
 type TabProps = {
-  i: Product;
+  i: newUdharProduct;
   lastIndex?: boolean;
 };
 
@@ -49,8 +49,8 @@ const Tab: React.FC<TabProps> = ({i, lastIndex}): React.JSX.Element => {
         <Text style={styles.productAmount}>
           {`${app.currency}${
             i.discountedPrice && i.discountedPrice.trim().length !== 0
-              ? i.discountedPrice
-              : i.basePrice
+              ? i.count === "0" ? i.discountedPrice : (Number(i.discountedPrice) * Number(i.count)).toString()
+              : i.count === "0" ? i.basePrice :(Number(i.basePrice) * Number(i.count)).toString()
           }`}
         </Text>
       </View>

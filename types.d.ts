@@ -78,9 +78,14 @@ export interface Customer {
   image?: string | undefined;
   address?: string;
   shopkeeperId: string;
-  unpaidPayments?: Product[];
-  paidPayments?: Product[];
+  unpaidPayments?: newUdharProduct[];
+  paidPayments?: newUdharProduct[];
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface newUdharProduct extends Product{
+  addedAt:string;
+  count:string
 }
 

@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, FlatList} from 'react-native';
 import React from 'react';
 import CustomerInfo from './components/CustomerInfo';
 import {useRoute} from '@react-navigation/native';
-import {Customer, Product} from '../../../types';
+import {Customer, newUdharProduct, Product} from '../../../types';
 import Header from '../../components/Header';
 import Tab from './components/Tab';
 import CustomerHeader from '../../components/CustomerHeader';
@@ -10,9 +10,10 @@ import { currentTheme } from '../../utils/Constants';
 
 type RouteType = {
   customer: Customer;
-  products: Product[];
+  products: newUdharProduct[];
   date: string;
 };
+
 
 const UnpaidUdhars = () => {
   const params = useRoute().params;
@@ -28,7 +29,7 @@ const UnpaidUdhars = () => {
         <View style={styles.itemListContainer}>
           <FlatList
             data={products}
-            keyExtractor={i => i.id}
+            keyExtractor={i => i.addedAt}
             renderItem={({item}) => <Tab i={item} />}
           />
         </View>

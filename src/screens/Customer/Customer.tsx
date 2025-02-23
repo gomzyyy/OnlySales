@@ -30,7 +30,7 @@ const Customer = () => {
       <Header
         name={`${customer.fullName}`}
         backButtom
-        customComponent={true}
+        customComponent={content==="UNPAID"}
         renderItem={<Icon name="plus" color={'black'} size={24} />}
         customAction={openAddUdharModal}
       />
@@ -73,7 +73,7 @@ const Customer = () => {
         </View>
       </View>
       <SlideUpContainer open={addUdhar} close={closeAddUdharModal}>
-      <AddUdhar />
+      <AddUdhar close={closeAddUdharModal} customer={customer} />
       </SlideUpContainer>
     </View>
   );

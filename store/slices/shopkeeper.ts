@@ -1,9 +1,10 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {d} from '../../_data/dummy_data';
-import {Shopkeeper, App, Customer, Product} from '../../types';
+import {Shopkeeper, App, Customer, Product, newUdharProduct} from '../../types';
 import {AdminRole, AppThemeName, BusinessType} from '../../enums';
 import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid';
+import UnpaidUdhars from '../../src/screens/Customer/UnpaidUdhars';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -76,17 +77,94 @@ const shopkeeperSlice = createSlice({
       const choosedTheme: AppThemeName = action.payload;
       state.app.currentTheme = choosedTheme;
     },
-    addProduct: (
+    addNewUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: Product}>,
-    ) => {},
-    removeProduct: (
-      state,
-      action: PayloadAction<{customer: Customer; product: Product}>,
-    ) => {},
+      action: PayloadAction<{customer: Customer; products: newUdharProduct[]}>,
+    ) => {
+      const newUdharList = action.payload.products;
+      const customer = action.payload.customer;
 
-    setToPaid: (state, action: PayloadAction<{customer: Customer}>) => {},
-    setToUnpaid: (state, action: PayloadAction<{customer: Customer}>) => {},
+      const allUdhars =
+        state.shopkeeper.customers.find(s => s.id === customer.id)
+          ?.unpaidPayments || [];
+
+      const newAllUdhars = allUdhars.map(d => {
+        const updatedUdhar = newUdharList.find(c => c.id === d.id);
+        console.log(updatedUdhar)
+        return updatedUdhar ? {...d, count: (Number(d.count) + Number(updatedUdhar.count)).toString()} : d;
+      });
+
+      state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
+        s.id === customer.id
+          ? {
+              ...s,
+              unpaidPayments: [
+                ...newAllUdhars,
+                ...newUdharList.filter(
+                  c => !allUdhars.some(d => d.id === c.id),
+                ),
+              ],
+            }
+          : s,
+      );
+    },
+
+    removeUdhar: (
+      state,
+      action: PayloadAction<{customer: Customer; product: Product}>,
+    ) => {
+      const customers = state.shopkeeper.customers;
+      const customer = action.payload.customer;
+      const newUnpaidPaymentsList =
+        customer.unpaidPayments &&
+        customer.unpaidPayments.filter(s => s.id !== action.payload.product.id);
+      state.shopkeeper.customers = customers.map(c =>
+        c.id === customer.id ? {...c, UnpaidUdhars: newUnpaidPaymentsList} : c,
+      );
+    },
+
+    setToPaid: (
+      state,
+      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+    ) => {
+      const customers = state.shopkeeper.customers;
+      const customer = action.payload.customer;
+      const product = action.payload.product;
+      const newUnpaidPaymets = customer.unpaidPayments?.filter(
+        s => s.id !== product.id,
+      );
+      const newPaidPayments = [product, ...(customer.paidPayments || [])];
+      state.shopkeeper.customers = customers.map(c =>
+        c.id === customer.id
+          ? {
+              ...c,
+              unpaidPayments: newUnpaidPaymets,
+              paidPayments: newPaidPayments,
+            }
+          : c,
+      );
+    },
+    setToUnpaid: (
+      state,
+      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+    ) => {
+      const customers = state.shopkeeper.customers;
+      const customer = action.payload.customer;
+      const product = action.payload.product;
+      const newUnpaidPaymets = [product, ...(customer.unpaidPayments || [])];
+      const newPaidPayments = customer.paidPayments?.filter(
+        s => s.id !== product.id,
+      );
+      state.shopkeeper.customers = customers.map(c =>
+        c.id === customer.id
+          ? {
+              ...c,
+              unpaidPayments: newUnpaidPaymets,
+              paidPayments: newPaidPayments,
+            }
+          : c,
+      );
+    },
     addProductToShelf: (state, action: PayloadAction<{product: Product}>) => {},
     editShelfProduct: (state, action: PayloadAction<{product: Product}>) => {},
     removeProductFromShelf: (
@@ -101,8 +179,8 @@ export const {
   removeCustomer,
   setSearchResult,
   resetSearchResults,
-  addProduct,
-  removeProduct,
+  addNewUdhar,
+  removeUdhar,
   setToPaid,
   setToUnpaid,
   addProductToShelf,
