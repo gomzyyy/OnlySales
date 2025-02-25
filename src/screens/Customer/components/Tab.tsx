@@ -48,9 +48,9 @@ const Tab: React.FC<TabProps> = ({i, lastIndex}): React.JSX.Element => {
         <Text style={styles.customerName}>{i.name}</Text>
         <Text style={styles.productAmount}>
           {`${app.currency}${
-            i.discountedPrice && i.discountedPrice.trim().length !== 0
-              ? i.count === "0" ? i.discountedPrice : (Number(i.discountedPrice) * Number(i.count)).toString()
-              : i.count === "0" ? i.basePrice :(Number(i.basePrice) * Number(i.count)).toString()
+            i.discountedPrice && i.discountedPrice !== 0
+              ? i.count ===0 ? i.discountedPrice : (Number(i.discountedPrice) * Number(i.count)).toString()
+              : i.count === 0 ? i.basePrice :(Number(i.basePrice) * Number(i.count)).toString()
           }`}
         </Text>
       </View>

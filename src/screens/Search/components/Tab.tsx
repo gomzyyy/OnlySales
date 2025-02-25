@@ -25,8 +25,8 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     );
     if (res) {
       dispatch(removeCustomer(i));
-      persistor.flush()
-      console.log(shopkeeper.customers)
+      // persistor.flush()
+      // console.log(shopkeeper.customers)
       showToast({type: 'success', text1: 'Customer removed successfully.'});
       return;
     } else {

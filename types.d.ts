@@ -64,8 +64,8 @@ export interface Product {
   name: string;
   image?: string | undefined;
   totalSold: number;
-  basePrice: string;
-  discountedPrice?: string;
+  basePrice: number;
+  discountedPrice?: number;
   quantity: string;
   measurementType: QuantityType;
   createdAt: string;
@@ -86,6 +86,6 @@ export interface Customer {
 
 export interface newUdharProduct extends Product{
   addedAt:string;
-  count:string
+  count:number
 }
 

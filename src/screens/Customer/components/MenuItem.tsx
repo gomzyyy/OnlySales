@@ -28,22 +28,23 @@ const MenuItem: React.FC<MenuItemProps> = ({
   const [count, setCount] = useState<number>(0);
 
   const handlePlusMinus = (action: 'ADD' | 'MINUS') => {
-    if (action === 'ADD') {
-      setCount(p => (p += 1));
-    }
-    if (action === 'MINUS') {
-      if (count === 0) {
-        return;
+    setCount(prevCount => {
+      let newCount;
+      
+      if (action === 'ADD') {
+        newCount = prevCount + 1;
+      } else {
+        if (prevCount === 0) {
+          return prevCount;
+        }
+        newCount = prevCount - 1;
       }
-      setCount(p => (p -= 1));
-    }
-    callback({product, action, count});
-    return;
-  };
+      
+      callback({ product, action, count: newCount });
 
-  useEffect(() => {
-    console.log(count);
-  }, [count]);
+      return newCount;
+    });
+};
 
   return (
     <View style={styles.parent}>
@@ -55,7 +56,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
         </TouchableOpacity>
 
         <Text style={styles.itemText}>
-          {count} {product.name}
+          {`${count}  ${product.name}`}
         </Text>
         <TouchableOpacity onPress={() => handlePlusMinus('MINUS')}>
           {removeIcon && (
@@ -77,8 +78,10 @@ const styles = StyleSheet.create({
     borderColor: currentTheme.baseColor,
   },
   innerContainer: {
+    paddingHorizontal: 4,
     flexDirection: 'row',
-    gap: 4,
+    alignItems:'center',
+    gap: 8,
   },
   itemText: {
     fontSize: 20,

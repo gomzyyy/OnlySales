@@ -34,6 +34,15 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       phoneNumber,
       address,
     };
+    if (fullName.trim().length === 0) {
+      showToast({
+        type: 'error',
+        text1: "Can't add new customer.",
+        text2: 'Some required fields are empty.',
+      });
+      callback();
+      return;
+    }
     dispatch(createCustomers(customerData));
     showToast({
       type: 'success',
@@ -103,7 +112,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color:currentTheme.modal.title
+    color: currentTheme.modal.title,
   },
   formContainer: {
     marginTop: 20,
@@ -121,7 +130,7 @@ const styles = StyleSheet.create({
   inputText: {
     borderWidth: 2,
     borderRadius: 8,
-    borderColor:currentTheme.modal.inputBorder,
+    borderColor: currentTheme.modal.inputBorder,
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,

@@ -16,7 +16,6 @@ import {sampleProducts} from '../../../../_data/dummy_data';
 import SearchBar from '../../Search/components/subcomponents/SearchBar';
 import {Customer, newUdharProduct, Product} from '../../../../types';
 import {addNewUdhar} from '../../../../store/slices/shopkeeper';
-import {QuantityType} from '../../../../enums';
 
 type AddUdharProps = {
   close?: () => void;
@@ -34,14 +33,14 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const [selectedProducts, setSelectedProducts] = useState<
     newUdharProduct[] | undefined
   >(undefined);
-  const [udharAmount, setUdharAmount] = useState<string>((0).toString());
+  const [udharAmount, setUdharAmount] = useState<number>(0);
 
   const handleNewUdhars = (s: newUdharProduct) => {
     const alreadyExist: newUdharProduct | undefined = selectedProducts
       ? selectedProducts.find(f => f.id === s.id)
       : undefined;
     if (alreadyExist) {
-      if (alreadyExist.count === '0') {
+      if (alreadyExist.count === 0) {
         return;
       }
       setSelectedProducts(prev =>
@@ -65,34 +64,15 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     action: 'ADD' | 'MINUS';
     count: number;
   }) => {
-    console.log(count);
     if (action === 'ADD') {
-      setUdharAmount(
-        (
-          Number(udharAmount) +
-          Number(
-            product.discountedPrice
-              ? product.discountedPrice
-              : product.basePrice,
-          )
-        ).toString(),
-      );
+      setUdharAmount(udharAmount + Number(product.discountedPrice ?? product.basePrice));
     }
     if (action === 'MINUS') {
-      setUdharAmount(
-        (
-          Number(udharAmount) -
-          Number(
-            product.discountedPrice
-              ? product.discountedPrice
-              : product.basePrice,
-          )
-        ).toString(),
-      );
+      setUdharAmount(udharAmount - Number(product.discountedPrice ?? product.basePrice))
     }
     const newProducts: newUdharProduct = {
       ...product,
-      count: count.toString(),
+      count: count,
       addedAt: Date.now().toString(),
     };
     handleNewUdhars(newProducts);
@@ -140,7 +120,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           activeOpacity={0.8}
           onPress={handleAddUdharBtn}>
           <Text style={styles.doneAddingText}>
-            {udharAmount === '0'
+            {udharAmount === 0
               ? 'Cancel'
               : `Add Udhar of ${currencyType} ${udharAmount}`}
           </Text>

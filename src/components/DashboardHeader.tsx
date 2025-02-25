@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import {RootState} from '../../store/store';
 import {useSelector} from 'react-redux';
-import {currentTheme} from '../utils/Constants';
+import {currentTheme, deviceWidth} from '../utils/Constants';
 import {dashboardHeaderTabs} from '../utils/Constants';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 import {navigate} from '../utils/nagivationUtils';
@@ -31,9 +31,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <ScrollView
           horizontal={true}
           style={styles.container}
-          contentContainerStyle={{gap: 20}}
+          contentContainerStyle={{gap: 20
+            // ,paddingHorizontal:deviceWidth*0.06
+          }}
           showsVerticalScrollIndicator={false}>
-          {dashboardHeaderTabs.map((t, i) => (
+          {dashboardHeaderTabs.map((t) => (
             <View key={t.name} style={styles.innerBox}>
               <View style={styles.infoContainer}>
                 <Text style={styles.textLabel}>{t.name}</Text>
@@ -64,6 +66,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     marginBottom: 10,
+    // backgroundColor:"red"
   },
   innerBox: {
     height: 90,

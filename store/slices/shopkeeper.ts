@@ -3,8 +3,6 @@ import {d} from '../../_data/dummy_data';
 import {Shopkeeper, App, Customer, Product, newUdharProduct} from '../../types';
 import {AdminRole, AppThemeName, BusinessType} from '../../enums';
 import 'react-native-get-random-values';
-import {v4 as uuid} from 'uuid';
-import UnpaidUdhars from '../../src/screens/Customer/UnpaidUdhars';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -90,8 +88,7 @@ const shopkeeperSlice = createSlice({
 
       const newAllUdhars = allUdhars.map(d => {
         const updatedUdhar = newUdharList.find(c => c.id === d.id);
-        console.log(updatedUdhar)
-        return updatedUdhar ? {...d, count: (Number(d.count) + Number(updatedUdhar.count)).toString()} : d;
+        return updatedUdhar ? {...d, count: d.count + updatedUdhar.count} : d;
       });
 
       state.shopkeeper.customers = state.shopkeeper.customers.map(s =>

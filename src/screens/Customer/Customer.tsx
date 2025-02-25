@@ -1,5 +1,5 @@
 import {View, StyleSheet, Pressable} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
 import {Customer as CustomerType} from '../../../types';
@@ -11,6 +11,8 @@ import CustomerInfo from './components/CustomerInfo';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddUdhar from './components/AddUdhar';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 
 type RouteParams = {
@@ -19,23 +21,35 @@ type RouteParams = {
 const Customer = () => {
   const params = useRoute().params;
   const {customer} = params as RouteParams;
+  const customers = useSelector((s:RootState)=>s.shopkeeper.shopkeeper.customers)
+  const findCustomer=():CustomerType | undefined=>{
+    const c:CustomerType | undefined = customer && customers.find((s)=>s.id === customer.id)
+    return c
+  }
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
   const [addUdhar, setAddUdhar] = useState<boolean>(false);
+  const [currCustomer,setCurrCustomer]=useState<CustomerType>(customer)
 
   const openAddUdharModal=()=>setAddUdhar(true)
   const closeAddUdharModal=()=>setAddUdhar(false)
+  useEffect(()=>{
+    const currentCustomer = findCustomer();
+    if(currentCustomer){
+      setCurrCustomer(currentCustomer)
+    }
+  },[customers])
   
   return (
     <View style={styles.parent}>
       <Header
-        name={`${customer.fullName}`}
+        name={`${currCustomer.fullName}`}
         backButtom
         customComponent={content==="UNPAID"}
         renderItem={<Icon name="plus" color={'black'} size={24} />}
         customAction={openAddUdharModal}
       />
       <View style={styles.contentContainer}>
-        <CustomerInfo customer={customer} />
+        <CustomerInfo customer={currCustomer} />
         <View style={styles.contentToggleContainer}>
           <Pressable onPress={() => setContent('UNPAID')} style={{flex: 1}}>
             <ToogleButton
@@ -54,18 +68,18 @@ const Customer = () => {
         </View>
         <View style={styles.dataContainer}>
           {content === 'UNPAID' ? (
-            customer.unpaidPayments && customer.unpaidPayments.length !== 0 ? (
+            currCustomer.unpaidPayments && currCustomer.unpaidPayments.length !== 0 ? (
               <ProductsByDate
-                customer={customer}
-                ArrWithDate={customer.unpaidPayments}
+                customer={currCustomer}
+                ArrWithDate={currCustomer.unpaidPayments}
               />
             ) : (
               <EmptyListMessage title="Oops! No unpaid payments." />
             )
-          ) : customer.paidPayments && customer.paidPayments.length !== 0 ? (
+          ) : currCustomer.paidPayments && currCustomer.paidPayments.length !== 0 ? (
             <ProductsByDate
-              customer={customer}
-              ArrWithDate={customer.paidPayments}
+              customer={currCustomer}
+              ArrWithDate={currCustomer.paidPayments}
             />
           ) : (
             <EmptyListMessage title="Oops! No paid payments." />
@@ -73,7 +87,7 @@ const Customer = () => {
         </View>
       </View>
       <SlideUpContainer open={addUdhar} close={closeAddUdharModal}>
-      <AddUdhar close={closeAddUdharModal} customer={customer} />
+      <AddUdhar close={closeAddUdharModal} customer={currCustomer} />
       </SlideUpContainer>
     </View>
   );

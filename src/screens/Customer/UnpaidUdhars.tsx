@@ -18,6 +18,7 @@ type RouteType = {
 const UnpaidUdhars = () => {
   const params = useRoute().params;
   const {customer, products, date} = params as RouteType;
+
   return (
     <View style={styles.parent}>
       <Header name={date} backButtom={true} />

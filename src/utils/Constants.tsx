@@ -228,17 +228,4 @@ export const Theme:AppTheme[] = [
   },
 ];
 
-
- // {
-  //   name: AppThemeName.DARK,
-  //   baseColor: "#121212",
-  //   fadeColor: "#1e1e1e",
-  //   tabColor: "#333333",
-  //   borderColor: "#444",
-  //   textColor: "#000",
-  //   contrastColor: "#fff",
-  //   bgColor: "#000",
-  //   textAlt:"#fff"
-  // }
-
-export const currentTheme=Theme[4]
+export const currentTheme=Theme[5]
