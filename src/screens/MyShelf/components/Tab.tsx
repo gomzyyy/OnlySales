@@ -20,17 +20,17 @@ const Tab: React.FC<TabProps> = ({
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}
-      onPress={() => onPress(i)}>
+    <View style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}>
       <View style={styles.tabLabel}>
         <Text style={styles.productName}>{i.name}</Text>
         <TouchableOpacity>
           <Icon name="delete" color={currentTheme.tab.icon} size={22} />
         </TouchableOpacity>
       </View>
-      <View style={styles.productInfoContainer}>
+      <TouchableOpacity
+        activeOpacity={0.4}
+        onPress={() => onPress(i)}
+        style={styles.productInfoContainer}>
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>Price: {i.basePrice}</Text>
         </View>
@@ -48,8 +48,8 @@ const Tab: React.FC<TabProps> = ({
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>Total sold: {i.totalSold}</Text>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -73,15 +73,15 @@ const styles = StyleSheet.create({
   },
   productInfoContainer: {
     flex: 1,
-    marginTop:10
+    marginTop: 10,
   },
   infoContainer: {
-    marginTop:6
+    marginTop: 6,
   },
   infoText: {
     color: currentTheme.tab.label,
-    fontSize:16,
-    fontWeight:"bold"
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

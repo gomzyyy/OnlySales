@@ -1,36 +1,40 @@
-import { Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useRef, useState} from 'react';
 import {Customer} from '../../../../types';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/AntDesign';
 import {currentTheme} from '../../../utils/Constants';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {removeCustomer} from '../../../../store/slices/shopkeeper';
-import {AppDispatch, persistor, RootState} from '../../../../store/store';
+import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
-import { navigate } from '../../../utils/nagivationUtils';
+import {navigate} from '../../../utils/nagivationUtils';
 
 type TabProps = {
   i: Customer;
   lastIndex?: boolean;
+  handleOpenLongPressOptions?: (customer: Customer) => void;
+  dummy?:boolean
 };
 
-const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
-  const shopkeeper = useSelector((s:RootState)=>s.shopkeeper.shopkeeper)
+const Tab: React.FC<TabProps> = ({
+  i,
+  lastIndex = false,
+  handleOpenLongPressOptions,
+  dummy=false
+}): React.JSX.Element => {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [longPressed, setLongPressed] = useState<boolean>();
 
-  const handleDeleteCustomer = async (): Promise<void> => {
-    const res = await Confirm(
-      'Are you sure you want to remove this customer?',
-      'Once customer removed, cannot be reversed! be careful of miss-touching removal button.',
-    );
-    if (res) {
-      dispatch(removeCustomer(i));
-      // persistor.flush()
-      showToast({type: 'success', text1: 'Customer removed successfully.'});
-      return;
-    } else {
-      showToast({type: 'info', text1: 'Removal canceled.'});
-      return;
+  const triggerLongPress = () => {
+    timeoutRef.current = setTimeout(() => {
+      handleOpenLongPressOptions && handleOpenLongPressOptions(i);
+      setLongPressed(true);
+    }, 200);
+  };
+  const cancelLongPress = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      setLongPressed(false);
     }
   };
 
@@ -38,12 +42,11 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     <TouchableOpacity
       activeOpacity={0.8}
       style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}
-      onPress={()=>navigate("Customer",{customer:i})}
-      >
+      onPress={() => !longPressed && !dummy && navigate('Customer', {customer: i})}
+      onPressIn={triggerLongPress}
+      onPressOut={cancelLongPress}>
       <Text style={styles.customerName}>{i.fullName}</Text>
-      <TouchableOpacity onPress={handleDeleteCustomer}>
-        <Icon name="delete" color={currentTheme.tab.icon} size={22} />
-      </TouchableOpacity>
+      <Icon name="right" color={currentTheme.tab.icon} size={22} />
     </TouchableOpacity>
   );
 };

@@ -12,7 +12,6 @@ import {currentTheme, deviceHeight} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import MenuItem from './MenuItem';
-import {sampleProducts} from '../../../../_data/dummy_data';
 import SearchBar from '../../Search/components/subcomponents/SearchBar';
 import {Customer, newUdharProduct, Product} from '../../../../types';
 import {addNewUdhar} from '../../../../store/slices/shopkeeper';
@@ -27,13 +26,16 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   customer,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
-  const shelf = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
+  const menu = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
   const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
   const [query, setQuery] = useState<string>('');
-  const [selectedProducts, setSelectedProducts] = useState<
-    newUdharProduct[] | undefined
-  >(undefined);
+  const [selectedProducts, setSelectedProducts] = useState<newUdharProduct[]>(
+    [],
+  );
   const [udharAmount, setUdharAmount] = useState<number>(0);
+  const sortedMenu: Product[] = [...menu].sort(
+    (a, b) => b.totalSold - a.totalSold,
+  );
 
   const handleNewUdhars = (s: newUdharProduct) => {
     const alreadyExist: newUdharProduct | undefined = selectedProducts
@@ -51,7 +53,11 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           : [{...s}],
       );
     } else {
-      setSelectedProducts([...(selectedProducts || []), {...s}]);
+      setSelectedProducts(
+        [...(selectedProducts || []), {...s}].map(
+          s => s && {...s, createdAt: new Date(Date.now()).toDateString()},
+        ),
+      );
     }
   };
 
@@ -65,10 +71,24 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     count: number;
   }) => {
     if (action === 'ADD') {
-      setUdharAmount(udharAmount + Number(product.discountedPrice ?? product.basePrice));
+      setUdharAmount(
+        udharAmount +
+          Number(
+            product.discountedPrice === 0
+              ? product.basePrice
+              : product.discountedPrice,
+          ),
+      );
     }
     if (action === 'MINUS') {
-      setUdharAmount(udharAmount - Number(product.discountedPrice ?? product.basePrice))
+      setUdharAmount(
+        udharAmount -
+          Number(
+            product.discountedPrice === 0
+              ? product.basePrice
+              : product.discountedPrice,
+          ),
+      );
     }
     const newProducts: newUdharProduct = {
       ...product,
@@ -104,17 +124,20 @@ const AddUdhar: React.FC<AddUdharProps> = ({
         />
       </View>
       <View style={styles.productsContainer}>
+        {/* <View style={styles.bestSellers}> */}
+        {/* <Text style={styles.bestSellerText}>Menu Items</Text> */}
         <ScrollView
-          style={styles.products}
+          // style={styles.bestSellerProducts}
           contentContainerStyle={{
-            gap: 8,
+            gap: 10,
             flexDirection: 'row',
             flexWrap: 'wrap',
           }}>
-          {sampleProducts.map((m, i) => (
-            <MenuItem product={m} key={i} callback={handleSetUdharAmount} />
+          {sortedMenu.map((f, i) => (
+            <MenuItem key={i} product={f} callback={handleSetUdharAmount} />
           ))}
         </ScrollView>
+        {/* </View>     */}
         <TouchableOpacity
           style={styles.doneAdding}
           activeOpacity={0.8}
@@ -132,12 +155,11 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
 const styles = StyleSheet.create({
   addUdharContainer: {
-    paddingTop: 20,
-    paddingHorizontal: 20,
+    padding: 20,
     backgroundColor: currentTheme.contrastColor,
-    height: deviceHeight * 0.75,
-    borderTopStartRadius: 20,
-    borderTopEndRadius: 20,
+    height: deviceHeight * 0.65,
+    borderRadius: 20,
+    marginBottom: 10,
   },
   title: {
     textAlign: 'center',
@@ -164,11 +186,24 @@ const styles = StyleSheet.create({
   productsContainer: {
     flex: 1,
   },
+  bestSellers: {},
+  bestSellerText: {
+    fontWeight: 'semibold',
+    fontSize: 20,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  bestSellerProducts: {
+    // gap:10,
+    // flexDirection:"row",
+    // flexWrap:"wrap"
+  },
   searchBarContainer: {
     alignItems: 'center',
     marginBottom: 16,
   },
   products: {
+    flex: 1,
     marginBottom: 10,
   },
   doneAdding: {

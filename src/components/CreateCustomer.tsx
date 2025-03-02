@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: currentTheme.contrastColor,
     height: deviceHeight * 0.51,
-    borderTopStartRadius: 20,
-    borderTopEndRadius: 20,
+    borderRadius: 20,
+    marginBottom:10
   },
   formTitle: {
     textAlign: 'center',

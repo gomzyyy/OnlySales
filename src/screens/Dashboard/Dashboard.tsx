@@ -11,24 +11,38 @@ import CreateCustomer from '../../components/CreateCustomer';
 import EmptyListMessage from './components/EmptyListMessage';
 import {currentTheme} from '../../utils/Constants';
 import {prepareNavigation} from '../../utils/nagivationUtils';
+import TabLongPressOptions from './components/TabLongPressOptions';
+import {Customer} from '../../../types';
+import EditCustomer from '../../components/EditCustomer';
+import PopupContainer from '../../components/PopUp';
 
 const Dashboard = () => {
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
+  const [openTabOptions, setOpenTabOptions] = useState<boolean>(false);
+  const [openEditCustomer, setOpenEditCustomer] = useState<boolean>(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<
+    Customer | undefined
+  >(undefined);
+
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
-  const searchResults = useSelector(
-    (s: RootState) => s.shopkeeper.app.searchResults,
-  );
-
+  const handleOpenLongPressOptions = (customer: Customer) => {
+    setOpenTabOptions(true);
+    setSelectedCustomer(customer);
+  };
+  const handleCloseLongPressOptions = () => setOpenTabOptions(false);
+  const handleOpenEditCustomer = () => {
+    setOpenTabOptions(false);
+    setOpenEditCustomer(true);
+  };
+  const handleCloseEditCustomer = () => setOpenEditCustomer(false);
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
-
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
 
   useEffect(() => {
     prepareNavigation();
   }, []);
-
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>
       {!openCreateCustomer && (
@@ -44,7 +58,12 @@ const Dashboard = () => {
                 data={customers}
                 keyExtractor={s => s.id.toString()}
                 nestedScrollEnabled
-                renderItem={({item}) => <Tab i={item} />}
+                renderItem={({item}) => (
+                  <Tab
+                    i={item}
+                    handleOpenLongPressOptions={handleOpenLongPressOptions}
+                  />
+                )}
                 style={{flex: 1}}
                 showsVerticalScrollIndicator={false}
               />
@@ -62,6 +81,28 @@ const Dashboard = () => {
           open={openCreateCustomer}
           close={handleCloseCreateCustomer}>
           <CreateCustomer callback={handleCloseCreateCustomer} />
+        </SlideupContainer>
+      )}
+      {openTabOptions && selectedCustomer && (
+        <PopupContainer
+          open={openTabOptions}
+          close={handleCloseLongPressOptions}
+          // bgcolor="transparent"
+          padding
+          >
+          <TabLongPressOptions
+            triggerEdit={handleOpenEditCustomer}
+            i={selectedCustomer}
+            close={handleCloseLongPressOptions}
+          />
+        </PopupContainer>
+      )}
+      {openEditCustomer && selectedCustomer && (
+        <SlideupContainer
+          open={openEditCustomer}
+          close={handleCloseEditCustomer}
+          >
+          <EditCustomer i={selectedCustomer} close={handleCloseEditCustomer} />
         </SlideupContainer>
       )}
     </View>

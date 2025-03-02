@@ -59,7 +59,7 @@ const shopkeeperSlice = createSlice({
 
       state.shopkeeper.customers = [newCustomer, ...currentCustomers];
     },
-    updateCustomers: (state, action: PayloadAction<Customer>) => {
+    updateCustomer: (state, action: PayloadAction<Customer>) => {
       const updatedCustomer = action.payload;
       state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
         s.id === updatedCustomer.id ? {...s, ...updatedCustomer} : s,
@@ -86,24 +86,27 @@ const shopkeeperSlice = createSlice({
         state.shopkeeper.customers.find(s => s.id === customer.id)
           ?.unpaidPayments || [];
 
-      const newAllUdhars = allUdhars.map(d => {
+      // Ensure both existing and new unpaid products are included
+      const updatedUdhars = allUdhars.map(d => {
         const updatedUdhar = newUdharList.find(c => c.id === d.id);
         return updatedUdhar ? {...d, count: d.count + updatedUdhar.count} : d;
       });
 
-      state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
-        s.id === customer.id
-          ? {
-              ...s,
-              unpaidPayments: [
-                ...newAllUdhars,
-                ...newUdharList.filter(
-                  c => !allUdhars.some(d => d.id === c.id),
-                ),
-              ],
-            }
-          : s,
+      const newUnpaidUdhars = newUdharList.filter(
+        c => !allUdhars.some(d => d.id === c.id),
       );
+
+      const newAllUdhars = [...updatedUdhars, ...newUnpaidUdhars];
+
+      state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
+        s.id === customer.id ? {...s, unpaidPayments: newAllUdhars} : s,
+      );
+      state.shopkeeper.menu = state.shopkeeper.menu.map(s => {
+        const foundProduct = newAllUdhars.find(d => s.id === d.id);
+        return foundProduct
+          ? {...s, totalSold: (s.totalSold || 0) + foundProduct.count}
+          : s;
+      });
     },
 
     removeUdhar: (
@@ -162,17 +165,28 @@ const shopkeeperSlice = createSlice({
           : c,
       );
     },
-    addProductToShelf: (state, action: PayloadAction<{product: Product}>) => {},
-    editShelfProduct: (state, action: PayloadAction<{product: Product}>) => {},
+    addProductToShelf: (state, action: PayloadAction<{product: Product}>) => {
+      const newProduct = action.payload.product;
+      const menu = state.shopkeeper.menu;
+      state.shopkeeper.menu = [newProduct, ...state.shopkeeper.menu];
+    },
+    editShelfProduct: (state, action: PayloadAction<{product: Product}>) => {
+      // const updatedProduct
+    },
     removeProductFromShelf: (
       state,
       action: PayloadAction<{product: Product}>,
-    ) => {},
+    ) => {
+      const removedProduct = action.payload.product;
+      const menu = state.shopkeeper.menu;
+      const newMenu = menu.filter(s => s.id !== removedProduct.id);
+      state.shopkeeper.menu = newMenu;
+    },
   },
 });
 export const {
   createCustomers,
-  updateCustomers,
+  updateCustomer,
   removeCustomer,
   setSearchResult,
   resetSearchResults,

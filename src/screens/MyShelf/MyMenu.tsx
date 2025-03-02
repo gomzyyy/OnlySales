@@ -6,14 +6,15 @@ import {deviceWidth, currentTheme} from '../../utils/Constants';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
-import {sampleProducts} from '../../../_data/dummy_data';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import {Product} from '../../../types';
 import EditProduct from './components/EditCreateProduct';
 import AddProduct from './components/AddProduct';
+import EmptyListMessage from '../../components/EmptyListMessage';
 
 const MyMenu = () => {
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const menuItems = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>(
@@ -27,27 +28,33 @@ const MyMenu = () => {
   const handleAddButton = () => {
     setOpenAddProduct(true);
   };
-
-  const arr = sampleProducts;
-
   return (
     <View style={styles.parent}>
       <Header
         name={`${shopkeeper.name}`}
         backButtom
         customComponent={true}
-        renderItem={<Icon name="plus" color={currentTheme.textColor} size={24} />}
+        renderItem={
+          <Icon name="plus" color={currentTheme.textColor} size={24} />
+        }
         customAction={handleAddButton}
       />
       <View style={styles.contentContainer}>
-        <ScrollView
-          contentContainerStyle={styles.listContainer}
-          showsHorizontalScrollIndicator={false}
-          nestedScrollEnabled={true}>
-          {arr.map((s, i) => (
-            <Tab i={s} key={i} onPress={handleClickingTab} />
-          ))}
-        </ScrollView>
+        {menuItems.length === 0 ? (
+          <EmptyListMessage
+            title="No Items in your menu!"
+            context="Click on PLUS button to add a new item."
+          />
+        ) : (
+          <ScrollView
+            contentContainerStyle={styles.listContainer}
+            showsHorizontalScrollIndicator={false}
+            nestedScrollEnabled={true}>
+            {menuItems.map((s, i) => (
+              <Tab i={s} key={i} onPress={handleClickingTab} />
+            ))}
+          </ScrollView>
+        )}
       </View>
       <View style={styles.assistTextContainer}>
         <Text style={styles.assistText}>Click to edit Menu item.</Text>
@@ -56,10 +63,13 @@ const MyMenu = () => {
         <SlideUpContainer
           open={openEditing}
           close={() => setOpenEditing(false)}>
-          <EditProduct product={selectedProduct} close={() => setOpenEditing(false)} />
+          <EditProduct
+            product={selectedProduct}
+            close={() => setOpenEditing(false)}
+          />
         </SlideUpContainer>
       )}
-       {openAddProduct && (
+      {openAddProduct && (
         <SlideUpContainer
           open={openAddProduct}
           close={() => setOpenAddProduct(false)}>

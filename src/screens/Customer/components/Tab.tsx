@@ -1,19 +1,16 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import {currentTheme} from '../../../utils/Constants';
 import {newUdharProduct, Product} from '../../../../types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
+import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 
 type TabProps = {
   i: newUdharProduct;
   lastIndex?: boolean;
+  longPressAction: () => void;
 };
 
 type ToogleButtonProps = {
@@ -40,29 +37,39 @@ const ToogleButton: React.FC<ToogleButtonProps> = ({
   );
 };
 
-const Tab: React.FC<TabProps> = ({i, lastIndex}): React.JSX.Element => {
+const Tab: React.FC<TabProps> = ({
+  i,
+  lastIndex,
+  longPressAction,
+}): React.JSX.Element => {
   const app = useSelector((s: RootState) => s.shopkeeper.app);
   return (
-    <View style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}>
-      <View style={styles.tabInfo}>
-        <Text style={styles.customerName}>{i.name}</Text>
-        <Text style={styles.productAmount}>
-          {`${app.currency}${
-            i.discountedPrice && i.discountedPrice !== 0
-              ? i.count ===0 ? i.discountedPrice : (Number(i.discountedPrice) * Number(i.count)).toString()
-              : i.count === 0 ? i.basePrice :(Number(i.basePrice) * Number(i.count)).toString()
-          }`}
-        </Text>
+    <LongPressEnabled longPressAction={longPressAction}>
+      <View style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}>
+        <View style={styles.tabInfo}>
+          <Text style={styles.customerName}>{i.name}</Text>
+          <Text style={styles.productAmount}>
+            {`${app.currency}${
+              i.discountedPrice && i.discountedPrice !== 0
+                ? i.count === 0
+                  ? i.discountedPrice
+                  : (Number(i.discountedPrice) * Number(i.count)).toString()
+                : i.count === 0
+                ? i.basePrice
+                : (Number(i.basePrice) * Number(i.count)).toString()
+            }`}
+          </Text>
+        </View>
+        <View style={styles.tabActionContainer}>
+          <TouchableOpacity style={styles.MarkAsPaid}>
+            <Text style={styles.MarkAsPaidText}>Mark as *Paid</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Icon name="delete" color={currentTheme.tab.icon} size={24} />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.tabActionContainer}>
-        <TouchableOpacity style={styles.MarkAsPaid}>
-          <Text style={styles.MarkAsPaidText}>Mark as *Paid</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Icon name="delete" color={currentTheme.tab.icon} size={24} />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </LongPressEnabled>
   );
 };
 
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
   },
   MarkAsPaidText: {
     fontWeight: '600',
-    color:currentTheme.textAlt
+    color: currentTheme.textAlt,
   },
   contentToggleContainer: {
     flexDirection: 'row',

@@ -29,9 +29,9 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
     {} as Record<string, Product[]>,
   );
   const groupedArr = Object.keys(groupedObject).map(m => ({
-    date: m,
+    date: m.split(" ").join(", "),
     products: groupedObject[m],
-  }));
+  })).reverse();
   const Tab: React.FC<TabProps> = ({
     lastIndex = false,
     i,

@@ -13,6 +13,7 @@ import SlideUpContainer from '../../components/SlideUpContainer';
 import AddUdhar from './components/AddUdhar';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
+import { toogleState } from '../../service/fn';
 
 
 type RouteParams = {
@@ -29,9 +30,7 @@ const Customer = () => {
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
   const [addUdhar, setAddUdhar] = useState<boolean>(false);
   const [currCustomer,setCurrCustomer]=useState<CustomerType>(customer)
-
-  const openAddUdharModal=()=>setAddUdhar(true)
-  const closeAddUdharModal=()=>setAddUdhar(false)
+ 
   useEffect(()=>{
     const currentCustomer = findCustomer();
     if(currentCustomer){
@@ -46,7 +45,7 @@ const Customer = () => {
         backButtom
         customComponent={content==="UNPAID"}
         renderItem={<Icon name="plus" color={'black'} size={24} />}
-        customAction={openAddUdharModal}
+        customAction={toogleState(setAddUdhar).true}
       />
       <View style={styles.contentContainer}>
         <CustomerInfo customer={currCustomer} />
@@ -86,8 +85,8 @@ const Customer = () => {
           )}
         </View>
       </View>
-      <SlideUpContainer open={addUdhar} close={closeAddUdharModal}>
-      <AddUdhar close={closeAddUdharModal} customer={currCustomer} />
+      <SlideUpContainer open={addUdhar} close={toogleState(setAddUdhar).false}>
+      <AddUdhar close={toogleState(setAddUdhar).false} customer={currCustomer} />
       </SlideUpContainer>
     </View>
   );

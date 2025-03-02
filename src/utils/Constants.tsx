@@ -26,6 +26,7 @@ export const Theme:AppTheme[] = [
     contrastColor: "#fff",
     bgColor: "#ffeaff",
     textAlt: "#000",
+    // dangerBg:"#FF0000"
     modal: {
       title: "#000",
       inputbg: "#fff",
@@ -227,5 +228,10 @@ export const Theme:AppTheme[] = [
     },
   },
 ];
+export const colors = {
+  danger:"rgb(255,0,0)",
+  dangerFade:"rgba(255,0,0,0.2)",
+  iconBlack:"rgb(0,0,0)"
+}
 
 export const currentTheme=Theme[5]

@@ -66,7 +66,7 @@ export interface Product {
   totalSold: number;
   basePrice: number;
   discountedPrice?: number;
-  quantity: string;
+  quantity: number;
   measurementType: QuantityType;
   createdAt: string;
   updatedAt: string;

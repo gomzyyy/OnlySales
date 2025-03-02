@@ -5,6 +5,7 @@ import {
   Platform,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight, currentTheme} from '../../../utils/Constants';
@@ -15,7 +16,7 @@ import {QuantityType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {editShelfProduct} from '../../../../store/slices/shopkeeper';
-import {showToast} from '../../../service/fn';
+import {Confirm, showToast} from '../../../service/fn';
 
 type EditProductProps = {
   product: Product;
@@ -24,21 +25,35 @@ type EditProductProps = {
 
 const EditCreateProduct: React.FC<EditProductProps> = ({
   product,
-  close
+  close,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>(product.name);
-  const [price, setPrice] = useState<string>(product.basePrice);
-  const [discountedPrice, setDiscountedPrice] = useState<string>(
-    product.discountedPrice ?? '',
+  const [price, setPrice] = useState<number>(product.basePrice);
+  const [discountedPrice, setDiscountedPrice] = useState<number>(
+    product.discountedPrice ?? 0,
   );
-  const [quantity, setQuantity] = useState<string>(product.quantity);
+  const [quantity, setQuantity] = useState<number>(product.quantity);
   const [measurementType, setMeasurementType] = useState<QuantityType>(
-    product.measurementType
+    product.measurementType,
   );
 
   const handleOnSubmit = () => {
-    // dispatch(editShelfProduct({product}))
+    if (price === 0) {
+      const res = Confirm('Are you sure to put the price 0?');
+      if (!res) return;
+    }
+    const updatedProduct: Product = {
+      id: product.id,
+      name: name.length !== 0 ? name : product.name,
+      basePrice: price,
+      discountedPrice,
+      quantity,
+      measurementType,
+      createdAt: product.createdAt,
+      updatedAt: Date.now().toString(),
+      totalSold: product.totalSold,
+    };
     close();
     showToast({
       type: 'success',
@@ -50,71 +65,76 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
     <KeyboardAvoidingView
       style={styles.createCustomerContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <Text style={styles.formTitle}>Edit Product: {product.name}</Text>
-      <View style={styles.formContainer}>
-        <View style={styles.inputTitleContainer}>
-          <Text style={styles.inputLabel}>Product name*</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            style={styles.inputText}
-            placeholder="Enter name"
-            placeholderTextColor={currentTheme.baseColor}
-          />
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+        <Text style={styles.formTitle}>Edit Product: {product.name}</Text>
+        <View style={styles.formContainer}>
+          <View style={styles.inputTitleContainer}>
+            <Text style={styles.inputLabel}>Product name*</Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              style={styles.inputText}
+              placeholder="Enter name"
+              placeholderTextColor={currentTheme.baseColor}
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text style={styles.inputLabel}>Product price*</Text>
+            <TextInput
+              value={price.toString()}
+              onChangeText={s => setPrice(Number(s) || 0)}
+              style={styles.inputText}
+              placeholder="Enter price"
+              placeholderTextColor={currentTheme.baseColor}
+              keyboardType='numeric'
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text style={styles.inputLabel}>Product discounted price</Text>
+            <TextInput
+              value={discountedPrice.toString()}
+              onChangeText={s => setDiscountedPrice(Number(s) || 0)}
+              style={styles.inputText}
+              placeholder="Enter discounted price"
+              placeholderTextColor={currentTheme.baseColor}
+              keyboardType='numeric'
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text style={styles.inputLabel}>Product quantity*</Text>
+            <TextInput
+              value={quantity.toString()}
+              onChangeText={value=>setQuantity(Number(value))}
+              style={styles.inputText}
+              placeholder="Enter quantity"
+              placeholderTextColor={currentTheme.baseColor}
+              keyboardType='numeric'
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text style={styles.inputLabel}>Product measurement type</Text>
+            <Picker
+              selectedValue={measurementType}
+              onValueChange={value => setMeasurementType(value)}
+              dropdownIconColor={currentTheme.textAlt}
+              style={styles.dropdown}>
+              <Picker.Item label="Ml" value={'ml'} />
+              <Picker.Item label="Litre" value={'litre'} />
+              <Picker.Item label="Kilograms" value={'kilograms'} />
+              <Picker.Item label="Grams" value={'grams'} />
+              <Picker.Item label="Pcs" value={'pcs'} />
+              <Picker.Item label="Pack" value={'pack'} />
+              <Picker.Item label="Dozen" value={'dozen'} />
+            </Picker>
+          </View>
+          <TouchableOpacity
+            style={styles.saveButton}
+            activeOpacity={0.8}
+            onPress={handleOnSubmit}>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.inputTitleContainer}>
-          <Text style={styles.inputLabel}>Product price*</Text>
-          <TextInput
-            value={price}
-            onChangeText={setPrice}
-            style={styles.inputText}
-            placeholder="Enter price"
-            placeholderTextColor={currentTheme.baseColor}
-          />
-        </View>
-        <View style={styles.inputTitleContainer}>
-          <Text style={styles.inputLabel}>Product discounted price</Text>
-          <TextInput
-            value={discountedPrice}
-            onChangeText={setDiscountedPrice}
-            style={styles.inputText}
-            placeholder="Enter discounted price"
-            placeholderTextColor={currentTheme.baseColor}
-          />
-        </View>
-        <View style={styles.inputTitleContainer}>
-          <Text style={styles.inputLabel}>Product quantity*</Text>
-          <TextInput
-            value={quantity}
-            onChangeText={setQuantity}
-            style={styles.inputText}
-            placeholder="Enter quantity"
-            placeholderTextColor={currentTheme.baseColor}
-          />
-        </View>
-        <View style={styles.inputTitleContainer}>
-          <Text style={styles.inputLabel}>Product measurement type</Text>
-          <Picker
-            selectedValue={measurementType}
-            onValueChange={value => setMeasurementType(value)}
-            dropdownIconColor={currentTheme.textAlt}
-            style={styles.dropdown}>
-            <Picker.Item label="Ml" value={'ml'} />
-            <Picker.Item label="Litre" value={'litre'} />
-            <Picker.Item label="Kilograms" value={'kilograms'} />
-            <Picker.Item label="Grams" value={'grams'} />
-            <Picker.Item label="Pcs" value={'pcs'} />
-            <Picker.Item label="Pack" value={'pack'} />
-            <Picker.Item label="Dozen" value={'dozen'} />
-          </Picker>
-        </View>
-        <TouchableOpacity
-          style={styles.saveButton}
-          activeOpacity={0.8}
-          onPress={handleOnSubmit}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -125,8 +145,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: currentTheme.contrastColor,
     height: deviceHeight * 0.75,
-    borderTopStartRadius: 20,
-    borderTopEndRadius: 20,
+    borderRadius: 20,
+    marginBottom: 10,
   },
   formTitle: {
     textAlign: 'center',

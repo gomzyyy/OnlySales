@@ -6,43 +6,42 @@ type SlideUpContainerProps = {
   children: React.ReactNode;
   open: boolean;
   close: () => void;
+  bgcolor?: string;
+  padding?: boolean;
 };
 
 const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   children,
   open,
   close,
+  bgcolor = 'rgba(0,0,0,0.8)',
+  padding = false,
 }): React.JSX.Element => {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{flex: 1}}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          statusBarTranslucent
-          visible={open}
-          onRequestClose={close}
-          style={styles.modal}>
-          <Pressable style={styles.childredContainer} onPress={close}>
-            <Pressable onPress={e => e.stopPropagation()}>
-              {children}
-              </Pressable>
-          </Pressable>
-        </Modal>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      statusBarTranslucent={true}
+      visible={open}
+      onRequestClose={close}
+      hardwareAccelerated={true}
+      >
+      <Pressable
+        style={[
+          styles.childContainer,
+          {backgroundColor: bgcolor, paddingHorizontal: padding ? 14 : 10},
+        ]}
+        onPress={close}>
+        <Pressable onPress={e => e.stopPropagation()}>{children}</Pressable>
+      </Pressable>
+    </Modal>
   );
 };
 const styles = StyleSheet.create({
-  modal: {
-    margin: 20,
-    borderRadius: 20,
-    padding: 35,
-  },
-  childredContainer: {
+  childContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'flex-end',
+    paddingHorizontal: 10,
   },
 });
 

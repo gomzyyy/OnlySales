@@ -20,12 +20,32 @@ export const showToast = ({type, text1, text2}: ShowToastFunction) => {
 
 export const Confirm = async (
   title: string,
-  context: string,
+  context?: string,
 ): Promise<boolean> => {
   return new Promise(resolve => {
-    Alert.alert(title, context, [
+    Alert.alert(title, context && context, [
       {text: 'OK', onPress: () => resolve(true), style: 'default'},
       {text: 'CANCEL', onPress: () => resolve(false), style: 'cancel'},
     ]);
   });
+};
+// export const Alert = async (
+//   title: string,
+//   context?: string,
+// ): Promise<boolean> => {
+//   return new Promise(resolve => {
+//     Alert.alert(title, context && context, [
+//       {text: 'OK', onPress: () => resolve(true), style: 'default'},
+//       {text: 'CANCEL', onPress: () => resolve(false), style: 'cancel'},
+//     ]);
+//   });
+// };
+
+export const toogleState = (
+  fn: (value: boolean) => void,
+): {true: () => void; false: () => void} => {
+  return {
+    true: () => fn(true),
+    false: () => fn(false),
+  };
 };
