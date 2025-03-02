@@ -8,6 +8,8 @@ import Tab from './components/Tab';
 import CustomerHeader from '../../components/CustomerHeader';
 import PopupContainer from '../../components/PopUp';
 import TabLongPressOptions from './components/TabLongPressOptions';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store/store';
 
 type RouteType = {
   customer: Customer;
@@ -18,11 +20,10 @@ type RouteType = {
 const UnpaidUdhars = () => {
   const params = useRoute().params;
   const {customer, products, date} = params as RouteType;
-
-  const [longPressActionOpen, setLongPressActionOpen] =
-    useState<boolean>(false);
-
-  const handleOpenLongPressOptions = () => setLongPressActionOpen(true);
+  const unpaidPayments: newUdharProduct[] =
+    useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers)?.find(
+      c => c.id === customer.id,
+    )?.unpaidPayments || [];
 
   return (
     <View style={styles.parent}>
@@ -34,19 +35,13 @@ const UnpaidUdhars = () => {
         </View>
         <View style={styles.itemListContainer}>
           <FlatList
-            data={products}
+            data={unpaidPayments}
             keyExtractor={i => i.addedAt}
-            renderItem={({item}) => (
-              <Tab i={item} longPressAction={handleOpenLongPressOptions} />
-            )}
+            renderItem={({item}) => <Tab i={item} customer={customer} />}
+            nestedScrollEnabled
           />
         </View>
       </View>
-      <PopupContainer
-        open={longPressActionOpen}
-        close={() => setLongPressActionOpen(false)}>
-        <TabLongPressOptions />
-      </PopupContainer>
     </View>
   );
 };

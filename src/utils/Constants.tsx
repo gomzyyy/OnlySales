@@ -234,4 +234,4 @@ export const colors = {
   iconBlack:"rgb(0,0,0)"
 }
 
-export const currentTheme=Theme[5]
+export const currentTheme=Theme[3]

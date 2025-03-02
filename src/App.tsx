@@ -9,13 +9,13 @@ function App(): React.JSX.Element {
   return (
     <ReduxProvider>
       <View style={{flex: 1}}>
-        <SafeAreaView style={{flex: 1}}>
-          <StatusBar />
-          <Navigation />
-          {/* <BottomTabs /> */}
-        </SafeAreaView>
+          <SafeAreaView style={{flex: 1}}>
+            <StatusBar />
+            <Navigation />
+            {/* <BottomTabs /> */}
+          </SafeAreaView>
       </View>
-      <Toast position="bottom" visibilityTime={6000}/>
+      <Toast position="bottom" visibilityTime={6000} />
     </ReduxProvider>
   );
 }

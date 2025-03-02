@@ -124,10 +124,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
         />
       </View>
       <View style={styles.productsContainer}>
-        {/* <View style={styles.bestSellers}> */}
-        {/* <Text style={styles.bestSellerText}>Menu Items</Text> */}
         <ScrollView
-          // style={styles.bestSellerProducts}
+          nestedScrollEnabled
           contentContainerStyle={{
             gap: 10,
             flexDirection: 'row',

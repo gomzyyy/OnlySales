@@ -56,6 +56,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
       renderItem={({item}) => (
         <Tab date={item.date} i={item.products} key={item.date} />
       )}
+      nestedScrollEnabled
     />
   );
 };

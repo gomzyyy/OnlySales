@@ -33,6 +33,7 @@ import {
             style={styles.container}
             contentContainerStyle={{gap:20}}
             showsVerticalScrollIndicator={false}
+            nestedScrollEnabled
             >
             {dashboardHeaderTabs.map((t,i) => (
                 <View key={t.name} style={styles.innerBox}>

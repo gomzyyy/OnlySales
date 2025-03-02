@@ -21,6 +21,7 @@ const Search = () => {
             data={searchResults}
             keyExtractor={s => s.id}
             renderItem={({item}) => <Tab i={item} />}
+            nestedScrollEnabled
           />
         )}
       </View>

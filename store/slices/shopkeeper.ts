@@ -26,7 +26,7 @@ const initialState: ShopkeeperInitialStateType = {
   app: {
     currency: 'Rs.',
     searchResults: [],
-    currentTheme: AppThemeName.PURPLE,
+    currentTheme: AppThemeName.GREEN,
   },
 };
 
@@ -86,7 +86,6 @@ const shopkeeperSlice = createSlice({
         state.shopkeeper.customers.find(s => s.id === customer.id)
           ?.unpaidPayments || [];
 
-      // Ensure both existing and new unpaid products are included
       const updatedUdhars = allUdhars.map(d => {
         const updatedUdhar = newUdharList.find(c => c.id === d.id);
         return updatedUdhar ? {...d, count: d.count + updatedUdhar.count} : d;
@@ -111,16 +110,25 @@ const shopkeeperSlice = createSlice({
 
     removeUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: Product}>,
+      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
     ) => {
-      const customers = state.shopkeeper.customers;
-      const customer = action.payload.customer;
-      const newUnpaidPaymentsList =
-        customer.unpaidPayments &&
-        customer.unpaidPayments.filter(s => s.id !== action.payload.product.id);
-      state.shopkeeper.customers = customers.map(c =>
-        c.id === customer.id ? {...c, UnpaidUdhars: newUnpaidPaymentsList} : c,
+      const {customer, product} = action.payload;
+
+      // Find the customer in the state
+      const customerIndex = state.shopkeeper.customers.findIndex(
+        c => c.id === customer.id,
       );
+
+      if (customerIndex !== -1) {
+        // Ensure we create a new array reference to trigger state updates
+        state.shopkeeper.customers[customerIndex] = {
+          ...state.shopkeeper.customers[customerIndex],
+          unpaidPayments:
+            state.shopkeeper.customers[customerIndex].unpaidPayments?.filter(
+              s => s.id !== product.id,
+            ) || [],
+        };
+      }
     },
 
     setToPaid: (
@@ -197,5 +205,6 @@ export const {
   addProductToShelf,
   editShelfProduct,
   removeProductFromShelf,
+  setTheme
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;

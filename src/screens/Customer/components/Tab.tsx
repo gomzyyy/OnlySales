@@ -1,16 +1,17 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {currentTheme} from '../../../utils/Constants';
-import {newUdharProduct, Product} from '../../../../types';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Customer, newUdharProduct} from '../../../../types';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
+import TabLongPressOptions from './TabLongPressOptions';
+import PopupContainer from '../../../components/PopUp';
 
 type TabProps = {
   i: newUdharProduct;
   lastIndex?: boolean;
-  longPressAction: () => void;
+  customer:Customer;
 };
 
 type ToogleButtonProps = {
@@ -37,14 +38,17 @@ const ToogleButton: React.FC<ToogleButtonProps> = ({
   );
 };
 
-const Tab: React.FC<TabProps> = ({
-  i,
-  lastIndex,
-  longPressAction,
-}): React.JSX.Element => {
+const Tab: React.FC<TabProps> = ({i, lastIndex,customer}): React.JSX.Element => {
   const app = useSelector((s: RootState) => s.shopkeeper.app);
+
+  const [longPressActionOpen, setLongPressActionOpen] =
+    useState<boolean>(false);
+
+    const handleCloseTabOptions=()=>setLongPressActionOpen(false)
+  const longPressAction = () => setLongPressActionOpen(true);
+
   return (
-    <LongPressEnabled longPressAction={longPressAction}>
+    <LongPressEnabled longPressAction={longPressAction} minPressDuration={300}>
       <View style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}>
         <View style={styles.tabInfo}>
           <Text style={styles.customerName}>{i.name}</Text>
@@ -64,10 +68,14 @@ const Tab: React.FC<TabProps> = ({
           <TouchableOpacity style={styles.MarkAsPaid}>
             <Text style={styles.MarkAsPaidText}>Mark as *Paid</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="delete" color={currentTheme.tab.icon} size={24} />
-          </TouchableOpacity>
         </View>
+        <PopupContainer
+          open={longPressActionOpen}
+          close={() => setLongPressActionOpen(false)}
+          padding={true}
+          >
+          <TabLongPressOptions product={i} customer={customer} close={handleCloseTabOptions} />
+        </PopupContainer>
       </View>
     </LongPressEnabled>
   );
@@ -105,8 +113,8 @@ const styles = StyleSheet.create({
   },
   MarkAsPaid: {
     backgroundColor: currentTheme.contrastColor,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
+    paddingHorizontal: 7,
+    paddingVertical: 4,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,

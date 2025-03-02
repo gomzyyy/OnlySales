@@ -50,7 +50,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       <KeyboardAvoidingView
         style={styles.createCustomerContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView style={{flex: 1}}>
+        <ScrollView style={{flex: 1}} nestedScrollEnabled>
           <Text style={styles.formTitle}>Edit Customer: {i.fullName}</Text>
           <View style={styles.formContainer}>
             <View style={styles.inputTitleContainer}>

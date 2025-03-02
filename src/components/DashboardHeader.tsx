@@ -32,8 +32,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           horizontal={true}
           style={styles.container}
           contentContainerStyle={{gap: 20
-            // ,paddingHorizontal:deviceWidth*0.06
           }}
+          nestedScrollEnabled
           showsVerticalScrollIndicator={false}>
           {dashboardHeaderTabs.map((t) => (
             <View key={t.name} style={styles.innerBox}>

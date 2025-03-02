@@ -67,7 +67,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
     <KeyboardAvoidingView
       style={styles.createCustomerContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <Text style={styles.formTitle}>Add new Product</Text>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>

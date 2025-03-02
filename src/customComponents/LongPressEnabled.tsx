@@ -5,7 +5,7 @@ type TabProps = {
   lastIndex?: boolean;
   dummy?: boolean;
   children: ReactNode;
-  longPressTime?: number;
+  minPressDuration?: number;
   longPressCanceledAction?: () => void;
   longPressAction: () => void;
 };
@@ -13,7 +13,7 @@ type TabProps = {
 const LongPressEnabled: React.FC<TabProps> = ({
   dummy = false,
   children,
-  longPressTime = 200,
+  minPressDuration = 200,
   longPressCanceledAction = () => {},
   longPressAction,
 }): React.JSX.Element => {
@@ -24,7 +24,7 @@ const LongPressEnabled: React.FC<TabProps> = ({
     timeoutRef.current = setTimeout(() => {
       longPressAction();
       setLongPressed(true);
-    }, longPressTime);
+    }, minPressDuration);
   };
   const cancelLongPress = () => {
     if (timeoutRef.current) {

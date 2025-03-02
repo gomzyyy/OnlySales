@@ -65,7 +65,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
     <KeyboardAvoidingView
       style={styles.createCustomerContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{flex: 1}} nestedScrollEnabled showsVerticalScrollIndicator={false}>
         <Text style={styles.formTitle}>Edit Product: {product.name}</Text>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
