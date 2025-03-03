@@ -1,29 +1,36 @@
 import {View, StyleSheet} from 'react-native';
 import React from 'react';
-import {currentTheme, deviceWidth} from '../../../../utils/Constants';
+import {deviceWidth} from '../../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
+import useTheme from '../../../../hooks/useTheme';
 
 type SearchBarProps = {
   query: string;
   setQuery: (text: string) => void;
   width?: number;
-  autoFocus?:boolean
+  autoFocus?: boolean;
 };
 
 const SearchBar: React.FC<SearchBarProps> = ({
   query,
   setQuery,
   width,
-  autoFocus=true
+  autoFocus = true,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+
   return (
-    <View style={[styles.searchQueryContainer, {width: width ? deviceWidth * width : "auto"}]}>
+    <View
+      style={[
+        styles.searchQueryContainer,
+        {width: width ? deviceWidth * width : 'auto'},
+      ]}>
       <TextInput
-        style={styles.searchQueryInput}
+        style={[styles.searchQueryInput, {borderColor: currentTheme.baseColor}]}
         value={query}
         onChangeText={setQuery}
         placeholder="Search by name"
-        placeholderTextColor={currentTheme.textColor}
+        placeholderTextColor={"#000"}
         autoFocus={autoFocus}
       />
     </View>
@@ -34,7 +41,6 @@ const styles = StyleSheet.create({
   searchQueryInput: {
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: currentTheme.baseColor,
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,

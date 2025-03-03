@@ -1,17 +1,20 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
-import {currentTheme} from '../../../utils/Constants';
 import {Customer, newUdharProduct} from '../../../../types';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
+import useTheme from '../../../hooks/useTheme';
+import {Confirm} from '../../../service/fn';
+import {setToPaid, setToUnpaid} from '../../../../store/slices/shopkeeper';
 
 type TabProps = {
   i: newUdharProduct;
   lastIndex?: boolean;
-  customer:Customer;
+  customer: Customer;
+  actionType: 'PAID' | 'UNPAID';
 };
 
 type ToogleButtonProps = {
@@ -38,21 +41,79 @@ const ToogleButton: React.FC<ToogleButtonProps> = ({
   );
 };
 
-const Tab: React.FC<TabProps> = ({i, lastIndex,customer}): React.JSX.Element => {
+const Tab: React.FC<TabProps> = ({
+  i,
+  lastIndex,
+  customer,
+  actionType,
+}): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
+
   const app = useSelector((s: RootState) => s.shopkeeper.app);
 
   const [longPressActionOpen, setLongPressActionOpen] =
     useState<boolean>(false);
 
-    const handleCloseTabOptions=()=>setLongPressActionOpen(false)
+  const handleCloseTabOptions = () => setLongPressActionOpen(false);
   const longPressAction = () => setLongPressActionOpen(true);
 
+  const handleMarkAs = async () => {
+    if (actionType === 'PAID') {
+      const res = await Confirm(`Set '${i.name}' to Unpaid?`);
+      if (!res) return;
+      dispatch(setToUnpaid({customer, product: i}));
+      return;
+    } else if (actionType === 'UNPAID') {
+      const res = await Confirm(`Set '${i.name}' to Paid?`);
+      if (!res) return;
+      dispatch(setToPaid({customer, product: i}));
+      return;
+    } else {
+      return;
+    }
+  };
+
   return (
-    <LongPressEnabled longPressAction={longPressAction} minPressDuration={300}>
-      <View style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}>
+    <LongPressEnabled longPressAction={longPressAction}
+    //  dummy={actionType === "PAID" ? true : false}
+     >
+      <View
+        style={[
+          styles.container,
+          {
+            marginBottom: lastIndex ? 70 : 6,
+            backgroundColor: currentTheme.tab.bg,
+          },
+        ]}>
         <View style={styles.tabInfo}>
-          <Text style={styles.customerName}>{i.name}</Text>
-          <Text style={styles.productAmount}>
+          <View style={{flexDirection:"row", gap:4}}>
+            <Text
+              style={[styles.customerName, {color: currentTheme.tab.label}]}>
+              {i.name}
+            </Text>
+            {actionType === 'PAID' && (
+              <View
+                style={[
+                  styles.MarkAsPaid,
+                  {backgroundColor: currentTheme.contrastColor},
+                ]}>
+                <Text
+                  style={[
+                    styles.MarkAsPaidText,
+                    {color: currentTheme.textAlt},
+                  ]}>
+                  Paid
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <Text
+            style={[
+              styles.productAmount,
+              {color: currentTheme?.tab?.value || '#000'},
+            ]}>
             {`${app.currency}${
               i.discountedPrice && i.discountedPrice !== 0
                 ? i.count === 0
@@ -65,16 +126,29 @@ const Tab: React.FC<TabProps> = ({i, lastIndex,customer}): React.JSX.Element => 
           </Text>
         </View>
         <View style={styles.tabActionContainer}>
-          <TouchableOpacity style={styles.MarkAsPaid}>
-            <Text style={styles.MarkAsPaidText}>Mark as *Paid</Text>
+          <TouchableOpacity
+            style={[
+              styles.MarkAsPaid,
+              {backgroundColor: currentTheme.contrastColor},
+            ]}
+            activeOpacity={0.8}
+            onPress={handleMarkAs}>
+            <Text
+              style={[styles.MarkAsPaidText, {color: currentTheme.textAlt}]}>
+              {actionType === 'PAID' ? 'Mark as *Unpaid' : 'Mark as *Paid'}
+            </Text>
           </TouchableOpacity>
         </View>
         <PopupContainer
           open={longPressActionOpen}
           close={() => setLongPressActionOpen(false)}
-          padding={true}
-          >
-          <TabLongPressOptions product={i} customer={customer} close={handleCloseTabOptions} />
+          padding={true}>
+          <TabLongPressOptions
+            product={i}
+            customer={customer}
+            close={handleCloseTabOptions}
+            actionType={actionType}
+          />
         </PopupContainer>
       </View>
     </LongPressEnabled>
@@ -87,12 +161,11 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tab.bg,
     borderRadius: 8,
   },
   tabInfo: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 2,
     alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1,
@@ -101,18 +174,15 @@ const styles = StyleSheet.create({
   customerName: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.tab.label,
   },
   productAmount: {
     fontSize: 20,
-    color: currentTheme.tab.value,
   },
   tabActionContainer: {
     flexDirection: 'row',
     gap: 4,
   },
   MarkAsPaid: {
-    backgroundColor: currentTheme.contrastColor,
     paddingHorizontal: 7,
     paddingVertical: 4,
     alignItems: 'center',
@@ -121,7 +191,6 @@ const styles = StyleSheet.create({
   },
   MarkAsPaidText: {
     fontWeight: '600',
-    color: currentTheme.textAlt,
   },
   contentToggleContainer: {
     flexDirection: 'row',

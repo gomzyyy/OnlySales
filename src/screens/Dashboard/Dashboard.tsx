@@ -1,4 +1,4 @@
-import {View, FlatList, StyleSheet, ScrollView} from 'react-native';
+import {View, FlatList, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
@@ -9,34 +9,16 @@ import CreateButton from '../../components/CreateButton';
 import SlideupContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
 import EmptyListMessage from './components/EmptyListMessage';
-import {currentTheme} from '../../utils/Constants';
 import {prepareNavigation} from '../../utils/nagivationUtils';
-import TabLongPressOptions from './components/TabLongPressOptions';
-import {Customer} from '../../../types';
-import EditCustomer from '../../components/EditCustomer';
-import PopupContainer from '../../components/PopUp';
+import useTheme from '../../hooks/useTheme';
 
 const Dashboard = () => {
+  const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
-  const [openTabOptions, setOpenTabOptions] = useState<boolean>(false);
-  const [openEditCustomer, setOpenEditCustomer] = useState<boolean>(false);
-  const [selectedCustomer, setSelectedCustomer] = useState<
-    Customer | undefined
-  >(undefined);
 
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
-  const handleOpenLongPressOptions = (customer: Customer) => {
-    setOpenTabOptions(true);
-    setSelectedCustomer(customer);
-  };
-  const handleCloseLongPressOptions = () => setOpenTabOptions(false);
-  const handleOpenEditCustomer = () => {
-    setOpenTabOptions(false);
-    setOpenEditCustomer(true);
-  };
-  const handleCloseEditCustomer = () => setOpenEditCustomer(false);
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
 
@@ -44,7 +26,7 @@ const Dashboard = () => {
     prepareNavigation();
   }, []);
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>
+    <View style={{flex: 1, backgroundColor: currentTheme?.contrastColor}}>
       {!openCreateCustomer && (
         <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
       )}
@@ -61,7 +43,6 @@ const Dashboard = () => {
                 renderItem={({item}) => (
                   <Tab
                     i={item}
-                    handleOpenLongPressOptions={handleOpenLongPressOptions}
                   />
                 )}
                 style={{flex: 1}}
@@ -83,28 +64,7 @@ const Dashboard = () => {
           <CreateCustomer callback={handleCloseCreateCustomer} />
         </SlideupContainer>
       )}
-      {openTabOptions && selectedCustomer && (
-        <PopupContainer
-          open={openTabOptions}
-          close={handleCloseLongPressOptions}
-          // bgcolor="transparent"
-          padding
-          >
-          <TabLongPressOptions
-            triggerEdit={handleOpenEditCustomer}
-            i={selectedCustomer}
-            close={handleCloseLongPressOptions}
-          />
-        </PopupContainer>
-      )}
-      {openEditCustomer && selectedCustomer && (
-        <SlideupContainer
-          open={openEditCustomer}
-          close={handleCloseEditCustomer}
-          >
-          <EditCustomer i={selectedCustomer} close={handleCloseEditCustomer} />
-        </SlideupContainer>
-      )}
+     
     </View>
   );
 };

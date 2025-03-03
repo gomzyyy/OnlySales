@@ -2,20 +2,28 @@ import {View, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import {Shopkeeper} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
-import {currentTheme} from '../../../utils/Constants';
 import LinearGradient from 'react-native-linear-gradient';
+import useTheme from '../../../hooks/useTheme';
 
 type ShopkeeperInfoProps = {
   shopkeeper: Shopkeeper;
 };
 
 const ShopkeeperInfo: React.FC<ShopkeeperInfoProps> = ({
-    shopkeeper,
+  shopkeeper,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   return (
     <LinearGradient
-      colors={[currentTheme.baseColor,currentTheme.fadeColor, currentTheme.bgColor]}
-      style={styles.ShopkeeperInfoContainer}>
+      colors={[
+        currentTheme.baseColor,
+        currentTheme.fadeColor,
+        currentTheme.bgColor,
+      ]}
+      style={[
+        styles.ShopkeeperInfoContainer,
+        {backgroundColor: currentTheme.fadeColor},
+      ]}>
       <View style={styles.profileImageContainer}>
         <Image
           source={
@@ -31,10 +39,9 @@ const ShopkeeperInfo: React.FC<ShopkeeperInfoProps> = ({
 };
 
 const styles = StyleSheet.create({
-    ShopkeeperInfoContainer: {
+  ShopkeeperInfoContainer: {
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: currentTheme.fadeColor,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },

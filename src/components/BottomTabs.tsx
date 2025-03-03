@@ -1,14 +1,14 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import {deviceWidth, Theme} from '../utils/Constants';
+import {deviceWidth} from '../utils/Constants';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
-
-const currentTheme = Theme[0];
+import useTheme from "../hooks/useTheme"
 
 const BottomTabs = () => {
+  const {currentTheme} = useTheme()
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: currentTheme.bgColor}]}>
       <View style={styles.icon}>
         <View>
           <Icon1 name="profile" size={20} />
@@ -31,14 +31,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 60,
     width: deviceWidth,
-    backgroundColor: currentTheme.bgColor,
-    flexDirection:"row",
-    marginHorizontal:4
+    flexDirection: 'row',
+    marginHorizontal: 4,
   },
   icon: {
-    flex:1,
-    alignItems:"center",
-    justifyContent:"center"
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

@@ -6,15 +6,28 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
 import ShopkeeperInfo from './components/ShopkeeperInfo';
 import {Picker} from '@react-native-picker/picker';
-import {currentTheme} from '../../utils/Constants';
 import {setTheme} from '../../../store/slices/shopkeeper';
 import {AppThemeName} from '../../../enums';
-const NoPhoto = require('../../assets/images/no-profile.jpg');
+import {Theme} from '../../utils/Constants';
+import {AppTheme} from '../../../types';
+import {showToast} from '../../service/fn';
+import { navigate } from '../../utils/nagivationUtils';
 
 const Settings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const app = useSelector((s: RootState) => s.shopkeeper.app);
+  const {currentTheme} = useSelector((s: RootState) => s.shopkeeper.app);
+
+  const handleThemeChange = (theme: AppThemeName) => {
+    let themeData: AppTheme | undefined = Theme.find(s => s.name === theme);
+    if (themeData) {
+      dispatch(setTheme(themeData));
+      navigate("Dashboard")
+    } else {
+      showToast({type: 'error', text1: 'Unable to set theme.'});
+      return;
+    }
+  };
 
   return (
     <View style={styles.parent}>
@@ -28,10 +41,16 @@ const Settings = () => {
           <Tab title="App" />
         </View> */}
         <Picker
-          style={styles.dropdown}
-          selectedValue={app.currentTheme}
-          onValueChange={(value: AppThemeName) => dispatch(setTheme(value))}
-          dropdownIconColor={currentTheme.modal.pickerText}>
+          style={[
+            styles.dropdown,
+            {
+              color: currentTheme?.modal.pickerText,
+              backgroundColor: currentTheme?.modal.pickerbg,
+            },
+          ]}
+          selectedValue={currentTheme?.name}
+          onValueChange={(value: AppThemeName) => handleThemeChange(value)}
+          dropdownIconColor={currentTheme?.modal.pickerText}>
           <Picker.Item
             label={AppThemeName.PURPLE}
             value={AppThemeName.PURPLE}
@@ -43,6 +62,10 @@ const Settings = () => {
           <Picker.Item label={AppThemeName.RED} value={AppThemeName.RED} />
           <Picker.Item label={AppThemeName.GREEN} value={AppThemeName.GREEN} />
           <Picker.Item label={AppThemeName.BLUE} value={AppThemeName.BLUE} />
+          <Picker.Item
+            label={AppThemeName.ROYAL_BLUE}
+            value={AppThemeName.ROYAL_BLUE}
+          />
         </Picker>
       </View>
     </View>
@@ -75,8 +98,6 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginTop: 40,
-    color: currentTheme.modal.pickerText,
-    backgroundColor: currentTheme.modal.pickerbg,
   },
 });
 

@@ -1,12 +1,13 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Customer, Product} from '../../../types';
-import {currentTheme} from '../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../utils/nagivationUtils';
+import useTheme from '../../hooks/useTheme';
 
 type ProductsByDateProps = {
   ArrWithDate: Product[];
   customer: Customer;
+  onTabPressNavigate:string;
 };
 type TabProps = {
   i: Product[];
@@ -16,7 +17,9 @@ type TabProps = {
 export const ProductsByDate: React.FC<ProductsByDateProps> = ({
   ArrWithDate,
   customer,
+  onTabPressNavigate
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   const groupedObject = ArrWithDate.reduce<Record<string, Product[]>>(
     (acc, product) => {
       const creationDate: string = new Date(product.createdAt).toDateString();
@@ -28,10 +31,12 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
     },
     {} as Record<string, Product[]>,
   );
-  const groupedArr = Object.keys(groupedObject).map(m => ({
-    date: m.split(" ").join(", "),
-    products: groupedObject[m],
-  })).reverse();
+  const groupedArr = Object.keys(groupedObject)
+    .map(m => ({
+      date: m.split(' ').join(', '),
+      products: groupedObject[m],
+    }))
+    .reverse();
   const Tab: React.FC<TabProps> = ({
     lastIndex = false,
     i,
@@ -40,9 +45,17 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}
-        onPress={() => navigate('UnpaidUdhars', {products: i, customer, date})}>
-        <Text style={styles.date}>{date}</Text>
+        style={[
+          styles.container,
+          {
+            marginBottom: lastIndex ? 70 : 6,
+            backgroundColor: currentTheme.tab.bg,
+          },
+        ]}
+        onPress={() => navigate(onTabPressNavigate, {products: i, customer, date})}>
+        <Text style={[styles.date,{color: currentTheme?.tab?.value || "#000"}]}>
+          {date}
+        </Text>
         <TouchableOpacity>
           <Icon name="right" color={currentTheme.tab.icon} size={22} />
         </TouchableOpacity>
@@ -67,12 +80,10 @@ const styles = StyleSheet.create({
     paddingVertical: 22,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tab.bg,
     borderRadius: 8,
   },
   date: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.tab.value,
   },
 });

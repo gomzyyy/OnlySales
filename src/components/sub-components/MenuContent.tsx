@@ -8,45 +8,42 @@ import Icon1 from 'react-native-vector-icons/Ionicons';
 import {navigate} from '../../utils/nagivationUtils';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import {currentTheme} from '../../utils/Constants';
 import {useNavigation} from '@react-navigation/native';
 import {DrawerActions} from '@react-navigation/native';
 import {navigationRef} from '../../utils/nagivationUtils';
 const NoProfile = require('../../assets/images/no-profile.jpg');
+import useTheme from '../../hooks/useTheme';
 
 type menuNavContent = {
   name: string;
   navigateTo: string;
-  icon: () => React.JSX.Element;
+  icon: (color: string) => React.JSX.Element;
 };
 
 const menuNav: menuNavContent[] = [
   {
     name: 'Dashboard',
     navigateTo: 'Dashboard',
-    icon: () => (
-      <Icon1 name="people-sharp" color={currentTheme.contrastColor} size={26} />
+    icon: (color: string) => (
+      <Icon1 name="people-sharp" color={color} size={26} />
     ),
   },
   {
     name: 'Settings',
     navigateTo: 'Settings',
-    icon: () => (
-      <Icon1 name="settings" color={currentTheme.contrastColor} size={26} />
-    ),
+    icon: (color: string) => <Icon1 name="settings" color={color} size={26} />,
   },
   {
     name: 'Menu',
     navigateTo: 'MyMenu',
-    icon: () => (
-      <Icon1 name="fast-food" color={currentTheme.contrastColor} size={26} />
-    ),
+    icon: (color: string) => <Icon1 name="fast-food" color={color} size={26} />,
   },
 ];
 
 const MenuContent: React.FC<DrawerContentComponentProps> = (
   props,
 ): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   const currRoute = navigationRef.current?.getCurrentRoute()?.name;
   const navigation = useNavigation();
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
@@ -59,35 +56,51 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
     navigation.dispatch(DrawerActions.closeDrawer());
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
       <DrawerContentScrollView style={{flex: 1}} nestedScrollEnabled {...props}>
         <View style={styles.innterContainer}>
-          <View style={styles.infoContainer}>
+          <View
+            style={[
+              styles.infoContainer,
+              {backgroundColor: currentTheme.baseColor},
+            ]}>
             <View style={styles.profileImageContainer}>
               <Image
                 source={
-                  shopkeeper.image
-                    && shopkeeper.image?.trim().length !== 0
-                      ? {uri: shopkeeper.image}
-                      : NoProfile
+                  shopkeeper.image && shopkeeper.image?.trim().length !== 0
+                    ? {uri: shopkeeper.image}
+                    : NoProfile
                 }
                 style={styles.profileImage}
               />
             </View>
             <View style={styles.profileNameContainer}>
-              <Text style={styles.profileName}>{shopkeeper.name}</Text>
+              <Text
+                style={[
+                  styles.profileName,
+                  {color: currentTheme.contrastColor},
+                ]}>
+                {shopkeeper.name}
+              </Text>
             </View>
           </View>
         </View>
         <View style={styles.navigtionTabContainer}>
           {menuNav.map((m, i) => (
             <TouchableOpacity
-              style={styles.navigationTab}
+              style={[
+                styles.navigationTab,
+                {backgroundColor: currentTheme.fadeColor},
+              ]}
               key={i}
               onPress={() => handleNavigationByMenu(m.navigateTo)}
               activeOpacity={0.8}>
-              {m.icon()}
-              <Text style={styles.tabText}>{m.name}</Text>
+              {m.icon(currentTheme.contrastColor)}
+              <Text
+                style={[styles.tabText, {color: currentTheme.contrastColor}]}>
+                {m.name}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -101,7 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 30,
     paddingHorizontal: 5,
-    backgroundColor:currentTheme.contrastColor
   },
   innterContainer: {},
   infoContainer: {
@@ -111,13 +123,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: currentTheme.baseColor,
     marginBottom: 20,
   },
   profileImageContainer: {
     height: 50,
     width: 50,
-    borderRadius: '50%',
+    borderRadius: 25,
     overflow: 'hidden',
   },
   profileImage: {
@@ -128,14 +139,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: currentTheme.contrastColor,
   },
   navigtionTabContainer: {
     gap: 8,
     paddingRight: 20,
   },
   navigationTab: {
-    backgroundColor: currentTheme.fadeColor,
     paddingHorizontal: 10,
     paddingVertical: 20,
     borderRadius: 10,
@@ -145,7 +154,6 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 20,
-    color: currentTheme.contrastColor,
   },
 });
 

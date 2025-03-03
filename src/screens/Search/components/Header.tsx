@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Pressable, TextInput} from 'react-native';
+import {View, StyleSheet, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';

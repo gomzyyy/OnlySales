@@ -8,13 +8,14 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import {currentTheme, deviceHeight} from '../../../utils/Constants';
+import {deviceHeight} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import MenuItem from './MenuItem';
 import SearchBar from '../../Search/components/subcomponents/SearchBar';
 import {Customer, newUdharProduct, Product} from '../../../../types';
 import {addNewUdhar} from '../../../../store/slices/shopkeeper';
+import useTheme from '../../../hooks/useTheme';
 
 type AddUdharProps = {
   close?: () => void;
@@ -25,6 +26,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   close,
   customer,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const menu = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
   const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
@@ -112,7 +114,10 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
   return (
     <KeyboardAvoidingView
-      style={styles.addUdharContainer}
+      style={[
+        styles.addUdharContainer,
+        {backgroundColor: currentTheme.contrastColor},
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={styles.title}>Add new Product</Text>
       <View style={styles.searchBarContainer}>
@@ -137,10 +142,14 @@ const AddUdhar: React.FC<AddUdharProps> = ({
         </ScrollView>
         {/* </View>     */}
         <TouchableOpacity
-          style={styles.doneAdding}
+          style={[styles.doneAdding, {backgroundColor: currentTheme.baseColor}]}
           activeOpacity={0.8}
           onPress={handleAddUdharBtn}>
-          <Text style={styles.doneAddingText}>
+          <Text
+            style={[
+              styles.doneAddingText,
+              {color: currentTheme.modal.saveBtnText},
+            ]}>
             {udharAmount === 0
               ? 'Cancel'
               : `Add Udhar of ${currencyType} ${udharAmount}`}
@@ -154,7 +163,6 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 const styles = StyleSheet.create({
   addUdharContainer: {
     padding: 20,
-    backgroundColor: currentTheme.contrastColor,
     height: deviceHeight * 0.65,
     borderRadius: 20,
     marginBottom: 10,
@@ -169,7 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 120,
     borderWidth: 2,
-    borderColor: currentTheme.baseColor,
+    // borderColor: currentTheme.baseColor,
     borderRadius: 12,
     paddingHorizontal: 6,
     paddingVertical: 4,
@@ -177,7 +185,7 @@ const styles = StyleSheet.create({
   selectedProductList: {
     flex: 1,
     marginTop: 4,
-    backgroundColor: currentTheme.bgColor,
+    // backgroundColor: currentTheme.bgColor,
     borderRadius: 8,
     padding: 8,
   },
@@ -205,7 +213,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   doneAdding: {
-    backgroundColor: currentTheme.baseColor,
     paddingVertical: 16,
     borderRadius: 8,
     marginBottom: 10,
@@ -214,7 +221,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
-    color: currentTheme.modal.saveBtnText,
   },
 });
 

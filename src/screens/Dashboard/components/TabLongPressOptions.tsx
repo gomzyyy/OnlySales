@@ -1,12 +1,13 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {colors, currentTheme, deviceHeight} from '../../../utils/Constants';
+import {colors, deviceHeight} from '../../../utils/Constants';
 import {Customer} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {removeCustomer} from '../../../../store/slices/shopkeeper';
 import Icon from 'react-native-vector-icons/AntDesign';
+import useTheme from '../../../hooks/useTheme';
 
 type TabLongPressOptionsProps = {
   i: Customer;
@@ -20,6 +21,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   triggerEdit,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
+  const {currentTheme} = useTheme();
 
   const handleDeleteCustomer = async (): Promise<void> => {
     const res = await Confirm(
@@ -35,21 +37,34 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   };
 
   return (
-    <View style={styles.parent}>
+    <View
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Text style={styles.label}>{i.fullName}</Text>
       <View style={styles.optionsContainer}>
         <TouchableOpacity
-          style={styles.buttonDanger}
+          style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
           activeOpacity={0.8}
           onPress={handleDeleteCustomer}>
-          <Text style={styles.buttonDangerText}>Delete</Text>
+          <Text
+            style={[
+              styles.buttonDangerText,
+              {color: colors.danger},
+            ]}>
+            Delete
+          </Text>
           <Icon name="delete" size={18} color={colors.danger} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonEdit}
           activeOpacity={0.8}
           onPress={triggerEdit}>
-          <Text style={styles.buttonEditText}>Edit</Text>
+          <Text
+            style={[
+              styles.buttonEditText,
+              {color: currentTheme.modal.inputText},
+            ]}>
+            Edit
+          </Text>
           <Icon name="edit" size={18} color={colors.iconBlack} />
         </TouchableOpacity>
       </View>
@@ -60,10 +75,10 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 const styles = StyleSheet.create({
   parent: {
     paddingTop: 20,
-    backgroundColor: currentTheme.contrastColor,
     height: deviceHeight * 0.26,
     borderRadius: 20,
     marginTop: 60,
+    elevation:30,
   },
   label: {
     fontSize: 20,
@@ -77,7 +92,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   buttonDanger: {
-    backgroundColor: colors.dangerFade,
     paddingVertical: 14,
     borderRadius: 12,
     flexDirection: 'row',
@@ -90,7 +104,6 @@ const styles = StyleSheet.create({
   },
   buttonDangerText: {
     textAlign: 'center',
-    color: colors.danger,
     fontSize: 20,
   },
   buttonEdit: {
@@ -104,7 +117,7 @@ const styles = StyleSheet.create({
   },
   buttonEditText: {
     textAlign: 'center',
-    color: currentTheme.modal.inputText,
+
     fontSize: 20,
   },
 });

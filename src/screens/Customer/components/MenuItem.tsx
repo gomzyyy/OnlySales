@@ -1,8 +1,8 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Product} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {currentTheme} from '../../../utils/Constants';
+import useTheme from '../../../hooks/useTheme';
 
 type MenuItemProps = {
   product: Product;
@@ -25,6 +25,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   removeIcon = true,
   callback,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+
   const [count, setCount] = useState<number>(0);
 
   const handlePlusMinus = (action: 'ADD' | 'MINUS') => {
@@ -46,7 +48,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   };
 
   return (
-    <View style={styles.parent}>
+    <View style={[styles.parent, {borderColor: currentTheme.baseColor}]}>
       <View style={styles.innerContainer}>
         <TouchableOpacity onPress={() => handlePlusMinus('ADD')}>
           {addIcon && (
@@ -54,7 +56,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
           )}
         </TouchableOpacity>
 
-        <Text style={styles.itemText}>{`${count}  ${product.name}`}</Text>
+        <Text
+          style={[
+            styles.itemText,
+            {color: currentTheme.baseColor},
+          ]}>{`${count}  ${product.name}`}</Text>
         <TouchableOpacity onPress={() => handlePlusMinus('MINUS')}>
           {removeIcon && (
             <Icon name="minus" size={20} color={currentTheme.baseColor} />
@@ -72,7 +78,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     alignSelf: 'flex-start',
     borderRadius: 12,
-    borderColor: currentTheme.baseColor,
   },
   innerContainer: {
     paddingHorizontal: 4,
@@ -82,7 +87,6 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 20,
-    color: currentTheme.baseColor,
   },
 });
 

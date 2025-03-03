@@ -2,9 +2,7 @@ import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {Product} from '../../../../types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {currentTheme} from '../../../utils/Constants';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../store/store';
+import useTheme from '../../../hooks/useTheme';
 
 type TabProps = {
   i: Product;
@@ -17,12 +15,21 @@ const Tab: React.FC<TabProps> = ({
   lastIndex = false,
   onPress,
 }): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
+  const {currentTheme} = useTheme();
 
   return (
-    <View style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}>
+    <View
+      style={[
+        styles.container,
+        {
+          marginBottom: lastIndex ? 70 : 6,
+          backgroundColor: currentTheme.tabColor,
+        },
+      ]}>
       <View style={styles.tabLabel}>
-        <Text style={styles.productName}>{i.name}</Text>
+        <Text style={[styles.productName, {color: currentTheme.contrastColor}]}>
+          {i.name}
+        </Text>
         <TouchableOpacity>
           <Icon name="delete" color={currentTheme.tab.icon} size={22} />
         </TouchableOpacity>
@@ -32,21 +39,23 @@ const Tab: React.FC<TabProps> = ({
         onPress={() => onPress(i)}
         style={styles.productInfoContainer}>
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>Price: {i.basePrice}</Text>
+          <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>Price: {i.basePrice}</Text>
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
             Discounted price: {i.discountedPrice}
           </Text>
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
             Includes: {i.quantity}
             {i.measurementType}
           </Text>
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>Total sold: {i.totalSold}</Text>
+          <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+            Total sold: {i.totalSold}
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -57,7 +66,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tabColor,
     borderRadius: 8,
     height: 150,
     width: 150,
@@ -69,7 +77,6 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.contrastColor,
   },
   productInfoContainer: {
     flex: 1,
@@ -79,7 +86,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   infoText: {
-    color: currentTheme.tab.label,
     fontSize: 16,
     fontWeight: 'bold',
   },

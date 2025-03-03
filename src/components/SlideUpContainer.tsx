@@ -1,5 +1,4 @@
-import {View, Text, Modal, StyleSheet, Pressable} from 'react-native';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import { Modal, StyleSheet, Pressable} from 'react-native';
 import React from 'react';
 
 type SlideUpContainerProps = {
@@ -14,7 +13,7 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   children,
   open,
   close,
-  bgcolor = 'rgba(0,0,0,0.8)',
+  bgcolor = 'rgba(0,0,0,0.1)',
   padding = false,
 }): React.JSX.Element => {
   return (

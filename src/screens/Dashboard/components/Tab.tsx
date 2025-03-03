@@ -1,53 +1,83 @@
-import {Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useRef, useState} from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+} from 'react-native';
+import React, {useState} from 'react';
 import {Customer} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {currentTheme} from '../../../utils/Constants';
-import {useDispatch} from 'react-redux';
-import {removeCustomer} from '../../../../store/slices/shopkeeper';
-import {AppDispatch} from '../../../../store/store';
-import {Confirm, showToast} from '../../../service/fn';
 import {navigate} from '../../../utils/nagivationUtils';
+import useTheme from '../../../hooks/useTheme';
+import LongPressEnabled from '../../../customComponents/LongPressEnabled';
+import SlideUpContainer from '../../../components/SlideUpContainer';
+import EditCustomer from '../../../components/EditCustomer';
+import PopupContainer from '../../../components/PopUp';
+import TabLongPressOptions from './TabLongPressOptions';
 
 type TabProps = {
   i: Customer;
   lastIndex?: boolean;
   handleOpenLongPressOptions?: (customer: Customer) => void;
-  dummy?:boolean
+  dummy?: boolean;
 };
 
 const Tab: React.FC<TabProps> = ({
   i,
   lastIndex = false,
-  handleOpenLongPressOptions,
-  dummy=false
+  dummy = false,
 }): React.JSX.Element => {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [longPressed, setLongPressed] = useState<boolean>();
+  const {currentTheme} = useTheme();
+  const [openTabOptions, setOpenTabOptions] = useState<boolean>(false);
+  const [openEditCustomer, setOpenEditCustomer] = useState<boolean>(false);
 
-  const triggerLongPress = () => {
-    timeoutRef.current = setTimeout(() => {
-      handleOpenLongPressOptions && handleOpenLongPressOptions(i);
-      setLongPressed(true);
-    }, 200);
+  const handleOpenLongPressOptions = () => {
+    setOpenTabOptions(true);
   };
-  const cancelLongPress = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      setLongPressed(false);
-    }
+  const handleCloseLongPressOptions = () => setOpenTabOptions(false);
+  const handleOpenEditCustomer = () => {
+    setOpenTabOptions(false);
+    setOpenEditCustomer(true);
   };
+  const handleCloseEditCustomer = () => setOpenEditCustomer(false);
+  const handleLongPressCancelAction=()=>navigate('Customer', {customer: i})
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}
-      onPress={() => !longPressed && !dummy && navigate('Customer', {customer: i})}
-      onPressIn={triggerLongPress}
-      onPressOut={cancelLongPress}>
-      <Text style={styles.customerName}>{i.fullName}</Text>
-      <Icon name="right" color={currentTheme.tab.icon} size={22} />
-    </TouchableOpacity>
+    <LongPressEnabled longPressCanceledAction={handleLongPressCancelAction} longPressAction={handleOpenLongPressOptions} dummy={dummy} >
+      <View
+        style={[
+          styles.container,
+          {
+            marginBottom: lastIndex ? 70 : 6,
+            backgroundColor: currentTheme?.tab.bg,
+          },
+        ]}>
+        <Text style={[styles.customerName, {color: currentTheme?.tab.label}]}>
+          {i.fullName}
+        </Text>
+        <Icon name="right" color={currentTheme?.tab.icon} size={22} />
+        {openTabOptions && i && (
+          <PopupContainer
+            open={openTabOptions}
+            close={handleCloseLongPressOptions}
+            padding>
+            <TabLongPressOptions
+              triggerEdit={handleOpenEditCustomer}
+              i={i}
+              close={handleCloseLongPressOptions}
+            />
+          </PopupContainer>
+        )}
+        {openEditCustomer && i && (
+          <SlideUpContainer
+            open={openEditCustomer}
+            close={handleCloseEditCustomer}
+            bgcolor='rgba(0,0,0,0.8)'
+            >
+            <EditCustomer i={i} close={handleCloseEditCustomer} />
+          </SlideUpContainer>
+        )}
+      </View>
+    </LongPressEnabled>
   );
 };
 const styles = StyleSheet.create({
@@ -56,13 +86,11 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tab.bg,
     borderRadius: 8,
   },
   customerName: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.tab.label,
   },
 });
 

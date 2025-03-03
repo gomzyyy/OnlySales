@@ -1,10 +1,10 @@
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View,StyleSheet, FlatList} from 'react-native';
 import React from 'react';
 import Header from './components/Header';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import Tab from './components/Tab';
+import Tab from '../Dashboard/components/Tab';
 
 const Search = () => {
   const searchResults = useSelector(

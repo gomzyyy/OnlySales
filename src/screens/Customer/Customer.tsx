@@ -5,45 +5,48 @@ import {useRoute} from '@react-navigation/native';
 import {Customer as CustomerType} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {ToogleButton} from './components/Tab';
-import {currentTheme} from '../../utils/Constants';
 import {ProductsByDate} from '../../components/shared/ProductByDate';
 import CustomerInfo from './components/CustomerInfo';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddUdhar from './components/AddUdhar';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
-import { toogleState } from '../../service/fn';
-
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store/store';
+import {toogleState} from '../../service/fn';
+import useTheme from '../../hooks/useTheme';
 
 type RouteParams = {
   customer: CustomerType;
 };
 const Customer = () => {
+  const {currentTheme} = useTheme();
   const params = useRoute().params;
   const {customer} = params as RouteParams;
-  const customers = useSelector((s:RootState)=>s.shopkeeper.shopkeeper.customers)
-  const findCustomer=():CustomerType | undefined=>{
-    const c:CustomerType | undefined = customer && customers.find((s)=>s.id === customer.id)
-    return c
-  }
+  const customers = useSelector(
+    (s: RootState) => s.shopkeeper.shopkeeper.customers,
+  );
+  const findCustomer = (): CustomerType | undefined => {
+    const c: CustomerType | undefined =
+      customer && customers.find(s => s.id === customer.id);
+    return c;
+  };
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
   const [addUdhar, setAddUdhar] = useState<boolean>(false);
-  const [currCustomer,setCurrCustomer]=useState<CustomerType>(customer)
- 
-  useEffect(()=>{
+  const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
+
+  useEffect(() => {
     const currentCustomer = findCustomer();
-    if(currentCustomer){
-      setCurrCustomer(currentCustomer)
+    if (currentCustomer) {
+      setCurrCustomer(currentCustomer);
     }
-  },[customers])
-  
+  }, [customers]);
+
   return (
     <View style={styles.parent}>
       <Header
         name={`${currCustomer.fullName}`}
         backButtom
-        customComponent={content==="UNPAID"}
+        customComponent={content === 'UNPAID'}
         renderItem={<Icon name="plus" color={'black'} size={24} />}
         customAction={toogleState(setAddUdhar).true}
       />
@@ -60,25 +63,31 @@ const Customer = () => {
           <Pressable onPress={() => setContent('PAID')} style={{flex: 1}}>
             <ToogleButton
               title="Paid Udhars"
-              bgcolor={content === 'PAID' ? currentTheme.toggleBtn.bgActive : ''}
+              bgcolor={
+                content === 'PAID' ? currentTheme.toggleBtn.bgActive : ''
+              }
               textColor={content === 'PAID' ? currentTheme.contrastColor : ''}
             />
           </Pressable>
         </View>
         <View style={styles.dataContainer}>
           {content === 'UNPAID' ? (
-            currCustomer.unpaidPayments && currCustomer.unpaidPayments.length !== 0 ? (
+            currCustomer.unpaidPayments &&
+            currCustomer.unpaidPayments.length !== 0 ? (
               <ProductsByDate
                 customer={currCustomer}
                 ArrWithDate={currCustomer.unpaidPayments}
+                onTabPressNavigate='UnpaidUdhars'
               />
             ) : (
               <EmptyListMessage title="Oops! No unpaid payments." />
             )
-          ) : currCustomer.paidPayments && currCustomer.paidPayments.length !== 0 ? (
+          ) : currCustomer.paidPayments &&
+            currCustomer.paidPayments.length !== 0 ? (
             <ProductsByDate
               customer={currCustomer}
               ArrWithDate={currCustomer.paidPayments}
+              onTabPressNavigate='PaidUdhars'
             />
           ) : (
             <EmptyListMessage title="Oops! No paid payments." />
@@ -86,7 +95,10 @@ const Customer = () => {
         </View>
       </View>
       <SlideUpContainer open={addUdhar} close={toogleState(setAddUdhar).false}>
-      <AddUdhar close={toogleState(setAddUdhar).false} customer={currCustomer} />
+        <AddUdhar
+          close={toogleState(setAddUdhar).false}
+          customer={currCustomer}
+        />
       </SlideUpContainer>
     </View>
   );

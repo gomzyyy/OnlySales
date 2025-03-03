@@ -7,16 +7,16 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
-  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
-import {currentTheme, deviceHeight} from '../utils/Constants';
+import {deviceHeight} from '../utils/Constants';
 import {Customer} from '../../types';
 import {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
 import Tab from '../screens/Dashboard/components/Tab';
 import {showToast} from '../service/fn';
 import {updateCustomer} from '../../store/slices/shopkeeper';
+import useTheme from '../hooks/useTheme';
 
 type EditCustomerProps = {
   i: Customer;
@@ -27,6 +27,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
   i,
   close,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const [fullName, setFullName] = useState<string>(i.fullName);
   const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber || '');
@@ -36,7 +37,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
 
   const SaveUpdatedCustomer = () => {
     if (fullName.trim().length === 0) {
-      showToast({type:"info",text1:"Name can't be empty"});
+      showToast({type: 'info', text1: "Name can't be empty"});
       close();
       return;
     }
@@ -48,13 +49,21 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
     <>
       <Tab i={updatedCustomer} dummy={true} />
       <KeyboardAvoidingView
-        style={styles.createCustomerContainer}
+        style={[
+          styles.createCustomerContainer,
+          {backgroundColor: currentTheme.contrastColor},
+        ]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView style={{flex: 1}} nestedScrollEnabled>
-          <Text style={styles.formTitle}>Edit Customer: {i.fullName}</Text>
+          <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
+            Edit Customer: {i.fullName}
+          </Text>
           <View style={styles.formContainer}>
             <View style={styles.inputTitleContainer}>
-              <Text style={styles.inputLabel}>Customer name</Text>
+              <Text
+                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+                Customer name
+              </Text>
               <TextInput
                 value={fullName}
                 onChangeText={value => {
@@ -64,36 +73,60 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
                     fullName: value,
                   });
                 }}
-                style={styles.inputText}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
                 placeholder="Enter name"
                 placeholderTextColor={currentTheme.modal.inputText}
               />
             </View>
             <View style={styles.inputTitleContainer}>
-              <Text style={styles.inputLabel}>Customer phone number</Text>
+              <Text
+                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+                Customer phone number
+              </Text>
               <TextInput
                 value={phoneNumber}
                 onChangeText={setphoneNumber}
-                style={styles.inputText}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
                 placeholder="Enter phone number"
                 placeholderTextColor={currentTheme.modal.inputText}
               />
             </View>
             <View style={styles.inputTitleContainer}>
-              <Text style={styles.inputLabel}>Customer address</Text>
+              <Text
+                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+                Customer address
+              </Text>
               <TextInput
                 value={address}
                 onChangeText={setAddress}
-                style={styles.inputText}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
                 placeholder="Enter address"
                 placeholderTextColor={currentTheme.modal.inputText}
               />
             </View>
             <TouchableOpacity
-              style={styles.saveButton}
+              style={[
+                styles.saveButton,
+                {backgroundColor: currentTheme.modal.saveBtnbg},
+              ]}
               activeOpacity={0.8}
               onPress={SaveUpdatedCustomer}>
-              <Text style={styles.saveButtonText}>Save</Text>
+              <Text
+                style={[
+                  styles.saveButtonText,
+                  {color: currentTheme.modal.saveBtnText},
+                ]}>
+                Save
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -105,17 +138,16 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
 const styles = StyleSheet.create({
   createCustomerContainer: {
     paddingHorizontal: 20,
-    backgroundColor: currentTheme.contrastColor,
     height: deviceHeight * 0.52,
     borderRadius: 20,
     marginBottom: 10,
     paddingVertical: 20,
+    elevation:30,
   },
   formTitle: {
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color: currentTheme.modal.title,
   },
   formContainer: {
     marginTop: 20,
@@ -128,18 +160,15 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     fontSize: 18,
     fontWeight: '400',
-    color: currentTheme.modal.title,
   },
   inputText: {
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: currentTheme.modal.inputBorder,
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,
   },
   saveButton: {
-    backgroundColor: currentTheme.modal.saveBtnbg,
     paddingVertical: 16,
     borderRadius: 8,
   },
@@ -147,7 +176,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
-    color: currentTheme.modal.saveBtnText,
   },
 });
 

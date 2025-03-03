@@ -24,5 +24,6 @@ export enum AppThemeName{
     YELLOW = 'Yellow',
     GREEN = 'Green',
     BLUE = 'Blue',
+    ROYAL_BLUE = 'Royal Blue'
 }
 

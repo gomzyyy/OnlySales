@@ -7,7 +7,8 @@ import {
   View,
 } from 'react-native';
 import React, {ReactNode} from 'react';
-import {currentTheme, deviceHeight} from '../utils/Constants';
+import {deviceHeight} from '../utils/Constants';
+import useTheme from '../hooks/useTheme';
 
 type PopupContainerProps = {
   children: ReactNode;
@@ -21,7 +22,7 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
   children,
   open,
   close,
-  bgcolor = 'rgba(0,0,0,0.8)',
+  bgcolor = 'rgba(0,0,0,0.1)',
   padding = false,
 }): React.JSX.Element => {
   return (
@@ -50,9 +51,15 @@ const Alert: React.FC<CustomAlertProps> = ({
   open,
   close,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+
   return (
     <PopupContainer open={open} close={close} padding>
-      <View style={styles.InnerContainer}></View>
+      <View
+        style={[
+          styles.InnerContainer,
+          {backgroundColor: currentTheme.contrastColor},
+        ]}></View>
     </PopupContainer>
   );
 };
@@ -63,9 +70,17 @@ const Prompt: React.FC<CustomPromptProps> = ({
   open,
   close,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+
   return (
     <PopupContainer open={open} close={close} padding>
-      <View style={styles.InnerContainer}> </View>
+      <View
+        style={[
+          styles.InnerContainer,
+          {backgroundColor: currentTheme.contrastColor},
+        ]}>
+        {' '}
+      </View>
     </PopupContainer>
   );
 };
@@ -91,9 +106,15 @@ const Confirm: React.FC<CustomConfirmProps> = ({
   btnLabel2 = 'NO',
   secondButton = true,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+
   return (
     <PopupContainer open={open} close={close} padding>
-      <View style={styles.InnerContainer}>
+      <View
+        style={[
+          styles.InnerContainer,
+          {backgroundColor: currentTheme.contrastColor},
+        ]}>
         <Text style={styles.label}>{label}</Text>
         <View style={confirm.contentContainer}>
           <View style={confirm.titleContainer}>
@@ -128,7 +149,6 @@ const styles = StyleSheet.create({
   },
   InnerContainer: {
     minHeight: deviceHeight * 0.3,
-    backgroundColor: currentTheme.contrastColor,
     borderRadius: 20,
     padding: 16,
     gap: 10,
@@ -143,9 +163,9 @@ const styles = StyleSheet.create({
 const confirm = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    marginTop:10
+    marginTop: 10,
   },
-  titleContainer: {paddingHorizontal:18},
+  titleContainer: {paddingHorizontal: 18},
   title: {fontSize: 20, fontWeight: 'bold'},
   subTitleContainer: {},
   subTitle: {},

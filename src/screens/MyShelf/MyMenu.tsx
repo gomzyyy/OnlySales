@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {deviceWidth, currentTheme} from '../../utils/Constants';
+import {deviceWidth} from '../../utils/Constants';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
@@ -11,8 +11,11 @@ import {Product} from '../../../types';
 import EditProduct from './components/EditCreateProduct';
 import AddProduct from './components/AddProduct';
 import EmptyListMessage from '../../components/EmptyListMessage';
+import useTheme from '../../hooks/useTheme';
 
 const MyMenu = () => {
+  const {currentTheme} = useTheme();
+
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
   const menuItems = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
@@ -29,7 +32,8 @@ const MyMenu = () => {
     setOpenAddProduct(true);
   };
   return (
-    <View style={styles.parent}>
+    <View
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Header
         name={`${shopkeeper.name}`}
         backButtom
@@ -83,7 +87,6 @@ const MyMenu = () => {
 const styles = StyleSheet.create({
   parent: {
     flex: 1,
-    backgroundColor: currentTheme.contrastColor,
   },
   contentContainer: {
     paddingHorizontal: 10,

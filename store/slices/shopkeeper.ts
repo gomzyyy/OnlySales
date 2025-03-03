@@ -1,8 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {d} from '../../_data/dummy_data';
-import {Shopkeeper, App, Customer, Product, newUdharProduct} from '../../types';
+import {Shopkeeper, App, Customer, Product, newUdharProduct,AppTheme} from '../../types';
 import {AdminRole, AppThemeName, BusinessType} from '../../enums';
 import 'react-native-get-random-values';
+import { Theme } from '../../src/utils/Constants';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -26,7 +27,8 @@ const initialState: ShopkeeperInitialStateType = {
   app: {
     currency: 'Rs.',
     searchResults: [],
-    currentTheme: AppThemeName.GREEN,
+    currentTheme: undefined,
+    defaultTheme: Theme[0]
   },
 };
 
@@ -71,8 +73,8 @@ const shopkeeperSlice = createSlice({
         s => s.id !== deletedCustomer.id,
       );
     },
-    setTheme: (state, action: PayloadAction<AppThemeName>) => {
-      const choosedTheme: AppThemeName = action.payload;
+    setTheme: (state, action: PayloadAction<AppTheme>) => {
+      const choosedTheme: AppTheme = action.payload;
       state.app.currentTheme = choosedTheme;
     },
     addNewUdhar: (
@@ -130,6 +132,26 @@ const shopkeeperSlice = createSlice({
         };
       }
     },
+    removePaidUdhar: (
+      state,
+      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+    ) => {
+      const {customer, product} = action.payload;
+
+      const customerIndex = state.shopkeeper.customers.findIndex(
+        c => c.id === customer.id,
+      );
+
+      if (customerIndex !== -1) {
+        state.shopkeeper.customers[customerIndex] = {
+          ...state.shopkeeper.customers[customerIndex],
+          paidPayments:
+            state.shopkeeper.customers[customerIndex].paidPayments?.filter(
+              s => s.id !== product.id,
+            ) || [],
+        };
+      }
+    },
 
     setToPaid: (
       state,
@@ -138,7 +160,8 @@ const shopkeeperSlice = createSlice({
       const customers = state.shopkeeper.customers;
       const customer = action.payload.customer;
       const product = action.payload.product;
-      const newUnpaidPaymets = customer.unpaidPayments?.filter(
+      console.log(customer.paidPayments)
+      const newUnpaidPaymets = (customer.unpaidPayments || []).filter(
         s => s.id !== product.id,
       );
       const newPaidPayments = [product, ...(customer.paidPayments || [])];
@@ -160,7 +183,7 @@ const shopkeeperSlice = createSlice({
       const customer = action.payload.customer;
       const product = action.payload.product;
       const newUnpaidPaymets = [product, ...(customer.unpaidPayments || [])];
-      const newPaidPayments = customer.paidPayments?.filter(
+      const newPaidPayments = (customer.paidPayments || []).filter(
         s => s.id !== product.id,
       );
       state.shopkeeper.customers = customers.map(c =>
@@ -200,6 +223,7 @@ export const {
   resetSearchResults,
   addNewUdhar,
   removeUdhar,
+  removePaidUdhar,
   setToPaid,
   setToUnpaid,
   addProductToShelf,

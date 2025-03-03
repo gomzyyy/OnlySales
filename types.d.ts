@@ -43,7 +43,8 @@ export interface TabTheme{
 export interface App {
   searchResults: Customer[];
   currency: string;
-  currentTheme: AppThemeName;
+  currentTheme: AppTheme | undefined;
+  defaultTheme:AppTheme
 }
 
 export interface Shopkeeper {

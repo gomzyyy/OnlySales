@@ -233,5 +233,3 @@ export const colors = {
   dangerFade:"rgba(255,0,0,0.2)",
   iconBlack:"rgb(0,0,0)"
 }
-
-export const currentTheme=Theme[3]

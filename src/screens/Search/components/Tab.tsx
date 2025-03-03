@@ -1,9 +1,9 @@
-import { Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Customer} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {currentTheme} from '../../../utils/Constants';
-import { navigate } from '../../../utils/nagivationUtils';
+import {navigate} from '../../../utils/nagivationUtils';
+import useTheme from '../../../hooks/useTheme';
 
 type TabProps = {
   i: Customer;
@@ -11,14 +11,22 @@ type TabProps = {
 };
 
 const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
+  const {currentTheme} = useTheme();
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={[styles.container, {marginBottom: lastIndex ? 70 : 6}]}
-      onPress={()=>navigate("Customer",{customer:i})}
-      >
-      <Text style={styles.customerName}>{i.fullName}</Text>
+      style={[
+        styles.container,
+        {
+          marginBottom: lastIndex ? 70 : 6,
+          backgroundColor: currentTheme.tab.bg,
+        },
+      ]}
+      onPress={() => navigate('Customer', {customer: i})}>
+      <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
+        {i.fullName}
+      </Text>
       <Icon name="right" color={currentTheme.tab.icon} size={22} />
     </TouchableOpacity>
   );
@@ -29,13 +37,11 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: currentTheme.tab.bg,
     borderRadius: 8,
   },
   customerName: {
     fontSize: 20,
     fontWeight: '400',
-    color: currentTheme.tab.label,
   },
 });
 
