@@ -17,8 +17,9 @@ const ShopkeeperInfo: React.FC<ShopkeeperInfoProps> = ({
     <LinearGradient
       colors={[
         currentTheme.baseColor,
-        currentTheme.fadeColor,
-        currentTheme.bgColor,
+        currentTheme.baseColor,
+        // currentTheme.fadeColor,
+        // currentTheme.bgColor,
       ]}
       style={[
         styles.ShopkeeperInfoContainer,
@@ -42,8 +43,7 @@ const styles = StyleSheet.create({
   ShopkeeperInfoContainer: {
     paddingVertical: 20,
     alignItems: 'center',
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
+    borderRadius: 10,
   },
   profileImageContainer: {
     height: 90,

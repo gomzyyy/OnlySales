@@ -60,13 +60,9 @@ const Tab: React.FC<TabProps> = ({
 
   const handleMarkAs = async () => {
     if (actionType === 'PAID') {
-      const res = await Confirm(`Set '${i.name}' to Unpaid?`);
-      if (!res) return;
       dispatch(setToUnpaid({customer, product: i}));
       return;
     } else if (actionType === 'UNPAID') {
-      const res = await Confirm(`Set '${i.name}' to Paid?`);
-      if (!res) return;
       dispatch(setToPaid({customer, product: i}));
       return;
     } else {
@@ -75,9 +71,7 @@ const Tab: React.FC<TabProps> = ({
   };
 
   return (
-    <LongPressEnabled longPressAction={longPressAction}
-    //  dummy={actionType === "PAID" ? true : false}
-     >
+    <LongPressEnabled longPressAction={longPressAction}>
       <View
         style={[
           styles.container,
@@ -87,10 +81,10 @@ const Tab: React.FC<TabProps> = ({
           },
         ]}>
         <View style={styles.tabInfo}>
-          <View style={{flexDirection:"row", gap:4}}>
+          <View style={{flexDirection: 'row', gap: 4}}>
             <Text
               style={[styles.customerName, {color: currentTheme.tab.label}]}>
-              {i.name}
+              {i.name}{" "}{`x${i.count}`}
             </Text>
             {actionType === 'PAID' && (
               <View

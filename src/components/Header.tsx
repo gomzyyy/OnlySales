@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {View, Text, StyleSheet, Pressable, TouchableOpacity} from 'react-native';
 import React from 'react';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
@@ -56,9 +56,9 @@ const Header: React.FC<HeaderProps> = ({
         </Text>
       )}
       {customComponent && (
-        <Pressable onPress={customAction} style={styles.rightCustomBtn}>
+        <TouchableOpacity activeOpacity={0.5} onPress={customAction} style={styles.rightCustomBtn}>
           {renderItem}
-        </Pressable>
+        </TouchableOpacity>
       )}
     </View>
   );

@@ -17,6 +17,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import useTheme from '../../../hooks/useTheme';
+import { editShelfProduct } from '../../../../store/slices/shopkeeper';
 
 type EditProductProps = {
   product: Product;
@@ -28,6 +29,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
   close,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const dispatch = useDispatch<AppDispatch>()
   const [name, setName] = useState<string>(product.name);
   const [price, setPrice] = useState<number>(product.basePrice);
   const [discountedPrice, setDiscountedPrice] = useState<number>(
@@ -54,6 +56,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
       updatedAt: Date.now().toString(),
       totalSold: product.totalSold,
     };
+    dispatch(editShelfProduct({product:updatedProduct}))
     close();
     showToast({
       type: 'success',

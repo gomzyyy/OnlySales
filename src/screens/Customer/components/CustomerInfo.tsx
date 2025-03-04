@@ -17,8 +17,9 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
     <LinearGradient
       colors={[
         currentTheme.baseColor,
-        currentTheme.fadeColor,
-        currentTheme.bgColor,
+        currentTheme.baseColor,
+        // currentTheme.fadeColor,
+        // currentTheme.bgColor,
       ]}
       style={[
         styles.customerInfoContainer,
@@ -42,8 +43,7 @@ const styles = StyleSheet.create({
   customerInfoContainer: {
     paddingVertical: 20,
     alignItems: 'center',
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
+    borderRadius: 10,
   },
   profileImageContainer: {
     height: 90,

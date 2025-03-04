@@ -15,9 +15,10 @@ import {Picker} from '@react-native-picker/picker';
 import {QuantityType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {addProductToShelf} from '../../../../store/slices/shopkeeper';
-import {showToast} from '../../../service/fn';
+import {addProductToMenu} from '../../../../store/slices/shopkeeper';
+import {Confirm, showToast} from '../../../service/fn';
 import useTheme from '../../../hooks/useTheme';
+import {isNumber} from '../../../service/test';
 
 type EditProductProps = {
   close: () => void;
@@ -27,26 +28,45 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>('');
-  const [price, setPrice] = useState<number>(0);
-  const [discountedPrice, setDiscountedPrice] = useState<number>(0);
-  const [quantity, setQuantity] = useState<number>(0);
+  const [price, setPrice] = useState<string>('0');
+  const [discountedPrice, setDiscountedPrice] = useState<string>('0');
+  const [quantity, setQuantity] = useState<string>('0');
   const [measurementType, setMeasurementType] = useState<QuantityType>(
     QuantityType.GRAMS,
   );
 
-  const handleOnSubmit = () => {
-    if (price === 0 || quantity === 0 || name.trim().length === 0) {
+  const handleOnSubmit = async() => {
+    const res = {
+      res1: isNumber(price),
+      res2: isNumber(discountedPrice),
+      res3: isNumber(quantity),
+    };
+    if (!res.res1 || !res.res2 || !res.res3) {
+      Alert.alert(
+        'Invalid input!',
+        "Numeric entities can't include alphabets and symbols",
+      );
+      return;
+    }
+    if (Number(quantity) === 0 || name.trim().length === 0) {
       Alert.alert('Some required fields are missing!');
       return;
     }
+    if (Number(price) === 0) {
+      const res = await Confirm(
+        'Are you sure?',
+        'You are trying to put the item price 0, please double check before creating.',
+      );
+      if (!res) return;
+    }
     dispatch(
-      addProductToShelf({
+      addProductToMenu({
         product: {
           id: Date.now().toString(),
           name,
-          basePrice: price,
-          discountedPrice,
-          quantity: quantity,
+          basePrice: Number(price),
+          discountedPrice: Number(discountedPrice),
+          quantity: Number(quantity),
           totalSold: 0,
           measurementType,
           createdAt: new Date(Date.now()).toDateString(),
@@ -98,8 +118,8 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               Product price*
             </Text>
             <TextInput
-              value={price.toString()}
-              onChangeText={value => setPrice(Number(value))}
+              value={price}
+              onChangeText={value => setPrice(value)}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -118,8 +138,8 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               Product discounted price
             </Text>
             <TextInput
-              value={discountedPrice.toString()}
-              onChangeText={value => setDiscountedPrice(Number(value))}
+              value={discountedPrice}
+              onChangeText={value => setDiscountedPrice(value)}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -138,9 +158,12 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               Product quantity*
             </Text>
             <TextInput
-              value={quantity.toString()}
-              onChangeText={value => setQuantity(Number(value))}
-              style={[styles.inputText,{borderColor: currentTheme.modal.inputBorder}]}
+              value={quantity}
+              onChangeText={value => setQuantity(value)}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
               placeholder="Enter quantity"
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
@@ -196,7 +219,7 @@ const styles = StyleSheet.create({
     height: deviceHeight * 0.75,
     borderRadius: 20,
     marginBottom: 10,
-    elevation:30,
+    elevation: 30,
   },
   formTitle: {
     textAlign: 'center',

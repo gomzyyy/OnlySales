@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
@@ -29,15 +29,16 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const menu = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
+  const sortedMenu: Product[] = [...menu].sort(
+    (a, b) => b.totalSold - a.totalSold,
+  );
   const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
+  const [menuItems, setMenuItems] = useState<Product[]>(sortedMenu);
   const [query, setQuery] = useState<string>('');
   const [selectedProducts, setSelectedProducts] = useState<newUdharProduct[]>(
     [],
   );
   const [udharAmount, setUdharAmount] = useState<number>(0);
-  const sortedMenu: Product[] = [...menu].sort(
-    (a, b) => b.totalSold - a.totalSold,
-  );
 
   const handleNewUdhars = (s: newUdharProduct) => {
     const alreadyExist: newUdharProduct | undefined = selectedProducts
@@ -112,6 +113,20 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     close && close();
   };
 
+  useEffect(() => {
+    if (query.trim().length !== 0) {
+      const queryResults = menuItems.filter(s =>
+        s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
+      );
+      setMenuItems(queryResults);
+    } else {
+      setMenuItems(sortedMenu);
+    }
+    return () => {
+      setMenuItems(sortedMenu);
+    };
+  }, [query]);
+
   return (
     <KeyboardAvoidingView
       style={[
@@ -136,7 +151,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             flexDirection: 'row',
             flexWrap: 'wrap',
           }}>
-          {sortedMenu.map((f, i) => (
+          {menuItems.map((f, i) => (
             <MenuItem key={i} product={f} callback={handleSetUdharAmount} />
           ))}
         </ScrollView>

@@ -50,6 +50,7 @@ export interface App {
 export interface Shopkeeper {
   id: string;
   name: string;
+  sessionId:number | null;
   role: AdminRole;
   image?: string | undefined;
   businessType: BusinessType;

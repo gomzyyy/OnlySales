@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   customerHeader: {
-    marginTop: 40,
+    marginTop: 20,
   },
   itemListContainer: {
     // marginTop: 20,

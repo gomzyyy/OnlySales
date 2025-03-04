@@ -1,9 +1,16 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {d} from '../../_data/dummy_data';
-import {Shopkeeper, App, Customer, Product, newUdharProduct,AppTheme} from '../../types';
-import {AdminRole, AppThemeName, BusinessType} from '../../enums';
+import {
+  Shopkeeper,
+  App,
+  Customer,
+  Product,
+  newUdharProduct,
+  AppTheme,
+} from '../../types';
+import {AdminRole, BusinessType} from '../../enums';
 import 'react-native-get-random-values';
-import { Theme } from '../../src/utils/Constants';
+import {Theme} from '../../src/utils/Constants';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -14,6 +21,7 @@ const initialState: ShopkeeperInitialStateType = {
   shopkeeper: {
     id: '1',
     name: 'Gomzy Dhingra',
+    sessionId: 813146310310697,
     role: AdminRole.SHOPKEEPER,
     image: undefined,
     businessType: BusinessType.RETAIL,
@@ -28,7 +36,7 @@ const initialState: ShopkeeperInitialStateType = {
     currency: 'Rs.',
     searchResults: [],
     currentTheme: undefined,
-    defaultTheme: Theme[0]
+    defaultTheme: Theme[0],
   },
 };
 
@@ -36,6 +44,18 @@ const shopkeeperSlice = createSlice({
   name: 'shopkeeper',
   initialState,
   reducers: {
+    setAdmin: (state, action: PayloadAction<Shopkeeper>) => {
+      const shopkeeper = action.payload;
+      state.shopkeeper = shopkeeper;
+    },
+    login: (state, action: PayloadAction<Shopkeeper>) => {
+      const newSession = Date.now();
+      const shopkeeper = action.payload;
+      state.shopkeeper = {...shopkeeper, sessionId: newSession};
+    },
+    logout: state => {
+      state.shopkeeper.sessionId = null;
+    },
     setSearchResult: (state, action: PayloadAction<Customer[]>) => {
       state.app.searchResults = action.payload;
     },
@@ -115,14 +135,11 @@ const shopkeeperSlice = createSlice({
       action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
     ) => {
       const {customer, product} = action.payload;
-
-      // Find the customer in the state
       const customerIndex = state.shopkeeper.customers.findIndex(
         c => c.id === customer.id,
       );
 
       if (customerIndex !== -1) {
-        // Ensure we create a new array reference to trigger state updates
         state.shopkeeper.customers[customerIndex] = {
           ...state.shopkeeper.customers[customerIndex],
           unpaidPayments:
@@ -158,64 +175,78 @@ const shopkeeperSlice = createSlice({
       action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
     ) => {
       const customers = state.shopkeeper.customers;
-      const customer = action.payload.customer;
-      const product = action.payload.product;
-      console.log(customer.paidPayments)
-      const newUnpaidPaymets = (customer.unpaidPayments || []).filter(
-        s => s.id !== product.id,
-      );
-      const newPaidPayments = [product, ...(customer.paidPayments || [])];
-      state.shopkeeper.customers = customers.map(c =>
-        c.id === customer.id
-          ? {
-              ...c,
-              unpaidPayments: newUnpaidPaymets,
-              paidPayments: newPaidPayments,
-            }
-          : c,
-      );
+      const {customer, product} = action.payload;
+
+      const updatedCustomers = customers.map(c => {
+        if (c.id === customer.id) {
+          const newUnpaidPayments = (c.unpaidPayments ?? []).filter(
+            s => s.id !== product.id,
+          );
+
+          const newPaidPayments = [product, ...(c.paidPayments ?? [])];
+
+          return {
+            ...c,
+            unpaidPayments: newUnpaidPayments,
+            paidPayments: newPaidPayments,
+          };
+        }
+        return c;
+      });
+
+      state.shopkeeper.customers = updatedCustomers;
     },
+
     setToUnpaid: (
       state,
       action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
     ) => {
       const customers = state.shopkeeper.customers;
-      const customer = action.payload.customer;
-      const product = action.payload.product;
-      const newUnpaidPaymets = [product, ...(customer.unpaidPayments || [])];
-      const newPaidPayments = (customer.paidPayments || []).filter(
-        s => s.id !== product.id,
-      );
-      state.shopkeeper.customers = customers.map(c =>
-        c.id === customer.id
-          ? {
-              ...c,
-              unpaidPayments: newUnpaidPaymets,
-              paidPayments: newPaidPayments,
-            }
-          : c,
-      );
+      const {customer, product} = action.payload;
+
+      const updatedCustomers = customers.map(c => {
+        if (c.id === customer.id) {
+          return {
+            ...c,
+            unpaidPayments: [product, ...(c.unpaidPayments ?? [])],
+            paidPayments: (c.paidPayments ?? []).filter(
+              s => s.id !== product.id,
+            ),
+          };
+        }
+        return c;
+      });
+      state.shopkeeper.customers = updatedCustomers;
     },
-    addProductToShelf: (state, action: PayloadAction<{product: Product}>) => {
+
+    addProductToMenu: (state, action: PayloadAction<{product: Product}>) => {
       const newProduct = action.payload.product;
-      const menu = state.shopkeeper.menu;
       state.shopkeeper.menu = [newProduct, ...state.shopkeeper.menu];
     },
     editShelfProduct: (state, action: PayloadAction<{product: Product}>) => {
-      // const updatedProduct
+      const {product} = action.payload;
+      const foundProduct = state.shopkeeper.menu.find(s => s.id === product.id);
+      if (foundProduct) {
+        Object.assign(foundProduct, {
+          ...product,
+          updatedAt: Date.now().toString(),
+        });
+      }
     },
-    removeProductFromShelf: (
+    removeProductFromMenu: (
       state,
       action: PayloadAction<{product: Product}>,
     ) => {
-      const removedProduct = action.payload.product;
-      const menu = state.shopkeeper.menu;
-      const newMenu = menu.filter(s => s.id !== removedProduct.id);
+      const {product} = action.payload;
+      const newMenu = state.shopkeeper.menu.filter(s => s.id !== product.id);
       state.shopkeeper.menu = newMenu;
     },
   },
 });
 export const {
+  setAdmin,
+  logout,
+  login,
   createCustomers,
   updateCustomer,
   removeCustomer,
@@ -226,9 +257,9 @@ export const {
   removePaidUdhar,
   setToPaid,
   setToUnpaid,
-  addProductToShelf,
+  addProductToMenu,
   editShelfProduct,
-  removeProductFromShelf,
-  setTheme
+  removeProductFromMenu,
+  setTheme,
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;

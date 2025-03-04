@@ -11,6 +11,7 @@ import UnpaidUdhars from '../screens/Customer/UnpaidUdhars';
 import MyMenu from '../screens/MyShelf/MyMenu';
 import Search from '../screens/Search/Search';
 import PaidUdhars from '../screens/Customer/PaidUdhars';
+import MyProfile from '../screens/Settings/screens/MyProfile';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -28,6 +29,7 @@ const StackNav = () => {
       <stack.Screen name="PaidUdhars" component={PaidUdhars}/>
       <stack.Screen name="MyMenu" component={MyMenu}/>
       <stack.Screen name="Search" component={Search}/>
+      <stack.Screen name="MyProfile" component={MyProfile}/>
     </stack.Navigator>
   );
 };

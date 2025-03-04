@@ -1,4 +1,4 @@
-import {View, StyleSheet, Pressable} from 'react-native';
+import {View, StyleSheet, Pressable, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
@@ -41,13 +41,15 @@ const Customer = () => {
     }
   }, [customers]);
 
+  const AddUdharIcon=():React.JSX.Element=>{return <View style={{flexDirection:"row",gap:4,alignItems:"center"}}><Icon name="plus" color={'black'} size={20} /><Text style={{fontSize:16}}>Add Udhar</Text></View>}
+
   return (
     <View style={styles.parent}>
       <Header
         name={`${currCustomer.fullName}`}
         backButtom
         customComponent={content === 'UNPAID'}
-        renderItem={<Icon name="plus" color={'black'} size={24} />}
+        renderItem={<AddUdharIcon />}
         customAction={toogleState(setAddUdhar).true}
       />
       <View style={styles.contentContainer}>
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 60,
-    marginTop: 40,
+    marginTop: 20,
     gap: 10,
   },
   toogleBtnText: {

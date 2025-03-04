@@ -1,5 +1,6 @@
 import {TouchableOpacity, Vibration} from 'react-native';
 import React, {ReactNode, useRef, useState} from 'react';
+import useHaptics, {useHapticsReturnType} from '../hooks/useHaptics';
 
 type LongPressEnabledProps = {
   dummy?: boolean;
@@ -7,19 +8,19 @@ type LongPressEnabledProps = {
   minPressDuration?: number;
   longPressCanceledAction?: () => void;
   longPressAction: () => void;
-  vibrateOnLongPress?: boolean;
+  hapticsEnabled?: boolean;
   vibrationDuration?: number;
 };
 
 const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
   dummy = false,
   children,
-  minPressDuration = 300,
+  minPressDuration = 400,
   longPressCanceledAction = () => {},
   longPressAction,
-  vibrateOnLongPress = true,
-  vibrationDuration = 50,
+  hapticsEnabled = true,
 }): React.JSX.Element => {
+  const {longPress} = useHaptics();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [longPressed, setLongPressed] = useState<boolean>(false);
 
@@ -30,8 +31,8 @@ const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
     timeoutRef.current = setTimeout(() => {
       longPressAction();
       setLongPressed(true);
-      if (vibrateOnLongPress) {
-        Vibration.vibrate(vibrationDuration);
+      if (hapticsEnabled) {
+        longPress();
       }
     }, minPressDuration);
   };

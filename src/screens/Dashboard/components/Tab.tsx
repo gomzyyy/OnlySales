@@ -10,9 +10,9 @@ import {navigate} from '../../../utils/nagivationUtils';
 import useTheme from '../../../hooks/useTheme';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import SlideUpContainer from '../../../components/SlideUpContainer';
-import EditCustomer from '../../../components/EditCustomer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
+const EditCustomer = React.lazy(()=>import("../../../components/EditCustomer"))
 
 type TabProps = {
   i: Customer;

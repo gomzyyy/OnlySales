@@ -2,9 +2,15 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
 import {AppTheme} from '../../types';
 
-export interface useThemeReturnType {currentTheme: AppTheme};
+export interface useSearchAPIReturnType {
+  currentTheme: AppTheme;
+}
+type useSearchAPIProps = {
+  arr: any[];
+  compareWith:string | number
+};
 
-const useTheme = (): useThemeReturnType => {
+const useSearchAPI = ({arr,compareWith}: useSearchAPIProps): useSearchAPIReturnType => {
   const {currentTheme, defaultTheme} = useSelector(
     (s: RootState) => s.shopkeeper.app,
   );
@@ -13,4 +19,4 @@ const useTheme = (): useThemeReturnType => {
   };
 };
 
-export default useTheme;
+export default useSearchAPI;
