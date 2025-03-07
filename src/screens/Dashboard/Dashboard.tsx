@@ -1,5 +1,5 @@
 import {View, FlatList, StyleSheet} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
 import Tab from './components/Tab';
@@ -19,6 +19,7 @@ const Dashboard = () => {
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
+  const app = useSelector((s: RootState) => s.shopkeeper.app);
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
 
@@ -40,11 +41,7 @@ const Dashboard = () => {
                 data={customers}
                 keyExtractor={s => s.id.toString()}
                 nestedScrollEnabled
-                renderItem={({item}) => (
-                  <Tab
-                    i={item}
-                  />
-                )}
+                renderItem={({item}) => <Tab i={item} />}
                 style={{flex: 1}}
                 showsVerticalScrollIndicator={false}
               />
@@ -64,7 +61,6 @@ const Dashboard = () => {
           <CreateCustomer callback={handleCloseCreateCustomer} />
         </SlideupContainer>
       )}
-     
     </View>
   );
 };

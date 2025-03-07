@@ -13,11 +13,11 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import ShopkeeperInfo from '../components/ShopkeeperInfo';
 import {TextInput} from 'react-native-gesture-handler';
 import useTheme from '../../../hooks/useTheme';
-import RolePicker from './components/RolePicker';
 import {AdminRole, BusinessType} from '../../../../enums';
-import BusinessTypePicker from './components/BusinessTypePicker';
 import {Confirm, showToast} from '../../../service/fn';
 import {setAdmin} from '../../../../store/slices/shopkeeper';
+import RolePicker from '../../../components/RolePicker';
+import BusinessTypePicker from '../../../components/BusinessTypePicker';
 
 const MyProfile = () => {
   const {currentTheme} = useTheme();
@@ -63,7 +63,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     checkIfEdited();
-  }, [name, role, businessType,shopkeeper]);
+  }, [name, role, businessType, shopkeeper]);
 
   return (
     <KeyboardAvoidingView

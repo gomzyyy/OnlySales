@@ -1,14 +1,8 @@
 import {StyleSheet} from 'react-native';
-import React, {Dispatch, SetStateAction, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../../store/store';
+import React, {Dispatch, SetStateAction} from 'react';
 import {Picker} from '@react-native-picker/picker';
-import {AdminRole} from '../../../../../enums';
-import {AppTheme} from '../../../../../types';
-import {navigate} from '../../../../utils/nagivationUtils';
-import {setTheme} from '../../../../../store/slices/shopkeeper';
-import {showToast} from '../../../../service/fn';
-import useTheme from '../../../../hooks/useTheme';
+import { AdminRole } from '../../enums';
+import useTheme from '../hooks/useTheme';
 
 
 type RolePickerProps = {

@@ -11,6 +11,7 @@ import {
 import {AdminRole, BusinessType} from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
+import {randomId} from '../../src/service/fn';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -21,13 +22,15 @@ const initialState: ShopkeeperInitialStateType = {
   shopkeeper: {
     id: '1',
     name: 'Gomzy Dhingra',
-    sessionId: 813146310310697,
+    userId: 'gomzy_dhingra',
+    phoneNumber: '9781295937',
+    sessionId: null,
     role: AdminRole.SHOPKEEPER,
     image: undefined,
     businessType: BusinessType.RETAIL,
     menu: [],
     starProducts: [],
-    sessionPasscode: undefined,
+    accessPasscode: undefined,
     customers: d.customers,
     createdAt: new Date().toDateString(),
     updatedAt: new Date().toDateString(),
@@ -37,6 +40,7 @@ const initialState: ShopkeeperInitialStateType = {
     searchResults: [],
     currentTheme: undefined,
     defaultTheme: Theme[0],
+    previousShopkeepers: [],
   },
 };
 
@@ -44,16 +48,69 @@ const shopkeeperSlice = createSlice({
   name: 'shopkeeper',
   initialState,
   reducers: {
-    setAdmin: (state, action: PayloadAction<Shopkeeper>) => {
-      const shopkeeper = action.payload;
-      state.shopkeeper = shopkeeper;
+    setShopkeeper: (
+      state,
+      action: PayloadAction<{
+        name: string;
+        userId: string;
+        phoneNumber?: string;
+        businessType?: BusinessType;
+      }>,
+    ) => {
+      const {name, userId, phoneNumber, businessType} = action.payload;
+      const prevShopkeeper = state.app.previousShopkeepers;
+      const ifExisting = prevShopkeeper.find(s => s.userId);
+      if (ifExisting) return;
+      const newShopkeeper: Shopkeeper = {
+        id: randomId(),
+        name,
+        userId,
+        phoneNumber: phoneNumber,
+        sessionId: Date.now(),
+        role: AdminRole.SHOPKEEPER,
+        businessType: businessType ?? BusinessType.RETAIL,
+        menu: [],
+        customers: [],
+        createdAt: Date.now().toString(),
+        updatedAt: Date.now().toString(),
+      };
+      state.app.previousShopkeepers.push(newShopkeeper);
     },
-    login: (state, action: PayloadAction<Shopkeeper>) => {
-      const newSession = Date.now();
-      const shopkeeper = action.payload;
-      state.shopkeeper = {...shopkeeper, sessionId: newSession};
+    removeExistingUser: (state, action: PayloadAction<{userId: string}>) => {
+      const {userId} = action.payload;
+      const prevShopkeeper = state.app.previousShopkeepers;
+      const user = prevShopkeeper.find(s => s.userId === userId);
+      if (!user) return;
+      const newPrevUsersArr = prevShopkeeper.filter(s => s.userId !== userId);
+      state.app.previousShopkeepers = newPrevUsersArr;
     },
-    logout: state => {
+    setAccessPassword: (
+      state,
+      action: PayloadAction<[string, string, string, string]>,
+    ) => {
+      const newAccessPasscode = action.payload;
+      state.shopkeeper.accessPasscode = newAccessPasscode;
+    },
+    login: (state, action: PayloadAction<{userId: string}>) => {
+      const prevUsers = state.app.previousShopkeepers;
+      const {userId} = action.payload;
+      const user = prevUsers.find(s => s.userId === userId);
+      if (!user) return;
+      const existingUser = {...user, sessionId: Date.now()};
+      if (!existingUser) {
+        return;
+      }
+      state.shopkeeper = existingUser;
+    },
+    logout: (state, action: PayloadAction<{userId: string}>) => {
+      const {userId} = action.payload;
+      const currUser = state.shopkeeper;
+      const user = state.app.previousShopkeepers.find(s => s.userId === userId);
+      if (!user) return;
+      const updatedPrevUsers = state.app.previousShopkeepers.map(s =>
+        s.userId === userId ? {...currUser, sessionId: null} : s,
+      );
+      state.app.previousShopkeepers = updatedPrevUsers;
       state.shopkeeper.sessionId = null;
     },
     setSearchResult: (state, action: PayloadAction<Customer[]>) => {
@@ -244,9 +301,10 @@ const shopkeeperSlice = createSlice({
   },
 });
 export const {
-  setAdmin,
+  setShopkeeper,
   logout,
   login,
+  setAccessPassword,
   createCustomers,
   updateCustomer,
   removeCustomer,
@@ -263,3 +321,15 @@ export const {
   setTheme,
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;
+
+// const shopkeeper = action.payload;
+// const storedUser = state.app.previousUsers.find(
+//   s => s.id === shopkeeper.id,
+// );
+// if (!storedUser) {
+//   state.app.previousShopkeepers.push({
+//     ...shopkeeper,
+//     id: randomId(),
+//   });
+// }
+// state.shopkeeper = shopkeeper;

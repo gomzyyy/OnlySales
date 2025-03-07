@@ -6,6 +6,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
 import ShopkeeperInfo from './components/ShopkeeperInfo';
 import AccountCenter from './components/AccountCenter';
+import LogoutButton from './components/LogoutButton';
+import AppSettings from './components/AppSettings';
 
 const Settings = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,6 +24,11 @@ const Settings = () => {
           <Text style={styles.label}>Account</Text>
          <AccountCenter />
         </View>
+        <View style={styles.sectionsContainer}>
+          <Text style={styles.label}>App</Text>
+         <AppSettings />
+        </View>
+        <LogoutButton/>
       </ScrollView>
     </View>
   );

@@ -26,7 +26,7 @@ const Tab: React.FC<TabProps> = ({title,onPress}): React.JSX.Element => {
       }]}
       onPress={handleOnPress}
       >
-      <Text style={[styles.label,{    color: currentTheme.tab.label,
+      <Text style={[styles.label,{color: currentTheme.tab.label,
 }]}>{title}</Text>
       <Icon name="right" color={currentTheme.tab.icon} size={22} />
     </TouchableOpacity>

@@ -4,6 +4,7 @@ export enum BusinessType {
   MANUFACTURING = 'manufacturing',
   SERVICE = 'service',
   DISTRIBUTION = 'distribution',
+  OTHER = 'other'
 }
 export enum QuantityType {
   ML = 'ml',

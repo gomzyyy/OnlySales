@@ -9,30 +9,30 @@ export interface AppTheme {
   textColor: string;
   contrastColor: string;
   bgColor: string;
-  textAlt:string
-  modal:ModalTheme,
-  toggleBtn:ToogleBtnTheme,
-  tab:TabTheme
+  textAlt: string;
+  modal: ModalTheme;
+  toggleBtn: ToogleBtnTheme;
+  tab: TabTheme;
 }
 
-export interface ModalTheme{
-  title:string;
+export interface ModalTheme {
+  title: string;
   inputbg: string;
   inputBorder: string;
   inputText: string;
   pickerbg: string;
-  pickerText:string;
+  pickerText: string;
   saveBtnbg: string;
   saveBtnText: string;
 }
 
-export interface ToogleBtnTheme{
+export interface ToogleBtnTheme {
   bgActive: string;
   bgInactive: string;
   textActive: string;
   textInactive: string;
 }
-export interface TabTheme{
+export interface TabTheme {
   label: string;
   bg: string;
   value: string;
@@ -44,22 +44,28 @@ export interface App {
   searchResults: Customer[];
   currency: string;
   currentTheme: AppTheme | undefined;
-  defaultTheme:AppTheme
+  defaultTheme: AppTheme;
+  previousShopkeepers:Shopkeeper[];
 }
 
-export interface Shopkeeper {
+export interface User{
   id: string;
   name: string;
-  sessionId:number | null;
+  userId: string;
+  phoneNumber?:string;
+  sessionId: number | null;
   role: AdminRole;
   image?: string | undefined;
+  accessPasscode?: [string, string, string, string] | undefined;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Shopkeeper extends User {
   businessType: BusinessType;
   menu: Product[];
   starProducts?: Product[];
   customers: Customer[];
-  sessionPasscode: string | undefined;
-  createdAt: string;
-  updatedAt: string;
 }
 export interface Product {
   id: string;
@@ -86,8 +92,7 @@ export interface Customer {
   updatedAt?: string;
 }
 
-export interface newUdharProduct extends Product{
-  addedAt:string;
-  count:number
+export interface newUdharProduct extends Product {
+  addedAt: string;
+  count: number;
 }
-
