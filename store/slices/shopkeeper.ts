@@ -21,9 +21,9 @@ type ShopkeeperInitialStateType = {
 const initialState: ShopkeeperInitialStateType = {
   shopkeeper: {
     id: '1',
-    name: 'Gomzy Dhingra',
-    userId: 'gomzy_dhingra',
-    phoneNumber: '9781295937',
+    name: '',
+    userId: '',
+    phoneNumber: undefined,
     sessionId: null,
     role: AdminRole.SHOPKEEPER,
     image: undefined,
@@ -41,6 +41,8 @@ const initialState: ShopkeeperInitialStateType = {
     currentTheme: undefined,
     defaultTheme: Theme[0],
     previousShopkeepers: [],
+    deviceId: undefined,
+    appLocked: false,
   },
 };
 
@@ -59,7 +61,8 @@ const shopkeeperSlice = createSlice({
     ) => {
       const {name, userId, phoneNumber, businessType} = action.payload;
       const prevShopkeeper = state.app.previousShopkeepers;
-      const ifExisting = prevShopkeeper.find(s => s.userId);
+      const ifExisting = prevShopkeeper.find(s => s.userId === userId);
+      console.log(ifExisting);
       if (ifExisting) return;
       const newShopkeeper: Shopkeeper = {
         id: randomId(),
@@ -75,6 +78,38 @@ const shopkeeperSlice = createSlice({
         updatedAt: Date.now().toString(),
       };
       state.app.previousShopkeepers.push(newShopkeeper);
+      console.log(newShopkeeper);
+      state.shopkeeper = newShopkeeper;
+    },
+    toogleLockApp: (state, action: PayloadAction<boolean>) => {
+      state.app.appLocked = action.payload;
+    },
+    editShopkeeper: (
+      state,
+      action: PayloadAction<{
+        name: string;
+        userId: string;
+        phoneNumber?: string;
+        businessType?: BusinessType;
+      }>,
+    ) => {
+      const {name, userId, phoneNumber, businessType} = action.payload;
+      const prevShopkeeper = state.app.previousShopkeepers;
+      const ifExisting = prevShopkeeper.find(s => s.userId === userId);
+      if (!ifExisting) return;
+      const newShopkeeper: Shopkeeper = {
+        ...ifExisting,
+        name,
+        phoneNumber,
+        businessType: businessType ?? BusinessType.RETAIL,
+        updatedAt: Date.now().toString(),
+      };
+      const newPrevShopkeepers = state.app.previousShopkeepers.map(s =>
+        s.userId === ifExisting.userId ? newShopkeeper : s,
+      );
+      console.log(newShopkeeper);
+      state.app.previousShopkeepers = newPrevShopkeepers;
+      state.shopkeeper = newShopkeeper;
     },
     removeExistingUser: (state, action: PayloadAction<{userId: string}>) => {
       const {userId} = action.payload;
@@ -89,6 +124,7 @@ const shopkeeperSlice = createSlice({
       action: PayloadAction<[string, string, string, string]>,
     ) => {
       const newAccessPasscode = action.payload;
+
       state.shopkeeper.accessPasscode = newAccessPasscode;
     },
     login: (state, action: PayloadAction<{userId: string}>) => {
@@ -302,8 +338,10 @@ const shopkeeperSlice = createSlice({
 });
 export const {
   setShopkeeper,
+  editShopkeeper,
   logout,
   login,
+  toogleLockApp,
   setAccessPassword,
   createCustomers,
   updateCustomer,
@@ -321,15 +359,3 @@ export const {
   setTheme,
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;
-
-// const shopkeeper = action.payload;
-// const storedUser = state.app.previousUsers.find(
-//   s => s.id === shopkeeper.id,
-// );
-// if (!storedUser) {
-//   state.app.previousShopkeepers.push({
-//     ...shopkeeper,
-//     id: randomId(),
-//   });
-// }
-// state.shopkeeper = shopkeeper;

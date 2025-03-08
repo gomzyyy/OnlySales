@@ -1,10 +1,10 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React from 'react';
 import Tab from './shared/Tab';
 import {navigate} from '../../../utils/nagivationUtils';
 
 const AppSettingsOptions = [
-  {title: 'Set Passcode', navigateTo: 'SetPasscode', id: 1},
+  {title: 'App Lock', navigateTo: 'SetPasscode', id: 1},
 ];
 
 const AppSettings = () => {

@@ -46,8 +46,13 @@ const Login = () => {
       });
       return;
     }
-    navigate('UserFound', {user});
-    return;
+    if (user.accessPasscode) {
+      navigate('Unlock', {user});
+      return;
+    } else {
+      navigate('UserFound', {user});
+      return;
+    }
   };
 
   return (

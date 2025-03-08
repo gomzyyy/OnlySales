@@ -1,5 +1,5 @@
 import {View, FlatList, StyleSheet} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
 import Tab from './components/Tab';
@@ -22,6 +22,8 @@ const Dashboard = () => {
   const app = useSelector((s: RootState) => s.shopkeeper.app);
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
+
+  console.log(app.previousShopkeepers);
 
   useEffect(() => {
     prepareNavigation();

@@ -8,6 +8,7 @@ import ShopkeeperInfo from './components/ShopkeeperInfo';
 import AccountCenter from './components/AccountCenter';
 import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
+import ThemePicker from './components/ThemePicker';
 
 const Settings = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,10 +16,10 @@ const Settings = () => {
 
   return (
     <View style={styles.parent}>
-      <Header name={shopkeeper.name} backButtom />
+      <Header name='Settings' backButtom />
       <ScrollView style={styles.settingsContainer} nestedScrollEnabled={true}>
         <View style={styles.infoContainer}>
-          <ShopkeeperInfo shopkeeper={shopkeeper} />
+          <ShopkeeperInfo shopkeeper={shopkeeper} secure={true} />
         </View>
         <View style={styles.sectionsContainer}>
           <Text style={styles.label}>Account</Text>
@@ -28,6 +29,7 @@ const Settings = () => {
           <Text style={styles.label}>App</Text>
          <AppSettings />
         </View>
+        <ThemePicker />
         <LogoutButton/>
       </ScrollView>
     </View>

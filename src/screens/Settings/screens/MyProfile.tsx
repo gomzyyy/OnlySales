@@ -15,9 +15,10 @@ import {TextInput} from 'react-native-gesture-handler';
 import useTheme from '../../../hooks/useTheme';
 import {AdminRole, BusinessType} from '../../../../enums';
 import {Confirm, showToast} from '../../../service/fn';
-import {setAdmin} from '../../../../store/slices/shopkeeper';
+import {editShopkeeper} from '../../../../store/slices/shopkeeper';
 import RolePicker from '../../../components/RolePicker';
 import BusinessTypePicker from '../../../components/BusinessTypePicker';
+import {isNumber} from '../../../service/test';
 
 const MyProfile = () => {
   const {currentTheme} = useTheme();
@@ -26,6 +27,9 @@ const MyProfile = () => {
 
   const [name, setName] = useState<string>(shopkeeper.name);
   const [role, setRole] = useState<AdminRole>(shopkeeper.role);
+  const [phoneNumber, setPhoneNumber] = useState<string>(
+    shopkeeper.phoneNumber ?? '',
+  );
   const [businessType, setBusinessType] = useState<BusinessType>(
     shopkeeper.businessType,
   );
@@ -41,19 +45,40 @@ const MyProfile = () => {
       showToast({type: 'error', text1: 'Name should 4-16 characters long.'});
       return;
     }
+    if (phoneNumber !== shopkeeper.phoneNumber) {
+      if (
+        phoneNumber.trim().length === 0 ||
+        phoneNumber.trim().length > 10 ||
+        phoneNumber.trim().length < 10 ||
+        !isNumber(phoneNumber)
+      ) {
+        showToast({type: 'error', text1: 'Please enter a valid phone number'});
+        return;
+      }
+    }
+
     const res = await Confirm(
       'Save changes?',
       'are you sure you have entered correct details?',
     );
     if (!res) return;
-    dispatch(setAdmin({...shopkeeper, name, role, businessType}));
-    showToast({type: 'success', text1: 'Profile edited successfully.'});
+    dispatch(
+      editShopkeeper({
+        name,
+        userId: shopkeeper.userId,
+        phoneNumber,
+        businessType,
+      }),
+    );
+    showToast({type: 'success', text1: 'Profile updated successfully.'});
   };
   const checkIfEdited = () => {
     if (
       name.trim() !== shopkeeper.name.trim() ||
       role !== shopkeeper.role ||
-      businessType !== shopkeeper.businessType
+      businessType !== shopkeeper.businessType ||
+      (phoneNumber.trim().length !== 0 &&
+        phoneNumber !== shopkeeper.phoneNumber)
     ) {
       setEdited(true);
     } else {
@@ -63,7 +88,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     checkIfEdited();
-  }, [name, role, businessType, shopkeeper]);
+  }, [name, role, businessType, shopkeeper, phoneNumber]);
 
   return (
     <KeyboardAvoidingView
@@ -93,6 +118,20 @@ const MyProfile = () => {
                 ]}
                 placeholder="Enter name"
                 placeholderTextColor={currentTheme.baseColor}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Registered Phone Number:</Text>
+              <TextInput
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Enter Phone Number"
+                placeholderTextColor={currentTheme.baseColor}
+                keyboardType="numeric"
               />
             </View>
             <View style={styles.inputContainer}>

@@ -24,7 +24,6 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
 
   const handleClickingTab = () => {
     setOpenEditing(true);
-    console.log('viveribriu');
   };
   const handleOpenLongPressOptions=()=>setOpenLongPressOptions(true)
   const handleCloseLongPressOptions=()=>setOpenLongPressOptions(false)

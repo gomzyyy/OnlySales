@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Dashboard from '../screens/Dashboard/Dashboard';
@@ -21,11 +21,39 @@ import UserFound from '../screens/Auth/Login/screens/UserFound';
 import GetStarted from '../screens/SplashScreen/GetStarted';
 import SetPasscode from '../screens/Auth/AppLock/SetPasscode/SetPasscode';
 import Unlock from '../screens/Auth/AppLock/Unlock/Unlock';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../store/store';
+import {toogleLockApp} from '../../store/slices/shopkeeper';
+import {AppState} from 'react-native';
+import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
 const StackNav = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {accessPasscode} = useSelector(
+    (s: RootState) => s.shopkeeper.shopkeeper,
+  );
+  useEffect(() => {
+    if (Array.isArray(accessPasscode)) {
+      dispatch(toogleLockApp(true));
+    }
+    const handleAppStateChange = (nextAppState: string) => {
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        dispatch(toogleLockApp(true));
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
   return (
     <stack.Navigator
       screenOptions={{
@@ -75,6 +103,11 @@ const StackNav = () => {
         name="Unlock"
         options={{gestureEnabled: false}}
         component={Unlock}
+      />
+        <stack.Screen
+        name="LoginOptions"
+        options={{gestureEnabled: false}}
+        component={LoginOptions}
       />
     </stack.Navigator>
   );

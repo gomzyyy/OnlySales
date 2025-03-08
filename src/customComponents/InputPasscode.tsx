@@ -7,17 +7,21 @@ import {
 } from 'react-native';
 import React, {SetStateAction, useRef} from 'react';
 import useTheme from '../hooks/useTheme';
+import {colors} from '../utils/Constants';
+import {isNumber} from '../service/test';
 
 type InputPasscodeProps = {
   state: [string, string, string, string];
   setState: React.Dispatch<SetStateAction<[string, string, string, string]>>;
   focused?: boolean;
+  error?: boolean;
 };
 
 const InputPasscode: React.FC<InputPasscodeProps> = ({
   state,
   setState,
   focused = false,
+  error = false,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const refs = [
@@ -27,6 +31,7 @@ const InputPasscode: React.FC<InputPasscodeProps> = ({
     useRef<TextInput>(null),
   ];
   const handleOnChangeText = (index: number, value: string) => {
+    if (!isNumber(value)) return;
     if (value.trim().length > 1) return;
     const newVal: [string, string, string, string] = [...state];
     newVal[index] = value;
@@ -49,7 +54,7 @@ const InputPasscode: React.FC<InputPasscodeProps> = ({
         <View
           style={[
             styles.inputContainer,
-            {borderColor: currentTheme.baseColor},
+            {borderColor: error ? colors.danger : '#000'},
           ]}
           key={i}>
           <TextInput
@@ -61,6 +66,7 @@ const InputPasscode: React.FC<InputPasscodeProps> = ({
             onKeyPress={e => handleOnKeyChange(i, e)}
             keyboardType="numeric"
             secureTextEntry={true}
+            showSoftInputOnFocus={false}
           />
         </View>
       ))}
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   inputContainer: {
-    borderWidth: 2,
+    borderWidth: 4,
     borderColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',

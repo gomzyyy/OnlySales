@@ -2,10 +2,15 @@ import {View, Text} from 'react-native';
 import React, {useEffect} from 'react';
 import {RootState} from '../../../store/store';
 import {useSelector} from 'react-redux';
-import {prepareNavigation, resetAndNavigate} from '../../utils/nagivationUtils';
+import {
+  navigate,
+  prepareNavigation,
+  resetAndNavigate,
+} from '../../utils/nagivationUtils';
 
 const SplashScreen = () => {
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const app = useSelector((s: RootState) => s.shopkeeper.app);
 
   useEffect(() => {
     const initNavigation = async () => {
@@ -13,6 +18,13 @@ const SplashScreen = () => {
       if (!shopkeeper?.sessionId) {
         setTimeout(() => resetAndNavigate('GetStarted'), 800);
       } else {
+        if (app.appLocked) {
+          setTimeout(
+            () => navigate('Unlock', {user: shopkeeper, logged: true}),
+            800,
+          );
+          return;
+        }
         setTimeout(() => resetAndNavigate('Dashboard'), 800);
       }
     };

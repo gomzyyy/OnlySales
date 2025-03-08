@@ -7,7 +7,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import shopkeeperSliceFunction from "./slices/shopkeeper"
 
 const persistConfig = {
-  key: 'vttbtvcxlybuuxurcfd',
+  key: 'jvbeoueabufwojbetib',
   storage: mmkv,
 };
 

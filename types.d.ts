@@ -45,14 +45,16 @@ export interface App {
   currency: string;
   currentTheme: AppTheme | undefined;
   defaultTheme: AppTheme;
-  previousShopkeepers:Shopkeeper[];
+  previousShopkeepers: Shopkeeper[];
+  deviceId?: string | undefined;
+  appLocked: boolean;
 }
 
-export interface User{
+export interface User {
   id: string;
   name: string;
   userId: string;
-  phoneNumber?:string;
+  phoneNumber?: string;
   sessionId: number | null;
   role: AdminRole;
   image?: string | undefined;

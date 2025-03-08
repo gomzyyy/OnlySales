@@ -25,6 +25,7 @@ const SetPasscode = () => {
     (s: RootState) => s.shopkeeper.shopkeeper,
   );
   const [locked, setLocked] = useState<boolean>(false);
+  const [currPasscodeError, setCurrPasscodeError] = useState<boolean>(false);
   const [currPasscode, setCurrPasscode] = useState<
     [string, string, string, string]
   >(['', '', '', '']);
@@ -50,12 +51,17 @@ const SetPasscode = () => {
     }
   };
   const handleSaveButton = () => {
-    if (locked && JSON.stringify(currPasscode) !== JSON.stringify(accessPasscode)) {
+    if (
+      locked &&
+      JSON.stringify(currPasscode) !== JSON.stringify(accessPasscode)
+    ) {
       showToast({
         type: 'error',
         text1: 'Password not matched with current password!',
         position: 'top',
       });
+      setCurrPasscode(['', '', '', '']);
+      setCurrPasscodeError(true);
       return;
     }
 
@@ -70,68 +76,83 @@ const SetPasscode = () => {
     dispatch(setAccessPassword(newPasscode));
     showToast({
       type: 'success',
-      text1: locked ? "Passcode changed successfully!" : "App lock enabled successfully!",
+      text1: locked
+        ? 'Passcode changed successfully!'
+        : 'App lock enabled successfully!',
     });
     back();
   };
   useEffect(() => {
-    setLocked(Array.isArray(accessPasscode));
-  }, [accessPasscode]);
-  useEffect(() => {
     handlePasswordConfirmed();
-  }, [confirmPasscode, newPasscode]);
+    setLocked(Array.isArray(accessPasscode));
+  }, [confirmPasscode, newPasscode, accessPasscode]);
+  useEffect(() => {
+    if (
+      currPasscode[0].trim().length !== 0 ||
+      currPasscode[0].trim().length !== 0 ||
+      currPasscode[0].trim().length !== 0 ||
+      currPasscode[0].trim().length !== 0
+    ) {
+      setCurrPasscodeError(false);
+    }
+    handlePasswordConfirmed();
+    setLocked(Array.isArray(accessPasscode));
+  }, [currPasscode]);
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView style={{flex: 1, paddingHorizontal: 20}}>
-        <Header name="Set a new Passcode" />
-        <View style={styles.innerContainer}>
-          {locked && (
+    <>
+      <Header name="Set a new Passcode" backButtom={true} />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView style={{flex: 1, paddingHorizontal: 20}}>
+          <View style={styles.innerContainer}>
+            {locked && (
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Enter Current Passcode</Text>
+                <InputPasscode
+                  state={currPasscode}
+                  setState={setCurrPasscode}
+                  focused
+                  error={currPasscodeError}
+                />
+              </View>
+            )}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Enter Current Passcode</Text>
-              <InputPasscode
-                state={currPasscode}
-                setState={setCurrPasscode}
-                focused
-              />
+              <Text style={styles.inputLabel}>Enter New Passcode</Text>
+              <InputPasscode state={newPasscode} setState={setNewPasscode} />
             </View>
-          )}
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Enter New Passcode</Text>
-            <InputPasscode state={newPasscode} setState={setNewPasscode} />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Confirm New Passcode</Text>
-            <InputPasscode
-              state={confirmPasscode}
-              setState={setConfirmPasscode}
-            />
-            {!passwordConfirmed &&
-              confirmPasscode[3].trim().length !== 0 &&
-              newPasscode[3].trim().length !== 0 && (
-                <Text style={[styles.errorMessage, {color: colors.danger}]}>
-                  Password not matched
-                </Text>
-              )}
-          </View>
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              {backgroundColor: currentTheme.baseColor},
-            ]}
-            onPress={handleSaveButton}>
-            <Text
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Confirm New Passcode</Text>
+              <InputPasscode
+                state={confirmPasscode}
+                setState={setConfirmPasscode}
+              />
+              {!passwordConfirmed &&
+                confirmPasscode[3].trim().length !== 0 &&
+                newPasscode[3].trim().length !== 0 && (
+                  <Text style={[styles.errorMessage, {color: colors.danger}]}>
+                    Password not matched
+                  </Text>
+                )}
+            </View>
+            <TouchableOpacity
               style={[
-                styles.saveButtonText,
-                {color: currentTheme.contrastColor},
-              ]}>
-              Save
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+                styles.saveButton,
+                {backgroundColor: currentTheme.baseColor},
+              ]}
+              onPress={handleSaveButton}>
+              <Text
+                style={[
+                  styles.saveButtonText,
+                  {color: currentTheme.contrastColor},
+                ]}>
+                Save
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
