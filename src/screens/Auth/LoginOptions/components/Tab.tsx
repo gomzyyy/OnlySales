@@ -6,12 +6,8 @@ import {
 import React, {useState} from 'react';
 import {Customer, Shopkeeper} from '../../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {navigate} from '../../../../utils/nagivationUtils';
-import useTheme from '../../../../hooks/useTheme';
+import {useTheme} from '../../../../hooks/index';
 import LongPressEnabled from '../../../../customComponents/LongPressEnabled';
-import SlideUpContainer from '../../../../components/SlideUpContainer';
-import PopupContainer from '../../../../components/PopUp';
-import TabLongPressOptions from '../../../Dashboard/components/TabLongPressOptions';
 const EditCustomer = React.lazy(()=>import("../../../../components/EditCustomer"))
 
 type TabProps = {

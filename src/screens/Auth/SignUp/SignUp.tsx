@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import React, {useState} from 'react';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {showToast} from '../../../service/fn';
@@ -62,10 +62,6 @@ const SignUp = () => {
       });
       return;
     }
-
-    dispatch(
-      setShopkeeper({name: name.trim(), userId: userId.trim(), phoneNumber}),
-    );
     navigate('AskAboutUserInfo', {name, userId});
   };
 

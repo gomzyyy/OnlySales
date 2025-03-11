@@ -5,13 +5,13 @@ import {
   App,
   Customer,
   Product,
-  newUdharProduct,
+  newSoldProduct,
   AppTheme,
 } from '../../types';
 import {AdminRole, BusinessType} from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
-import {randomId} from '../../src/service/fn';
+import {randomId, showToast} from '../../src/service/fn';
 
 type ShopkeeperInitialStateType = {
   shopkeeper: Shopkeeper;
@@ -23,12 +23,13 @@ const initialState: ShopkeeperInitialStateType = {
     id: '1',
     name: '',
     userId: '',
+    businessName: '',
     phoneNumber: undefined,
     sessionId: null,
     role: AdminRole.SHOPKEEPER,
     image: undefined,
     businessType: BusinessType.RETAIL,
-    menu: [],
+    inventory: [],
     starProducts: [],
     accessPasscode: undefined,
     customers: d.customers,
@@ -55,14 +56,19 @@ const shopkeeperSlice = createSlice({
       action: PayloadAction<{
         name: string;
         userId: string;
+        businessName?: string;
         phoneNumber?: string;
         businessType?: BusinessType;
       }>,
     ) => {
-      const {name, userId, phoneNumber, businessType} = action.payload;
+      const {name, userId, phoneNumber, businessType, businessName} =
+        action.payload;
+      if (!name || !userId) {
+        showToast({type: 'info', text1: 'Error: Shopkeeper.ts;'});
+        return;
+      }
       const prevShopkeeper = state.app.previousShopkeepers;
       const ifExisting = prevShopkeeper.find(s => s.userId === userId);
-      console.log(ifExisting);
       if (ifExisting) return;
       const newShopkeeper: Shopkeeper = {
         id: randomId(),
@@ -71,14 +77,14 @@ const shopkeeperSlice = createSlice({
         phoneNumber: phoneNumber,
         sessionId: Date.now(),
         role: AdminRole.SHOPKEEPER,
-        businessType: businessType ?? BusinessType.RETAIL,
-        menu: [],
+        businessName,
+        businessType,
+        inventory: [],
         customers: [],
         createdAt: Date.now().toString(),
         updatedAt: Date.now().toString(),
       };
       state.app.previousShopkeepers.push(newShopkeeper);
-      console.log(newShopkeeper);
       state.shopkeeper = newShopkeeper;
     },
     toogleLockApp: (state, action: PayloadAction<boolean>) => {
@@ -107,7 +113,6 @@ const shopkeeperSlice = createSlice({
       const newPrevShopkeepers = state.app.previousShopkeepers.map(s =>
         s.userId === ifExisting.userId ? newShopkeeper : s,
       );
-      console.log(newShopkeeper);
       state.app.previousShopkeepers = newPrevShopkeepers;
       state.shopkeeper = newShopkeeper;
     },
@@ -158,7 +163,7 @@ const shopkeeperSlice = createSlice({
     createCustomers: (
       state,
       action: PayloadAction<{
-        fullName: string;
+        name: string;
         phoneNumber: string;
         address: string;
       }>,
@@ -171,7 +176,7 @@ const shopkeeperSlice = createSlice({
         createdAt: new Date(Date.now()).toDateString(),
         updatedAt: new Date(Date.now()).toDateString(),
       };
-
+      console.log(newCustomer);
       state.shopkeeper.customers = [newCustomer, ...currentCustomers];
     },
     updateCustomer: (state, action: PayloadAction<Customer>) => {
@@ -192,7 +197,7 @@ const shopkeeperSlice = createSlice({
     },
     addNewUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; products: newUdharProduct[]}>,
+      action: PayloadAction<{customer: Customer; products: newSoldProduct[]}>,
     ) => {
       const newUdharList = action.payload.products;
       const customer = action.payload.customer;
@@ -211,21 +216,26 @@ const shopkeeperSlice = createSlice({
       );
 
       const newAllUdhars = [...updatedUdhars, ...newUnpaidUdhars];
-
-      state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
+      const updatedCustomers = state.shopkeeper.customers.map(s =>
         s.id === customer.id ? {...s, unpaidPayments: newAllUdhars} : s,
       );
-      state.shopkeeper.menu = state.shopkeeper.menu.map(s => {
-        const foundProduct = newAllUdhars.find(d => s.id === d.id);
+      state.shopkeeper.customers = updatedCustomers;
+      const newInventory = state.shopkeeper.inventory.map(s => {
+        const foundProduct = newUdharList.find(d => s.id === d.id);
         return foundProduct
-          ? {...s, totalSold: (s.totalSold || 0) + foundProduct.count}
+          ? {
+              ...s,
+              totalSold: (s.totalSold || 0) + foundProduct.count,
+              stock: (s.stock || 0) - foundProduct.count,
+            }
           : s;
       });
+      state.shopkeeper.inventory = newInventory;
     },
 
     removeUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
     ) => {
       const {customer, product} = action.payload;
       const customerIndex = state.shopkeeper.customers.findIndex(
@@ -244,7 +254,7 @@ const shopkeeperSlice = createSlice({
     },
     removePaidUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
     ) => {
       const {customer, product} = action.payload;
 
@@ -265,7 +275,7 @@ const shopkeeperSlice = createSlice({
 
     setToPaid: (
       state,
-      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
     ) => {
       const customers = state.shopkeeper.customers;
       const {customer, product} = action.payload;
@@ -292,7 +302,7 @@ const shopkeeperSlice = createSlice({
 
     setToUnpaid: (
       state,
-      action: PayloadAction<{customer: Customer; product: newUdharProduct}>,
+      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
     ) => {
       const customers = state.shopkeeper.customers;
       const {customer, product} = action.payload;
@@ -312,13 +322,21 @@ const shopkeeperSlice = createSlice({
       state.shopkeeper.customers = updatedCustomers;
     },
 
-    addProductToMenu: (state, action: PayloadAction<{product: Product}>) => {
+    addProductToInventory: (
+      state,
+      action: PayloadAction<{product: Product}>,
+    ) => {
       const newProduct = action.payload.product;
-      state.shopkeeper.menu = [newProduct, ...state.shopkeeper.menu];
+      state.shopkeeper.inventory = [newProduct, ...state.shopkeeper.inventory];
     },
-    editShelfProduct: (state, action: PayloadAction<{product: Product}>) => {
+    editInventoryProduct: (
+      state,
+      action: PayloadAction<{product: Product}>,
+    ) => {
       const {product} = action.payload;
-      const foundProduct = state.shopkeeper.menu.find(s => s.id === product.id);
+      const foundProduct = state.shopkeeper.inventory.find(
+        s => s.id === product.id,
+      );
       if (foundProduct) {
         Object.assign(foundProduct, {
           ...product,
@@ -326,13 +344,15 @@ const shopkeeperSlice = createSlice({
         });
       }
     },
-    removeProductFromMenu: (
+    removeProductFromInventory: (
       state,
       action: PayloadAction<{product: Product}>,
     ) => {
       const {product} = action.payload;
-      const newMenu = state.shopkeeper.menu.filter(s => s.id !== product.id);
-      state.shopkeeper.menu = newMenu;
+      const newInventory = state.shopkeeper.inventory.filter(
+        s => s.id !== product.id,
+      );
+      state.shopkeeper.inventory = newInventory;
     },
   },
 });
@@ -353,9 +373,9 @@ export const {
   removePaidUdhar,
   setToPaid,
   setToUnpaid,
-  addProductToMenu,
-  editShelfProduct,
-  removeProductFromMenu,
+  addProductToInventory,
+  editInventoryProduct,
+  removeProductFromInventory,
   setTheme,
 } = shopkeeperSlice.actions;
 export default shopkeeperSlice.reducer;

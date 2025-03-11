@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 import React, {Dispatch, SetStateAction} from 'react';
 import {Picker} from '@react-native-picker/picker';
 import { AdminRole } from '../../enums';
-import useTheme from '../hooks/useTheme';
+import {useTheme} from '../hooks/index';
 
 
 type RolePickerProps = {

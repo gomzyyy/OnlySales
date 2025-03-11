@@ -3,7 +3,7 @@ import React from 'react';
 import {Customer} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
 import LinearGradient from 'react-native-linear-gradient';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 
 type CustomerInfoProps = {
   customer: Customer;

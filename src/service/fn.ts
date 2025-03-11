@@ -27,7 +27,7 @@ export const showToast = ({
   });
 };
 
-export const hideToast=()=>Toast.hide()
+export const hideToast = () => Toast.hide();
 
 export const Confirm = async (
   title: string,
@@ -50,3 +50,41 @@ export const toogleState = (
     false: () => fn(false),
   };
 };
+export const checkDate = (date: string | number) => {
+  // Ensure proper date conversion
+  const parsedDate =
+    typeof date === 'number'
+      ? new Date(date) 
+      : new Date(isNaN(Number(date)) ? date : Number(date));
+
+  if (isNaN(parsedDate.getTime())) {
+    console.error('Invalid date:', date);
+    return {
+      sameDay: false,
+      thisMonth: false,
+      lastMonth: false,
+      olderThanLastMonth: false,
+      monthsOld: null,
+    };
+  }
+
+  const now = new Date();
+  const monthDifference =
+    (now.getFullYear() - parsedDate.getFullYear()) * 12 +
+    (now.getMonth() - parsedDate.getMonth());
+
+  const sameDay =
+    parsedDate.getFullYear() === now.getFullYear() &&
+    parsedDate.getMonth() === now.getMonth() &&
+    parsedDate.getDate() === now.getDate();
+
+  return {
+    sameDay,
+    thisMonth: monthDifference === 0,
+    lastMonth: monthDifference === 1,
+    olderThanLastMonth: monthDifference > 1,
+    monthsOld: monthDifference,
+  };
+};
+
+

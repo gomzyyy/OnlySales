@@ -11,11 +11,11 @@ import React, {useEffect, useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import MenuItem from './MenuItem';
+import InventoryItem from './InventoryItem';
 import SearchBar from '../../Search/components/subcomponents/SearchBar';
-import {Customer, newUdharProduct, Product} from '../../../../types';
+import {Customer, newSoldProduct, Product} from '../../../../types';
 import {addNewUdhar} from '../../../../store/slices/shopkeeper';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 
 type AddUdharProps = {
   close?: () => void;
@@ -28,20 +28,23 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const menu = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
-  const sortedMenu: Product[] = [...menu].sort(
+  const inventory = useSelector(
+    (s: RootState) => s.shopkeeper.shopkeeper.inventory,
+  );
+  const sortedInventory: Product[] = [...inventory].sort(
     (a, b) => b.totalSold - a.totalSold,
   );
   const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
-  const [menuItems, setMenuItems] = useState<Product[]>(sortedMenu);
+  const [inventoryItems, setInventoryItems] =
+    useState<Product[]>(sortedInventory);
   const [query, setQuery] = useState<string>('');
-  const [selectedProducts, setSelectedProducts] = useState<newUdharProduct[]>(
+  const [selectedProducts, setSelectedProducts] = useState<newSoldProduct[]>(
     [],
   );
   const [udharAmount, setUdharAmount] = useState<number>(0);
 
-  const handleNewUdhars = (s: newUdharProduct) => {
-    const alreadyExist: newUdharProduct | undefined = selectedProducts
+  const handleNewUdhars = (s: newSoldProduct) => {
+    const alreadyExist: newSoldProduct | undefined = selectedProducts
       ? selectedProducts.find(f => f.id === s.id)
       : undefined;
     if (alreadyExist) {
@@ -93,7 +96,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           ),
       );
     }
-    const newProducts: newUdharProduct = {
+    const newProducts: newSoldProduct = {
       ...product,
       count: count,
       addedAt: Date.now().toString(),
@@ -103,6 +106,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
   const handleAddUdharBtn = () => {
     if (selectedProducts && selectedProducts.length !== 0) {
+      console.log(selectedProducts);
       dispatch(
         addNewUdhar({
           customer,
@@ -115,15 +119,15 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
   useEffect(() => {
     if (query.trim().length !== 0) {
-      const queryResults = menuItems.filter(s =>
+      const queryResults = inventoryItems.filter(s =>
         s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
       );
-      setMenuItems(queryResults);
+      setInventoryItems(queryResults);
     } else {
-      setMenuItems(sortedMenu);
+      setInventoryItems(sortedInventory);
     }
     return () => {
-      setMenuItems(sortedMenu);
+      setInventoryItems(sortedInventory);
     };
   }, [query]);
 
@@ -151,11 +155,14 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             flexDirection: 'row',
             flexWrap: 'wrap',
           }}>
-          {menuItems.map((f, i) => (
-            <MenuItem key={i} product={f} callback={handleSetUdharAmount} />
+          {inventoryItems.map((f, i) => (
+            <InventoryItem
+              key={i}
+              product={f}
+              callback={handleSetUdharAmount}
+            />
           ))}
         </ScrollView>
-        {/* </View>     */}
         <TouchableOpacity
           style={[styles.doneAdding, {backgroundColor: currentTheme.baseColor}]}
           activeOpacity={0.8}
@@ -192,7 +199,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 120,
     borderWidth: 2,
-    // borderColor: currentTheme.baseColor,
     borderRadius: 12,
     paddingHorizontal: 6,
     paddingVertical: 4,
@@ -200,7 +206,6 @@ const styles = StyleSheet.create({
   selectedProductList: {
     flex: 1,
     marginTop: 4,
-    // backgroundColor: currentTheme.bgColor,
     borderRadius: 8,
     padding: 8,
   },
@@ -214,11 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
-  bestSellerProducts: {
-    // gap:10,
-    // flexDirection:"row",
-    // flexWrap:"wrap"
-  },
+  bestSellerProducts: {},
   searchBarContainer: {
     alignItems: 'center',
     marginBottom: 16,
@@ -240,31 +241,3 @@ const styles = StyleSheet.create({
 });
 
 export default AddUdhar;
-
-// <View
-// style={[
-//   styles.selectedProductsContainer,
-//   {width: deviceWidth * 0.9},
-// ]}>
-// <Text style={{textAlign: 'center', fontWeight: 'bold'}}>
-//   {selectedProducts.length === 0
-//     ? 'No Products selected'
-//     : 'Selected products'}
-// </Text>
-// <ScrollView
-//   style={styles.selectedProductList}
-//   contentContainerStyle={{
-//     gap: 8,
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//   }}>
-//   {selectedProducts.map((m, i) => (
-//     <MenuItem
-//       product={m}
-//       key={i}
-//       removeIcon={true}
-//       onPress={handleRemoveSelectedProducts}
-//     />
-//   ))}
-// </ScrollView>
-// </View>

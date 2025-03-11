@@ -5,6 +5,8 @@ import {
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
 import Icon1 from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import Icon3 from 'react-native-vector-icons/FontAwesome5';
 import {navigate} from '../../utils/nagivationUtils';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
@@ -12,31 +14,58 @@ import {useNavigation} from '@react-navigation/native';
 import {DrawerActions} from '@react-navigation/native';
 import {navigationRef} from '../../utils/nagivationUtils';
 const NoProfile = require('../../assets/images/no-profile.jpg');
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
 
 type menuNavContent = {
   name: string;
   navigateTo: string;
   icon: (color: string) => React.JSX.Element;
+  disabled: boolean;
 };
 
 const menuNav: menuNavContent[] = [
+  // {
+  //   name: 'Dashboard',
+  //   navigateTo: 'Dashboard',
+  //   icon: (color: string) => (
+  //     <Icon1 name="people-sharp" color={color} size={26} />
+  //   ),
+  // disabled:false
+  // },
   {
-    name: 'Dashboard',
-    navigateTo: 'Dashboard',
+    name: 'Inventory',
+    navigateTo: 'MyInventory',
+    icon: (color: string) => <Icon1 name="fast-food" color={color} size={26} />,
+    disabled: false,
+  },
+  {
+    name: 'Customers',
+    navigateTo: 'Customers',
     icon: (color: string) => (
       <Icon1 name="people-sharp" color={color} size={26} />
     ),
+    disabled: true,
   },
+  {
+    name: 'My Employees',
+    navigateTo: 'Employees',
+    icon: (color: string) => (
+      <Icon3 name="network-wired" color={color} size={26} />
+    ),
+    disabled: true,
+  },
+  {
+    name: 'Analytics',
+    navigateTo: 'Analytics',
+    icon: (color: string) => <Icon2 name="analytics" color={color} size={26} />,
+    disabled: true,
+  },
+
   {
     name: 'Settings',
     navigateTo: 'Settings',
     icon: (color: string) => <Icon1 name="settings" color={color} size={26} />,
-  },
-  {
-    name: 'Menu',
-    navigateTo: 'MyMenu',
-    icon: (color: string) => <Icon1 name="fast-food" color={color} size={26} />,
+    disabled: false,
   },
 ];
 
@@ -95,7 +124,8 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
               ]}
               key={i}
               onPress={() => handleNavigationByMenu(m.navigateTo)}
-              activeOpacity={0.8}>
+              activeOpacity={0.8}
+              disabled={m.disabled}>
               {m.icon(currentTheme.contrastColor)}
               <Text
                 style={[styles.tabText, {color: currentTheme.contrastColor}]}>

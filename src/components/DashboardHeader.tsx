@@ -5,13 +5,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {RootState} from '../../store/store';
 import {useSelector} from 'react-redux';
 import {dashboardHeaderTabs} from '../utils/Constants';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 import {navigate} from '../utils/nagivationUtils';
-import useTheme from '../hooks/useTheme';
+import {useTheme, useAnalytics} from '../hooks/index';
+import {useFocusEffect} from '@react-navigation/native';
 
 type DashboardHeaderProps = {
   searchBar?: boolean;
@@ -23,7 +24,45 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   flex = true,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const {soldThisMonth = [], todaySales = []} = useAnalytics();
   const app = useSelector((s: RootState) => s.shopkeeper.app);
+
+  const totalMonthlySales = useMemo(
+    () =>
+      soldThisMonth.reduce(
+        (acc, s) =>
+          acc +
+          ((s.discountedPrice ? s.discountedPrice : s.basePrice) *
+            s.totalSold || 0),
+        0,
+      ),
+    [soldThisMonth],
+  );
+  const onGoingDaySales = useMemo(
+    () =>
+      todaySales.reduce(
+        (acc, s) =>
+          acc +
+          ((s.discountedPrice ? s.discountedPrice : s.basePrice) *
+            s.totalSold || 0),
+        0,
+      ),
+    [todaySales],
+  );
+  const [monthlySales, setMonthlySales] = useState<number>(totalMonthlySales);
+  const [todaySalesNum, setTodaySalesNum] = useState<number>(onGoingDaySales);
+
+  const updateSalesCount = useCallback(() => {
+    setMonthlySales(totalMonthlySales);
+    setTodaySalesNum(onGoingDaySales);
+  }, [totalMonthlySales, onGoingDaySales]);
+
+  useFocusEffect(
+    useCallback(() => {
+      updateSalesCount();
+    }, [updateSalesCount]),
+  );
+
   return (
     <KeyboardAvoidingView
       style={{flex: flex ? 1 : 0}}
@@ -32,7 +71,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <ScrollView
           horizontal={true}
           style={styles.container}
-          contentContainerStyle={{gap: 20}}
+          contentContainerStyle={{gap: 20, paddingHorizontal: 10}}
           nestedScrollEnabled
           showsVerticalScrollIndicator={false}>
           {dashboardHeaderTabs.map(t => (
@@ -40,35 +79,43 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               key={t.name}
               style={[
                 styles.innerBox,
-                {backgroundColor: currentTheme.baseColor},
+                {backgroundColor: currentTheme.contrastColor},
               ]}>
               <View style={styles.infoContainer}>
                 <Text
-                  style={[
-                    styles.textLabel,
-                    {color: currentTheme.contrastColor},
-                  ]}>
+                  style={[styles.textLabel, {color: currentTheme.baseColor}]}>
                   {t.name}
                 </Text>
                 <Text
                   style={[
                     styles.textInfo,
-                    {color: currentTheme.contrastColor},
-                  ]}>{`${app.currency}${t.data.amount}`}</Text>
+                    {color: currentTheme.baseColor},
+                  ]}>{`${app.currency}${
+                  t.name === 'This Month' ? monthlySales : todaySalesNum
+                }`}</Text>
               </View>
             </View>
           ))}
         </ScrollView>
         {searchBar && (
           <Pressable
-            style={styles.searchQueryContainer}
+            style={[
+              styles.searchQueryContainer,
+              {backgroundColor: currentTheme.contrastColor},
+            ]}
             onPress={() => navigate('Search')}>
             <View
               style={[
                 styles.searchQueryInput,
                 {borderColor: currentTheme.baseColor},
               ]}>
-              <Text style={styles.searchQueryInputText}>Search by name</Text>
+              <Text
+                style={[
+                  styles.searchQueryInputText,
+                  {color: currentTheme.baseColor},
+                ]}>
+                Search by customer name
+              </Text>
             </View>
           </Pressable>
         )}
@@ -78,7 +125,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 };
 
 const styles = StyleSheet.create({
-  parent: {marginBottom: 20, gap: 6},
+  parent: {gap: 6},
   container: {
     flexDirection: 'row',
     marginBottom: 10,
@@ -105,7 +152,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
   },
-  searchQueryContainer: {},
+  searchQueryContainer: {
+    padding: 10,
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
+  },
   searchQueryInput: {
     borderWidth: 2,
     borderRadius: 8,

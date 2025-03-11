@@ -1,6 +1,6 @@
 import {TouchableOpacity} from 'react-native';
 import React, {ReactNode, useRef, useState} from 'react';
-import useHaptics from '../hooks/useHaptics';
+import {useHaptics} from '../hooks/index';
 
 type LongPressEnabledProps = {
   dummy?: boolean;

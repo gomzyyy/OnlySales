@@ -1,35 +1,33 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
-import {Customer} from '../../../../types';
+import { Product} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {removeCustomer} from '../../../../store/slices/shopkeeper';
+import {removeProductFromInventory} from '../../../../store/slices/shopkeeper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
 
 type TabLongPressOptionsProps = {
-  i: Customer;
+  i: Product;
   close: () => void;
-  triggerEdit: () => void;
 };
 
 const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   i,
   close,
-  triggerEdit,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
 
   const handleDeleteCustomer = async (): Promise<void> => {
     const res = await Confirm(
-      'Are you sure you want to remove this customer?',
-      'Once customer removed, cannot be reversed! be careful of miss-touching removal button.',
+      'Are you sure you want to remove this product?',
+      'Once product removed, cannot be reversed! be careful of miss-touching removal button.',
     );
     if (res) {
-      dispatch(removeCustomer(i));
+      dispatch(removeProductFromInventory({product:i}));
       showToast({type: 'success', text1: 'Customer removed successfully.'});
       close();
       return;
@@ -54,19 +52,6 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           </Text>
           <Icon name="delete" size={18} color={colors.danger} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonEdit}
-          activeOpacity={0.8}
-          onPress={triggerEdit}>
-          <Text
-            style={[
-              styles.buttonEditText,
-              {color: currentTheme.modal.inputText},
-            ]}>
-            Edit
-          </Text>
-          <Icon name="edit" size={18} color={colors.iconBlack} />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -75,7 +60,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 const styles = StyleSheet.create({
   parent: {
     paddingTop: 20,
-    height: deviceHeight * 0.26,
+    height: deviceHeight * 0.18,
     borderRadius: 20,
     marginTop: 60,
     elevation:30,

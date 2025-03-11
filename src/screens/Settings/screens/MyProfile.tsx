@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import ShopkeeperInfo from '../components/ShopkeeperInfo';
 import {TextInput} from 'react-native-gesture-handler';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 import {AdminRole, BusinessType} from '../../../../enums';
 import {Confirm, showToast} from '../../../service/fn';
 import {editShopkeeper} from '../../../../store/slices/shopkeeper';
@@ -31,7 +31,7 @@ const MyProfile = () => {
     shopkeeper.phoneNumber ?? '',
   );
   const [businessType, setBusinessType] = useState<BusinessType>(
-    shopkeeper.businessType,
+    shopkeeper.businessType || BusinessType.RETAIL,
   );
 
   const [edited, setEdited] = useState<boolean>(false);
@@ -142,7 +142,7 @@ const MyProfile = () => {
               <Text style={styles.inputLabel}>Registered business type:</Text>
               <BusinessTypePicker
                 enabled={true}
-                value={shopkeeper.businessType}
+                value={shopkeeper.businessType || BusinessType.RETAIL}
                 setState={setBusinessType}
               />
             </View>

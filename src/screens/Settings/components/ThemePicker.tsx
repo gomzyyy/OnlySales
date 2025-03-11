@@ -1,18 +1,19 @@
 import {StyleSheet} from 'react-native';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../../../store/store';
 import {Picker} from '@react-native-picker/picker';
 import {AppThemeName} from '../../../../enums';
-import { AppTheme } from '../../../../types';
-import { Theme } from '../../../utils/Constants';
-import { navigate } from '../../../utils/nagivationUtils';
-import { setTheme } from '../../../../store/slices/shopkeeper';
-import { showToast } from '../../../service/fn';
+import {AppTheme} from '../../../../types';
+import {Theme} from '../../../utils/Constants';
+import {navigate} from '../../../utils/nagivationUtils';
+import {setTheme} from '../../../../store/slices/shopkeeper';
+import {showToast} from '../../../service/fn';
+import {useTheme} from '../../../hooks/index';
 
 const ThemePicker = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {currentTheme} = useSelector((s: RootState) => s.shopkeeper.app);
+  const {currentTheme} = useTheme();
 
   const handleThemeChange = (theme: AppThemeName) => {
     let themeData: AppTheme | undefined = Theme.find(s => s.name === theme);
@@ -30,21 +31,33 @@ const ThemePicker = () => {
       style={[
         styles.dropdown,
         {
-          color: currentTheme?.modal.pickerText,
-          backgroundColor: currentTheme?.modal.pickerbg,
+          color: currentTheme.modal.pickerText,
+          backgroundColor: currentTheme.modal.pickerbg,
         },
       ]}
       selectedValue={currentTheme?.name}
       onValueChange={(value: AppThemeName) => handleThemeChange(value)}
       dropdownIconColor={currentTheme?.modal.pickerText}>
-      <Picker.Item label={AppThemeName.PURPLE} value={AppThemeName.PURPLE} />
-      <Picker.Item label={AppThemeName.YELLOW} value={AppThemeName.YELLOW} />
-      <Picker.Item label={AppThemeName.RED} value={AppThemeName.RED} />
-      <Picker.Item label={AppThemeName.GREEN} value={AppThemeName.GREEN} />
-      <Picker.Item label={AppThemeName.BLUE} value={AppThemeName.BLUE} />
       <Picker.Item
-        label={AppThemeName.ROYAL_BLUE}
-        value={AppThemeName.ROYAL_BLUE}
+        label={`${AppThemeName.PURPLE} 🟣`}
+        value={AppThemeName.PURPLE}
+      />
+      <Picker.Item
+        label={`${AppThemeName.YELLOW} 🟡`}
+        value={AppThemeName.YELLOW}
+      />
+      <Picker.Item label={`${AppThemeName.RED} 🔴`} value={AppThemeName.RED} />
+      <Picker.Item
+        label={`${AppThemeName.GREEN} 🟢`}
+        value={AppThemeName.GREEN}
+      />
+      <Picker.Item
+        label={`${AppThemeName.BLUE} 🔵`}
+        value={AppThemeName.BLUE}
+      />
+      <Picker.Item
+        label={`${AppThemeName.CORAL} 🟠`}
+        value={AppThemeName.CORAL}
       />
     </Picker>
   );

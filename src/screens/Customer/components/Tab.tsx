@@ -1,17 +1,17 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
-import {Customer, newUdharProduct} from '../../../../types';
+import {Customer, newSoldProduct} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 import {Confirm} from '../../../service/fn';
 import {setToPaid, setToUnpaid} from '../../../../store/slices/shopkeeper';
 
 type TabProps = {
-  i: newUdharProduct;
+  i: newSoldProduct;
   lastIndex?: boolean;
   customer: Customer;
   actionType: 'PAID' | 'UNPAID';

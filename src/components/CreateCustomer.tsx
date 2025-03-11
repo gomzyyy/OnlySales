@@ -13,7 +13,7 @@ import {showToast} from '../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
 import {createCustomers} from '../../store/slices/shopkeeper';
-import useTheme from '../hooks/useTheme';
+import {useTheme} from '../hooks/index';
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -24,18 +24,18 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const [fullName, setFullName] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const [phoneNumber, setphoneNumber] = useState<string>('');
   // const [image, setImage] = useState<string>('');
   const [address, setAddress] = useState<string>('');
 
   const handleSaveBtn = () => {
     const customerData = {
-      fullName,
+      name: name,
       phoneNumber,
       address,
     };
-    if (fullName.trim().length === 0) {
+    if (name.trim().length === 0) {
       showToast({
         type: 'error',
         text1: "Can't add new customer.",
@@ -69,8 +69,8 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             Customer name
           </Text>
           <TextInput
-            value={fullName}
-            onChangeText={setFullName}
+            value={name}
+            onChangeText={setName}
             style={[
               styles.inputText,
               {borderColor: currentTheme.modal.inputBorder},
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     height: deviceHeight * 0.51,
     borderRadius: 20,
     marginBottom: 10,
-    elevation:30,
+    elevation: 30,
   },
   formTitle: {
     textAlign: 'center',

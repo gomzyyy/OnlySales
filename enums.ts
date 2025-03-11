@@ -20,11 +20,10 @@ export enum AdminRole {
   CUSTOMER = "customer"
 }
 export enum AppThemeName{
-  PURPLE = 'Purple',
-    RED = 'Red',
-    YELLOW = 'Yellow',
-    GREEN = 'Green',
-    BLUE = 'Blue',
-    ROYAL_BLUE = 'Royal Blue'
+  PURPLE = 'Midnight Orchid',
+    RED = 'Blood Moon',
+    YELLOW = 'Molten Gold',
+    GREEN = 'Cyber Lime',
+    BLUE = 'Deep Ocean',
+    CORAL = 'Salmon Mist',
 }
-

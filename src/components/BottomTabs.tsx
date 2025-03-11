@@ -3,7 +3,7 @@ import React from 'react';
 import {deviceWidth} from '../utils/Constants';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
-import useTheme from "../hooks/useTheme"
+import {useTheme} from "../hooks/index"
 
 const BottomTabs = () => {
   const {currentTheme} = useTheme()

@@ -16,7 +16,7 @@ import {useDispatch} from 'react-redux';
 import Tab from '../screens/Dashboard/components/Tab';
 import {showToast} from '../service/fn';
 import {updateCustomer} from '../../store/slices/shopkeeper';
-import useTheme from '../hooks/useTheme';
+import {useTheme} from '../hooks/index';
 
 type EditCustomerProps = {
   i: Customer;
@@ -29,19 +29,19 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const [fullName, setFullName] = useState<string>(i.fullName);
+  const [name, setName] = useState<string>(i.name);
   const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber || '');
   // const [image, setImage] = useState<string>('');
   const [address, setAddress] = useState<string>(i.address || '');
   const [updatedCustomer, setUpdatedCustomer] = useState<Customer>({...i});
 
   const SaveUpdatedCustomer = () => {
-    if (fullName.trim().length === 0) {
+    if (name.trim().length === 0) {
       showToast({type: 'info', text1: "Name can't be empty"});
       close();
       return;
     }
-    dispatch(updateCustomer({...i, fullName}));
+    dispatch(updateCustomer({...i, name}));
     close();
   };
 
@@ -56,7 +56,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView style={{flex: 1}} nestedScrollEnabled>
           <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-            Edit Customer: {i.fullName}
+            Edit Customer: {i.name}
           </Text>
           <View style={styles.formContainer}>
             <View style={styles.inputTitleContainer}>
@@ -65,12 +65,12 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
                 Customer name
               </Text>
               <TextInput
-                value={fullName}
+                value={name}
                 onChangeText={value => {
-                  setFullName(value);
+                  setName(value);
                   setUpdatedCustomer({
                     ...i,
-                    fullName: value,
+                    name: value,
                   });
                 }}
                 style={[

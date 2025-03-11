@@ -1,16 +1,15 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {Text, StyleSheet, View, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import {Product} from '../../../../types';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import EditProduct from '../components/EditCreateProduct';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../store/store';
+import {deviceWidth} from '../../../utils/Constants';
 
 type TabProps = {
   i: Product;
@@ -19,15 +18,17 @@ type TabProps = {
 
 const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const {currency} = useSelector((s: RootState) => s.shopkeeper.app);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
-  const [openLongPressOptions, setOpenLongPressOptions] = useState<boolean>(false);
+  const [openLongPressOptions, setOpenLongPressOptions] =
+    useState<boolean>(false);
 
   const handleClickingTab = () => {
     setOpenEditing(true);
   };
-  const handleOpenLongPressOptions=()=>setOpenLongPressOptions(true)
-  const handleCloseLongPressOptions=()=>setOpenLongPressOptions(false)
-  const handleCloseEditing=()=>setOpenEditing(false)
+  const handleOpenLongPressOptions = () => setOpenLongPressOptions(true);
+  const handleCloseLongPressOptions = () => setOpenLongPressOptions(false);
+  const handleCloseEditing = () => setOpenEditing(false);
   return (
     <LongPressEnabled
       longPressCanceledAction={handleClickingTab}
@@ -54,12 +55,12 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           ]}>
           <View style={styles.infoContainer}>
             <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
-              Price: {i.basePrice}
+              Price: {`${currency}${i.basePrice}`}
             </Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
-              Discounted price: {i.discountedPrice}
+              Discounted price: {`${currency}${i.discountedPrice}`}
             </Text>
           </View>
           <View style={styles.infoContainer}>
@@ -72,13 +73,37 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
               Total sold: {i.totalSold}
             </Text>
           </View>
+          <View style={styles.infoContainer}>
+            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+              Stock: {i.stock}
+            </Text>
+          </View>
+
+          <View style={styles.infoContainer}>
+            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+              Product cost: {`${currency}${i.productCost}`}
+            </Text>
+          </View>
+          {i.productCost && (
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+                Net Profit/sale:{' '}
+                {`${
+                 parseFloat(( i.discountedPrice && i.discountedPrice > 0
+                    ? (i.discountedPrice / i.productCost) * 100
+                    : (i.basePrice / i.productCost) * 100).toFixed(2))
+                }%`}
+              </Text>
+            </View>
+          )}
         </View>
-        <SlideUpContainer
-          open={openEditing}
-          close={handleCloseEditing}>
+        <SlideUpContainer open={openEditing} close={handleCloseEditing}>
           <EditProduct product={i} close={handleCloseEditing} />
         </SlideUpContainer>
-        <PopupContainer open={openLongPressOptions} close={handleCloseLongPressOptions} padding={true}>
+        <PopupContainer
+          open={openLongPressOptions}
+          close={handleCloseLongPressOptions}
+          padding={true}>
           <TabLongPressOptions i={i} close={handleCloseLongPressOptions} />
         </PopupContainer>
       </View>
@@ -91,14 +116,14 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     justifyContent: 'space-between',
     borderRadius: 8,
-    height: 150,
-    width: 150,
+    height: 210,
+    width: deviceWidth * 0.45,
+    maxWidth: 300,
   },
   tabLabel: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    justifyContent: 'center',
+    paddingVertical: 6,
     borderRadius: 6,
   },
   productName: {
@@ -110,7 +135,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     borderRadius: 6,
     padding: 4,
-    height: 80,
   },
   infoContainer: {
     marginTop: 6,

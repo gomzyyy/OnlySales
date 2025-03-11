@@ -5,6 +5,7 @@ import {navigate} from '../../../utils/nagivationUtils';
 
 const AppSettingsOptions = [
   {title: 'App Lock', navigateTo: 'SetPasscode', id: 1},
+  {title: 'Themes', navigateTo: 'ChangeTheme', id: 2},
 ];
 
 const AppSettings = () => {

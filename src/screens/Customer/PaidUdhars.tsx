@@ -2,7 +2,7 @@ import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import CustomerInfo from './components/CustomerInfo';
 import {useRoute} from '@react-navigation/native';
-import {Customer, newUdharProduct} from '../../../types';
+import {Customer, newSoldProduct} from '../../../types';
 import Header from '../../components/Header';
 import Tab from './components/Tab';
 import CustomerHeader from '../../components/CustomerHeader';
@@ -11,11 +11,11 @@ import {RootState} from '../../../store/store';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {back} from '../../utils/nagivationUtils';
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
 
 type RouteType = {
   customer: Customer;
-  products: newUdharProduct[];
+  products: newSoldProduct[];
   date: string;
 };
 
@@ -23,7 +23,7 @@ const PaidUdhars = () => {
     const {currentTheme} = useTheme()
   const params = useRoute().params;
   const {customer, date} = params as RouteType;
-  const paidPayments: newUdharProduct[] =
+  const paidPayments: newSoldProduct[] =
     useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers)?.find(
       c => c.id === customer.id,
     )?.paidPayments || [];

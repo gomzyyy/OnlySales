@@ -2,7 +2,7 @@ import {FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Customer, Product} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../utils/nagivationUtils';
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
 
 type ProductsByDateProps = {
   ArrWithDate: Product[];

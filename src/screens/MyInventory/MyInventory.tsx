@@ -9,17 +9,17 @@ import Tab from './components/Tab';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddProduct from './components/AddProduct';
 import EmptyListMessage from '../../components/EmptyListMessage';
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
 
-const MyMenu = () => {
+const MyInventory = () => {
   const {currentTheme} = useTheme();
 
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const menuItems = useSelector((s: RootState) => s.shopkeeper.shopkeeper.menu);
+  const inventoryItems = useSelector((s: RootState) => s.shopkeeper.shopkeeper.inventory);
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);
 
-  const AddMenuItemIcon = (): React.JSX.Element => {
+  const AddInventoryItemIcon = (): React.JSX.Element => {
     return (
       <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
         <Icon name="plus" color={'black'} size={20} />
@@ -35,13 +35,13 @@ const MyMenu = () => {
         name={`${shopkeeper.name}`}
         backButtom
         customComponent={true}
-        renderItem={<AddMenuItemIcon />}
+        renderItem={<AddInventoryItemIcon />}
         customAction={handleAddButton}
       />
       <View style={styles.contentContainer}>
-        {menuItems.length === 0 ? (
+        {inventoryItems.length === 0 ? (
           <EmptyListMessage
-            title="No Items in your menu!"
+            title="No Items in your inventory!"
             context="Click on PLUS button to add a new item."
           />
         ) : (
@@ -49,14 +49,14 @@ const MyMenu = () => {
             contentContainerStyle={styles.listContainer}
             showsHorizontalScrollIndicator={false}
             nestedScrollEnabled={true}>
-            {menuItems.map((s, i) => (
+            {inventoryItems.map((s, i) => (
               <Tab i={s} key={i} />
             ))}
           </ScrollView>
         )}
       </View>
       <View style={styles.assistTextContainer}>
-        <Text style={styles.assistText}>Click to edit Menu item.</Text>
+        <Text style={styles.assistText}>Click to edit Inventory item.</Text>
       </View>
       {openAddProduct && (
         <SlideUpContainer
@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   listContainer: {
-    // alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     flexWrap: 'wrap',
@@ -95,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyMenu;
+export default MyInventory;

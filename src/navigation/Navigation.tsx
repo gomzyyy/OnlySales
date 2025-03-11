@@ -8,7 +8,7 @@ import Settings from '../screens/Settings/Settings';
 import {navigationRef} from '../utils/nagivationUtils';
 import Customer from '../screens/Customer/Customer';
 import UnpaidUdhars from '../screens/Customer/UnpaidUdhars';
-import MyMenu from '../screens/MyShelf/MyMenu';
+import MyInventory from '../screens/MyInventory/MyInventory';
 import Search from '../screens/Search/Search';
 import PaidUdhars from '../screens/Customer/PaidUdhars';
 import MyProfile from '../screens/Settings/screens/MyProfile';
@@ -26,21 +26,28 @@ import {AppDispatch, RootState} from '../../store/store';
 import {toogleLockApp} from '../../store/slices/shopkeeper';
 import {AppState} from 'react-native';
 import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
+import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
+import { useTheme } from '../hooks/index';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
 const StackNav = () => {
+  const {currentTheme}=useTheme()
   const dispatch = useDispatch<AppDispatch>();
   const {accessPasscode} = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper,
   );
+  const user = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const {appLocked} = useSelector((s: RootState) => s.shopkeeper.app);
   useEffect(() => {
-    if (Array.isArray(accessPasscode)) {
-      dispatch(toogleLockApp(true));
-    }
     const handleAppStateChange = (nextAppState: string) => {
-      if (nextAppState === 'background' || nextAppState === 'inactive') {
+      if (
+        nextAppState === 'background' ||
+        (nextAppState === 'inactive' &&
+          accessPasscode &&
+          Array.isArray(accessPasscode))
+      ) {
         dispatch(toogleLockApp(true));
       }
     };
@@ -53,11 +60,12 @@ const StackNav = () => {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [appLocked, accessPasscode, dispatch]);
   return (
     <stack.Navigator
       screenOptions={{
         headerShown: false,
+        statusBarBackgroundColor:currentTheme.baseColor
       }}>
       <stack.Screen name="SplashScreen" component={SplashScreen} />
       <stack.Screen name="Dashboard" component={Dashboard} />
@@ -65,7 +73,7 @@ const StackNav = () => {
       <stack.Screen name="Customer" component={Customer} />
       <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars} />
       <stack.Screen name="PaidUdhars" component={PaidUdhars} />
-      <stack.Screen name="MyMenu" component={MyMenu} />
+      <stack.Screen name="MyInventory" component={MyInventory} />
       <stack.Screen name="Search" component={Search} />
       <stack.Screen name="MyProfile" component={MyProfile} />
       <stack.Screen name="GetStarted" component={GetStarted} />
@@ -100,11 +108,16 @@ const StackNav = () => {
         component={SetPasscode}
       />
       <stack.Screen
+        name="ChangeTheme"
+        options={{gestureEnabled: false}}
+        component={ChangeTheme}
+      />
+      <stack.Screen
         name="Unlock"
         options={{gestureEnabled: false}}
         component={Unlock}
       />
-        <stack.Screen
+      <stack.Screen
         name="LoginOptions"
         options={{gestureEnabled: false}}
         component={LoginOptions}

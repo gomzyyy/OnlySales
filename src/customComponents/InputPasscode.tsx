@@ -6,7 +6,6 @@ import {
   TextInputKeyPressEventData,
 } from 'react-native';
 import React, {SetStateAction, useRef} from 'react';
-import useTheme from '../hooks/useTheme';
 import {colors} from '../utils/Constants';
 import {isNumber} from '../service/test';
 
@@ -23,7 +22,6 @@ const InputPasscode: React.FC<InputPasscodeProps> = ({
   focused = false,
   error = false,
 }): React.JSX.Element => {
-  const {currentTheme} = useTheme();
   const refs = [
     useRef<TextInput>(null),
     useRef<TextInput>(null),
@@ -66,7 +64,6 @@ const InputPasscode: React.FC<InputPasscodeProps> = ({
             onKeyPress={e => handleOnKeyChange(i, e)}
             keyboardType="numeric"
             secureTextEntry={true}
-            showSoftInputOnFocus={false}
           />
         </View>
       ))}
@@ -80,13 +77,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   inputContainer: {
-    borderWidth: 4,
+    borderBottomWidth: 4,
     borderColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 60,
-    width: 60,
-    borderRadius: 20,
+    height: 50,
+    width: 50,
+    // borderRadius: 20,
   },
   input: {
     color: 'black',

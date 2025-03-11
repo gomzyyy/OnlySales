@@ -10,7 +10,7 @@ import RolePicker from '../../components/RolePicker';
 import {AdminRole} from '../../../enums';
 import {deviceHeight} from '../../utils/Constants';
 import {navigate} from '../../utils/nagivationUtils';
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
 
 const GetStarted = () => {
   const {currentTheme}=useTheme()

@@ -2,9 +2,10 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {Product} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
+import {colors} from '../../../utils/Constants';
 
-type MenuItemProps = {
+type InventoryItemProps = {
   product: Product;
   addIcon?: boolean;
   removeIcon?: boolean;
@@ -19,7 +20,7 @@ type MenuItemProps = {
   }) => void;
 };
 
-const MenuItem: React.FC<MenuItemProps> = ({
+const InventoryItem: React.FC<InventoryItemProps> = ({
   product,
   addIcon = true,
   removeIcon = true,
@@ -48,22 +49,41 @@ const MenuItem: React.FC<MenuItemProps> = ({
   };
 
   return (
-    <View style={[styles.parent, {borderColor: currentTheme.baseColor}]}>
+    <View
+      style={[
+        styles.parent,
+        {
+          borderColor:
+            product.stock === 0 ? colors.danger : currentTheme.baseColor,
+        },
+      ]}>
       <View style={styles.innerContainer}>
         <TouchableOpacity onPress={() => handlePlusMinus('ADD')}>
           {addIcon && (
-            <Icon name="plus" size={20} color={currentTheme.baseColor} />
+            <Icon
+              name="plus"
+              size={20}
+              color={
+                product.stock === 0 ? colors.danger : currentTheme.baseColor
+              }
+            />
           )}
         </TouchableOpacity>
 
         <Text
           style={[
             styles.itemText,
-            {color: currentTheme.baseColor},
+            {color:product.stock === 0 ? colors.danger : currentTheme.baseColor},
           ]}>{`${count}  ${product.name}`}</Text>
         <TouchableOpacity onPress={() => handlePlusMinus('MINUS')}>
           {removeIcon && (
-            <Icon name="minus" size={20} color={currentTheme.baseColor} />
+            <Icon
+              name="minus"
+              size={20}
+              color={
+                product.stock === 0 ? colors.danger : currentTheme.baseColor
+              }
+            />
           )}
         </TouchableOpacity>
       </View>
@@ -90,4 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MenuItem;
+export default InventoryItem;

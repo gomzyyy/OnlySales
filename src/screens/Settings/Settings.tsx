@@ -1,17 +1,14 @@
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
 import React from 'react';
 import Header from '../../components/Header';
-import Tab from './components/shared/Tab';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../store/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store/store';
 import ShopkeeperInfo from './components/ShopkeeperInfo';
 import AccountCenter from './components/AccountCenter';
 import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
-import ThemePicker from './components/ThemePicker';
 
 const Settings = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
 
   return (
@@ -29,7 +26,6 @@ const Settings = () => {
           <Text style={styles.label}>App</Text>
          <AppSettings />
         </View>
-        <ThemePicker />
         <LogoutButton/>
       </ScrollView>
     </View>

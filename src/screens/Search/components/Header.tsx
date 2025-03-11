@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({
     let result: Customer[] = [];
     if (customers.length !== 0) {
       result = customers.filter(s =>
-        s.fullName.trim().toLowerCase().includes(query.trim().toLowerCase()),
+        s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
       );
     }
     result.length !== 0 && dispatch(setSearchResult(result));

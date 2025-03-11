@@ -10,7 +10,8 @@ import SlideupContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
 import EmptyListMessage from './components/EmptyListMessage';
 import {prepareNavigation} from '../../utils/nagivationUtils';
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
+import Customers from '../Customers/Customers';
 
 const Dashboard = () => {
   const {currentTheme} = useTheme();
@@ -19,56 +20,31 @@ const Dashboard = () => {
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
-  const app = useSelector((s: RootState) => s.shopkeeper.app);
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
-
-  console.log(app.previousShopkeepers);
 
   useEffect(() => {
     prepareNavigation();
   }, []);
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme?.contrastColor}}>
-      {!openCreateCustomer && (
-        <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
-      )}
+    <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <Header name="Dashboard" menuButton />
       <View style={styles.contentContainer}>
-        <View style={{flex: 1}}>
-          {customers.length !== 0 ? (
-            <>
-              <DashboardHeader flex={false} />
-              <FlatList
-                data={customers}
-                keyExtractor={s => s.id.toString()}
-                nestedScrollEnabled
-                renderItem={({item}) => <Tab i={item} />}
-                style={{flex: 1}}
-                showsVerticalScrollIndicator={false}
-              />
-            </>
-          ) : (
-            <View style={{flex: 1}}>
-              <DashboardHeader searchBar={false} flex={false} />
-              <EmptyListMessage />
-            </View>
-          )}
-        </View>
+        {/* <View style={{flex: 1}}> */}
+          <DashboardHeader flex={false} />
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: currentTheme.contrastColor,
+            }}></View>
+        {/* </View> */}
       </View>
-      {openCreateCustomer && (
-        <SlideupContainer
-          open={openCreateCustomer}
-          close={handleCloseCreateCustomer}>
-          <CreateCustomer callback={handleCloseCreateCustomer} />
-        </SlideupContainer>
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  contentContainer: {flex: 1, paddingHorizontal: 10},
+  contentContainer: {flex: 1},
 });
 
 export default Dashboard;

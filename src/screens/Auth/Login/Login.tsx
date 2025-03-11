@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, {useState} from 'react';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {useSelector} from 'react-redux';
@@ -47,7 +47,7 @@ const Login = () => {
       return;
     }
     if (user.accessPasscode) {
-      navigate('Unlock', {user});
+      navigate('Unlock', {user,navigateTo:'LoginOptions'});
       return;
     } else {
       navigate('UserFound', {user});

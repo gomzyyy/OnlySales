@@ -2,7 +2,7 @@ import {View, StyleSheet, Image, Text} from 'react-native';
 import React from 'react';
 import {Shopkeeper} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 type ShopkeeperInfoProps = {

@@ -3,7 +3,7 @@ import React from 'react';
 import {Customer} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
-import useTheme from '../../../hooks/useTheme';
+import {useTheme} from '../../../hooks/index';
 
 type TabProps = {
   i: Customer;
@@ -25,7 +25,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
       ]}
       onPress={() => navigate('Customer', {customer: i})}>
       <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
-        {i.fullName}
+        {i.name}
       </Text>
       <Icon name="right" color={currentTheme.tab.icon} size={22} />
     </TouchableOpacity>

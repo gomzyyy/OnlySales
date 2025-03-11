@@ -1,13 +1,21 @@
-import {View, Text, StyleSheet, Pressable, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {back} from '../utils/nagivationUtils';
+import {useTheme} from '../hooks/index';
 
 type HeaderProps = {
   name?: string;
   showTitle?: boolean;
+  titleColor?: string;
   backButtom?: boolean;
   menuButton?: boolean;
   customComponent?: boolean;
@@ -16,14 +24,16 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({
-  name="",
+  name = '',
   showTitle = true,
+  titleColor = '#000',
   backButtom = false,
   menuButton = false,
   customComponent = false,
   renderItem = <></>,
   customAction = () => {},
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   const navigation = useNavigation();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
 
@@ -38,12 +48,12 @@ const Header: React.FC<HeaderProps> = ({
       }}>
       {!backButtom && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>
-          <Icon2 name="menu" size={24} color={'black'} />
+          <Icon2 name="menu" size={24} color={currentTheme.textColor} />
         </Pressable>
       )}
       {backButtom && !menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={() => back()}>
-          <Icon1 name="left" size={24} color={'black'} />
+          <Icon1 name="left" size={24} color={currentTheme.textColor} />
         </Pressable>
       )}
       {showTitle && (
@@ -51,12 +61,16 @@ const Header: React.FC<HeaderProps> = ({
           style={{
             fontSize: 22,
             fontWeight: 'bold',
+            color: currentTheme.textColor,
           }}>
           {name}
         </Text>
       )}
       {customComponent && (
-        <TouchableOpacity activeOpacity={0.5} onPress={customAction} style={styles.rightCustomBtn}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={customAction}
+          style={styles.rightCustomBtn}>
           {renderItem}
         </TouchableOpacity>
       )}

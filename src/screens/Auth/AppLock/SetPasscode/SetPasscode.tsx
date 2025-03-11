@@ -13,8 +13,11 @@ import {AppDispatch, RootState} from '../../../../../store/store';
 import InputPasscode from '../../../../customComponents/InputPasscode';
 import {colors, deviceHeight} from '../../../../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
-import useTheme from '../../../../hooks/useTheme';
-import {setAccessPassword} from '../../../../../store/slices/shopkeeper';
+import {useTheme} from '../../../../hooks/index';
+import {
+  setAccessPassword,
+  toogleLockApp,
+} from '../../../../../store/slices/shopkeeper';
 import {back} from '../../../../utils/nagivationUtils';
 import {showToast} from '../../../../service/fn';
 
@@ -24,6 +27,7 @@ const SetPasscode = () => {
   const {accessPasscode} = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper,
   );
+  const {appLocked} = useSelector((s: RootState) => s.shopkeeper.app);
   const [locked, setLocked] = useState<boolean>(false);
   const [currPasscodeError, setCurrPasscodeError] = useState<boolean>(false);
   const [currPasscode, setCurrPasscode] = useState<
@@ -74,6 +78,7 @@ const SetPasscode = () => {
       return;
     }
     dispatch(setAccessPassword(newPasscode));
+    dispatch(toogleLockApp(true));
     showToast({
       type: 'success',
       text1: locked
@@ -119,7 +124,11 @@ const SetPasscode = () => {
             )}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Enter New Passcode</Text>
-              <InputPasscode state={newPasscode} setState={setNewPasscode} />
+              <InputPasscode
+                state={newPasscode}
+                setState={setNewPasscode}
+                focused={!locked}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Confirm New Passcode</Text>

@@ -6,61 +6,108 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
-import {Product} from '../../../../types';
 import {Picker} from '@react-native-picker/picker';
 import {QuantityType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
+import {addProductToInventory} from '../../../../store/slices/shopkeeper';
 import {Confirm, showToast} from '../../../service/fn';
-import useTheme from '../../../hooks/useTheme';
-import { editShelfProduct } from '../../../../store/slices/shopkeeper';
+import {useTheme} from '../../../hooks/index';
+import {isFloat, isNumber} from '../../../service/test';
+import Slider from '@react-native-community/slider';
 
 type EditProductProps = {
-  product: Product;
   close: () => void;
 };
 
-const EditCreateProduct: React.FC<EditProductProps> = ({
-  product,
-  close,
-}): React.JSX.Element => {
+const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>()
-  const [name, setName] = useState<string>(product.name);
-  const [price, setPrice] = useState<number>(product.basePrice);
-  const [discountedPrice, setDiscountedPrice] = useState<number>(
-    product.discountedPrice ?? 0,
-  );
-  const [quantity, setQuantity] = useState<number>(product.quantity);
+  const dispatch = useDispatch<AppDispatch>();
+  const [name, setName] = useState<string>('');
+  const [price, setPrice] = useState<string>('0');
+  const [discountedPrice, setDiscountedPrice] = useState<string>('0');
+  const [quantity, setQuantity] = useState<string>('0');
+  const [stock, setStock] = useState<string>('0');
+  const [productCost, setProductCost] = useState<string>('0');
   const [measurementType, setMeasurementType] = useState<QuantityType>(
-    product.measurementType,
+    QuantityType.GRAMS,
   );
 
-  const handleOnSubmit = () => {
-    if (price === 0) {
-      const res = Confirm('Are you sure to put the price 0?');
+  const handleOnSubmit = async () => {
+    const res = {
+      res1: isNumber(price),
+      res2: isNumber(discountedPrice),
+      res3: isNumber(quantity),
+    };
+    const float = {
+      res1: isFloat(stock),
+      res2: isFloat(productCost),
+    };
+    if (!float.res1 || !float.res2) {
+      Alert.alert(
+        'Invalid input!',
+        "Numeric entities can't include alphabets and only include '.'",
+      );
+      return;
+    }
+    if (!res.res1 || !res.res2 || !res.res3) {
+      Alert.alert(
+        'Invalid input!',
+        "Numeric entities can't include alphabets and symbols",
+      );
+      return;
+    }
+    if (Number(quantity) === 0 || name.trim().length === 0) {
+      Alert.alert('Some required fields are missing!');
+      return;
+    }
+    if (Number(price) === 0) {
+      const res = await Confirm(
+        'Are you sure?',
+        'You are trying to put the item price 0, please double check before creating.',
+      );
       if (!res) return;
     }
-    const updatedProduct: Product = {
-      id: product.id,
-      name: name.length !== 0 ? name : product.name,
-      basePrice: price,
-      discountedPrice,
-      quantity,
-      measurementType,
-      createdAt: product.createdAt,
-      updatedAt: Date.now().toString(),
-      totalSold: product.totalSold,
-    };
-    dispatch(editShelfProduct({product:updatedProduct}))
+    if (Number(stock) === 0) {
+      const res = await Confirm(
+        "Stock value can't be zero!",
+        'stock is required to keep a record and analytical calculations.',
+      );
+      if (!res) return;
+    }
+    if (Number(productCost) === 0) {
+      const res = await Confirm(
+        'Making cost value is required!',
+        'making cost is required to keep a record and analytical calculations.',
+      );
+      if (!res) return;
+    }
+    dispatch(
+      addProductToInventory({
+        product: {
+          id: Date.now().toString(),
+          name,
+          basePrice: Number(price),
+          discountedPrice: Number(discountedPrice),
+          quantity: Number(quantity),
+          totalSold: 0,
+          stock: Number(stock),
+          productCost: Number(productCost),
+          measurementType,
+          createdAt: new Date(Date.now()).toDateString(),
+          updatedAt: new Date(Date.now()).toDateString(),
+        },
+      }),
+    );
     close();
     showToast({
       type: 'success',
-      text1: `Product Edited successfully: ${product.name}`,
+      text1: `Product Created successfully`,
     });
   };
 
@@ -71,22 +118,13 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
         {backgroundColor: currentTheme.contrastColor},
       ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView
-        style={{flex: 1}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}>
-        <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-          Edit Product: {product.name}
-        </Text>
+      <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
+        Add new Product
+      </Text>
+      <ScrollView style={{flex: 1}} nestedScrollEnabled>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              Product name*
-            </Text>
+            <Text style={styles.inputLabel}>Product name*</Text>
             <TextInput
               value={name}
               onChangeText={setName}
@@ -107,8 +145,8 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
               Product price*
             </Text>
             <TextInput
-              value={price.toString()}
-              onChangeText={s => setPrice(Number(s) || 0)}
+              value={price}
+              onChangeText={value => setPrice(value)}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -127,8 +165,8 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
               Product discounted price
             </Text>
             <TextInput
-              value={discountedPrice.toString()}
-              onChangeText={s => setDiscountedPrice(Number(s) || 0)}
+              value={discountedPrice}
+              onChangeText={value => setDiscountedPrice(value)}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -147,9 +185,12 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
               Product quantity*
             </Text>
             <TextInput
-              value={quantity.toString()}
-              onChangeText={value => setQuantity(Number(value))}
-              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              value={quantity}
+              onChangeText={value => setQuantity(value)}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
               placeholder="Enter quantity"
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
@@ -159,9 +200,48 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
             <Text
               style={[
                 styles.inputLabel,
-                {
-                  color: currentTheme.modal.inputText,
-                },
+                {color: currentTheme.modal.inputText},
+              ]}>
+              Product Stock*
+            </Text>
+            <TextInput
+              value={stock}
+              onChangeText={value => setStock(value)}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter Stock"
+              placeholderTextColor={currentTheme.baseColor}
+              keyboardType="numeric"
+            />
+          </View>
+          <View style={[styles.inputTitleContainer, {gap: 5}]}>
+            <Text
+              style={[
+                styles.inputLabel,
+                {color: currentTheme.modal.inputText},
+              ]}>
+              Estimated Making cost:{' '}
+              {`${productCost.trim().length !== 0 ? productCost : '0'}`}
+            </Text>
+            <TextInput
+              value={productCost}
+              onChangeText={value => setProductCost(value)}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter Estimated Making cost"
+              placeholderTextColor={currentTheme.baseColor}
+              keyboardType="numeric"
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[
+                styles.inputLabel,
+                {color: currentTheme.modal.inputText},
               ]}>
               Product measurement type
             </Text>
@@ -204,10 +284,11 @@ const styles = StyleSheet.create({
   createCustomerContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    height: deviceHeight * 0.75,
+    paddingVertical: 20,
+    height: deviceHeight * 0.6,
     borderRadius: 20,
     marginBottom: 10,
-    elevation:30,
+    elevation: 30,
   },
   formTitle: {
     textAlign: 'center',
@@ -246,4 +327,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditCreateProduct;
+export default AddProduct;

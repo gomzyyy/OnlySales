@@ -13,7 +13,7 @@ import AddUdhar from './components/AddUdhar';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import {toogleState} from '../../service/fn';
-import useTheme from '../../hooks/useTheme';
+import {useTheme} from '../../hooks/index';
 
 type RouteParams = {
   customer: CustomerType;
@@ -46,7 +46,7 @@ const Customer = () => {
   return (
     <View style={styles.parent}>
       <Header
-        name={`${currCustomer.fullName}`}
+        name={`${currCustomer.name}`}
         backButtom
         customComponent={content === 'UNPAID'}
         renderItem={<AddUdharIcon />}

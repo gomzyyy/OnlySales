@@ -2,7 +2,7 @@ import {View, StyleSheet} from 'react-native';
 import React from 'react';
 import {deviceWidth} from '../../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
-import useTheme from '../../../../hooks/useTheme';
+import {useTheme} from '../../../../hooks/index';
 
 type SearchBarProps = {
   query: string;

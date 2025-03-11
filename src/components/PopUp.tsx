@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {ReactNode} from 'react';
 import {deviceHeight} from '../utils/Constants';
-import useTheme from '../hooks/useTheme';
+import {useTheme} from '../hooks/index';
 
 type PopupContainerProps = {
   children: ReactNode;

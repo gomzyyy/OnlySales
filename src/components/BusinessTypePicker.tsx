@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import React, {Dispatch, SetStateAction} from 'react';
 import { BusinessType } from '../../enums';
-import useTheme from '../hooks/useTheme';
+import {useTheme} from '../hooks/index';
 import { Picker } from '@react-native-picker/picker';
 
 

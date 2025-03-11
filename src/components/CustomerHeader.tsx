@@ -11,7 +11,7 @@ import {RootState} from '../../store/store';
 import {useSelector} from 'react-redux';
 import {dashboardHeaderTabs} from '../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
-import useTheme from '../hooks/useTheme';
+import {useTheme} from '../hooks/index';
 
 type CustomerHeaderProps = {
   flex?: boolean;

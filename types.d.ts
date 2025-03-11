@@ -53,21 +53,32 @@ export interface App {
 export interface User {
   id: string;
   name: string;
-  userId: string;
   phoneNumber?: string;
-  sessionId: number | null;
-  role: AdminRole;
   image?: string | undefined;
-  accessPasscode?: [string, string, string, string] | undefined;
   createdAt: string;
   updatedAt: string;
+  address?: string;
+}
+
+export interface Customer extends User {
+  shopkeeperId: string;
+  unpaidPayments?: newSoldProduct[];
+  paidPayments?: newSoldProduct[];
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Shopkeeper extends User {
-  businessType: BusinessType;
-  menu: Product[];
+  businessAddress?:string;
+  businessName?: string;
+  businessType?: BusinessType;
+  inventory: Product[];
   starProducts?: Product[];
   customers: Customer[];
+  role: AdminRole;
+  sessionId: number | null;
+  accessPasscode?: [string, string, string, string] | undefined;
+  userId: string;
 }
 export interface Product {
   id: string;
@@ -78,23 +89,13 @@ export interface Product {
   discountedPrice?: number;
   quantity: number;
   measurementType: QuantityType;
+  stock?: number;
+  productCost?: number;
   createdAt: string;
   updatedAt: string;
 }
-export interface Customer {
-  id: string;
-  fullName: string;
-  phoneNumber?: string;
-  image?: string | undefined;
-  address?: string;
-  shopkeeperId: string;
-  unpaidPayments?: newUdharProduct[];
-  paidPayments?: newUdharProduct[];
-  createdAt: string;
-  updatedAt?: string;
-}
 
-export interface newUdharProduct extends Product {
+export interface newSoldProduct extends Product {
   addedAt: string;
   count: number;
 }
