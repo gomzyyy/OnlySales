@@ -23,14 +23,23 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <View
       style={[
         styles.searchQueryContainer,
-        {width: width ? deviceWidth * width : 'auto'},
+        {
+          width: width ? deviceWidth * width : 'auto',
+        },
       ]}>
       <TextInput
-        style={[styles.searchQueryInput, {borderColor: currentTheme.baseColor}]}
+        style={[
+          styles.searchQueryInput,
+          {
+            borderColor: currentTheme.baseColor,
+            color: currentTheme.baseColor,
+            backgroundColor: currentTheme.contrastColor,
+          },
+        ]}
         value={query}
         onChangeText={setQuery}
-        placeholder="Search by name"
-        placeholderTextColor={"#000"}
+        placeholder="Search customer by name"
+        placeholderTextColor={currentTheme.baseColor}
         autoFocus={autoFocus}
       />
     </View>
@@ -39,11 +48,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
 const styles = StyleSheet.create({
   searchQueryContainer: {},
   searchQueryInput: {
-    borderWidth: 2,
     borderRadius: 8,
-    height: 50,
-    fontSize: 18,
+    height: 45,
+    fontSize: 20,
     paddingHorizontal: 12,
+    width: 'auto',
   },
 });
 

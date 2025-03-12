@@ -30,7 +30,6 @@ const SplashScreen = () => {
           setTimeout(() => resetAndNavigate('Dashboard'), 800);
         }
       };
-
       initNavigation();
     }, [shopkeeper]),
   );

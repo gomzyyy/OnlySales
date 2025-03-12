@@ -98,26 +98,28 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           ))}
         </ScrollView>
         {searchBar && (
-          <Pressable
-            style={[
-              styles.searchQueryContainer,
-              {backgroundColor: currentTheme.contrastColor},
-            ]}
-            onPress={() => navigate('Search')}>
-            <View
+          <View style={{paddingHorizontal:10}}>
+            <Pressable
               style={[
-                styles.searchQueryInput,
-                {borderColor: currentTheme.baseColor},
-              ]}>
-              <Text
+                styles.searchQueryContainer,
+                {backgroundColor: currentTheme.contrastColor},
+              ]}
+              onPress={() => navigate('Search')}>
+              <View
                 style={[
-                  styles.searchQueryInputText,
-                  {color: currentTheme.baseColor},
+                  styles.searchQueryInput,
+                  {borderColor: currentTheme.baseColor},
                 ]}>
-                Search by customer name
-              </Text>
-            </View>
-          </Pressable>
+                <Text
+                  style={[
+                    styles.searchQueryInputText,
+                    {color: currentTheme.baseColor},
+                  ]}>
+                  Search customer by name
+                </Text>
+              </View>
+            </Pressable>
+          </View>
         )}
       </View>
     </KeyboardAvoidingView>
@@ -142,9 +144,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-evenly',
     paddingVertical: 10,
+    elevation: 10,
   },
   textLabel: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -153,13 +156,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchQueryContainer: {
-    padding: 10,
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
+    paddingHorizontal: 10,
+    paddingTop: 12,
+    paddingBottom: 10,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    elevation: 10,
   },
   searchQueryInput: {
     borderWidth: 2,
-    borderRadius: 8,
+    borderRadius: 14,
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,

@@ -99,7 +99,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     const newProducts: newSoldProduct = {
       ...product,
       count: count,
-      addedAt: Date.now().toString(),
+      addedAt: Date.now(),
     };
     handleNewUdhars(newProducts);
   };

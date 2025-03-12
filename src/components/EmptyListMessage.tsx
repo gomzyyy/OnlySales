@@ -1,15 +1,16 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 
-type EmptyListMessageProps = {title: string; context?: string};
+type EmptyListMessageProps = {title: string; context?: string,color?:string};
 
 const EmptyListMessage: React.FC<EmptyListMessageProps> = ({
   title,
   context="",
+  color='#000'
 }): React.JSX.Element => {
   return (
     <View style={styles.container}>
-      <Text style={styles.textBold}>{title}</Text>
+      <Text style={[styles.textBold,{color}]}>{title}</Text>
       <Text style={styles.textLight}>
        {context}
       </Text>

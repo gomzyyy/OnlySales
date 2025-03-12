@@ -51,10 +51,9 @@ export const toogleState = (
   };
 };
 export const checkDate = (date: string | number) => {
-  // Ensure proper date conversion
   const parsedDate =
     typeof date === 'number'
-      ? new Date(date) 
+      ? new Date(date)
       : new Date(isNaN(Number(date)) ? date : Number(date));
 
   if (isNaN(parsedDate.getTime())) {
@@ -69,14 +68,23 @@ export const checkDate = (date: string | number) => {
   }
 
   const now = new Date();
-  const monthDifference =
-    (now.getFullYear() - parsedDate.getFullYear()) * 12 +
-    (now.getMonth() - parsedDate.getMonth());
 
-  const sameDay =
-    parsedDate.getFullYear() === now.getFullYear() &&
-    parsedDate.getMonth() === now.getMonth() &&
-    parsedDate.getDate() === now.getDate();
+  const nowUTC = new Date(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+  );
+  const parsedDateUTC = new Date(
+    parsedDate.getUTCFullYear(),
+    parsedDate.getUTCMonth(),
+    parsedDate.getUTCDate(),
+  );
+
+  const monthDifference =
+    (nowUTC.getFullYear() - parsedDateUTC.getFullYear()) * 12 +
+    (nowUTC.getMonth() - parsedDateUTC.getMonth());
+
+  const sameDay = nowUTC.getTime() === parsedDateUTC.getTime();
 
   return {
     sameDay,
@@ -86,5 +94,3 @@ export const checkDate = (date: string | number) => {
     monthsOld: monthDifference,
   };
 };
-
-

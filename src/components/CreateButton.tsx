@@ -16,8 +16,8 @@ const CreateButton: React.FC<CreateButtomProps> = ({
       style={[
         styles.container,
         {
-          backgroundColor: currentTheme.contrastColor,
-          borderColor: currentTheme.baseColor,
+          backgroundColor: currentTheme.baseColor,
+          borderColor: currentTheme.contrastColor,
         },
       ]}
       activeOpacity={0.8}
@@ -26,7 +26,7 @@ const CreateButton: React.FC<CreateButtomProps> = ({
         <Icon
           name="circle-with-plus"
           size={26}
-          color={currentTheme.baseColor}
+          color={currentTheme.contrastColor}
         />
       </View>
     </TouchableOpacity>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
     borderRadius: '40%',
     borderWidth: 3,
-    elevation:30,
+    elevation: 30,
   },
 });
 

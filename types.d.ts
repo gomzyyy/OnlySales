@@ -13,6 +13,11 @@ export interface AppTheme {
   modal: ModalTheme;
   toggleBtn: ToogleBtnTheme;
   tab: TabTheme;
+  header: HeaderTheme;
+}
+
+export interface HeaderTheme {
+  textColor: string;
 }
 
 export interface ModalTheme {
@@ -69,7 +74,7 @@ export interface Customer extends User {
 }
 
 export interface Shopkeeper extends User {
-  businessAddress?:string;
+  businessAddress?: string;
   businessName?: string;
   businessType?: BusinessType;
   inventory: Product[];
@@ -96,6 +101,6 @@ export interface Product {
 }
 
 export interface newSoldProduct extends Product {
-  addedAt: string;
+  addedAt: number;
   count: number;
 }

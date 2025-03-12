@@ -156,7 +156,7 @@ const SignUp = () => {
             </Text>
             <Text style={styles.descriptionseperationText}>or</Text>
             <Pressable
-              style={{justifyContent: 'center'}}
+              style={{justifyContent: 'center',marginBottom:40}}
               onPress={() => navigate('Login')}>
               <Text
                 style={[

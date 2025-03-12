@@ -40,7 +40,7 @@ const PaidUdhars = () => {
           {paidPayments.length !== 0 ? (
             <FlatList
               data={paidPayments}
-              keyExtractor={i => i.addedAt}
+              keyExtractor={i => i.addedAt.toString()}
               renderItem={({item}) => (
                 <Tab actionType="PAID" i={item} customer={customer} />
               )}

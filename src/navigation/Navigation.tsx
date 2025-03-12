@@ -27,13 +27,15 @@ import {toogleLockApp} from '../../store/slices/shopkeeper';
 import {AppState} from 'react-native';
 import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
-import { useTheme } from '../hooks/index';
+import {useTheme} from '../hooks/index';
+import Customers from '../screens/Customers/Customers';
+import Test from '../screens/Test/Test';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
 const StackNav = () => {
-  const {currentTheme}=useTheme()
+  const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const {accessPasscode} = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper,
@@ -65,12 +67,14 @@ const StackNav = () => {
     <stack.Navigator
       screenOptions={{
         headerShown: false,
-        statusBarBackgroundColor:currentTheme.baseColor
+        statusBarBackgroundColor: currentTheme.baseColor,
       }}>
+      <stack.Screen name="Test" component={Test} />
       <stack.Screen name="SplashScreen" component={SplashScreen} />
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />
       <stack.Screen name="Customer" component={Customer} />
+      <stack.Screen name="Customers" component={Customers} />
       <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars} />
       <stack.Screen name="PaidUdhars" component={PaidUdhars} />
       <stack.Screen name="MyInventory" component={MyInventory} />

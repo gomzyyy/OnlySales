@@ -51,10 +51,10 @@ const Tab: React.FC<TabProps> = ({
             backgroundColor: currentTheme.tab.bg,
           },
         ]}>
-        <Text style={[styles.customerName, {color: currentTheme?.tab.label}]}>
+        <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
           {i.name}
         </Text>
-        <Icon name="right" color={currentTheme?.tab.icon} size={22} />
+        <Icon name="right" color={currentTheme.tab.icon} size={22} />
         {openTabOptions && i && (
           <PopupContainer
             open={openTabOptions}

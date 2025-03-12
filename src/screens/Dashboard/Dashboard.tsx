@@ -1,43 +1,65 @@
-import {View, FlatList, StyleSheet} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
-import Tab from './components/Tab';
-import {RootState} from '../../../store/store';
-import {useSelector} from 'react-redux';
-import CreateButton from '../../components/CreateButton';
-import SlideupContainer from '../../components/SlideUpContainer';
-import CreateCustomer from '../../components/CreateCustomer';
-import EmptyListMessage from './components/EmptyListMessage';
 import {prepareNavigation} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
-import Customers from '../Customers/Customers';
+import PressableContainer from './components/PressableContainer';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import {colors} from '../../utils/Constants';
+
+const DashboardOptions = [
+  {
+    id: 0,
+    title: 'Customers',
+    navigateTo: 'Customers',
+    icon: (color: string) => (
+      <Icon name="people-sharp" size={24} color={color} />
+    ),
+  },
+  {
+    id: 1,
+    title: 'Analytics',
+    navigateTo: 'Analytics',
+    icon: (color: string) => <Icon2 name="analytics" size={24} color={color} />,
+  },
+];
 
 const Dashboard = () => {
   const {currentTheme} = useTheme();
-  const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
-
-  const customers = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper.customers,
-  );
-  const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
-  const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
-
   useEffect(() => {
     prepareNavigation();
   }, []);
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
-      <Header name="Dashboard" menuButton />
+      <Header
+        name="Dashboard"
+        menuButton
+        titleColor={currentTheme.header.textColor}
+      />
       <View style={styles.contentContainer}>
-        {/* <View style={{flex: 1}}> */}
-          <DashboardHeader flex={false} />
+        <DashboardHeader flex={false} />
+        <View style={{paddingHorizontal: 10, flex: 1}}>
           <View
             style={{
-              flex: 1,
               backgroundColor: currentTheme.contrastColor,
-            }}></View>
-        {/* </View> */}
+              paddingBottom: 10,
+              borderBottomRightRadius: 20,
+              borderBottomLeftRadius: 20,
+            }}>
+            <View style={styles.navigationBtnsContainer}>
+              {DashboardOptions.map(s => (
+                <PressableContainer
+                  navigateTo={s.navigateTo}
+                  title={s.title}
+                  key={s.id}>
+                  {s.icon(currentTheme.header.textColor)}
+                </PressableContainer>
+              ))}
+            </View>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -45,6 +67,14 @@ const Dashboard = () => {
 
 const styles = StyleSheet.create({
   contentContainer: {flex: 1},
+  navigationBtnsContainer: {
+    alignItems: 'flex-start',
+    marginTop: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
 });
 
 export default Dashboard;

@@ -1,11 +1,19 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 
-const EmptyListMessage = () => {
+type EmptyListMessageProps = {
+  textColor?: string;
+};
+
+const EmptyListMessage: React.FC<EmptyListMessageProps> = ({
+  textColor = '#000',
+}): React.JSX.Element => {
   return (
     <View style={styles.contaienr}>
-      <Text style={styles.textBold}>Hurray! No Udhars.</Text>
-      <Text style={styles.textLight}>
+      <Text style={[styles.textBold, {color: textColor}]}>
+        Hurray! No Udhars.
+      </Text>
+      <Text style={[styles.textLight, {color: textColor}]}>
         Click on create button to create Udhar.
       </Text>
     </View>

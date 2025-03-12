@@ -11,6 +11,7 @@ import {
   setSearchResult,
   resetSearchResults,
 } from '../../../../store/slices/shopkeeper';
+import {useTheme} from '../../../hooks/index';
 
 type HeaderProps = {
   searchBar?: boolean;
@@ -21,6 +22,7 @@ const Header: React.FC<HeaderProps> = ({
   searchBar = true,
   backButtom = false,
 }): React.JSX.Element => {
+  const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
@@ -51,21 +53,25 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <View
       style={{
-        height: 70,
+        height: 80,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 20,
+        backgroundColor: currentTheme.baseColor,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        elevation:10
       }}>
       {backButtom && (
         <Pressable style={styles.leftActionBtn} onPress={() => back()}>
-          <Icon1 name="left" size={24} color={'black'} />
+          <Icon1 name="left" size={24} color={currentTheme.header.textColor} />
         </Pressable>
       )}
       {searchBar && <SearchBar query={query} setQuery={setQuery} width={0.7} />}
       {query.trim().length !== 0 && (
         <Pressable onPress={clearSearchText} style={styles.rightCustomBtn}>
-          <Icon2 name="clear" size={24} />
+          <Icon2 name="clear" size={28} color={currentTheme.header.textColor} />
         </Pressable>
       )}
     </View>

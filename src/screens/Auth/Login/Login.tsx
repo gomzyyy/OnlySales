@@ -102,7 +102,7 @@ const Login = () => {
           </Text>
           <Text style={styles.descriptionseperationText}>or</Text>
           <Pressable
-            style={{justifyContent: 'center'}}
+            style={{justifyContent: 'center',marginBottom:40}}
             onPress={() => navigate('SignUp')}>
             <Text
               style={[styles.descriptionText, {color: currentTheme.baseColor}]}>

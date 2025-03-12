@@ -36,7 +36,7 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   const soldFewMonthsAgo = soldProducts.filter(
     g => checkDate(g.addedAt).olderThanLastMonth,
   );
-  const todaySales = soldProducts.filter(s => checkDate(s.addedAt).sameDay);
+  const todaySales = soldThisMonth.filter(s => checkDate(s.addedAt).sameDay);
 
   return {
     ...shopkeeper,
@@ -53,21 +53,3 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
 };
 
 export default useAnalytics;
-
-// {
-//     name,
-//     businessAddress,
-//     businessName,
-//     businessType,
-//     starProducts,
-//     inventory,
-//     role,
-//     accessPasscode,
-//     customers,
-//     sessionId,
-//     userId,
-//     phoneNumber,
-//     image,
-//     createdAt,
-//     updatedAt,
-//   }

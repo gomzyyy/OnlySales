@@ -16,6 +16,7 @@ type HeaderProps = {
   name?: string;
   showTitle?: boolean;
   titleColor?: string;
+  headerBgColor?: string;
   backButtom?: boolean;
   menuButton?: boolean;
   customComponent?: boolean;
@@ -27,6 +28,7 @@ const Header: React.FC<HeaderProps> = ({
   name = '',
   showTitle = true,
   titleColor = '#000',
+  headerBgColor,
   backButtom = false,
   menuButton = false,
   customComponent = false,
@@ -45,15 +47,16 @@ const Header: React.FC<HeaderProps> = ({
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 20,
+        backgroundColor: headerBgColor ?? ''
       }}>
       {!backButtom && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>
-          <Icon2 name="menu" size={24} color={currentTheme.textColor} />
+          <Icon2 name="menu" size={24} color={titleColor} />
         </Pressable>
       )}
       {backButtom && !menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={() => back()}>
-          <Icon1 name="left" size={24} color={currentTheme.textColor} />
+          <Icon1 name="left" size={24} color={titleColor} />
         </Pressable>
       )}
       {showTitle && (
@@ -61,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({
           style={{
             fontSize: 22,
             fontWeight: 'bold',
-            color: currentTheme.textColor,
+            color: titleColor,
           }}>
           {name}
         </Text>

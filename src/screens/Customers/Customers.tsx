@@ -1,6 +1,5 @@
-import {View, Text, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
-import DashboardHeader from '../../components/DashboardHeader';
 import EmptyListMessage from './components/EmptyListMessage';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
@@ -9,24 +8,40 @@ import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
 import CreateButton from '../../components/CreateButton';
 import SearchBar from './components/SearchBar';
+import Header from '../../components/Header';
+import {useTheme} from '../../hooks';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const Customers = () => {
+  const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
-
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
   return (
-    <>
+    <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
+      <Header
+        name="Customers"
+        backButtom={true}
+        titleColor={currentTheme.header.textColor}
+        customComponent={true}
+        renderItem={
+          <Icon name="plus" size={24} color={currentTheme.header.textColor} />
+        }
+        customAction={() => setopenCreateCustomer(true)}
+      />
       <View style={styles.contentContainer}>
         {!openCreateCustomer && (
           <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
         )}
         <View style={{flex: 1}}>
           <View style={styles.searchBarContainer}>
-            <SearchBar />
+            <SearchBar
+              textColor={currentTheme.header.textColor}
+              enable={customers.length !== 0}
+            />
           </View>
           {customers.length !== 0 ? (
             <FlatList
@@ -39,8 +54,7 @@ const Customers = () => {
             />
           ) : (
             <View style={{flex: 1}}>
-              <DashboardHeader searchBar={false} flex={false} />
-              <EmptyListMessage />
+              <EmptyListMessage textColor={currentTheme.header.textColor} />
             </View>
           )}
         </View>
@@ -52,12 +66,12 @@ const Customers = () => {
           <CreateCustomer callback={handleCloseCreateCustomer} />
         </SlideUpContainer>
       )}
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  searchBarContainer:{paddingVertical:20},
+  searchBarContainer: {paddingVertical: 20},
   contentContainer: {flex: 1, paddingHorizontal: 10},
 });
 
