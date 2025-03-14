@@ -14,11 +14,13 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import {toogleState} from '../../service/fn';
 import {useTheme} from '../../hooks/index';
+import {useHaptics} from '../../hooks/index';
 
 type RouteParams = {
   customer: CustomerType;
 };
 const Customer = () => {
+  const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const params = useRoute().params;
   const {customer} = params as RouteParams;
@@ -41,7 +43,25 @@ const Customer = () => {
     }
   }, [customers]);
 
-  const AddUdharIcon=():React.JSX.Element=>{return <View style={{flexDirection:"row",gap:4,alignItems:"center"}}><Icon name="plus" color={'black'} size={20} /><Text style={{fontSize:16}}>Add Udhar</Text></View>}
+  const toogleToPaid = () => {
+    setContent('UNPAID');
+    lightTap();
+  };
+  const toogleToUnPaid = () => {
+    setContent('PAID');
+    lightTap();
+  };
+
+  const AddUdharIcon = (): React.JSX.Element => {
+    return (
+      <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
+        <Icon name="plus" color={currentTheme.header.textColor} size={20} />
+        <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
+          Add
+        </Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.parent}>
@@ -51,24 +71,30 @@ const Customer = () => {
         customComponent={content === 'UNPAID'}
         renderItem={<AddUdharIcon />}
         customAction={toogleState(setAddUdhar).true}
+        headerBgColor={currentTheme.baseColor}
+        titleColor={currentTheme.header.textColor}
       />
-      <View style={styles.contentContainer}>
+      <View
+        style={[
+          styles.contentContainer,
+          {backgroundColor: currentTheme.baseColor},
+        ]}>
         <CustomerInfo customer={currCustomer} />
         <View style={styles.contentToggleContainer}>
-          <Pressable onPress={() => setContent('UNPAID')} style={{flex: 1}}>
+          <Pressable onPress={toogleToPaid} style={{flex: 1}}>
             <ToogleButton
-              title="Unpaid Udhars"
-              bgcolor={content === 'UNPAID' ? currentTheme.tabColor : ''}
-              textColor={content === 'UNPAID' ? currentTheme.contrastColor : ''}
+              title="Pending Payments"
+              textColor={currentTheme.contrastColor}
+              border={content === 'UNPAID'}
+              borderColor={currentTheme.contrastColor}
             />
           </Pressable>
-          <Pressable onPress={() => setContent('PAID')} style={{flex: 1}}>
+          <Pressable onPress={toogleToUnPaid} style={{flex: 1}}>
             <ToogleButton
-              title="Paid Udhars"
-              bgcolor={
-                content === 'PAID' ? currentTheme.toggleBtn.bgActive : ''
-              }
-              textColor={content === 'PAID' ? currentTheme.contrastColor : ''}
+              title="Paid Payments"
+              textColor={currentTheme.contrastColor}
+              border={content === 'PAID'}
+              borderColor={currentTheme.contrastColor}
             />
           </Pressable>
         </View>
@@ -79,20 +105,26 @@ const Customer = () => {
               <ProductsByDate
                 customer={currCustomer}
                 ArrWithDate={currCustomer.unpaidPayments}
-                onTabPressNavigate='UnpaidUdhars'
+                onTabPressNavigate="UnpaidUdhars"
               />
             ) : (
-              <EmptyListMessage title="Oops! No unpaid payments." />
+              <EmptyListMessage
+                title="HURRAY! No Pending Payments."
+                textColor={currentTheme.contrastColor}
+              />
             )
           ) : currCustomer.paidPayments &&
             currCustomer.paidPayments.length !== 0 ? (
             <ProductsByDate
               customer={currCustomer}
               ArrWithDate={currCustomer.paidPayments}
-              onTabPressNavigate='PaidUdhars'
+              onTabPressNavigate="PaidUdhars"
             />
           ) : (
-            <EmptyListMessage title="Oops! No paid payments." />
+            <EmptyListMessage
+              title="Oops! No Paid Payments."
+              textColor={currentTheme.contrastColor}
+            />
           )}
         </View>
       </View>

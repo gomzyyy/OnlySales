@@ -13,7 +13,7 @@ import {showToast} from '../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
 import {createCustomers} from '../../store/slices/shopkeeper';
-import {useTheme} from '../hooks/index';
+import {useHaptics, useTheme} from '../hooks/index';
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -22,6 +22,7 @@ type CreateCustomerProps = {
 const CreateCustomer: React.FC<CreateCustomerProps> = ({
   callback,
 }): React.JSX.Element => {
+  const {warning} = useHaptics();
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>('');
@@ -36,12 +37,13 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       address,
     };
     if (name.trim().length === 0) {
+      warning();
       showToast({
-        type: 'error',
-        text1: "Can't add new customer.",
-        text2: 'Some required fields are empty.',
+        type: 'info',
+        text1: "Some required fields are empty.",
+        position: 'top',
       });
-      callback();
+      // callback();
       return;
     }
     dispatch(createCustomers(customerData));

@@ -12,7 +12,7 @@ export interface useAnalyticsReturnType extends Shopkeeper {
   soldProducts: newSoldProduct[];
   soldThisMonth: newSoldProduct[];
   soldLastMonth: newSoldProduct[];
-  soldFewMonthsAgo: newSoldProduct[];
+  soldMoreThanFourMonthsAgo: newSoldProduct[];
 }
 
 const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
@@ -28,13 +28,13 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     totalSold: s.count,
   }));
   const soldThisMonth = soldProducts.filter(
-    g => checkDate(g.addedAt).thisMonth,
+    g => checkDate(g.addedAt).thisMonth
   );
   const soldLastMonth = soldProducts.filter(
     g => checkDate(g.addedAt).lastMonth,
   );
-  const soldFewMonthsAgo = soldProducts.filter(
-    g => checkDate(g.addedAt).olderThanLastMonth,
+  const soldMoreThanFourMonthsAgo = soldProducts.filter(
+    g => checkDate(g.addedAt).olderThanFourMonths,
   );
   const todaySales = soldThisMonth.filter(s => checkDate(s.addedAt).sameDay);
 
@@ -48,7 +48,7 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     customers,
     soldThisMonth,
     soldLastMonth,
-    soldFewMonthsAgo,
+    soldMoreThanFourMonthsAgo,
   };
 };
 

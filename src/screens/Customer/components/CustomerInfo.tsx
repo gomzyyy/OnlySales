@@ -4,6 +4,8 @@ import {Customer} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
 import LinearGradient from 'react-native-linear-gradient';
 import {useTheme} from '../../../hooks/index';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Icon1 from 'react-native-vector-icons/Entypo';
 
 type CustomerInfoProps = {
   customer: Customer;
@@ -15,16 +17,8 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
   const {currentTheme} = useTheme();
   return (
     <LinearGradient
-      colors={[
-        currentTheme.baseColor,
-        currentTheme.baseColor,
-        // currentTheme.fadeColor,
-        // currentTheme.bgColor,
-      ]}
-      style={[
-        styles.customerInfoContainer,
-        {backgroundColor: currentTheme.fadeColor},
-      ]}>
+      colors={[currentTheme.contrastColor, currentTheme.contrastColor]}
+      style={[styles.customerInfoParent]}>
       <View style={styles.profileImageContainer}>
         <Image
           source={
@@ -35,15 +29,42 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
           style={styles.profileImage}
         />
       </View>
+      <View style={styles.customerInfoContainer}>
+        <Text style={[styles.name, {color: currentTheme.baseColor}]}>
+          {customer.name}
+        </Text>
+        <View style={styles.phoneNumberContainer}>
+          <Icon name="mobile1" color={currentTheme.baseColor} />
+          <Text style={[styles.phoneNumber, {color: currentTheme.baseColor}]}>
+            {' '}
+            {customer.phoneNumber ? `+91-${customer.phoneNumber}` : 'N/A'}
+          </Text>
+        </View>
+        <View style={styles.addressContainer}>
+          <Icon1 name="location-pin" size={16} color={currentTheme.baseColor} />
+          <Text style={[styles.address, {color: currentTheme.baseColor}]}>
+            {customer.address ? `+91-${customer.address}` : 'N/A'}
+          </Text>
+        </View>
+      </View>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  customerInfoContainer: {
+  customerInfoParent: {
     paddingVertical: 20,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     borderRadius: 10,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    gap: 10,
+  },
+
+  profileImage: {
+    height: '100%',
+    width: 'auto',
+    resizeMode: 'contain',
   },
   profileImageContainer: {
     height: 90,
@@ -52,10 +73,25 @@ const styles = StyleSheet.create({
     borderRadius: '50%',
     backgroundColor: 'red',
   },
-  profileImage: {
-    height: '100%',
-    width: 'auto',
-    resizeMode: 'contain',
+  customerInfoContainer: {
+    justifyContent: 'center',
+    gap: 6,
+  },
+  name: {
+    fontSize: 30,
+  },
+  phoneNumberContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  phoneNumber: {fontSize: 16, textAlignVertical: 'center'},
+  addressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  address: {
+    fontSize: 16,
+    textAlignVertical: 'center',
   },
 });
 

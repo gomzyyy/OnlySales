@@ -24,11 +24,11 @@ const Search = () => {
           <View
             style={{
               height: 'auto',
-              minHeight: deviceHeight * 0.2,
               backgroundColor: currentTheme.baseColor,
               borderRadius: 20,
               padding: 15,
               gap: 10,
+              elevation:5
             }}>
             <Text
               style={{

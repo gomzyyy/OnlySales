@@ -30,12 +30,18 @@ const UnpaidUdhars = () => {
 
   return (
     <View style={styles.parent}>
-      <Header name={date} backButtom={true} />
-      <View style={styles.container}>
+      <Header
+        name={date}
+        backButtom={true}
+        titleColor={currentTheme.header.textColor}
+        headerBgColor={currentTheme.baseColor}
+      />
+      <View
+        style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
         <CustomerInfo customer={customer} />
-        <View style={styles.customerHeader}>
+        {/* <View style={styles.customerHeader}>
           <CustomerHeader flex={false} />
-        </View>
+        </View> */}
         <View style={styles.itemListContainer}>
           {unpaidPayments.length !== 0 ? (
             <FlatList
@@ -48,23 +54,23 @@ const UnpaidUdhars = () => {
             />
           ) : (
             <View style={styles.emptyListContainer}>
-              <EmptyListMessage title="HOORAY! No UNPAID udhars at the momment." />
+              <EmptyListMessage
+                title="HOORAY! No UNPAID udhars at the momment."
+                textColor={currentTheme.contrastColor}
+              />
               <TouchableOpacity
                 style={[
                   styles.backBtnContainer,
-                  {backgroundColor: currentTheme.baseColor},
+                  {backgroundColor: currentTheme.contrastColor},
                 ]}
                 onPress={() => back()}>
                 <Icon
                   name="arrowleft"
                   size={20}
-                  color={currentTheme.contrastColor}
+                  color={currentTheme.baseColor}
                 />
                 <Text
-                  style={[
-                    styles.backBtnText,
-                    {color: currentTheme.contrastColor},
-                  ]}>
+                  style={[styles.backBtnText, {color: currentTheme.baseColor}]}>
                   Back
                 </Text>
               </TouchableOpacity>
@@ -88,7 +94,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   itemListContainer: {
-    // marginTop: 20,
+    marginTop: 20,
   },
   emptyListContainer: {alignItems: 'center'},
   backBtnContainer: {

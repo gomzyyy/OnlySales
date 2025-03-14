@@ -69,7 +69,7 @@ const StackNav = () => {
         headerShown: false,
         statusBarBackgroundColor: currentTheme.baseColor,
       }}>
-      <stack.Screen name="Test" component={Test} />
+      {/* <stack.Screen name="Test" component={Test} /> */}
       <stack.Screen name="SplashScreen" component={SplashScreen} />
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />

@@ -122,7 +122,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
       const queryResults = inventoryItems.filter(s =>
         s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
       );
-      setInventoryItems(queryResults);
+     queryResults.length !== 0 && setInventoryItems(queryResults);
     } else {
       setInventoryItems(sortedInventory);
     }
@@ -145,6 +145,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           setQuery={setQuery}
           width={0.9}
           autoFocus={false}
+          shadow={3}
         />
       </View>
       <View style={styles.productsContainer}>
@@ -185,7 +186,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 const styles = StyleSheet.create({
   addUdharContainer: {
     padding: 20,
-    height: deviceHeight * 0.65,
+    height: deviceHeight * 0.55,
     borderRadius: 20,
     marginBottom: 10,
   },

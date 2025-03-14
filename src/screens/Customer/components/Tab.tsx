@@ -19,14 +19,18 @@ type TabProps = {
 
 type ToogleButtonProps = {
   title: string;
-  bgcolor: string;
+  bgcolor?: string;
   textColor: string;
+  border?:boolean,
+  borderColor?:string;
 };
 
 const ToogleButton: React.FC<ToogleButtonProps> = ({
   title,
-  bgcolor,
+  bgcolor='',
   textColor,
+  border=false,
+  borderColor=''
 }): React.JSX.Element => {
   return (
     <View
@@ -34,6 +38,8 @@ const ToogleButton: React.FC<ToogleButtonProps> = ({
         styles.contentToggleBtn,
         {
           backgroundColor: bgcolor,
+          borderWidth: border ? 2 : 0,
+          borderColor
         },
       ]}>
       <Text style={[styles.toogleBtnText, {color: textColor}]}>{title}</Text>
@@ -95,7 +101,7 @@ const Tab: React.FC<TabProps> = ({
                 <Text
                   style={[
                     styles.MarkAsPaidText,
-                    {color: currentTheme.textAlt},
+                    {color: currentTheme.tab.label},
                   ]}>
                   Paid
                 </Text>
@@ -123,12 +129,12 @@ const Tab: React.FC<TabProps> = ({
           <TouchableOpacity
             style={[
               styles.MarkAsPaid,
-              {backgroundColor: currentTheme.contrastColor},
+              {backgroundColor: currentTheme.tab.btnBg},
             ]}
             activeOpacity={0.8}
             onPress={handleMarkAs}>
             <Text
-              style={[styles.MarkAsPaidText, {color: currentTheme.textAlt}]}>
+              style={[styles.MarkAsPaidText, {color: currentTheme.tab.btnText}]}>
               {actionType === 'PAID' ? 'Mark as *Unpaid' : 'Mark as *Paid'}
             </Text>
           </TouchableOpacity>

@@ -9,6 +9,7 @@ type SearchBarProps = {
   setQuery: (text: string) => void;
   width?: number;
   autoFocus?: boolean;
+  shadow?: number;
 };
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -16,6 +17,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   setQuery,
   width,
   autoFocus = true,
+  shadow = 5,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
@@ -34,6 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             borderColor: currentTheme.baseColor,
             color: currentTheme.baseColor,
             backgroundColor: currentTheme.contrastColor,
+            elevation: shadow,
           },
         ]}
         value={query}

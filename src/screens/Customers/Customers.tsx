@@ -11,15 +11,20 @@ import SearchBar from './components/SearchBar';
 import Header from '../../components/Header';
 import {useTheme} from '../../hooks';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {useHaptics} from '../../hooks';
 
 const Customers = () => {
+  const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
   const customers = useSelector(
     (s: RootState) => s.shopkeeper.shopkeeper.customers,
   );
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
-  const handleOpenCreateCustomer = () => setopenCreateCustomer(true);
+  const handleOpenCreateCustomer = () => {
+    setopenCreateCustomer(true);
+    lightTap();
+  };
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <Header
@@ -30,7 +35,10 @@ const Customers = () => {
         renderItem={
           <Icon name="plus" size={24} color={currentTheme.header.textColor} />
         }
-        customAction={() => setopenCreateCustomer(true)}
+        customAction={() => {
+          setopenCreateCustomer(true);
+          lightTap();
+        }}
       />
       <View style={styles.contentContainer}>
         {!openCreateCustomer && (

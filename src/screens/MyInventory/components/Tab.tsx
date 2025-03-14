@@ -44,7 +44,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
         <View
           style={[styles.tabLabel, {backgroundColor: currentTheme.baseColor}]}>
           <Text
-            style={[styles.productName, {color: currentTheme.contrastColor}]}>
+            style={[styles.productName, {color: currentTheme.tab.label}]}>
             {i.name}
           </Text>
         </View>

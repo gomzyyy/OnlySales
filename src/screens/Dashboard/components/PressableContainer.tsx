@@ -1,6 +1,6 @@
-import {Text, StyleSheet, Pressable, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {PropsWithChildren} from 'react';
-import {useTheme} from '../../../hooks';
+import {useTheme, useHaptics} from '../../../hooks';
 import {navigate} from '../../../utils/nagivationUtils';
 
 type PressableContainerProps = PropsWithChildren<{
@@ -14,6 +14,11 @@ const PressableContainer: React.FC<PressableContainerProps> = ({
   children,
 }) => {
   const {currentTheme} = useTheme();
+  const {lightTap} = useHaptics();
+  const handleNavigation = () => {
+    lightTap();
+    navigate(navigateTo);
+  };
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -21,7 +26,7 @@ const PressableContainer: React.FC<PressableContainerProps> = ({
         styles.pressableContainer,
         {backgroundColor: currentTheme.baseColor},
       ]}
-      onPress={() => navigate(navigateTo)}>
+      onPress={handleNavigation}>
       {children}
       <Text
         style={[styles.pressableText, {color: currentTheme.header.textColor}]}>

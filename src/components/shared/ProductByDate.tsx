@@ -53,7 +53,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
           },
         ]}
         onPress={() => navigate(onTabPressNavigate, {products: i, customer, date})}>
-        <Text style={[styles.date,{color: currentTheme?.tab?.value || "#000"}]}>
+        <Text style={[styles.date,{color: currentTheme.tab.label || "#000"}]}>
           {date}
         </Text>
         <TouchableOpacity>

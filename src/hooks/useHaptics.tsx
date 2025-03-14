@@ -7,7 +7,7 @@ export interface useHapticsReturnType {
   success: () => void;
   error: () => void;
   removed: () => void;
-};
+}
 
 export enum Haptics {
   lightTap = 'lightTap',
@@ -15,15 +15,18 @@ export enum Haptics {
   warning = 'warning',
   success = 'success',
   error = 'error',
-  removed = 'delete'
+  removed = 'delete',
 }
 
 const useHaptics = (): useHapticsReturnType => {
   const lightTap = () => Vibration.vibrate(20);
   const longPress = () => Vibration.vibrate(50);
-  const warning = () => Vibration.vibrate(90);
+  const warning = () => {
+    Vibration.vibrate(90);
+    setTimeout(() => Vibration.vibrate(90), 160);
+  };
   const success = () => Vibration.vibrate(20);
-  const error = () => Vibration.vibrate([20, 15, 20]);
+  const error = () => Vibration.vibrate(140);
   const removed = () => Vibration.vibrate(20);
   return {
     lightTap,
@@ -31,7 +34,7 @@ const useHaptics = (): useHapticsReturnType => {
     warning,
     success,
     error,
-    removed
+    removed,
   };
 };
 

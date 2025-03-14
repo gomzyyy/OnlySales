@@ -50,23 +50,21 @@ export const toogleState = (
     false: () => fn(false),
   };
 };
-export const checkDate = (date: string | number) => {
-  const parsedDate =
-    typeof date === 'number'
-      ? new Date(date)
-      : new Date(isNaN(Number(date)) ? date : Number(date));
-
-  if (isNaN(parsedDate.getTime())) {
-    console.error('Invalid date:', date);
+export const checkDate = (date:number) => {
+  if (typeof date !== 'number') {
+    console.log('Invalid input');
     return {
       sameDay: false,
       thisMonth: false,
       lastMonth: false,
-      olderThanLastMonth: false,
+      twoMonthsOld: false,
+  threeMonthsOld: false,
+  fourMonthsOld: false,
+  olderThanFourMonths: false,
       monthsOld: null,
     };
   }
-
+  const parsedDate = new Date(date);
   const now = new Date();
 
   const nowUTC = new Date(
@@ -90,7 +88,10 @@ export const checkDate = (date: string | number) => {
     sameDay,
     thisMonth: monthDifference === 0,
     lastMonth: monthDifference === 1,
-    olderThanLastMonth: monthDifference > 1,
+    twoMonthsOld: monthDifference === 2,
+  threeMonthsOld: monthDifference === 3,
+  fourMonthsOld: monthDifference === 4,
+  olderThanFourMonths: monthDifference > 4,
     monthsOld: monthDifference,
   };
 };

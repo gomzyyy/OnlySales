@@ -30,12 +30,17 @@ const PaidUdhars = () => {
 
   return (
     <View style={styles.parent}>
-      <Header name={date} backButtom={true} />
-      <View style={styles.container}>
+      <Header
+        name={date}
+        backButtom={true}
+        titleColor={currentTheme.header.textColor}
+        headerBgColor={currentTheme.baseColor}
+      />
+      <View  style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
         <CustomerInfo customer={customer} />
-        <View style={styles.customerHeader}>
+        {/* <View style={styles.customerHeader}>
           <CustomerHeader flex={false} />
-        </View>
+        </View> */}
         <View style={styles.itemListContainer}>
           {paidPayments.length !== 0 ? (
             <FlatList
@@ -48,13 +53,13 @@ const PaidUdhars = () => {
             />
           ) : (
             <View style={styles.emptyListContainer}>
-              <EmptyListMessage title="No paid udhars at the momment." />
+              <EmptyListMessage title="No paid udhars at the momment." textColor={currentTheme.contrastColor} />
               <TouchableOpacity
-                style={[styles.backBtnContainer,{backgroundColor:currentTheme.baseColor}]}
+                style={[styles.backBtnContainer,{backgroundColor:currentTheme.contrastColor}]}
                 activeOpacity={0.8}
                 onPress={() => back()}>
-                <Icon name="arrowleft" size={20} color={currentTheme.contrastColor} />
-                <Text style={[styles.backBtnText,{color:currentTheme.contrastColor}]}>Back</Text>
+                <Icon name="arrowleft" size={20} color={currentTheme.baseColor} />
+                <Text style={[styles.backBtnText,{color:currentTheme.baseColor}]}>Back</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -76,7 +81,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   itemListContainer: {
-    // marginTop: 20,
+    marginTop: 20,
   },
   emptyListContainer: {alignItems: 'center'},
   backBtnContainer: {
