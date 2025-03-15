@@ -30,6 +30,7 @@ import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
 import {useTheme} from '../hooks/index';
 import Customers from '../screens/Customers/Customers';
 import Test from '../screens/Test/Test';
+import SignupSuccess from '../screens/Auth/SignUp/screens/SignupSuccess';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -96,6 +97,7 @@ const StackNav = () => {
         options={{gestureEnabled: false}}
         component={UserNotFound}
       />
+      <stack.Screen name="SignupSuccess" component={SignupSuccess} />
       <stack.Screen
         name="AskAboutUserInfo"
         options={{gestureEnabled: false}}

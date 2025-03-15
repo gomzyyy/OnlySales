@@ -7,18 +7,19 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTheme} from '../../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {deviceHeight} from '../../../../utils/Constants';
 import {navigate} from '../../../../utils/nagivationUtils';
 import BusinessTypePicker from '../../../../components/BusinessTypePicker';
-import {BusinessType} from '../../../../../enums';
+import {BusinessType, CurrencyType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
 import {setShopkeeper} from '../../../../../store/slices/shopkeeper';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
 import {showToast} from '../../../../service/fn';
+import CurrencyPicker from '../../../../components/CurrencyPicker';
 
 type AskAboutUserInfoParams = {
   name: string;
@@ -33,16 +34,47 @@ const AskAboutUserInfo = () => {
   const [businessType, setBusinessType] = useState<BusinessType>(
     BusinessType.RETAIL,
   );
+  const [currency, setCurrency] = useState<CurrencyType>(CurrencyType.INR);
   const [businessName, setBusinessName] = useState<string>('');
+  const [askBusinessDescription, setAskBusinessDescription] =
+    useState<boolean>(false);
+  const [businessDiscription, setBusinessDescription] = useState<string>('');
+  const [businessAddress, setBusinessAddress] = useState<string>('');
 
   const handleSetBusinessType = () => {
-    if (!businessName || businessName.length === 0) {
-      showToast({type: 'error', text1: 'Business name is required!'});
+    if (
+      !businessName ||
+      businessName.trim().length === 0 ||
+      !businessAddress ||
+      businessAddress.trim().length === 0
+    ) {
+      showToast({type: 'error', text1: 'Some business details are missing.'});
       return;
-    } else if (businessName.length < 4 || businessName.length > 64) {
+    } else if (
+      businessName.length < 4 ||
+      businessName.length > 64 ||
+      businessAddress.length < 4 ||
+      businessAddress.length > 64
+    ) {
       showToast({
         type: 'error',
-        text1: 'Business name should between 4-64 characters!',
+        text1: "Name & address should between 4-64 characters!",
+        position: 'top',
+      });
+      return;
+    }
+    if (
+      (businessType === BusinessType.OTHER &&
+        businessDiscription.trim().length === 0) ||
+      (businessType === BusinessType.OTHER &&
+        businessDiscription.trim().length < 4) ||
+      (businessType === BusinessType.OTHER &&
+        businessDiscription.trim().length > 64)
+    ) {
+      showToast({
+        type: 'error',
+        text1: 'Description should between 4-64 characters!',
+        position: 'top',
       });
       return;
     }
@@ -51,11 +83,19 @@ const AskAboutUserInfo = () => {
       userId,
       businessName,
       businessType,
+      businessDiscription,
+      currency
     };
     dispatch(setShopkeeper(signupData));
-    navigate('Dashboard');
+    navigate('SignupSuccess');
   };
-
+  useEffect(() => {
+    if (businessType === BusinessType.OTHER) {
+      setAskBusinessDescription(true);
+    } else {
+      setAskBusinessDescription(false);
+    }
+  }, [businessType]);
   return (
     <KeyboardAvoidingView style={styles.parent}>
       <ScrollView style={{flex: 1}}>
@@ -78,11 +118,49 @@ const AskAboutUserInfo = () => {
             />
           </View>
           <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Enter your business address:</Text>
+            <TextInput
+              value={businessAddress}
+              onChangeText={setBusinessAddress}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Your business address here."
+              placeholderTextColor={currentTheme.baseColor}
+            />
+          </View>
+          <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Choose your business type:</Text>
             <BusinessTypePicker
               enabled={true}
               value={businessType}
               setState={setBusinessType}
+            />
+          </View>
+          {askBusinessDescription && (
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>
+                Please describe your business in few words:
+              </Text>
+              <TextInput
+                value={businessDiscription}
+                onChangeText={setBusinessDescription}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Describe here."
+                placeholderTextColor={currentTheme.baseColor}
+              />
+            </View>
+          )}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Choose your currency:</Text>
+            <CurrencyPicker
+              enabled={true}
+              value={currency}
+              setState={setCurrency}
             />
           </View>
         </View>
@@ -124,7 +202,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: deviceHeight * 0.15,
+    marginTop: deviceHeight * 0.1,
   },
   subTitle: {
     fontSize: 20,
@@ -133,12 +211,12 @@ const styles = StyleSheet.create({
     marginTop: deviceHeight * 0.05,
   },
   formContainer: {
-    marginTop: deviceHeight * 0.06,
+    marginTop: deviceHeight * 0.04,
     gap: 16,
   },
   inputContainer: {
     gap: 10,
-    marginTop: deviceHeight * 0.03,
+    marginTop: deviceHeight * 0.02,
   },
   inputText: {
     borderWidth: 2,

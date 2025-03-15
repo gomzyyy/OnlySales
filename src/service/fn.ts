@@ -50,48 +50,64 @@ export const toogleState = (
     false: () => fn(false),
   };
 };
-export const checkDate = (date:number) => {
+export const checkDate = ({
+  date,
+  matchByDay = 1, // Default: Check if the date is today
+}: {
+  date: number;
+  matchByDay?: number;
+}) => {
   if (typeof date !== 'number') {
     console.log('Invalid input');
     return {
+      isExactMatch: false, // ✅ For matchByDay checking
       sameDay: false,
       thisMonth: false,
       lastMonth: false,
       twoMonthsOld: false,
-  threeMonthsOld: false,
-  fourMonthsOld: false,
-  olderThanFourMonths: false,
+      threeMonthsOld: false,
+      fourMonthsOld: false,
+      olderThanFourMonths: false,
       monthsOld: null,
+      daysAgo: null, // ✅ How many days old
     };
   }
+
   const parsedDate = new Date(date);
   const now = new Date();
 
+  // Normalize both dates to remove time and compare only dates
   const nowUTC = new Date(
     now.getUTCFullYear(),
     now.getUTCMonth(),
-    now.getUTCDate(),
+    now.getUTCDate()
   );
+
   const parsedDateUTC = new Date(
     parsedDate.getUTCFullYear(),
     parsedDate.getUTCMonth(),
-    parsedDate.getUTCDate(),
+    parsedDate.getUTCDate()
   );
 
+  // Calculate full days difference
+  const timeDifference = nowUTC.getTime() - parsedDateUTC.getTime();
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  // Calculate month difference
   const monthDifference =
     (nowUTC.getFullYear() - parsedDateUTC.getFullYear()) * 12 +
     (nowUTC.getMonth() - parsedDateUTC.getMonth());
 
-  const sameDay = nowUTC.getTime() === parsedDateUTC.getTime();
-
   return {
-    sameDay,
+    isExactMatch: daysDifference === matchByDay, // ✅ Checks exact day difference
+    sameDay: daysDifference === 0,
     thisMonth: monthDifference === 0,
     lastMonth: monthDifference === 1,
     twoMonthsOld: monthDifference === 2,
-  threeMonthsOld: monthDifference === 3,
-  fourMonthsOld: monthDifference === 4,
-  olderThanFourMonths: monthDifference > 4,
+    threeMonthsOld: monthDifference === 3,
+    fourMonthsOld: monthDifference === 4,
+    olderThanFourMonths: monthDifference > 4,
     monthsOld: monthDifference,
+    daysAgo: daysDifference, // ✅ Returns actual days old
   };
 };

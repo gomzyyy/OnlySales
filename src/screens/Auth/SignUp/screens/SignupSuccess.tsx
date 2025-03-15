@@ -1,9 +1,9 @@
-import {View, Text, Dimensions, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import {navigate} from '../../utils/nagivationUtils';
+import {navigate} from '../../../../utils/nagivationUtils';
 
-const Test = () => {
+const SignupSuccess = () => {
   const [count, setCount] = useState<number>(3);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ const Test = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   parent: {
     flex: 1,
@@ -54,4 +55,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Test;
+export default SignupSuccess;

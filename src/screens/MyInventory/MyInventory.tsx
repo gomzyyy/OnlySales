@@ -15,28 +15,33 @@ const MyInventory = () => {
   const {currentTheme} = useTheme();
 
   const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const inventoryItems = useSelector((s: RootState) => s.shopkeeper.shopkeeper.inventory);
+  const inventoryItems = useSelector(
+    (s: RootState) => s.shopkeeper.shopkeeper.inventory,
+  );
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);
 
   const AddInventoryItemIcon = (): React.JSX.Element => {
     return (
       <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
-        <Icon name="plus" color={'black'} size={20} />
-        <Text style={{fontSize: 16}}>Add Item</Text>
+        <Icon name="plus" color={currentTheme.header.textColor} size={20} />
+        <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
+          Add Item
+        </Text>
       </View>
     );
   };
 
   return (
-    <View
-      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
+    <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Header
-        name={`${shopkeeper.name}`}
+        name={`${shopkeeper.businessName || shopkeeper.name}`}
         backButtom
         customComponent={true}
         renderItem={<AddInventoryItemIcon />}
         customAction={handleAddButton}
+        titleColor={currentTheme.header.textColor}
+        headerBgColor={currentTheme.baseColor}
       />
       <View style={styles.contentContainer}>
         {inventoryItems.length === 0 ? (
@@ -56,7 +61,9 @@ const MyInventory = () => {
         )}
       </View>
       <View style={styles.assistTextContainer}>
-        <Text style={styles.assistText}>Click to edit Inventory item.</Text>
+        <Text style={[styles.assistText, {color: currentTheme.contrastColor}]}>
+          Click to edit Inventory item.
+        </Text>
       </View>
       {openAddProduct && (
         <SlideUpContainer
@@ -75,6 +82,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 10,
+    marginTop: 20,
   },
   listContainer: {
     flexDirection: 'row',

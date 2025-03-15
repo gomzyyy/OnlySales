@@ -1,4 +1,4 @@
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import React, {useEffect} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
@@ -7,8 +7,8 @@ import {useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../utils/Constants';
-import BreifInfoGraph from './components/BreifInfoGraph';
+import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
+import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 
 const DashboardOptions = [
   {
@@ -63,9 +63,18 @@ const Dashboard = () => {
             </View>
           </View>
           <View style={styles.graphContainer}>
-            <BreifInfoGraph />
-            <BreifInfoGraph />
-            <BreifInfoGraph />
+            <Text
+              style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
+              Today's best-sellers {'(sales-product)'}
+            </Text>
+            <TodayBestSellerInfoGraph />
+          </View>
+          <View style={styles.graphContainer}>
+            <Text
+              style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
+              Past 7 Day Recap {'(sales-day)'}
+            </Text>
+            <WeeklySalesInfoGraph />
           </View>
         </View>
       </ScrollView>
@@ -74,7 +83,9 @@ const Dashboard = () => {
 };
 
 const styles = StyleSheet.create({
-  contentContainer: {flex: 1},
+  contentContainer: {
+    flex: 1,
+  },
   navigationBtnsContainer: {
     alignItems: 'flex-start',
     marginTop: 5,
@@ -86,7 +97,12 @@ const styles = StyleSheet.create({
   graphContainer: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 30,
+  },
+  graphLabel: {
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: 'bold',
   },
 });
 

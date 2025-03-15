@@ -42,7 +42,7 @@ const ToogleButton: React.FC<ToogleButtonProps> = ({
           borderColor
         },
       ]}>
-      <Text style={[styles.toogleBtnText, {color: textColor}]}>{title}</Text>
+      <Text style={[styles.toogletext, {color: textColor}]}>{title}</Text>
     </View>
   );
 };
@@ -114,7 +114,7 @@ const Tab: React.FC<TabProps> = ({
               styles.productAmount,
               {color: currentTheme?.tab?.value || '#000'},
             ]}>
-            {`${app.currency}${
+            {`${app.currency} ${
               i.discountedPrice && i.discountedPrice !== 0
                 ? i.count === 0
                   ? i.discountedPrice
@@ -134,7 +134,7 @@ const Tab: React.FC<TabProps> = ({
             activeOpacity={0.8}
             onPress={handleMarkAs}>
             <Text
-              style={[styles.MarkAsPaidText, {color: currentTheme.tab.btnText}]}>
+              style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
               {actionType === 'PAID' ? 'Mark as *Unpaid' : 'Mark as *Paid'}
             </Text>
           </TouchableOpacity>
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     height: 60,
     marginTop: 20,
   },
-  toogleBtnText: {
+  toogletext: {
     fontSize: 20,
     fontWeight: 'bold',
   },

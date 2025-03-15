@@ -39,7 +39,7 @@ const SignUp = () => {
     ) {
       showToast({
         type: 'error',
-        text1: 'Name and ID should between 4-16!',
+        text1: 'Name and ID should between 4-16.',
         position: 'top',
       });
       return;
@@ -58,7 +58,7 @@ const SignUp = () => {
     ) {
       showToast({
         type: 'error',
-        text1: 'Please enter a valid Phone Number!',
+        text1: 'Please enter a valid Phone Number.',
       });
       return;
     }

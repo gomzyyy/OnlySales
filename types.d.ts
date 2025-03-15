@@ -44,6 +44,7 @@ export interface TabTheme {
   btnBg: string;
   btnText: string;
   icon: string;
+  text: string;
 }
 export interface App {
   searchResults: Customer[];
@@ -76,6 +77,7 @@ export interface Customer extends User {
 export interface Shopkeeper extends User {
   businessAddress?: string;
   businessName?: string;
+  businessDescription?: string;
   businessType?: BusinessType;
   inventory: Product[];
   starProducts?: Product[];

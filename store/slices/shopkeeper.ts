@@ -8,7 +8,7 @@ import {
   newSoldProduct,
   AppTheme,
 } from '../../types';
-import {AdminRole, BusinessType} from '../../enums';
+import {AdminRole, BusinessType, CurrencyType} from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
 import {randomId, showToast} from '../../src/service/fn';
@@ -32,12 +32,12 @@ const initialState: ShopkeeperInitialStateType = {
     inventory: [],
     starProducts: [],
     accessPasscode: undefined,
-    customers: d.customers,
+    customers: [],
     createdAt: new Date().toDateString(),
     updatedAt: new Date().toDateString(),
   },
   app: {
-    currency: 'Rs.',
+    currency: CurrencyType.INR,
     searchResults: [],
     currentTheme: undefined,
     defaultTheme: Theme[0],
@@ -59,10 +59,21 @@ const shopkeeperSlice = createSlice({
         businessName?: string;
         phoneNumber?: string;
         businessType?: BusinessType;
+        businessDescription?: string;
+        businessAddress?: string;
+        currency?: CurrencyType;
       }>,
     ) => {
-      const {name, userId, phoneNumber, businessType, businessName} =
-        action.payload;
+      const {
+        name,
+        userId,
+        phoneNumber,
+        businessType,
+        businessName,
+        businessDescription,
+        businessAddress,
+        currency,
+      } = action.payload;
       if (!name || !userId) {
         showToast({type: 'info', text1: 'Error: Shopkeeper.ts;'});
         return;
@@ -78,6 +89,8 @@ const shopkeeperSlice = createSlice({
         sessionId: Date.now(),
         role: AdminRole.SHOPKEEPER,
         businessName,
+        businessDescription,
+        businessAddress,
         businessType,
         inventory: [],
         customers: [],
@@ -85,6 +98,7 @@ const shopkeeperSlice = createSlice({
         updatedAt: Date.now().toString(),
       };
       state.app.previousShopkeepers.push(newShopkeeper);
+      state.app.currency = currency ?? CurrencyType.INR;
       state.shopkeeper = newShopkeeper;
     },
     toogleLockApp: (state, action: PayloadAction<boolean>) => {

@@ -90,7 +90,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   style={[
                     styles.textInfo,
                     {color: currentTheme.baseColor},
-                  ]}>{`${app.currency}${
+                  ]}>{`${app.currency} ${
                   t.name === 'This Month' ? monthlySales : todaySalesNum
                 }`}</Text>
               </View>
@@ -98,7 +98,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           ))}
         </ScrollView>
         {searchBar && (
-          <View style={{paddingHorizontal:10}}>
+          <View style={{paddingHorizontal: 10}}>
             <Pressable
               style={[
                 styles.searchQueryContainer,

@@ -38,13 +38,13 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.tabColor,
+            backgroundColor: currentTheme.contrastColor,
           },
         ]}>
         <View
           style={[styles.tabLabel, {backgroundColor: currentTheme.baseColor}]}>
           <Text
-            style={[styles.productName, {color: currentTheme.tab.label}]}>
+            style={[styles.productName, {color: currentTheme.tab.text}]}>
             {i.name}
           </Text>
         </View>
@@ -54,39 +54,39 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
             {backgroundColor: currentTheme.baseColor},
           ]}>
           <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
               Price: {`${currency}${i.basePrice}`}
             </Text>
           </View>
           <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
-              Discounted price: {`${currency}${i.discountedPrice}`}
+            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              Discounted price: {`${currency} ${i.discountedPrice}`}
             </Text>
           </View>
           <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
               Includes: {i.quantity} {i.measurementType}
             </Text>
           </View>
           <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
               Total sold: {i.totalSold}
             </Text>
           </View>
           <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
               Stock: {i.stock}
             </Text>
           </View>
 
           <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
-              Product cost: {`${currency}${i.productCost}`}
+            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              Product cost: {`${currency} ${i.productCost}`}
             </Text>
           </View>
           {i.productCost && (
             <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, {color: currentTheme.tab.label}]}>
+              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
                 Net Profit/sale:{' '}
                 {`${
                  parseFloat(( i.discountedPrice && i.discountedPrice > 0
@@ -112,8 +112,8 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
 };
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 8,
-    paddingVertical: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 6,
     justifyContent: 'space-between',
     borderRadius: 8,
     height: 210,

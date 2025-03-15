@@ -6,6 +6,9 @@ export enum BusinessType {
   DISTRIBUTION = 'distribution',
   OTHER = 'other'
 }
+export enum CurrencyType {
+  INR='INR'
+}
 export enum QuantityType {
   ML = 'ml',
   LITRE = 'litre',
