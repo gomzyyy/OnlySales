@@ -3,13 +3,13 @@ import React from 'react';
 import {colors} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import {logout} from '../../../../store/slices/shopkeeper';
+import {logout} from '../../../../store/slices/business';
 import {Confirm, showToast} from '../../../service/fn';
 import { resetAndNavigate } from '../../../utils/nagivationUtils';
 
 const LogoutButton = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {userId} = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const {userId} = useSelector((s: RootState) => s.appData.BusinessOwner);
   const handleOnLogout = async () => {
     const res = await Confirm(
       'Are you sure?',

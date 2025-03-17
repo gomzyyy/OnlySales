@@ -21,8 +21,8 @@ const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   flex = true,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const app = useSelector((s: RootState) => s.shopkeeper.app);
-  const c = useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers);
+  const app = useSelector((s: RootState) => s.appData.app);
+  const c = useSelector((s: RootState) => s.appData.BusinessOwner.customers);
   return (
     <KeyboardAvoidingView
       style={{flex: flex ? 1 : 0}}

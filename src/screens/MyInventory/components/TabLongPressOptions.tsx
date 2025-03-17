@@ -5,7 +5,7 @@ import { Product} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {removeProductFromInventory} from '../../../../store/slices/shopkeeper';
+import {removeProductFromInventory} from '../../../../store/slices/business';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
 

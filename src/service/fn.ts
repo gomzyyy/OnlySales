@@ -1,6 +1,7 @@
 import {Alert} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {v4 as uuidv4} from 'uuid';
+import {User} from '../../types';
 type ShowToastFunction = {
   type: 'success' | 'error' | 'info';
   text1: string;
@@ -80,13 +81,13 @@ export const checkDate = ({
   const nowUTC = new Date(
     now.getUTCFullYear(),
     now.getUTCMonth(),
-    now.getUTCDate()
+    now.getUTCDate(),
   );
 
   const parsedDateUTC = new Date(
     parsedDate.getUTCFullYear(),
     parsedDate.getUTCMonth(),
-    parsedDate.getUTCDate()
+    parsedDate.getUTCDate(),
   );
 
   // Calculate full days difference
@@ -110,4 +111,12 @@ export const checkDate = ({
     monthsOld: monthDifference,
     daysAgo: daysDifference, // ✅ Returns actual days old
   };
+};
+
+export const modifyUserName = (name: User['name']) => {
+  const nameToArray = name.split(' ');
+  const modifiedName = nameToArray
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  return modifiedName;
 };

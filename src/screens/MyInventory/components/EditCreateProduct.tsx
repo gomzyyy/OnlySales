@@ -17,7 +17,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
-import { editInventoryProduct } from '../../../../store/slices/shopkeeper';
+import { editInventoryProduct } from '../../../../store/slices/business';
 
 type EditProductProps = {
   product: Product;

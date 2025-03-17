@@ -23,18 +23,20 @@ const EmptyListMessage: React.FC<EmptyListMessageProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent:'center',
+    justifyContent: 'center',
   },
   textBold: {
     marginTop: 20,
     fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   textLight: {
     marginTop: 20,
     fontSize: 24,
     fontWeight: '400',
     paddingHorizontal: 20,
+    textAlign: 'center',
   },
 });
 

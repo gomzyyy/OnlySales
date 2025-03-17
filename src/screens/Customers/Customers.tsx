@@ -18,7 +18,7 @@ const Customers = () => {
   const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
   const customers = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper.customers,
+    (s: RootState) => s.appData.BusinessOwner.customers,
   );
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => {
@@ -42,7 +42,7 @@ const Customers = () => {
       />
       <View style={styles.contentContainer}>
         {!openCreateCustomer && (
-          <CreateButton openCreateCustomer={handleOpenCreateCustomer} />
+          <CreateButton open={handleOpenCreateCustomer} />
         )}
         <View style={{flex: 1}}>
           <View style={styles.searchBarContainer}>

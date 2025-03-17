@@ -4,14 +4,14 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Customer, Shopkeeper} from '../../../../../types';
+import {Customer, BusinessOwner} from '../../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../../hooks/index';
 import LongPressEnabled from '../../../../customComponents/LongPressEnabled';
 const EditCustomer = React.lazy(()=>import("../../../../components/EditCustomer"))
 
 type TabProps = {
-  i: Shopkeeper;
+  i: BusinessOwner;
   lastIndex?: boolean;
   handleOpenLongPressOptions?: (customer: Customer) => void;
   dummy?: boolean;
@@ -47,7 +47,7 @@ const Tab: React.FC<TabProps> = ({
             backgroundColor: currentTheme?.tab.bg,
           },
         ]}>
-        <Text style={[styles.shopkeeperName, {color: currentTheme?.tab.label}]}>
+        <Text style={[styles.ownerName, {color: currentTheme?.tab.label}]}>
           {i.name}
         </Text>
         <Icon name="right" color={currentTheme?.tab.icon} size={22} />
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderRadius: 8,
   },
-  shopkeeperName: {
+  ownerName: {
     fontSize: 20,
     fontWeight: '400',
   },

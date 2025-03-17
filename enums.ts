@@ -10,17 +10,17 @@ export enum CurrencyType {
   INR='INR'
 }
 export enum QuantityType {
-  ML = 'ml',
-  LITRE = 'litre',
-  KILOGRAMS = 'kilograms',
-  GRAMS = 'grams',
-  PCS = 'pcs',
-  PACK = 'pack',
-  DOZENS = 'dozen',
+  ML = 'Ml',
+  LITRE = 'Litre',
+  KILOGRAMS = 'Kilograms',
+  GRAMS = 'Grams',
+  PCS = 'Pcs',
+  PACK = 'Pack',
+  DOZENS = 'Dozen',
 }
 export enum AdminRole {
-  SHOPKEEPER = "shopkeeper",
-  CUSTOMER = "customer"
+  OWNER = "Owner",
+  EMPLOYEE = "Employee"
 }
 export enum AppThemeName{
   PURPLE = 'Midnight Orchid',
@@ -29,4 +29,29 @@ export enum AppThemeName{
     GREEN = 'Cyber Lime',
     BLUE = 'Deep Ocean',
     CORAL = 'Salmon Mist',
+}
+
+export enum AssetCategory{
+  CASH='Cash',
+  INVESTMENT='Investment',
+  PROPERTY='Property',
+  VECHILE='Vehicle',
+  STOCKS='Stocks',
+  BONDS='Bonds',
+  PATENTS='Patents',
+  OTHER='Other'
+}
+
+export enum EmploymentStatus{
+ACTIVE='Active',
+INACTIVE='Inactive',
+TERMINATED='Terminated',
+RESIGNATION='Resignation'
+}
+
+export enum Shift{
+  MORNING='Morning',
+  evening='Evening',
+  NIGHT='Night',
+  UNDECIDED='Undecided'
 }

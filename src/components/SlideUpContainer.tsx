@@ -1,19 +1,18 @@
-import { Modal, StyleSheet, Pressable} from 'react-native';
-import React from 'react';
+import {Modal, StyleSheet, Pressable} from 'react-native';
+import React, {PropsWithChildren} from 'react';
 
-type SlideUpContainerProps = {
-  children: React.ReactNode;
+type SlideUpContainerProps = PropsWithChildren<{
   open: boolean;
   close: () => void;
-  bgcolor?: string;
+  opacity?: 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
   padding?: boolean;
-};
+}>;
 
 const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   children,
   open,
   close,
-  bgcolor = 'rgba(0,0,0,0.1)',
+  opacity = 0.1,
   padding = false,
 }): React.JSX.Element => {
   return (
@@ -23,12 +22,14 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
       statusBarTranslucent={true}
       visible={open}
       onRequestClose={close}
-      hardwareAccelerated={true}
-      >
+      hardwareAccelerated={true}>
       <Pressable
         style={[
           styles.childContainer,
-          {backgroundColor: bgcolor, paddingHorizontal: padding ? 14 : 10},
+          {
+            backgroundColor: `rgba(0,0,0,${opacity})`,
+            paddingHorizontal: padding ? 14 : 10,
+          },
         ]}
         onPress={close}>
         <Pressable onPress={e => e.stopPropagation()}>{children}</Pressable>

@@ -10,31 +10,33 @@ import React, {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import ShopkeeperInfo from '../components/ShopkeeperInfo';
+import OwnerInfo from '../components/OwnerInfo';
 import {TextInput} from 'react-native-gesture-handler';
 import {useTheme} from '../../../hooks/index';
 import {AdminRole, BusinessType} from '../../../../enums';
 import {Confirm, showToast} from '../../../service/fn';
-import {editShopkeeper} from '../../../../store/slices/shopkeeper';
+import {editBusinessOwner} from '../../../../store/slices/business';
 import RolePicker from '../../../components/RolePicker';
 import BusinessTypePicker from '../../../components/BusinessTypePicker';
 import {isNumber} from '../../../service/test';
+import {back} from '../../../utils/nagivationUtils';
 
 const MyProfile = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-
-  const [name, setName] = useState<string>(shopkeeper.name);
-  const [role, setRole] = useState<AdminRole>(shopkeeper.role);
+  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const [name, setName] = useState<string>(owner.name);
+  const [role, setRole] = useState<AdminRole>(owner.role);
   const [phoneNumber, setPhoneNumber] = useState<string>(
-    shopkeeper.phoneNumber ?? '',
+    owner.phoneNumber ?? '',
   );
   const [businessType, setBusinessType] = useState<BusinessType>(
-    shopkeeper.businessType || BusinessType.RETAIL,
+    owner.businessType || BusinessType.RETAIL,
   );
-
   const [edited, setEdited] = useState<boolean>(false);
+  const [businessDescription, setBusinessDescription] = useState<string>(
+    owner.businessDescription || '',
+  );
 
   const handleProfileEdit = async () => {
     if (
@@ -45,7 +47,7 @@ const MyProfile = () => {
       showToast({type: 'error', text1: 'Name should 4-16 characters long.'});
       return;
     }
-    if (phoneNumber !== shopkeeper.phoneNumber) {
+    if (owner.phoneNumber && phoneNumber !== owner.phoneNumber) {
       if (
         phoneNumber.trim().length === 0 ||
         phoneNumber.trim().length > 10 ||
@@ -63,22 +65,26 @@ const MyProfile = () => {
     );
     if (!res) return;
     dispatch(
-      editShopkeeper({
+      editBusinessOwner({
         name,
-        userId: shopkeeper.userId,
+        userId: owner.userId,
         phoneNumber,
         businessType,
+        businessDescription,
       }),
     );
     showToast({type: 'success', text1: 'Profile updated successfully.'});
+    back();
   };
   const checkIfEdited = () => {
     if (
-      name.trim() !== shopkeeper.name.trim() ||
-      role !== shopkeeper.role ||
-      businessType !== shopkeeper.businessType ||
-      (phoneNumber.trim().length !== 0 &&
-        phoneNumber !== shopkeeper.phoneNumber)
+      name.trim() !== owner.name.trim() ||
+      role !== owner.role ||
+      businessType !== owner.businessType ||
+      (phoneNumber.trim().length !== 0 && phoneNumber !== owner.phoneNumber) ||
+      (businessType === BusinessType.OTHER &&
+        businessDescription.trim().length !== 0 &&
+        businessDescription !== owner.businessDescription)
     ) {
       setEdited(true);
     } else {
@@ -88,7 +94,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     checkIfEdited();
-  }, [name, role, businessType, shopkeeper, phoneNumber]);
+  }, [name, role, businessType, owner, phoneNumber, businessDescription]);
 
   return (
     <KeyboardAvoidingView
@@ -99,12 +105,18 @@ const MyProfile = () => {
           name="My Profile"
           backButtom
           customComponent={edited}
-          renderItem={<Text style={{fontSize: 20}}>Save</Text>}
+          renderItem={
+            <Text style={{fontSize: 20, color: currentTheme.header.textColor}}>
+              Save
+            </Text>
+          }
           customAction={handleProfileEdit}
+          headerBgColor={currentTheme.baseColor}
+          titleColor={currentTheme.header.textColor}
         />
         <View style={styles.settingsContainer}>
           <View style={styles.infoContainer}>
-            <ShopkeeperInfo shopkeeper={shopkeeper} />
+            <OwnerInfo owner={owner} />
           </View>
           <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -136,16 +148,31 @@ const MyProfile = () => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Registered role:</Text>
-              <RolePicker value={shopkeeper.role} setState={setRole} />
+              <RolePicker value={owner.role} setState={setRole} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Registered business type:</Text>
               <BusinessTypePicker
                 enabled={true}
-                value={shopkeeper.businessType || BusinessType.RETAIL}
+                value={owner.businessType || BusinessType.RETAIL}
                 setState={setBusinessType}
               />
             </View>
+            {businessType === BusinessType.OTHER && (
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Registered business type:</Text>
+                <TextInput
+                  value={businessDescription}
+                  onChangeText={setBusinessDescription}
+                  style={[
+                    styles.inputText,
+                    {borderColor: currentTheme.modal.inputBorder},
+                  ]}
+                  placeholder="Describe your business here."
+                  placeholderTextColor={currentTheme.baseColor}
+                />
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -158,6 +185,7 @@ const styles = StyleSheet.create({
   infoContainer: {},
   settingsContainer: {
     paddingHorizontal: 10,
+    marginBottom: 40,
   },
   container: {
     marginTop: 20,

@@ -4,7 +4,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Customer} from '../../../../types';
+import {Customer, Employee} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks/index';
@@ -43,6 +43,7 @@ const Tab: React.FC<TabProps> = ({
 
   return (
     <LongPressEnabled longPressCanceledAction={handleLongPressCancelAction} longPressAction={handleOpenLongPressOptions} dummy={dummy} >
+      
       <View
         style={[
           styles.container,
@@ -54,6 +55,7 @@ const Tab: React.FC<TabProps> = ({
         <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
           {i.name}
         </Text>
+       
         <Icon name="right" color={currentTheme.tab.icon} size={22} />
         {openTabOptions && i && (
           <PopupContainer
@@ -71,7 +73,7 @@ const Tab: React.FC<TabProps> = ({
           <SlideUpContainer
             open={openEditCustomer}
             close={handleCloseEditCustomer}
-            bgcolor='rgba(0,0,0,0.8)'
+            opacity={0.8}
             >
             <EditCustomer i={i} close={handleCloseEditCustomer} />
           </SlideUpContainer>
@@ -87,6 +89,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 8,
+  },
+  absolute: {
+    position: "absolute",
   },
   customerName: {
     fontSize: 20,

@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {LineChart} from 'react-native-chart-kit';
 import {deviceWidth} from '../../../utils/Constants';
@@ -17,7 +17,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
   const {currentTheme} = useTheme();
   const {soldThisMonth, soldLastMonth, soldOneMonthAgo, soldTwoMonthAgo} =
     useAnalytics();
-  const currency = useSelector((s: RootState) => s.shopkeeper.app.currency);
+  const currency = useSelector((s: RootState) => s.appData.app.currency);
   const data: Dataset = {
     data: [
       0,

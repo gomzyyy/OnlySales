@@ -1,20 +1,20 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
-import {Customer, newSoldProduct} from '../../../../types';
+import {Customer, SoldProduct} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
 import {useTheme} from '../../../hooks/index';
-import {Confirm} from '../../../service/fn';
-import {setToPaid, setToUnpaid} from '../../../../store/slices/shopkeeper';
+import {setToPaid, setToUnpaid} from '../../../../store/slices/business';
 
 type TabProps = {
-  i: newSoldProduct;
+  i: SoldProduct;
   lastIndex?: boolean;
   customer: Customer;
   actionType: 'PAID' | 'UNPAID';
+  dummy?:boolean
 };
 
 type ToogleButtonProps = {
@@ -52,11 +52,12 @@ const Tab: React.FC<TabProps> = ({
   lastIndex,
   customer,
   actionType,
+  dummy=false
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
 
-  const app = useSelector((s: RootState) => s.shopkeeper.app);
+  const app = useSelector((s: RootState) => s.appData.app);
 
   const [longPressActionOpen, setLongPressActionOpen] =
     useState<boolean>(false);

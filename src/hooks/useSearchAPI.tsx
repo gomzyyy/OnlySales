@@ -12,7 +12,7 @@ type useSearchAPIProps = {
 
 const useSearchAPI = ({arr,compareWith}: useSearchAPIProps): useSearchAPIReturnType => {
   const {currentTheme, defaultTheme} = useSelector(
-    (s: RootState) => s.shopkeeper.app,
+    (s: RootState) => s.appData.app,
   );
   return {
     currentTheme: currentTheme ?? defaultTheme,

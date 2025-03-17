@@ -1,12 +1,27 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import {View, Text, StyleSheet} from 'react-native';
+import React from 'react';
+import Header from '../../components/Header';
+import {useTheme} from '../../hooks';
 
 const Analytics = () => {
+  const {currentTheme} = useTheme();
   return (
-    <View>
-      <Text>Analytics</Text>
+    <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
+      <Header
+        titleColor={currentTheme.header.textColor}
+        name="Analytics"
+        headerBgColor={currentTheme.baseColor}
+        backButtom={true}
+      />
+      <Text style={{textAlign: 'center', color: currentTheme.contrastColor}}>
+        Analytics
+      </Text>
     </View>
-  )
-}
+  );
+};
 
-export default Analytics
+const styles = StyleSheet.create({
+  parent: {flex: 1},
+});
+
+export default Analytics;

@@ -15,7 +15,7 @@ import {Picker} from '@react-native-picker/picker';
 import {QuantityType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {addProductToInventory} from '../../../../store/slices/shopkeeper';
+import {addProductToInventory} from '../../../../store/slices/business';
 import {Confirm, showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
 import {isFloat, isNumber} from '../../../service/test';

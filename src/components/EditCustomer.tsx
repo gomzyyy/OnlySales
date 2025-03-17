@@ -7,16 +7,19 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  Button,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {Customer} from '../../types';
 import {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
-import Tab from '../screens/Dashboard/components/Tab';
+import Tab from '../screens/Customer/components/Tab';
 import {showToast} from '../service/fn';
-import {updateCustomer} from '../../store/slices/shopkeeper';
+import {updateCustomer} from '../../store/slices/business';
 import {useTheme} from '../hooks/index';
+import SlideUpContainer from './SlideUpContainer';
+import GetImage from './GetImage';
 
 type EditCustomerProps = {
   i: Customer;
@@ -31,9 +34,9 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>(i.name);
   const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber || '');
-  // const [image, setImage] = useState<string>('');
+  const [image, setImage] = useState<string | undefined>(undefined);
   const [address, setAddress] = useState<string>(i.address || '');
-  const [updatedCustomer, setUpdatedCustomer] = useState<Customer>({...i});
+  const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
 
   const SaveUpdatedCustomer = () => {
     if (name.trim().length === 0) {
@@ -41,97 +44,115 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       close();
       return;
     }
-    dispatch(updateCustomer({...i, name}));
+    dispatch(updateCustomer({...i, name,image,phoneNumber,address}));
     close();
   };
-
+  const closeImagePicker = () => setOpenImagePicker(false);
   return (
-    <>
-      <Tab i={updatedCustomer} dummy={true} />
-      <KeyboardAvoidingView
-        style={[
-          styles.createCustomerContainer,
-          {backgroundColor: currentTheme.contrastColor},
-        ]}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView style={{flex: 1}} nestedScrollEnabled>
-          <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-            Edit Customer: {i.name}
-          </Text>
-          <View style={styles.formContainer}>
-            <View style={styles.inputTitleContainer}>
-              <Text
-                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-                Customer name
-              </Text>
-              <TextInput
-                value={name}
-                onChangeText={value => {
-                  setName(value);
-                  setUpdatedCustomer({
-                    ...i,
-                    name: value,
-                  });
-                }}
-                style={[
-                  styles.inputText,
-                  {borderColor: currentTheme.modal.inputBorder},
-                ]}
-                placeholder="Enter name"
-                placeholderTextColor={currentTheme.modal.inputText}
-              />
-            </View>
-            <View style={styles.inputTitleContainer}>
-              <Text
-                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-                Customer phone number
-              </Text>
-              <TextInput
-                value={phoneNumber}
-                onChangeText={setphoneNumber}
-                style={[
-                  styles.inputText,
-                  {borderColor: currentTheme.modal.inputBorder},
-                ]}
-                placeholder="Enter phone number"
-                placeholderTextColor={currentTheme.modal.inputText}
-              />
-            </View>
-            <View style={styles.inputTitleContainer}>
-              <Text
-                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-                Customer address
-              </Text>
-              <TextInput
-                value={address}
-                onChangeText={setAddress}
-                style={[
-                  styles.inputText,
-                  {borderColor: currentTheme.modal.inputBorder},
-                ]}
-                placeholder="Enter address"
-                placeholderTextColor={currentTheme.modal.inputText}
-              />
-            </View>
-            <TouchableOpacity
+    <KeyboardAvoidingView
+      style={[
+        styles.createCustomerContainer,
+        {backgroundColor: currentTheme.contrastColor},
+      ]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
+        Edit Customer: {i.name}
+      </Text>
+      <ScrollView style={{flex: 1}} nestedScrollEnabled>
+        <View style={styles.formContainer}>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Customer name
+            </Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
               style={[
-                styles.saveButton,
-                {backgroundColor: currentTheme.modal.saveBtnbg},
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
               ]}
-              activeOpacity={0.8}
-              onPress={SaveUpdatedCustomer}>
-              <Text
-                style={[
-                  styles.saveButtonText,
-                  {color: currentTheme.modal.saveBtnText},
-                ]}>
-                Save
-              </Text>
-            </TouchableOpacity>
+              placeholder="Enter name"
+              placeholderTextColor={'grey'}
+            />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Customer phone number
+            </Text>
+            <TextInput
+              value={phoneNumber}
+              onChangeText={setphoneNumber}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter phone number"
+              placeholderTextColor={'grey'}
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Customer address
+            </Text>
+            <TextInput
+              value={address}
+              onChangeText={setAddress}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter address"
+              placeholderTextColor={'grey'}
+            />
+          </View>
+          {image && image.trim().length !== 0 ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
+              <Button title="Remove" onPress={() => setImage(undefined)} />
+            </View>
+          ) : (
+            <View
+              style={{
+                paddingHorizontal: 40,
+                alignItems: 'center',
+              }}>
+              <Button
+                title="Choose Profile Image"
+                onPress={() => setOpenImagePicker(true)}
+              />
+            </View>
+          )}
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              {backgroundColor: currentTheme.modal.saveBtnbg},
+            ]}
+            activeOpacity={0.8}
+            onPress={SaveUpdatedCustomer}>
+            <Text
+              style={[
+                styles.saveButtonText,
+                {color: currentTheme.modal.saveBtnText},
+              ]}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <SlideUpContainer
+          opacity={0.2}
+          open={openImagePicker}
+          close={closeImagePicker}>
+          <GetImage
+            value={image}
+            setState={setImage}
+            callback={closeImagePicker}
+          />
+        </SlideUpContainer>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -142,7 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 10,
     paddingVertical: 20,
-    elevation:30,
+    elevation: 30,
   },
   formTitle: {
     textAlign: 'center',

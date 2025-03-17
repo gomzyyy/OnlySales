@@ -1,39 +1,39 @@
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import {Customer, newSoldProduct, Product, Shopkeeper} from '../../types';
+import {Customer, SoldProduct, Product, BusinessOwner} from '../../types';
 import {checkDate} from '../service/fn';
 
-export interface useAnalyticsReturnType extends Shopkeeper {
+export interface useAnalyticsReturnType extends BusinessOwner {
   bestSellers: Product[];
-  todaysMostSoldProducts: newSoldProduct[];
-  todaySales: newSoldProduct[];
+  todaysMostSoldProducts: SoldProduct[];
+  todaySales: SoldProduct[];
   customers: Customer[];
-  paidPayments: newSoldProduct[];
-  unpaidPayments: newSoldProduct[];
-  soldProducts: newSoldProduct[];
-  soldThisMonth: newSoldProduct[];
-  soldLastMonth: newSoldProduct[];
-  soldOneMonthAgo: newSoldProduct[];
-  soldTwoMonthAgo: newSoldProduct[];
-  soldThreeMonthAgo: newSoldProduct[];
-  soldMoreThanFourMonthsAgo: newSoldProduct[];
+  paidPayments: SoldProduct[];
+  unpaidPayments: SoldProduct[];
+  soldProducts: SoldProduct[];
+  soldThisMonth: SoldProduct[];
+  soldLastMonth: SoldProduct[];
+  soldOneMonthAgo: SoldProduct[];
+  soldTwoMonthAgo: SoldProduct[];
+  soldThreeMonthAgo: SoldProduct[];
+  soldMoreThanFourMonthsAgo: SoldProduct[];
   weeklySales: {
-    today: newSoldProduct[];
-    yesterday: newSoldProduct[];
-    oneDayAgo: newSoldProduct[];
-    twoDayAgo: newSoldProduct[];
-    threeDayAgo: newSoldProduct[];
-    fourDayAgo: newSoldProduct[];
-    fiveDayAgo: newSoldProduct[];
+    today: SoldProduct[];
+    yesterday: SoldProduct[];
+    oneDayAgo: SoldProduct[];
+    twoDayAgo: SoldProduct[];
+    threeDayAgo: SoldProduct[];
+    fourDayAgo: SoldProduct[];
+    fiveDayAgo: SoldProduct[];
   };
 }
 
 const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
-  const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const bestSellers = [...shopkeeper.inventory]
+  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const bestSellers = [...owner.inventory]
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, bestSellerCount);
-  const customers = shopkeeper.customers;
+  const customers = owner.customers;
   const paidPayments = customers.flatMap(s => s.paidPayments || []);
   const unpaidPayments = customers.flatMap(s => s.unpaidPayments || []);
   const soldProducts = [...paidPayments, ...unpaidPayments].map(s => ({
@@ -83,13 +83,25 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     ),
   };
 
-  const todaysMostSoldProducts = todaySales
+  const todaysMostSoldProductsRaw = todaySales
     .filter(s => checkDate({date: s.addedAt}).sameDay)
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, 5);
 
+  const todaysMostSoldProductsObj = todaysMostSoldProductsRaw.reduce<
+    Record<string, SoldProduct>
+  >((acc, product) => {
+    if (acc[product.id]) {
+      acc[product.id].totalSold += product.totalSold;
+    } else {
+      acc[product.id] = {...product};
+    }
+    return acc;
+  }, {});
+  const todaysMostSoldProducts = Object.values(todaysMostSoldProductsObj);
+
   return {
-    ...shopkeeper,
+    ...owner,
     bestSellers,
     todaysMostSoldProducts,
     weeklySales,

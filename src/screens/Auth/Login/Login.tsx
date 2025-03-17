@@ -22,7 +22,7 @@ const Login = () => {
   const [userId, setUserId] = useState<string>('');
 
   const prevUsers = useSelector(
-    (s: RootState) => s.shopkeeper.app.previousShopkeepers,
+    (s: RootState) => s.appData.app.previousOwners,
   );
   const findFromPrevUsers = () => {
     if (userId.trim().length === 0) {

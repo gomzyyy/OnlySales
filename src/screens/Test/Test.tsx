@@ -1,37 +1,37 @@
-import {View, Text, Dimensions, ScrollView, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Image,
+  Button,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import {navigate} from '../../utils/nagivationUtils';
+import GetImage from '../../components/GetImage';
+import SlideUpContainer from '../../components/SlideUpContainer';
 
 const Test = () => {
-  const [count, setCount] = useState<number>(3);
-
-  useEffect(() => {
-    const intervalId: NodeJS.Timeout = setInterval(
-      () =>
-        setCount(p => {
-          if (p === 0 || p < 0) return 0;
-          return p - 1;
-        }),
-      1000,
-    );
-    if (count === 0) {
-      navigate('Dashboard');
-    }
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [count]);
+  const [image, setImage] = useState<string | undefined>(undefined);
+  const [open, setOpen] = useState<boolean>(false);
   return (
     <View style={styles.parent}>
       <View style={styles.container}>
-        <Icon name="check-circle" size={80} color={'#02e202'} />
-        <Text style={[styles.successText, {color: 'grey'}]}>
-          Account created Successfully!
-        </Text>
-        <View>
-          <Text>Redirecting in {count}</Text>
-        </View>
+        {image && image.trim().length !== 0 && (
+          <View style={{borderRadius:70,overflow:'hidden'}}>
+            <Image source={{uri: image}} height={140} width={140} />
+          </View>
+        )}
+        <SlideUpContainer close={() => setOpen(false)} open={open}>
+          <GetImage
+            value={image}
+            setState={setImage}
+            callback={() => setOpen(false)}
+          />
+        </SlideUpContainer>
+        <Button title="OPEN" onPress={() => setOpen(true)} />
       </View>
     </View>
   );

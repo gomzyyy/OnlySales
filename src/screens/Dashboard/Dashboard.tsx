@@ -13,8 +13,8 @@ import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 const DashboardOptions = [
   {
     id: 0,
-    title: 'Customers',
-    navigateTo: 'Customers',
+    title: 'Employees',
+    navigateTo: 'Employees',
     icon: (color: string) => (
       <Icon name="people-sharp" size={24} color={color} />
     ),

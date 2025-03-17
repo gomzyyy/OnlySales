@@ -14,9 +14,9 @@ import {useTheme} from '../../hooks/index';
 const MyInventory = () => {
   const {currentTheme} = useTheme();
 
-  const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
   const inventoryItems = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper.inventory,
+    (s: RootState) => s.appData.BusinessOwner.inventory,
   );
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);
@@ -35,7 +35,7 @@ const MyInventory = () => {
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Header
-        name={`${shopkeeper.businessName || shopkeeper.name}`}
+        name={`${owner.businessName || owner.name}`}
         backButtom
         customComponent={true}
         renderItem={<AddInventoryItemIcon />}
@@ -48,6 +48,7 @@ const MyInventory = () => {
           <EmptyListMessage
             title="No Items in your inventory!"
             context="Click on PLUS button to add a new item."
+            textColor={currentTheme.contrastColor}
           />
         ) : (
           <ScrollView

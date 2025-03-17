@@ -3,20 +3,20 @@ import React from 'react';
 import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import ShopkeeperInfo from './components/ShopkeeperInfo';
+import OwnerInfo from './components/OwnerInfo';
 import AccountCenter from './components/AccountCenter';
 import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
 
 const Settings = () => {
-  const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
 
   return (
     <View style={styles.parent}>
       <Header name='Settings' backButtom />
       <ScrollView style={styles.settingsContainer} nestedScrollEnabled={true}>
         <View style={styles.infoContainer}>
-          <ShopkeeperInfo shopkeeper={shopkeeper} secure={true} />
+          <OwnerInfo owner={owner} secure={true} />
         </View>
         <View style={styles.sectionsContainer}>
           <Text style={styles.label}>Account</Text>

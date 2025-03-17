@@ -5,13 +5,13 @@ import {
   navigate,
 } from '../../../../utils/nagivationUtils';
 import {useRoute} from '@react-navigation/native';
-import {Shopkeeper} from '../../../../../types';
+import {BusinessOwner} from '../../../../../types';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
-import {login} from '../../../../../store/slices/shopkeeper';
+import {login} from '../../../../../store/slices/business';
 
 type UserFoundParams = {
-  user: Shopkeeper;
+  user: BusinessOwner;
 };
 const UserFound = () => {
   const dispatch = useDispatch<AppDispatch>();

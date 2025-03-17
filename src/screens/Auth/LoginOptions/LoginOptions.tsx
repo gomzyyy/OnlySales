@@ -7,7 +7,7 @@ import Tab from './components/Tab';
 
 const LoginOptions = () => {
   const recentUsers = useSelector(
-    (s: RootState) => s.shopkeeper.app.previousShopkeepers,
+    (s: RootState) => s.appData.app.previousOwners,
   );
   return (
     <View style={styles.parent}>

@@ -6,7 +6,7 @@ export interface useThemeReturnType {currentTheme: AppTheme};
 
 const useTheme = (): useThemeReturnType => {
   const {currentTheme, defaultTheme} = useSelector(
-    (s: RootState) => s.shopkeeper.app,
+    (s: RootState) => s.appData.app,
   );
   return {
     currentTheme: currentTheme ?? defaultTheme,

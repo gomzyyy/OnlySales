@@ -1,9 +1,8 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import React from 'react';
 import Tab from './shared/Tab';
 import {navigate} from '../../../utils/nagivationUtils';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+
 
 const AccountCenterOptions = [
   {title: 'My Profile', navigateTo: 'MyProfile', id: 1},

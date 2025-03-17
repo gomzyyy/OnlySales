@@ -17,7 +17,7 @@ import {useTheme} from '../../../../hooks/index';
 import {
   setAccessPassword,
   toogleLockApp,
-} from '../../../../../store/slices/shopkeeper';
+} from '../../../../../store/slices/business';
 import {back} from '../../../../utils/nagivationUtils';
 import {showToast} from '../../../../service/fn';
 
@@ -25,9 +25,9 @@ const SetPasscode = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const {accessPasscode} = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper,
+    (s: RootState) => s.appData.BusinessOwner,
   );
-  const {appLocked} = useSelector((s: RootState) => s.shopkeeper.app);
+  const {appLocked} = useSelector((s: RootState) => s.appData.app);
   const [locked, setLocked] = useState<boolean>(false);
   const [currPasscodeError, setCurrPasscodeError] = useState<boolean>(false);
   const [currPasscode, setCurrPasscode] = useState<

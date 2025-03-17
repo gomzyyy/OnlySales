@@ -27,10 +27,10 @@ const RolePicker:React.FC<RolePickerProps> = ({enabled=false,setState,value}):Re
     onValueChange={(value: AdminRole) => setState(value)}
     dropdownIconColor={currentTheme?.modal.pickerText}>
     <Picker.Item
-      label={`${AdminRole.SHOPKEEPER} ${!enabled ? "(disabled)" : ""}`}
-      value={AdminRole.SHOPKEEPER}
+      label={`${AdminRole.OWNER} ${!enabled ? "(disabled)" : ""}`}
+      value={AdminRole.OWNER}
     />
-    <Picker.Item label={`${AdminRole.CUSTOMER} ${enabled === false ? "(disabled)" : ""}`} value={AdminRole.CUSTOMER} />
+    <Picker.Item label={`${AdminRole.EMPLOYEE} ${enabled === false ? "(disabled)" : ""}`} value={AdminRole.EMPLOYEE} />
   </Picker>)
 };
 

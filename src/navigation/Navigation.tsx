@@ -7,10 +7,11 @@ import MenuContent from '../components/sub-components/MenuContent';
 import Settings from '../screens/Settings/Settings';
 import {navigationRef} from '../utils/nagivationUtils';
 import Customer from '../screens/Customer/Customer';
-import UnpaidUdhars from '../screens/Customer/UnpaidUdhars';
+import UnpaidUdhars from '../screens/Customer/screens/UnpaidUdhars';
 import MyInventory from '../screens/MyInventory/MyInventory';
-import Search from '../screens/Search/Search';
-import PaidUdhars from '../screens/Customer/PaidUdhars';
+import SearchCustomer from '../screens/SearchCustomer/SearchCustomer';
+import SearchEmployee from '../screens/SearchEmpolyee/SearchEmployee';
+import PaidUdhars from '../screens/Customer/screens/PaidUdhars';
 import MyProfile from '../screens/Settings/screens/MyProfile';
 import Login from '../screens/Auth/Login/Login';
 import SignUp from '../screens/Auth/SignUp/SignUp';
@@ -23,7 +24,7 @@ import SetPasscode from '../screens/Auth/AppLock/SetPasscode/SetPasscode';
 import Unlock from '../screens/Auth/AppLock/Unlock/Unlock';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {toogleLockApp} from '../../store/slices/shopkeeper';
+import {toogleLockApp} from '../../store/slices/business';
 import {AppState} from 'react-native';
 import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
@@ -31,6 +32,9 @@ import {useTheme} from '../hooks/index';
 import Customers from '../screens/Customers/Customers';
 import Test from '../screens/Test/Test';
 import SignupSuccess from '../screens/Auth/SignUp/screens/SignupSuccess';
+import Analytics from '../screens/Analytics/Analytics';
+import Employees from '../screens/Employees/Employees';
+import Employee from '../screens/Employee/Employee';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -39,10 +43,9 @@ const StackNav = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const {accessPasscode} = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper,
+    (s: RootState) => s.appData.BusinessOwner,
   );
-  const user = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const {appLocked} = useSelector((s: RootState) => s.shopkeeper.app);
+  const {appLocked} = useSelector((s: RootState) => s.appData.app);
   useEffect(() => {
     const handleAppStateChange = (nextAppState: string) => {
       if (
@@ -54,12 +57,10 @@ const StackNav = () => {
         dispatch(toogleLockApp(true));
       }
     };
-
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
     );
-
     return () => {
       subscription.remove();
     };
@@ -75,11 +76,14 @@ const StackNav = () => {
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />
       <stack.Screen name="Customer" component={Customer} />
+      <stack.Screen name="SearchCustomer" component={SearchCustomer} />
       <stack.Screen name="Customers" component={Customers} />
+      <stack.Screen name="Analytics" component={Analytics} />
+      <stack.Screen name="Employees" component={Employees} />
+      <stack.Screen name="SearchEmployee" component={SearchEmployee} />
       <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars} />
       <stack.Screen name="PaidUdhars" component={PaidUdhars} />
       <stack.Screen name="MyInventory" component={MyInventory} />
-      <stack.Screen name="Search" component={Search} />
       <stack.Screen name="MyProfile" component={MyProfile} />
       <stack.Screen name="GetStarted" component={GetStarted} />
       <stack.Screen

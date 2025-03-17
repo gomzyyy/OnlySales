@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <Pressable
       style={styles.searchQueryContainer}
-      onPress={() => enable && navigate('Search')}>
+      onPress={() => enable && navigate('SearchCustomer')}>
       <View
         style={[
           styles.searchQueryInput,

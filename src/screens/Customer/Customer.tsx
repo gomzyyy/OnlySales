@@ -25,7 +25,7 @@ const Customer = () => {
   const params = useRoute().params;
   const {customer} = params as RouteParams;
   const customers = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper.customers,
+    (s: RootState) => s.appData.BusinessOwner.customers,
   );
   const findCustomer = (): CustomerType | undefined => {
     const c: CustomerType | undefined =

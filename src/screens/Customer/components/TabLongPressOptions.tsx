@@ -2,17 +2,17 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {Dispatch, SetStateAction} from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Customer, newSoldProduct} from '../../../../types';
+import {Customer, SoldProduct} from '../../../../types';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {
   removePaidUdhar,
   removeUdhar,
-} from '../../../../store/slices/shopkeeper';
+} from '../../../../store/slices/business';
 import {useTheme} from '../../../hooks/index';
 
 type TabLongPressOptionsProps = {
-  product: newSoldProduct;
+  product: SoldProduct;
   customer: Customer;
   close: Dispatch<SetStateAction<boolean>>;
   actionType: 'PAID' | 'UNPAID';

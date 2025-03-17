@@ -4,15 +4,15 @@ import {Provider} from 'react-redux';
 import {mmkv} from '../src/storage/mmkv';
 import React from 'react';
 import {PersistGate} from 'redux-persist/integration/react';
-import shopkeeperSliceFunction from "./slices/shopkeeper"
+import BusinessOwnerSliceFunction from "./slices/business"
 
 const persistConfig = {
-  key: 'eregadeddartbtr',
+  key: 'eregadsdnfswueddartbtr',
   storage: mmkv,
 };
 
 const rootReducer = combineReducers({
-  shopkeeper:shopkeeperSliceFunction
+  appData:BusinessOwnerSliceFunction
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

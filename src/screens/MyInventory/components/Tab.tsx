@@ -18,7 +18,7 @@ type TabProps = {
 
 const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const {currency} = useSelector((s: RootState) => s.shopkeeper.app);
+  const {currency} = useSelector((s: RootState) => s.appData.app);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
   const [openLongPressOptions, setOpenLongPressOptions] =
     useState<boolean>(false);

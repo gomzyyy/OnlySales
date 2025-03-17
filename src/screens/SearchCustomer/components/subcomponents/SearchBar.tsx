@@ -10,6 +10,7 @@ type SearchBarProps = {
   width?: number;
   autoFocus?: boolean;
   shadow?: number;
+  placeholderText?: string;
 };
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -18,6 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   width,
   autoFocus = true,
   shadow = 5,
+  placeholderText = 'Search here',
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
@@ -41,7 +43,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         ]}
         value={query}
         onChangeText={setQuery}
-        placeholder="Search customer by name"
+        placeholder={placeholderText}
         placeholderTextColor={currentTheme.baseColor}
         autoFocus={autoFocus}
       />

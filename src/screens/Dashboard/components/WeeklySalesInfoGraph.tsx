@@ -16,8 +16,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {weeklySales} = useAnalytics();
-  console.log(weeklySales)
-  const currency = useSelector((s: RootState) => s.shopkeeper.app.currency);
+  const currency = useSelector((s: RootState) => s.appData.app.currency);
   const data: Dataset = {
     data: [
       0,

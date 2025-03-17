@@ -25,7 +25,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {soldThisMonth = [], todaySales = []} = useAnalytics();
-  const app = useSelector((s: RootState) => s.shopkeeper.app);
+  const app = useSelector((s: RootState) => s.appData.app);
 
   const totalMonthlySales = useMemo(
     () =>

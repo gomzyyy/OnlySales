@@ -44,7 +44,7 @@ const menuNav: menuNavContent[] = [
     icon: (color: string) => (
       <Icon1 name="people-sharp" color={color} size={26} />
     ),
-    disabled: true,
+    disabled: false,
   },
   {
     name: 'My Employees',
@@ -75,7 +75,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
   const {currentTheme} = useTheme();
   const currRoute = navigationRef.current?.getCurrentRoute()?.name;
   const navigation = useNavigation();
-  const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
+  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
   const handleNavigationByMenu = (r: string): void => {
     if (currRoute === r) {
       navigation.dispatch(DrawerActions.closeDrawer());
@@ -97,8 +97,8 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
             <View style={styles.profileImageContainer}>
               <Image
                 source={
-                  shopkeeper.image && shopkeeper.image?.trim().length !== 0
-                    ? {uri: shopkeeper.image}
+                  owner.image && owner.image?.trim().length !== 0
+                    ? {uri: owner.image}
                     : NoProfile
                 }
                 style={styles.profileImage}
@@ -110,7 +110,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
                   styles.profileName,
                   {color: currentTheme.contrastColor},
                 ]}>
-                {shopkeeper.name}
+                {owner.name}
               </Text>
             </View>
           </View>

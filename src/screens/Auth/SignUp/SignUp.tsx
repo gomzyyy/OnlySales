@@ -12,19 +12,17 @@ import React, {useState} from 'react';
 import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
-import {showToast} from '../../../service/fn';
+import {modifyUserName, showToast} from '../../../service/fn';
 import {deviceHeight} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import {setShopkeeper} from '../../../../store/slices/shopkeeper';
 import {ScrollView} from 'react-native-gesture-handler';
 import {isNumber} from '../../../service/test';
 
 const SignUp = () => {
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
   const prevUsers = useSelector(
-    (s: RootState) => s.shopkeeper.app.previousShopkeepers,
+    (s: RootState) => s.appData.app.previousOwners,
   );
   const [name, setName] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
@@ -92,7 +90,7 @@ const SignUp = () => {
             <Text style={styles.inputLabel}>Enter your name:</Text>
             <TextInput
               value={name}
-              onChangeText={setName}
+              onChangeText={(value)=>{setName(modifyUserName(value))}}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},

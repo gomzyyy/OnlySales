@@ -7,7 +7,7 @@ import {AppThemeName} from '../../../../enums';
 import {AppTheme} from '../../../../types';
 import {Theme} from '../../../utils/Constants';
 import {navigate} from '../../../utils/nagivationUtils';
-import {setTheme} from '../../../../store/slices/shopkeeper';
+import {setTheme} from '../../../../store/slices/business';
 import {showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
 

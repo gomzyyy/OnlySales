@@ -2,14 +2,13 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useTheme} from '../../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { deviceHeight } from '../../../../utils/Constants';
-import { back, navigate, resetAndNavigate } from '../../../../utils/nagivationUtils';
+import { back, resetAndNavigate } from '../../../../utils/nagivationUtils';
 
 const UserNotFound = () => {
   const {currentTheme} = useTheme();

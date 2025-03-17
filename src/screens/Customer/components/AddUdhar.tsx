@@ -12,10 +12,13 @@ import {deviceHeight} from '../../../utils/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import InventoryItem from './InventoryItem';
-import SearchBar from '../../Search/components/subcomponents/SearchBar';
-import {Customer, newSoldProduct, Product} from '../../../../types';
-import {addNewUdhar} from '../../../../store/slices/shopkeeper';
+import SearchBar from '../../SearchCustomer/components/subcomponents/SearchBar';
+import {Customer, SoldProduct, Product} from '../../../../types';
+import {addNewUdhar} from '../../../../store/slices/business';
 import {useTheme} from '../../../hooks/index';
+import EmptyListMessage from '../../../components/EmptyListMessage';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {navigate} from '../../../utils/nagivationUtils';
 
 type AddUdharProps = {
   close?: () => void;
@@ -29,22 +32,20 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const inventory = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper.inventory,
+    (s: RootState) => s.appData.BusinessOwner.inventory,
   );
   const sortedInventory: Product[] = [...inventory].sort(
     (a, b) => b.totalSold - a.totalSold,
   );
-  const currencyType = useSelector((s: RootState) => s.shopkeeper.app.currency);
+  const currencyType = useSelector((s: RootState) => s.appData.app.currency);
   const [inventoryItems, setInventoryItems] =
     useState<Product[]>(sortedInventory);
   const [query, setQuery] = useState<string>('');
-  const [selectedProducts, setSelectedProducts] = useState<newSoldProduct[]>(
-    [],
-  );
+  const [selectedProducts, setSelectedProducts] = useState<SoldProduct[]>([]);
   const [udharAmount, setUdharAmount] = useState<number>(0);
 
-  const handleNewUdhars = (s: newSoldProduct) => {
-    const alreadyExist: newSoldProduct | undefined = selectedProducts
+  const handleNewUdhars = (s: SoldProduct) => {
+    const alreadyExist: SoldProduct | undefined = selectedProducts
       ? selectedProducts.find(f => f.id === s.id)
       : undefined;
     if (alreadyExist) {
@@ -96,7 +97,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           ),
       );
     }
-    const newProducts: newSoldProduct = {
+    const newProducts: SoldProduct = {
       ...product,
       count: count,
       addedAt: Date.now(),
@@ -106,7 +107,6 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
   const handleAddUdharBtn = () => {
     if (selectedProducts && selectedProducts.length !== 0) {
-      console.log(selectedProducts);
       dispatch(
         addNewUdhar({
           customer,
@@ -122,7 +122,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
       const queryResults = inventoryItems.filter(s =>
         s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
       );
-     queryResults.length !== 0 && setInventoryItems(queryResults);
+      queryResults.length !== 0 && setInventoryItems(queryResults);
     } else {
       setInventoryItems(sortedInventory);
     }
@@ -146,38 +146,71 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           width={0.9}
           autoFocus={false}
           shadow={3}
+          placeholderText="Search Products"
         />
       </View>
       <View style={styles.productsContainer}>
-        <ScrollView
-          nestedScrollEnabled
-          contentContainerStyle={{
-            gap: 10,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-          }}>
-          {inventoryItems.map((f, i) => (
-            <InventoryItem
-              key={i}
-              product={f}
-              callback={handleSetUdharAmount}
-            />
-          ))}
-        </ScrollView>
-        <TouchableOpacity
-          style={[styles.doneAdding, {backgroundColor: currentTheme.baseColor}]}
-          activeOpacity={0.8}
-          onPress={handleAddUdharBtn}>
-          <Text
+        {inventoryItems.length !== 0 ? (
+          <ScrollView
+            nestedScrollEnabled
+            contentContainerStyle={{
+              gap: 10,
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}>
+            {inventoryItems.map((f, i) => (
+              <InventoryItem
+                key={i}
+                product={f}
+                callback={handleSetUdharAmount}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={{flex: 1}}>
+            <EmptyListMessage title="No Products to show." />
+          </View>
+        )}
+        <View style={{flexDirection: 'row', gap: 6}}>
+          <TouchableOpacity
             style={[
-              styles.doneAddingText,
-              {color: currentTheme.modal.saveBtnText},
-            ]}>
-            {udharAmount === 0
-              ? 'Cancel'
-              : `Add Udhar of ${currencyType} ${udharAmount}`}
-          </Text>
-        </TouchableOpacity>
+              styles.doneAdding,
+              {backgroundColor: currentTheme.baseColor},
+            ]}
+            activeOpacity={0.8}
+            onPress={handleAddUdharBtn}>
+            <Text
+              style={[
+                styles.doneAddingText,
+                {color: currentTheme.modal.saveBtnText},
+              ]}>
+              {udharAmount === 0
+                ? 'Cancel'
+                : `Add Udhar of ${currencyType} ${udharAmount}`}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.addProductBtn,
+              {backgroundColor: currentTheme.baseColor},
+            ]}
+            onPress={() => {
+              navigate('MyInventory');
+            }}>
+            <Text
+              style={[
+                styles.addProductText,
+                {color: currentTheme.modal.saveBtnText},
+              ]}>
+              Add
+            </Text>
+            <Icon
+              name="plus"
+              size={18}
+              color={currentTheme.modal.saveBtnText}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -233,11 +266,26 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 8,
     marginBottom: 10,
+    flex: 2,
   },
   doneAddingText: {
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
+  },
+  addProductBtn: {
+    paddingVertical: 16,
+    borderRadius: 8,
+    marginBottom: 10,
+    flexDirection: 'row',
+    gap: 6,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  addProductText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });
 

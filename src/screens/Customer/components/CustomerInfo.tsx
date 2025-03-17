@@ -36,14 +36,13 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
         <View style={styles.phoneNumberContainer}>
           <Icon name="mobile1" color={currentTheme.baseColor} />
           <Text style={[styles.phoneNumber, {color: currentTheme.baseColor}]}>
-            {' '}
             {customer.phoneNumber ? `+91-${customer.phoneNumber}` : 'N/A'}
           </Text>
         </View>
         <View style={styles.addressContainer}>
           <Icon1 name="location-pin" size={16} color={currentTheme.baseColor} />
           <Text style={[styles.address, {color: currentTheme.baseColor}]}>
-            {customer.address ? `+91-${customer.address}` : 'N/A'}
+            {customer.address ? `${customer.address}` : 'N/A'}
           </Text>
         </View>
       </View>

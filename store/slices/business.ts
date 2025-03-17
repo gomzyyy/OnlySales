@@ -1,66 +1,77 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {d} from '../../_data/dummy_data';
 import {
-  Shopkeeper,
+  BusinessOwner,
   App,
   Customer,
   Product,
-  newSoldProduct,
+  SoldProduct,
   AppTheme,
+  Employee,
+  User,
 } from '../../types';
-import {AdminRole, BusinessType, CurrencyType} from '../../enums';
+import {
+  AdminRole,
+  BusinessType,
+  CurrencyType,
+  EmploymentStatus,
+  Shift,
+} from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
 import {randomId, showToast} from '../../src/service/fn';
 
-type ShopkeeperInitialStateType = {
-  shopkeeper: Shopkeeper;
+type BusinessOwnerInitialStateType = {
+  BusinessOwner: BusinessOwner;
   app: App;
 };
 
-const initialState: ShopkeeperInitialStateType = {
-  shopkeeper: {
+const initialState: BusinessOwnerInitialStateType = {
+  BusinessOwner: {
     id: '1',
     name: '',
     userId: '',
     businessName: '',
     phoneNumber: undefined,
     sessionId: null,
-    role: AdminRole.SHOPKEEPER,
+    role: AdminRole.OWNER,
     image: undefined,
     businessType: BusinessType.RETAIL,
     inventory: [],
     starProducts: [],
     accessPasscode: undefined,
     customers: [],
+    EmployeeData: [],
     createdAt: new Date().toDateString(),
     updatedAt: new Date().toDateString(),
   },
   app: {
     currency: CurrencyType.INR,
-    searchResults: [],
+    searchResults: {
+      customerResults: [],
+      employeeResults: [],
+    },
     currentTheme: undefined,
     defaultTheme: Theme[0],
-    previousShopkeepers: [],
+    previousOwners: [],
     deviceId: undefined,
     appLocked: false,
   },
 };
 
-const shopkeeperSlice = createSlice({
-  name: 'shopkeeper',
+const BusinessOwnerSlice = createSlice({
+  name: 'BusinessOwner',
   initialState,
   reducers: {
-    setShopkeeper: (
+    setBusinessOwner: (
       state,
       action: PayloadAction<{
-        name: string;
-        userId: string;
-        businessName?: string;
-        phoneNumber?: string;
+        name: BusinessOwner['name'];
+        userId: BusinessOwner['userId'];
+        businessName?: BusinessOwner['businessName'];
+        phoneNumber?: BusinessOwner['phoneNumber'];
         businessType?: BusinessType;
-        businessDescription?: string;
-        businessAddress?: string;
+        businessDescription?: BusinessOwner['businessDescription'];
+        businessAddress?: BusinessOwner['businessAddress'];
         currency?: CurrencyType;
       }>,
     ) => {
@@ -75,19 +86,20 @@ const shopkeeperSlice = createSlice({
         currency,
       } = action.payload;
       if (!name || !userId) {
-        showToast({type: 'info', text1: 'Error: Shopkeeper.ts;'});
+        showToast({type: 'info', text1: 'Error: BusinessOwner.ts;'});
         return;
       }
-      const prevShopkeeper = state.app.previousShopkeepers;
-      const ifExisting = prevShopkeeper.find(s => s.userId === userId);
+      const prevBusinessOwner = state.app.previousOwners;
+      const ifExisting = prevBusinessOwner.find(s => s.userId === userId);
       if (ifExisting) return;
-      const newShopkeeper: Shopkeeper = {
+      const newBusinessOwner: BusinessOwner = {
         id: randomId(),
         name,
         userId,
         phoneNumber: phoneNumber,
+        EmployeeData: [],
         sessionId: Date.now(),
-        role: AdminRole.SHOPKEEPER,
+        role: AdminRole.OWNER,
         businessName,
         businessDescription,
         businessAddress,
@@ -97,46 +109,54 @@ const shopkeeperSlice = createSlice({
         createdAt: Date.now().toString(),
         updatedAt: Date.now().toString(),
       };
-      state.app.previousShopkeepers.push(newShopkeeper);
+      state.app.previousOwners.push(newBusinessOwner);
       state.app.currency = currency ?? CurrencyType.INR;
-      state.shopkeeper = newShopkeeper;
+      state.BusinessOwner = newBusinessOwner;
     },
     toogleLockApp: (state, action: PayloadAction<boolean>) => {
       state.app.appLocked = action.payload;
     },
-    editShopkeeper: (
+    editBusinessOwner: (
       state,
       action: PayloadAction<{
-        name: string;
-        userId: string;
-        phoneNumber?: string;
+        name: BusinessOwner['name'];
+        userId: BusinessOwner['userId'];
+        phoneNumber?: BusinessOwner['phoneNumber'];
         businessType?: BusinessType;
+        businessDescription?: BusinessOwner['businessDescription'];
       }>,
     ) => {
-      const {name, userId, phoneNumber, businessType} = action.payload;
-      const prevShopkeeper = state.app.previousShopkeepers;
-      const ifExisting = prevShopkeeper.find(s => s.userId === userId);
+      const {name, userId, phoneNumber, businessType, businessDescription} =
+        action.payload;
+      const prevBusinessOwner = state.app.previousOwners;
+      const ifExisting = prevBusinessOwner.find(s => s.userId === userId);
       if (!ifExisting) return;
-      const newShopkeeper: Shopkeeper = {
+      const newBusinessOwner: BusinessOwner = {
         ...ifExisting,
         name,
         phoneNumber,
+        businessDescription,
         businessType: businessType ?? BusinessType.RETAIL,
         updatedAt: Date.now().toString(),
       };
-      const newPrevShopkeepers = state.app.previousShopkeepers.map(s =>
-        s.userId === ifExisting.userId ? newShopkeeper : s,
+      const newPrevBusinessOwners = state.app.previousOwners.map(s =>
+        s.userId === ifExisting.userId ? newBusinessOwner : s,
       );
-      state.app.previousShopkeepers = newPrevShopkeepers;
-      state.shopkeeper = newShopkeeper;
+      state.app.previousOwners = newPrevBusinessOwners;
+      state.BusinessOwner = newBusinessOwner;
     },
-    removeExistingUser: (state, action: PayloadAction<{userId: string}>) => {
+    removeExistingUser: (
+      state,
+      action: PayloadAction<{userId: BusinessOwner['userId']}>,
+    ) => {
       const {userId} = action.payload;
-      const prevShopkeeper = state.app.previousShopkeepers;
-      const user = prevShopkeeper.find(s => s.userId === userId);
+      const prevBusinessOwner = state.app.previousOwners;
+      const user = prevBusinessOwner.find(s => s.userId === userId);
       if (!user) return;
-      const newPrevUsersArr = prevShopkeeper.filter(s => s.userId !== userId);
-      state.app.previousShopkeepers = newPrevUsersArr;
+      const newPrevUsersArr = prevBusinessOwner.filter(
+        s => s.userId !== userId,
+      );
+      state.app.previousOwners = newPrevUsersArr;
     },
     setAccessPassword: (
       state,
@@ -144,10 +164,10 @@ const shopkeeperSlice = createSlice({
     ) => {
       const newAccessPasscode = action.payload;
 
-      state.shopkeeper.accessPasscode = newAccessPasscode;
+      state.BusinessOwner.accessPasscode = newAccessPasscode;
     },
     login: (state, action: PayloadAction<{userId: string}>) => {
-      const prevUsers = state.app.previousShopkeepers;
+      const prevUsers = state.app.previousOwners;
       const {userId} = action.payload;
       const user = prevUsers.find(s => s.userId === userId);
       if (!user) return;
@@ -155,53 +175,72 @@ const shopkeeperSlice = createSlice({
       if (!existingUser) {
         return;
       }
-      state.shopkeeper = existingUser;
+      state.BusinessOwner = existingUser;
     },
-    logout: (state, action: PayloadAction<{userId: string}>) => {
+    logout: (
+      state,
+      action: PayloadAction<{userId: BusinessOwner['id'] | Employee['id']}>,
+    ) => {
       const {userId} = action.payload;
-      const currUser = state.shopkeeper;
-      const user = state.app.previousShopkeepers.find(s => s.userId === userId);
+      const currUser = state.BusinessOwner;
+      const user = state.app.previousOwners.find(s => s.userId === userId);
       if (!user) return;
-      const updatedPrevUsers = state.app.previousShopkeepers.map(s =>
+      const updatedPrevUsers = state.app.previousOwners.map(s =>
         s.userId === userId ? {...currUser, sessionId: null} : s,
       );
-      state.app.previousShopkeepers = updatedPrevUsers;
-      state.shopkeeper.sessionId = null;
+      state.app.previousOwners = updatedPrevUsers;
+      state.BusinessOwner.sessionId = null;
     },
-    setSearchResult: (state, action: PayloadAction<Customer[]>) => {
-      state.app.searchResults = action.payload;
+    setSearchResult: (
+      state,
+      action: PayloadAction<{
+        customers?: Customer[];
+        employees?: Employee[];
+        type: 'CUSTOMER' | 'EMPLOYEE';
+      }>,
+    ) => {
+      const {customers, employees, type} = action.payload;
+      console.log(action.payload);
+      if (customers && type === 'CUSTOMER') {
+        state.app.searchResults.customerResults = customers;
+      }
+      if (employees && type === 'EMPLOYEE') {
+        console.log("reireir")
+        state.app.searchResults.employeeResults = employees;
+      }
     },
     resetSearchResults: state => {
-      state.app.searchResults = [];
+      state.app.searchResults.customerResults = [];
+      state.app.searchResults.employeeResults = [];
     },
     createCustomers: (
       state,
       action: PayloadAction<{
-        name: string;
-        phoneNumber: string;
-        address: string;
+        name: Customer['name'];
+        phoneNumber?: Customer['phoneNumber'];
+        address?: Customer['address'];
+        image?: Customer['image'];
       }>,
     ) => {
-      const currentCustomers: Customer[] = state.shopkeeper.customers;
+      const currentCustomers: Customer[] = state.BusinessOwner.customers;
       const newCustomer: Customer = {
         ...action.payload,
         id: Date.now().toString(),
-        shopkeeperId: state.shopkeeper.id,
+        businessOwnerId: state.BusinessOwner.id,
         createdAt: new Date(Date.now()).toDateString(),
         updatedAt: new Date(Date.now()).toDateString(),
       };
-      console.log(newCustomer);
-      state.shopkeeper.customers = [newCustomer, ...currentCustomers];
+      state.BusinessOwner.customers = [newCustomer, ...currentCustomers];
     },
     updateCustomer: (state, action: PayloadAction<Customer>) => {
       const updatedCustomer = action.payload;
-      state.shopkeeper.customers = state.shopkeeper.customers.map(s =>
+      state.BusinessOwner.customers = state.BusinessOwner.customers.map(s =>
         s.id === updatedCustomer.id ? {...s, ...updatedCustomer} : s,
       );
     },
     removeCustomer: (state, action: PayloadAction<Customer>) => {
       const deletedCustomer = action.payload;
-      state.shopkeeper.customers = state.shopkeeper.customers.filter(
+      state.BusinessOwner.customers = state.BusinessOwner.customers.filter(
         s => s.id !== deletedCustomer.id,
       );
     },
@@ -211,13 +250,13 @@ const shopkeeperSlice = createSlice({
     },
     addNewUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; products: newSoldProduct[]}>,
+      action: PayloadAction<{customer: Customer; products: SoldProduct[]}>,
     ) => {
       const newUdharList = action.payload.products;
       const customer = action.payload.customer;
 
       const allUdhars =
-        state.shopkeeper.customers.find(s => s.id === customer.id)
+        state.BusinessOwner.customers.find(s => s.id === customer.id)
           ?.unpaidPayments || [];
 
       const updatedUdhars = allUdhars.map(d => {
@@ -230,11 +269,11 @@ const shopkeeperSlice = createSlice({
       );
 
       const newAllUdhars = [...updatedUdhars, ...newUnpaidUdhars];
-      const updatedCustomers = state.shopkeeper.customers.map(s =>
+      const updatedCustomers = state.BusinessOwner.customers.map(s =>
         s.id === customer.id ? {...s, unpaidPayments: newAllUdhars} : s,
       );
-      state.shopkeeper.customers = updatedCustomers;
-      const newInventory = state.shopkeeper.inventory.map(s => {
+      state.BusinessOwner.customers = updatedCustomers;
+      const newInventory = state.BusinessOwner.inventory.map(s => {
         const foundProduct = newUdharList.find(d => s.id === d.id);
         return foundProduct
           ? {
@@ -244,23 +283,23 @@ const shopkeeperSlice = createSlice({
             }
           : s;
       });
-      state.shopkeeper.inventory = newInventory;
+      state.BusinessOwner.inventory = newInventory;
     },
 
     removeUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
+      action: PayloadAction<{customer: Customer; product: SoldProduct}>,
     ) => {
       const {customer, product} = action.payload;
-      const customerIndex = state.shopkeeper.customers.findIndex(
+      const customerIndex = state.BusinessOwner.customers.findIndex(
         c => c.id === customer.id,
       );
 
       if (customerIndex !== -1) {
-        state.shopkeeper.customers[customerIndex] = {
-          ...state.shopkeeper.customers[customerIndex],
+        state.BusinessOwner.customers[customerIndex] = {
+          ...state.BusinessOwner.customers[customerIndex],
           unpaidPayments:
-            state.shopkeeper.customers[customerIndex].unpaidPayments?.filter(
+            state.BusinessOwner.customers[customerIndex].unpaidPayments?.filter(
               s => s.id !== product.id,
             ) || [],
         };
@@ -268,19 +307,19 @@ const shopkeeperSlice = createSlice({
     },
     removePaidUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
+      action: PayloadAction<{customer: Customer; product: SoldProduct}>,
     ) => {
       const {customer, product} = action.payload;
 
-      const customerIndex = state.shopkeeper.customers.findIndex(
+      const customerIndex = state.BusinessOwner.customers.findIndex(
         c => c.id === customer.id,
       );
 
       if (customerIndex !== -1) {
-        state.shopkeeper.customers[customerIndex] = {
-          ...state.shopkeeper.customers[customerIndex],
+        state.BusinessOwner.customers[customerIndex] = {
+          ...state.BusinessOwner.customers[customerIndex],
           paidPayments:
-            state.shopkeeper.customers[customerIndex].paidPayments?.filter(
+            state.BusinessOwner.customers[customerIndex].paidPayments?.filter(
               s => s.id !== product.id,
             ) || [],
         };
@@ -289,9 +328,9 @@ const shopkeeperSlice = createSlice({
 
     setToPaid: (
       state,
-      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
+      action: PayloadAction<{customer: Customer; product: SoldProduct}>,
     ) => {
-      const customers = state.shopkeeper.customers;
+      const customers = state.BusinessOwner.customers;
       const {customer, product} = action.payload;
 
       const updatedCustomers = customers.map(c => {
@@ -311,14 +350,14 @@ const shopkeeperSlice = createSlice({
         return c;
       });
 
-      state.shopkeeper.customers = updatedCustomers;
+      state.BusinessOwner.customers = updatedCustomers;
     },
 
     setToUnpaid: (
       state,
-      action: PayloadAction<{customer: Customer; product: newSoldProduct}>,
+      action: PayloadAction<{customer: Customer; product: SoldProduct}>,
     ) => {
-      const customers = state.shopkeeper.customers;
+      const customers = state.BusinessOwner.customers;
       const {customer, product} = action.payload;
 
       const updatedCustomers = customers.map(c => {
@@ -333,7 +372,7 @@ const shopkeeperSlice = createSlice({
         }
         return c;
       });
-      state.shopkeeper.customers = updatedCustomers;
+      state.BusinessOwner.customers = updatedCustomers;
     },
 
     addProductToInventory: (
@@ -341,14 +380,17 @@ const shopkeeperSlice = createSlice({
       action: PayloadAction<{product: Product}>,
     ) => {
       const newProduct = action.payload.product;
-      state.shopkeeper.inventory = [newProduct, ...state.shopkeeper.inventory];
+      state.BusinessOwner.inventory = [
+        newProduct,
+        ...state.BusinessOwner.inventory,
+      ];
     },
     editInventoryProduct: (
       state,
       action: PayloadAction<{product: Product}>,
     ) => {
       const {product} = action.payload;
-      const foundProduct = state.shopkeeper.inventory.find(
+      const foundProduct = state.BusinessOwner.inventory.find(
         s => s.id === product.id,
       );
       if (foundProduct) {
@@ -363,16 +405,50 @@ const shopkeeperSlice = createSlice({
       action: PayloadAction<{product: Product}>,
     ) => {
       const {product} = action.payload;
-      const newInventory = state.shopkeeper.inventory.filter(
+      const newInventory = state.BusinessOwner.inventory.filter(
         s => s.id !== product.id,
       );
-      state.shopkeeper.inventory = newInventory;
+      state.BusinessOwner.inventory = newInventory;
+    },
+    createEmployee: (
+      state,
+      action: PayloadAction<{
+        name: User['name'];
+        salary: Employee['salary'];
+        status: Employee['status'];
+        shift: Employee['shift'];
+        phoneNumber: Employee['phoneNumber'];
+      }>,
+    ) => {
+      const {name, salary, status, shift, phoneNumber} = action.payload;
+      state.BusinessOwner.EmployeeData.push({
+        name,
+        id: randomId(),
+        phoneNumber,
+        businessOwnerId: state.BusinessOwner.id,
+        createdAt: Date.now().toString(),
+        updatedAt: Date.now().toString(),
+        hireDate: Date.now().toString(),
+        salary,
+        status: status || EmploymentStatus.ACTIVE,
+        shift: shift || Shift.MORNING,
+      });
+    },
+    updateEmployee: (state, action: PayloadAction<Employee>) => {
+      const updateEmployee = action.payload;
+      const existingEmployee = state.BusinessOwner.EmployeeData.find(
+        s => s.id === updateEmployee.id,
+      );
+      if (!existingEmployee) return;
+      state.BusinessOwner.EmployeeData = state.BusinessOwner.EmployeeData.map(
+        s => (s.id === updateEmployee.id ? {...s, ...updateEmployee} : s),
+      );
     },
   },
 });
 export const {
-  setShopkeeper,
-  editShopkeeper,
+  setBusinessOwner,
+  editBusinessOwner,
   logout,
   login,
   toogleLockApp,
@@ -391,5 +467,7 @@ export const {
   editInventoryProduct,
   removeProductFromInventory,
   setTheme,
-} = shopkeeperSlice.actions;
-export default shopkeeperSlice.reducer;
+  createEmployee,
+  updateEmployee,
+} = BusinessOwnerSlice.actions;
+export default BusinessOwnerSlice.reducer;

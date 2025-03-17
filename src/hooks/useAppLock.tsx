@@ -10,7 +10,7 @@ type useAppLockReturnType = {
 
 const useAppLock = ({key}: useAppLockProps): useAppLockReturnType => {
   const unlockKey: [string, string, string, string] | undefined = useSelector(
-    (s: RootState) => s.shopkeeper.shopkeeper.accessPasscode,
+    (s: RootState) => s.appData.BusinessOwner.accessPasscode,
   );
   const ok: boolean = JSON.stringify(unlockKey) === JSON.stringify(key);
   return {

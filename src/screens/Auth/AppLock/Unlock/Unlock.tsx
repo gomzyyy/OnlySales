@@ -8,8 +8,8 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {Shopkeeper} from '../../../../../types';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {BusinessOwner} from '../../../../../types';
+import {useRoute} from '@react-navigation/native';
 import InputPasscode from '../../../../customComponents/InputPasscode';
 import {colors, deviceHeight} from '../../../../utils/Constants';
 import Header from '../../../../components/Header';
@@ -21,10 +21,10 @@ import {
 } from '../../../../utils/nagivationUtils';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
-import {login} from '../../../../../store/slices/shopkeeper';
+import {login} from '../../../../../store/slices/business';
 
 type UnlockParamsType = {
-  user: Shopkeeper;
+  user: BusinessOwner;
   logged?: boolean;
   navigateTo?: string;
   localCheck?: boolean;

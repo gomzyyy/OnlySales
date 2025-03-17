@@ -1,40 +1,40 @@
 import {View, StyleSheet, Image, Text} from 'react-native';
 import React from 'react';
-import {Shopkeeper} from '../../../../types';
+import {BusinessOwner} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
 import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-type ShopkeeperInfoProps = {
-  shopkeeper: Shopkeeper;
+type OwnerInfoProps = {
+  owner: BusinessOwner;
   secure?:boolean
 };
 
-const ShopkeeperInfo: React.FC<ShopkeeperInfoProps> = ({
-  shopkeeper,
+const OwnerInfo: React.FC<OwnerInfoProps> = ({
+  owner,
   secure=false
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   return (
     <View
       style={[
-        styles.ShopkeeperInfoContainer,
+        styles.ownerInfoParentContainer,
       ]}>
       <View style={styles.profileImageContainer}>
         <Image
           source={
-            shopkeeper.image && shopkeeper.image.trim().length !== 0
-              ? {uri: shopkeeper.image}
+            owner.image && owner.image.trim().length !== 0
+              ? {uri: owner.image}
               : NoProfile
           }
           style={styles.profileImage}
         />
       </View>
-      <View style={styles.shopkeeperInfoContainer}>
-        <Text style={styles.name}>{shopkeeper.name}</Text>
+      <View style={styles.ownerInfoContainer}>
+        <Text style={styles.name}>{owner.name}</Text>
         <View style={styles.phoneNumberContainer}>
         <Icon name='mobile1' />
-        <Text style={styles.phoneNumber}>: {shopkeeper.phoneNumber ? secure ? `+91-${shopkeeper.phoneNumber?.slice(0,5)}*****` : `+91-${shopkeeper.phoneNumber}` : 'N/A'}</Text>
+        <Text style={styles.phoneNumber}>: {owner.phoneNumber ? secure ? `+91-${owner.phoneNumber?.slice(0,5)}*****` : `+91-${owner.phoneNumber}` : 'N/A'}</Text>
         </View>
       </View>
     </View>
@@ -42,7 +42,7 @@ const ShopkeeperInfo: React.FC<ShopkeeperInfoProps> = ({
 };
 
 const styles = StyleSheet.create({
-  ShopkeeperInfoContainer: {
+  ownerInfoParentContainer: {
     paddingVertical: 20,
     borderRadius: 10,
     flexDirection: 'row',
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     width: 'auto',
     resizeMode: 'contain',
   },
-  shopkeeperInfoContainer: {
+  ownerInfoContainer: {
     justifyContent:'center',
   gap:6
   },
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   phoneNumber:{fontSize: 16,textAlignVertical:'center'}
 });
 
-export default ShopkeeperInfo;
+export default OwnerInfo;

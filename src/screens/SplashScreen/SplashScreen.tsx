@@ -1,5 +1,5 @@
 import {View, Text} from 'react-native';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {RootState} from '../../../store/store';
 import {useSelector} from 'react-redux';
 import {
@@ -10,19 +10,19 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 
 const SplashScreen = () => {
-  const shopkeeper = useSelector((s: RootState) => s.shopkeeper.shopkeeper);
-  const app = useSelector((s: RootState) => s.shopkeeper.app);
+  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const app = useSelector((s: RootState) => s.appData.app);
 
   useFocusEffect(
     useCallback(() => {
       const initNavigation = async () => {
         prepareNavigation();
-        if (!shopkeeper?.sessionId) {
+        if (!owner?.sessionId) {
           setTimeout(() => resetAndNavigate('GetStarted'), 800);
         } else {
-          if (app.appLocked && shopkeeper.accessPasscode) {
+          if (app.appLocked && owner.accessPasscode) {
             setTimeout(
-              () => navigate('Unlock', {user: shopkeeper, logged: true}),
+              () => navigate('Unlock', {user: owner, logged: true}),
               800,
             );
             return;
@@ -31,7 +31,7 @@ const SplashScreen = () => {
         }
       };
       initNavigation();
-    }, [shopkeeper]),
+    }, [owner]),
   );
   return (
     <View style={{flex: 1}}>

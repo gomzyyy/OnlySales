@@ -6,14 +6,13 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Tab from '../Customers/components/Tab';
 import {useTheme} from '../../hooks';
-import {deviceHeight} from '../../utils/Constants';
 import {Text} from 'react-native';
 
-const Search = () => {
+const SearchCustomer = () => {
   const {currentTheme} = useTheme();
   const searchResults = useSelector(
-    (s: RootState) => s.shopkeeper.app.searchResults,
-  );
+    (s: RootState) => s.appData.app.searchResults,
+  ).customerResults;
   return (
     <View style={styles.parent}>
       <Header backButtom />
@@ -60,4 +59,4 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
 });
-export default Search;
+export default SearchCustomer;

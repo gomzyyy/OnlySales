@@ -4,11 +4,11 @@ import Icon from 'react-native-vector-icons/Entypo';
 import {useTheme} from '../hooks/index';
 
 type CreateButtomProps = {
-  openCreateCustomer: () => void;
+  open: () => void;
 };
 
 const CreateButton: React.FC<CreateButtomProps> = ({
-  openCreateCustomer,
+  open,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   return (
@@ -21,7 +21,7 @@ const CreateButton: React.FC<CreateButtomProps> = ({
         },
       ]}
       activeOpacity={0.8}
-      onPress={openCreateCustomer}>
+      onPress={open}>
       <View>
         <Icon
           name="circle-with-plus"

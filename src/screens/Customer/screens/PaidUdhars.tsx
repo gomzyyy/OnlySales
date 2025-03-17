@@ -1,21 +1,20 @@
 import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
-import CustomerInfo from './components/CustomerInfo';
+import CustomerInfo from '../components/CustomerInfo';
 import {useRoute} from '@react-navigation/native';
-import {Customer, newSoldProduct} from '../../../types';
-import Header from '../../components/Header';
-import Tab from './components/Tab';
-import CustomerHeader from '../../components/CustomerHeader';
+import {Customer, SoldProduct} from '../../../../types';
+import Header from '../../../components/Header';
+import Tab from '../components/Tab';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
-import EmptyListMessage from '../../components/EmptyListMessage';
+import {RootState} from '../../../../store/store';
+import EmptyListMessage from '../../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {back} from '../../utils/nagivationUtils';
-import {useTheme} from '../../hooks/index';
+import {back} from '../../../utils/nagivationUtils';
+import {useTheme} from '../../../hooks/index';
 
 type RouteType = {
   customer: Customer;
-  products: newSoldProduct[];
+  products: SoldProduct[];
   date: string;
 };
 
@@ -23,8 +22,8 @@ const PaidUdhars = () => {
     const {currentTheme} = useTheme()
   const params = useRoute().params;
   const {customer, date} = params as RouteType;
-  const paidPayments: newSoldProduct[] =
-    useSelector((s: RootState) => s.shopkeeper.shopkeeper.customers)?.find(
+  const paidPayments: SoldProduct[] =
+    useSelector((s: RootState) => s.appData.BusinessOwner.customers)?.find(
       c => c.id === customer.id,
     )?.paidPayments || [];
 

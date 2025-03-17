@@ -1,4 +1,12 @@
-import {AdminRole, BusinessType, QuantityType, AppThemeName} from './enums';
+import {
+  AdminRole,
+  BusinessType,
+  QuantityType,
+  AppThemeName,
+  AssetCategory,
+  EmploymentStatus,
+  Shift,
+} from './enums';
 
 export interface AppTheme {
   name: AppThemeName;
@@ -47,11 +55,14 @@ export interface TabTheme {
   text: string;
 }
 export interface App {
-  searchResults: Customer[];
+  searchResults: {
+    customerResults: Customer[];
+    employeeResults: Employee[];
+  };
   currency: string;
   currentTheme: AppTheme | undefined;
   defaultTheme: AppTheme;
-  previousShopkeepers: Shopkeeper[];
+  previousOwners: BusinessOwner[];
   deviceId?: string | undefined;
   appLocked: boolean;
 }
@@ -67,18 +78,20 @@ export interface User {
 }
 
 export interface Customer extends User {
-  shopkeeperId: string;
-  unpaidPayments?: newSoldProduct[];
-  paidPayments?: newSoldProduct[];
+  businessOwnerId: string;
+  unpaidPayments?: SoldProduct[];
+  paidPayments?: SoldProduct[];
   createdAt: string;
   updatedAt?: string;
 }
 
-export interface Shopkeeper extends User {
+export interface BusinessOwner extends User {
   businessAddress?: string;
+  businessPartners?: BusinessOwner[];
   businessName?: string;
   businessDescription?: string;
   businessType?: BusinessType;
+  EmployeeData: Employee[];
   inventory: Product[];
   starProducts?: Product[];
   customers: Customer[];
@@ -87,6 +100,21 @@ export interface Shopkeeper extends User {
   accessPasscode?: [string, string, string, string] | undefined;
   userId: string;
 }
+
+export interface Employee extends User {
+  businessOwnerId: string;
+  department?: string; // Department name (e.g., IT, HR, Sales)
+  position?: string; // Job title or role
+  email?: string; // Work email
+  hireDate: string; // Date of joining
+  salary: number; // Salary details
+  status: EmploymentStatus; // Employment status
+  address?: string; // Employee's address
+  skills?: string[]; // List of employee skills
+  shift: Shift; // Work shift
+  reportsTo?: string; // Manager ID or name
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -102,7 +130,17 @@ export interface Product {
   updatedAt: string;
 }
 
-export interface newSoldProduct extends Product {
+export interface SoldProduct extends Product {
   addedAt: number;
   count: number;
+}
+export interface Asset {
+  id: string;
+  name: string;
+  type: string;
+  category: AssetCategory;
+  value: number;
+  acquiredDate: string;
+  description?: string;
+  documentUrl?: string;
 }

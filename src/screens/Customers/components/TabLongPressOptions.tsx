@@ -1,11 +1,11 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
-import {Customer} from '../../../../types';
+import {Customer, Employee} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {removeCustomer} from '../../../../store/slices/shopkeeper';
+import {removeCustomer} from '../../../../store/slices/business';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
 
@@ -23,14 +23,14 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
 
-  const handleDeleteCustomer = async (): Promise<void> => {
+  const handleDeleteEmployee = async (): Promise<void> => {
     const res = await Confirm(
-      'Are you sure you want to remove this customer?',
-      'Once customer removed, cannot be reversed! be careful of miss-touching removal button.',
+      'Are you sure you want to remove this Employee?',
+      'Once Employee removed, cannot be reversed! be careful of miss-touching removal button.',
     );
     if (res) {
       dispatch(removeCustomer(i));
-      showToast({type: 'success', text1: 'Customer removed successfully.'});
+      showToast({type: 'success', text1: 'Employee removed successfully.'});
       close();
       return;
     }
@@ -44,7 +44,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
         <TouchableOpacity
           style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
           activeOpacity={0.8}
-          onPress={handleDeleteCustomer}>
+          onPress={handleDeleteEmployee}>
           <Text
             style={[
               styles.buttonDangerText,

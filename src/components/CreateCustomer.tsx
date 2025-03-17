@@ -6,14 +6,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {showToast} from '../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
-import {createCustomers} from '../../store/slices/shopkeeper';
+import {createCustomers} from '../../store/slices/business';
 import {useHaptics, useTheme} from '../hooks/index';
+import GetImage from './GetImage';
+import SlideUpContainer from './SlideUpContainer';
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -27,23 +30,24 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>('');
   const [phoneNumber, setphoneNumber] = useState<string>('');
-  // const [image, setImage] = useState<string>('');
+  const [image, setImage] = useState<string | undefined>();
   const [address, setAddress] = useState<string>('');
+  const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
 
   const handleSaveBtn = () => {
     const customerData = {
       name: name,
       phoneNumber,
       address,
+      image
     };
     if (name.trim().length === 0) {
       warning();
       showToast({
         type: 'info',
-        text1: "Some required fields are empty.",
+        text1: 'Some required fields are empty.',
         position: 'top',
       });
-      // callback();
       return;
     }
     dispatch(createCustomers(customerData));
@@ -54,6 +58,8 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
     });
     callback();
   };
+
+  const closeImagePicker = () => setOpenImagePicker(false);
 
   return (
     <KeyboardAvoidingView
@@ -78,7 +84,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               {borderColor: currentTheme.modal.inputBorder},
             ]}
             placeholder="Enter name"
-            placeholderTextColor={currentTheme.modal.inputText}
+            placeholderTextColor={'grey'}
           />
         </View>
         <View style={styles.inputTitleContainer}>
@@ -93,7 +99,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               {borderColor: currentTheme.modal.inputBorder},
             ]}
             placeholder="Enter phone number"
-            placeholderTextColor={currentTheme.modal.inputText}
+            placeholderTextColor={'grey'}
           />
         </View>
         <View style={styles.inputTitleContainer}>
@@ -108,9 +114,26 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               {borderColor: currentTheme.modal.inputBorder},
             ]}
             placeholder="Enter address"
-            placeholderTextColor={currentTheme.modal.inputText}
+            placeholderTextColor={'grey'}
           />
         </View>
+        {image && image.trim().length !== 0 ? (
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
+            <Button title="Remove" onPress={() => setImage(undefined)} />
+          </View>
+        ) : (
+          <View
+            style={{
+              paddingHorizontal: 40,
+              alignItems: 'center',
+            }}>
+            <Button
+              title="Choose Image"
+              onPress={() => setOpenImagePicker(true)}
+            />
+          </View>
+        )}
         <TouchableOpacity
           style={[
             styles.saveButton,
@@ -126,6 +149,16 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             Save
           </Text>
         </TouchableOpacity>
+        <SlideUpContainer
+          opacity={0.2}
+          open={openImagePicker}
+          close={closeImagePicker}>
+          <GetImage
+            value={image}
+            setState={setImage}
+            callback={closeImagePicker}
+          />
+        </SlideUpContainer>
       </View>
     </KeyboardAvoidingView>
   );
@@ -135,7 +168,7 @@ const styles = StyleSheet.create({
   createCustomerContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    height: deviceHeight * 0.51,
+    // height: deviceHeight * 0.55,
     borderRadius: 20,
     marginBottom: 10,
     elevation: 30,
@@ -148,6 +181,7 @@ const styles = StyleSheet.create({
   formContainer: {
     marginTop: 20,
     gap: 16,
+    marginBottom: 16,
   },
   inputTitleContainer: {
     gap: 4,
