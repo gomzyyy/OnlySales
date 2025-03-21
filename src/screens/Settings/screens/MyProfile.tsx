@@ -26,6 +26,9 @@ const MyProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
   const [name, setName] = useState<string>(owner.name);
+  const [profileImageValue, setProfileImageValue] = useState<
+    string | undefined
+  >(owner.image);
   const [role, setRole] = useState<AdminRole>(owner.role);
   const [phoneNumber, setPhoneNumber] = useState<string>(
     owner.phoneNumber ?? '',
@@ -71,6 +74,7 @@ const MyProfile = () => {
         phoneNumber,
         businessType,
         businessDescription,
+        image:profileImageValue
       }),
     );
     showToast({type: 'success', text1: 'Profile updated successfully.'});
@@ -84,7 +88,8 @@ const MyProfile = () => {
       (phoneNumber.trim().length !== 0 && phoneNumber !== owner.phoneNumber) ||
       (businessType === BusinessType.OTHER &&
         businessDescription.trim().length !== 0 &&
-        businessDescription !== owner.businessDescription)
+        businessDescription !== owner.businessDescription) ||
+      owner.image !== profileImageValue
     ) {
       setEdited(true);
     } else {
@@ -94,7 +99,15 @@ const MyProfile = () => {
 
   useEffect(() => {
     checkIfEdited();
-  }, [name, role, businessType, owner, phoneNumber, businessDescription]);
+  }, [
+    name,
+    role,
+    businessType,
+    owner,
+    phoneNumber,
+    businessDescription,
+    profileImageValue,
+  ]);
 
   return (
     <KeyboardAvoidingView
@@ -116,7 +129,11 @@ const MyProfile = () => {
         />
         <View style={styles.settingsContainer}>
           <View style={styles.infoContainer}>
-            <OwnerInfo owner={owner} />
+            <OwnerInfo
+              owner={owner}
+              profileImageValue={profileImageValue}
+              setProfileImageValue={setProfileImageValue}
+            />
           </View>
           <View style={styles.container}>
             <View style={styles.inputContainer}>

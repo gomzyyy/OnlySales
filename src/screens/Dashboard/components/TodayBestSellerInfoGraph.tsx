@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {LineChart} from 'react-native-chart-kit';
 import {deviceWidth} from '../../../utils/Constants';
@@ -6,7 +6,6 @@ import {useAnalytics, useTheme} from '../../../hooks';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {Dataset} from 'react-native-chart-kit/dist/HelperTypes';
-import {SoldProduct} from '../../../../types';
 
 type TodayBestSellerInfoGraphProps = {
   pressActions?: () => void;
@@ -16,7 +15,7 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
   pressActions = () => {},
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const { todaysMostSoldProducts} = useAnalytics();
+  const {todaysMostSoldProducts} = useAnalytics();
 
   const currency = useSelector((s: RootState) => s.appData.app.currency);
   const data: Dataset = {
@@ -24,7 +23,8 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
       0,
       todaysMostSoldProducts.length >= 1
         ? todaysMostSoldProducts[0].totalSold *
-          (todaysMostSoldProducts[0].discountedPrice || todaysMostSoldProducts[0].basePrice)
+          (todaysMostSoldProducts[0].discountedPrice ||
+            todaysMostSoldProducts[0].basePrice)
         : 0,
 
       todaysMostSoldProducts.length >= 2
@@ -35,17 +35,20 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
 
       todaysMostSoldProducts.length >= 3
         ? todaysMostSoldProducts[2].totalSold *
-          (todaysMostSoldProducts[2].discountedPrice || todaysMostSoldProducts[2].basePrice)
+          (todaysMostSoldProducts[2].discountedPrice ||
+            todaysMostSoldProducts[2].basePrice)
         : 0,
 
       todaysMostSoldProducts.length >= 4
         ? todaysMostSoldProducts[3].totalSold *
-          (todaysMostSoldProducts[3].discountedPrice || todaysMostSoldProducts[3].basePrice)
+          (todaysMostSoldProducts[3].discountedPrice ||
+            todaysMostSoldProducts[3].basePrice)
         : 0,
 
       todaysMostSoldProducts.length >= 5
         ? todaysMostSoldProducts[4].totalSold *
-          (todaysMostSoldProducts[4].discountedPrice || todaysMostSoldProducts[4].basePrice)
+          (todaysMostSoldProducts[4].discountedPrice ||
+            todaysMostSoldProducts[4].basePrice)
         : 0,
     ].slice(0, todaysMostSoldProducts.length + 1),
     color: opacity => `rgba(0,0,0,${opacity})`,

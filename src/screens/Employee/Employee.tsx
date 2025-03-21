@@ -1,21 +1,32 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Employee} from '../../../types';
+import {Employee as EmployeeType} from '../../../types';
 import Header from '../../components/Header';
-import { useTheme } from '../../hooks';
+import {useTheme} from '../../hooks';
 
 type EmployeeParams = {
-  employee: Employee;
+  employee: EmployeeType;
 };
 type EmployeeProps = {};
 const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
-    const {currentTheme}=useTheme()
+  const {currentTheme} = useTheme();
   const {params} = useRoute();
   const {employee} = params as EmployeeParams;
+  const EditButton = (): React.JSX.Element => {
+    return <ActivityIndicator color={currentTheme.header.textColor} />;
+  };
   return (
     <View style={styles.parent}>
-      <Header name={employee.name} headerBgColor={currentTheme.baseColor} />
+      <Header
+        name={employee.name}
+        headerBgColor={currentTheme.baseColor}
+        titleColor={currentTheme.header.textColor}
+        backButtom
+        // customComponent={true}
+        renderItem={<EditButton />}
+      />
+      
     </View>
   );
 };

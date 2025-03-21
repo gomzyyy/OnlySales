@@ -6,6 +6,7 @@ import {
   AssetCategory,
   EmploymentStatus,
   Shift,
+  CurrencyType,
 } from './enums';
 
 export interface AppTheme {
@@ -18,6 +19,7 @@ export interface AppTheme {
   contrastColor: string;
   bgColor: string;
   textAlt: string;
+  bottomTabBg:string;
   modal: ModalTheme;
   toggleBtn: ToogleBtnTheme;
   tab: TabTheme;
@@ -59,7 +61,7 @@ export interface App {
     customerResults: Customer[];
     employeeResults: Employee[];
   };
-  currency: string;
+  currency: CurrencyType;
   currentTheme: AppTheme | undefined;
   defaultTheme: AppTheme;
   previousOwners: BusinessOwner[];
@@ -131,9 +133,18 @@ export interface Product {
 }
 
 export interface SoldProduct extends Product {
+  customerId:string;
   addedAt: number;
   count: number;
 }
+
+// export interface SoldProductList{
+//   products:SoldProduct[];
+//   totalAmount:number;
+//   payableAmount:number;
+//   amountPaid:number
+// }
+
 export interface Asset {
   id: string;
   name: string;

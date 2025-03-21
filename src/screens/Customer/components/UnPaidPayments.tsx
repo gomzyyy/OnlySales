@@ -1,52 +1,69 @@
-import {View, StyleSheet, FlatList, TouchableOpacity, Text} from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import CustomerInfo from '../components/CustomerInfo';
-import {useRoute} from '@react-navigation/native';
 import {Customer, SoldProduct} from '../../../../types';
-import Header from '../../../components/Header';
-import Tab from '../components/Tab';
-import {useSelector} from 'react-redux';
+import {deviceHeight} from '../../../utils/Constants';
+import {useTheme} from '../../../hooks';
 import {RootState} from '../../../../store/store';
-import EmptyListMessage from '../../../components/EmptyListMessage';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {back} from '../../../utils/nagivationUtils';
-import {useAnalytics, useTheme} from '../../../hooks/index';
+import {useSelector} from 'react-redux';
 import PayButton from '../../../components/PayButton';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import ConfirmPayment from '../../../components/ConfirmPayment';
+import {TouchableOpacity} from 'react-native';
+import EmptyListMessage from '../../../components/EmptyListMessage';
+import {back} from '../../../utils/nagivationUtils';
+import CustomerInfo from './CustomerInfo';
+import Tab from './Tab';
+import Icon from 'react-native-vector-icons/AntDesign';
+import ScanQRToPay from '../../../components/ScanQRToPay';
 
-type UnpaidUdharsProps = {
+type UnpaidPaymentsProps = {
   customer: Customer;
   date: string;
   products: SoldProduct[];
 };
 
-const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
+const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   customer,
-  date,
   products,
+  date,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const {customers} = useAnalytics();
-  // const params = useRoute().params;
-  // const {customer, date, products} = params as UnpaidUdharsParams;
+
   const [amount, setAmount] = useState<number>(0);
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
+  const [willingToPay, setWillingToPay] = useState<boolean>(false);
+  const [selectedProducts, setSelectedProducts] = useState<SoldProduct[]>([]);
   const {currency} = useSelector((s: RootState) => s.appData.app);
-  const unpaidPayments: SoldProduct[] =
-    customers?.find(c => c.id === customer.id)?.unpaidPayments || [];
+  const up =
+    useSelector((s: RootState) => s.appData.BusinessOwner.customers)
+      .find(s => s.id === customer.id)
+      ?.unpaidPayments?.flatMap(d =>
+        products.filter(f => f.id === d.id && f.addedAt === d.addedAt),
+      ) || [];
 
   const handleCloseConfirmPayment = () => {
     setAskConfirmPayment(false);
   };
-  const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', itemPrice: number = 0) => {
+  const handleCloseQRCode = () => {
+    setWillingToPay(false);
+  };
+  const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', item?: SoldProduct) => {
     if (payAs === 'WHOLE') {
       setPayableAmount(amount);
-    } else {
-      setPayableAmount(itemPrice);
+    } else if (payAs === 'SINGLE' && item) {
+      setPayableAmount(
+        (item.discountedPrice && item.discountedPrice !== 0
+          ? item.discountedPrice
+          : item.basePrice) * item.count,
+      );
     }
     setAskConfirmPayment(true);
+  };
+
+  const handlePayButton = () => {
+    setAskConfirmPayment(false);
+    setWillingToPay(true);
   };
 
   useEffect(() => {
@@ -56,35 +73,27 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
       0,
     );
     setAmount(amt);
-  }, [unpaidPayments, amount]);
+  }, [products, amount]);
 
   return (
-    <View style={styles.parent}>
-      <Header
-        name={date}
-        backButtom={true}
-        titleColor={currentTheme.header.textColor}
-        headerBgColor={currentTheme.baseColor}
-      />
+    <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
+      <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
+        Pending Payments
+      </Text>
       <View
         style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
         <CustomerInfo customer={customer} />
         <View style={styles.itemListContainer}>
-          {products.length !== 0 ? (
+          {up.length !== 0 ? (
             <FlatList
-              data={products}
+              data={up}
               keyExtractor={i => i.addedAt.toString()}
               renderItem={({item}) => (
                 <Tab
                   actionType="UNPAID"
                   i={item}
                   customer={customer}
-                  onPay={() =>
-                    openConfirmPay(
-                      'SINGLE',
-                      (item.discountedPrice || item.basePrice) * item.count,
-                    )
-                  }
+                  onPay={() => openConfirmPay('SINGLE', item)}
                 />
               )}
               nestedScrollEnabled
@@ -115,7 +124,7 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
           )}
         </View>
       </View>
-      {unpaidPayments.length !== 0 && (
+      {products.length !== 0 && (
         <PayButton
           label={`Pay ${currency} ${amount}`}
           pressAction={() => openConfirmPay('WHOLE')}
@@ -124,12 +133,28 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
       <SlideUpContainer
         open={askConfirmPayment}
         close={handleCloseConfirmPayment}
-        opacity={0.4}>
+        opacity={0.5}>
         <ConfirmPayment
-          payableAmount={payableAmount}
+          value={payableAmount}
+          setState={setPayableAmount}
           cancel={handleCloseConfirmPayment}
           currency={currency}
-          callback={handleCloseConfirmPayment}
+          callback={handlePayButton}
+          editable={false}
+        />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={willingToPay}
+        close={handleCloseQRCode}
+        opacity={0.4}>
+        <ScanQRToPay
+          payableAmount={payableAmount}
+          cancel={handleCloseQRCode}
+          currency={currency}
+          callback={handlePayButton}
+          // products={}
+          pa="gomzydhingra0001@okhdfcbank"
+          pn="Khata App"
         />
       </SlideUpContainer>
     </View>
@@ -138,11 +163,21 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    flex: 1,
+    height: deviceHeight * 0.75,
+    backgroundColor: 'white',
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    paddingVertical: 20,
+  },
+  label: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   container: {
     flex: 1,
     paddingHorizontal: 10,
+    marginTop: 20,
   },
   customerHeader: {
     marginTop: 20,
@@ -163,4 +198,4 @@ const styles = StyleSheet.create({
   backBtnText: {fontSize: 20, fontWeight: 'bold'},
 });
 
-export default UnpaidUdhars;
+export default UnPaidPayments;

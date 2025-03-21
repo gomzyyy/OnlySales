@@ -39,7 +39,7 @@ import {
       setOpenEditCustomer(true);
     };
     const handleCloseEditCustomer = () => setOpenEditCustomer(false);
-    const handleLongPressCancelAction=()=>navigate('Customer', {customer: i})
+    const handleLongPressCancelAction=()=>navigate('Employee', {employee: i})
   
     return (
       <LongPressEnabled longPressCanceledAction={handleLongPressCancelAction} longPressAction={handleOpenLongPressOptions} dummy={dummy} >

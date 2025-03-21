@@ -26,7 +26,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#ffeaff',
     textAlt: '#000',
-    // dangerBg:"#FF0000"
+    bottomTabBg:'rgba(127, 1, 127,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -64,6 +64,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#ffe6e6',
     textAlt: '#000',
+    bottomTabBg:'rgba(214, 0, 0,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -101,6 +102,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#fff8e1',
     textAlt: '#000',
+    bottomTabBg:'rgba(255, 193, 7,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -138,6 +140,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#e6ffe6',
     textAlt: '#000',
+    bottomTabBg:'rgba(158, 195, 120,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -175,6 +178,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#e6f2ff',
     textAlt: '#000',
+    bottomTabBg:'rgba(0, 123, 255,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -212,6 +216,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#fff3f0',
     textAlt: '#000',
+    bottomTabBg:'rgba(255, 111, 97,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',

@@ -100,7 +100,7 @@ export const checkDate = ({
     (nowUTC.getMonth() - parsedDateUTC.getMonth());
 
   return {
-    isExactMatch: daysDifference === matchByDay, // ✅ Checks exact day difference
+    isExactMatch: daysDifference === matchByDay-1, // ✅ Checks exact day difference
     sameDay: daysDifference === 0,
     thisMonth: monthDifference === 0,
     lastMonth: monthDifference === 1,

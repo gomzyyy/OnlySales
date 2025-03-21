@@ -41,8 +41,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    padding: 22,
     borderRadius: 16,
+    height: 60,
+    width: 150,
+    justifyContent: 'center',
   },
   pressableText: {fontSize: 22, fontWeight: 'bold'},
 });

@@ -7,26 +7,46 @@ import OwnerInfo from './components/OwnerInfo';
 import AccountCenter from './components/AccountCenter';
 import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
+import {useTheme} from '../../hooks';
 
 const Settings = () => {
+  const {currentTheme} = useTheme();
   const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
 
   return (
     <View style={styles.parent}>
-      <Header name='Settings' backButtom />
-      <ScrollView style={styles.settingsContainer} nestedScrollEnabled={true}>
+      <Header
+        name="Settings"
+        backButtom
+        headerBgColor={currentTheme.baseColor}
+        titleColor={currentTheme.header.textColor}
+      />
+      <ScrollView
+        style={[
+          styles.settingsContainer,
+          {backgroundColor: currentTheme.baseColor},
+        ]}
+        nestedScrollEnabled={true}>
         <View style={styles.infoContainer}>
-          <OwnerInfo owner={owner} secure={true} />
+          <OwnerInfo
+            owner={owner}
+            secure={true}
+            profileImageValue={owner.image}
+          />
         </View>
         <View style={styles.sectionsContainer}>
-          <Text style={styles.label}>Account</Text>
-         <AccountCenter />
+          <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
+            Account
+          </Text>
+          <AccountCenter />
         </View>
         <View style={styles.sectionsContainer}>
-          <Text style={styles.label}>App</Text>
-         <AppSettings />
+          <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
+            App
+          </Text>
+          <AppSettings />
         </View>
-        <LogoutButton/>
+        <LogoutButton />
       </ScrollView>
     </View>
   );
@@ -41,7 +61,7 @@ const styles = StyleSheet.create({
   sectionsContainer: {
     marginTop: 20,
   },
-  label: {fontSize: 30, fontWeight: 'bold', paddingHorizontal:20},
+  label: {fontSize: 30, fontWeight: 'bold', paddingHorizontal: 20},
 });
 
 export default Settings;

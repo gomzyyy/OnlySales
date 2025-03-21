@@ -2,7 +2,7 @@ import {View, StyleSheet, Pressable, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
-import {Customer as CustomerType} from '../../../types';
+import {Customer as CustomerType, SoldProduct} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {ToogleButton} from './components/Tab';
 import {ProductsByDate} from '../../components/shared/ProductByDate';
@@ -15,6 +15,9 @@ import {RootState} from '../../../store/store';
 import {toogleState} from '../../service/fn';
 import {useTheme} from '../../hooks/index';
 import {useHaptics} from '../../hooks/index';
+import UnpaidUdhars from './screens/UnpaidUdhars';
+import UnPaidPayments from './components/UnPaidPayments';
+import PaidPayments from './components/PaidPayments';
 
 type RouteParams = {
   customer: CustomerType;
@@ -35,6 +38,18 @@ const Customer = () => {
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
   const [addUdhar, setAddUdhar] = useState<boolean>(false);
   const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
+  const [openUnpaidPayments, setOpenUnpaidPayments] = useState<boolean>(false);
+  const [openPaidPayments, setOpenPaidPayments] = useState<boolean>(false);
+  const [unpaidPaymentsProps, setUnpaidPaymentsProps] = useState<{
+    products: SoldProduct[];
+    customer: CustomerType;
+    date: string;
+  }>({products: [], customer, date: ''});
+  const [paidPaymentsProps, setPaidPaymentsProps] = useState<{
+    products: SoldProduct[];
+    customer: CustomerType;
+    date: string;
+  }>({products: [], customer, date: ''});
 
   useEffect(() => {
     const currentCustomer = findCustomer();
@@ -51,6 +66,28 @@ const Customer = () => {
     setContent('PAID');
     lightTap();
   };
+
+  const handleOpenPayments = ({
+    products,
+    customer,
+    date,
+  }: {
+    products: SoldProduct[];
+    customer: CustomerType;
+    date: string;
+  }) => {
+    if (content === 'PAID') {
+      setPaidPaymentsProps({products, customer, date});
+      setOpenPaidPayments(true);
+    } else if (content === 'UNPAID') {
+      setUnpaidPaymentsProps({products, customer, date});
+      setOpenUnpaidPayments(true);
+    } else {
+      return;
+    }
+  };
+  const handleCloseUnpaidPayments = () => setOpenUnpaidPayments(false);
+  const handleClosePaidPayments = () => setOpenPaidPayments(false);
 
   const AddUdharIcon = (): React.JSX.Element => {
     return (
@@ -105,11 +142,11 @@ const Customer = () => {
               <ProductsByDate
                 customer={currCustomer}
                 ArrWithDate={currCustomer.unpaidPayments}
-                onTabPressNavigate="UnpaidUdhars"
+                onTabPress={handleOpenPayments}
               />
             ) : (
               <EmptyListMessage
-                title="HURRAY! No Pending Payments."
+                title="HURRAY! No Pending Payments"
                 textColor={currentTheme.contrastColor}
               />
             )
@@ -118,11 +155,11 @@ const Customer = () => {
             <ProductsByDate
               customer={currCustomer}
               ArrWithDate={currCustomer.paidPayments}
-              onTabPressNavigate="PaidUdhars"
+              onTabPress={handleOpenPayments}
             />
           ) : (
             <EmptyListMessage
-              title="Oops! No Paid Payments."
+              title="Oops! No Paid Payments"
               textColor={currentTheme.contrastColor}
             />
           )}
@@ -132,6 +169,26 @@ const Customer = () => {
         <AddUdhar
           close={toogleState(setAddUdhar).false}
           customer={currCustomer}
+        />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={openUnpaidPayments}
+        close={handleCloseUnpaidPayments}
+        opacity={0.7}>
+        <UnPaidPayments
+          date={unpaidPaymentsProps.date}
+          customer={unpaidPaymentsProps.customer}
+          products={unpaidPaymentsProps.products}
+        />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={openPaidPayments}
+        close={handleClosePaidPayments}
+        opacity={0.7}>
+        <PaidPayments
+          date={paidPaymentsProps.date}
+          customer={paidPaymentsProps.customer}
+          products={paidPaymentsProps.products}
         />
       </SlideUpContainer>
     </View>

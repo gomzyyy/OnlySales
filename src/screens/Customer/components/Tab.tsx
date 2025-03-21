@@ -14,23 +14,24 @@ type TabProps = {
   lastIndex?: boolean;
   customer: Customer;
   actionType: 'PAID' | 'UNPAID';
-  dummy?:boolean
+  dummy?: boolean;
+  onPay?: () => void;
 };
 
 type ToogleButtonProps = {
   title: string;
   bgcolor?: string;
   textColor: string;
-  border?:boolean,
-  borderColor?:string;
+  border?: boolean;
+  borderColor?: string;
 };
 
 const ToogleButton: React.FC<ToogleButtonProps> = ({
   title,
-  bgcolor='',
+  bgcolor = '',
   textColor,
-  border=false,
-  borderColor=''
+  border = false,
+  borderColor = '',
 }): React.JSX.Element => {
   return (
     <View
@@ -39,7 +40,7 @@ const ToogleButton: React.FC<ToogleButtonProps> = ({
         {
           backgroundColor: bgcolor,
           borderWidth: border ? 2 : 0,
-          borderColor
+          borderColor,
         },
       ]}>
       <Text style={[styles.toogletext, {color: textColor}]}>{title}</Text>
@@ -52,7 +53,8 @@ const Tab: React.FC<TabProps> = ({
   lastIndex,
   customer,
   actionType,
-  dummy=false
+  dummy = false,
+  onPay
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
@@ -91,7 +93,7 @@ const Tab: React.FC<TabProps> = ({
           <View style={{flexDirection: 'row', gap: 4}}>
             <Text
               style={[styles.customerName, {color: currentTheme.tab.label}]}>
-              {i.name}{" "}{`x${i.count}`}
+              {i.name} {`x${i.count}`}
             </Text>
             {actionType === 'PAID' && (
               <View
@@ -110,11 +112,7 @@ const Tab: React.FC<TabProps> = ({
             )}
           </View>
 
-          <Text
-            style={[
-              styles.productAmount,
-              {color: currentTheme?.tab?.value || '#000'},
-            ]}>
+          <Text style={[styles.productAmount, {color: currentTheme.baseColor}]}>
             {`${app.currency} ${
               i.discountedPrice && i.discountedPrice !== 0
                 ? i.count === 0
@@ -126,20 +124,38 @@ const Tab: React.FC<TabProps> = ({
             }`}
           </Text>
         </View>
-        <View style={styles.tabActionContainer}>
-          <TouchableOpacity
-            style={[
-              styles.MarkAsPaid,
-              {backgroundColor: currentTheme.tab.btnBg},
-            ]}
-            activeOpacity={0.8}
-            onPress={handleMarkAs}>
-            <Text
-              style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
-              {actionType === 'PAID' ? 'Mark as *Unpaid' : 'Mark as *Paid'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {actionType === 'PAID' && (
+          <View style={styles.tabActionContainer}>
+            <TouchableOpacity
+              style={[
+                styles.MarkAsPaid,
+                {backgroundColor: currentTheme.tab.btnBg},
+              ]}
+              activeOpacity={0.8}
+              onPress={handleMarkAs}>
+              <Text
+                style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
+                {'Mark as *Unpaid'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {actionType === 'UNPAID' && (
+          <View style={styles.tabActionContainer}>
+            <TouchableOpacity
+              style={[
+                styles.MarkAsPaid,
+                {backgroundColor: currentTheme.tab.btnBg},
+              ]}
+              activeOpacity={0.8}
+              onPress={() => onPay && onPay()}>
+              <Text
+                style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
+                {'Pay'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <PopupContainer
           open={longPressActionOpen}
           close={() => setLongPressActionOpen(false)}
@@ -159,7 +175,7 @@ const Tab: React.FC<TabProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 14,
-    paddingVertical: 22,
+    paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 8,
@@ -184,14 +200,15 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   MarkAsPaid: {
-    paddingHorizontal: 7,
-    paddingVertical: 4,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
   },
   MarkAsPaidText: {
     fontWeight: '600',
+    fontSize: 18,
   },
   contentToggleContainer: {
     flexDirection: 'row',

@@ -62,7 +62,13 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     } else {
       setSelectedProducts(
         [...(selectedProducts || []), {...s}].map(
-          s => s && {...s, createdAt: new Date(Date.now()).toDateString()},
+          s =>
+            s && {
+              ...s,
+              createdAt: new Date(Date.now()
+              //  - (24*60*60*1000)
+              ).toDateString(),
+            },
         ),
       );
     }
@@ -99,8 +105,10 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     }
     const newProducts: SoldProduct = {
       ...product,
+      customerId:customer.id,
       count: count,
-      addedAt: Date.now(),
+      addedAt: Date.now()
+      //  - (24*60*60*1000),
     };
     handleNewUdhars(newProducts);
   };
@@ -218,7 +226,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
 const styles = StyleSheet.create({
   addUdharContainer: {
-    padding: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     height: deviceHeight * 0.55,
     borderRadius: 20,
     marginBottom: 10,

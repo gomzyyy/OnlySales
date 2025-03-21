@@ -6,8 +6,10 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import {logout} from '../../../../store/slices/business';
 import {Confirm, showToast} from '../../../service/fn';
 import { resetAndNavigate } from '../../../utils/nagivationUtils';
+import { useTheme } from '../../../hooks';
 
 const LogoutButton = () => {
+  const {currentTheme} = useTheme()
   const dispatch = useDispatch<AppDispatch>();
   const {userId} = useSelector((s: RootState) => s.appData.BusinessOwner);
   const handleOnLogout = async () => {
@@ -25,10 +27,10 @@ const LogoutButton = () => {
       activeOpacity={0.8}
       style={[
         styles.button,
-        {marginBottom: 6, backgroundColor: colors.dangerFade},
+        {marginBottom: 6, backgroundColor: colors.danger},
       ]}
       onPress={handleOnLogout}>
-      <Text style={[styles.buttonText, {color: colors.danger}]}>Logout</Text>
+      <Text style={[styles.buttonText, {color: currentTheme.contrastColor}]}>Logout</Text>
     </TouchableOpacity>
   );
 };

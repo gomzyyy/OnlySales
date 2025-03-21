@@ -42,7 +42,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Text style={styles.label}>
-        Product: {product.name}
+        {product.name}
         {` (${product.createdAt.split(' ').join(', ')})`}
       </Text>
       <View style={styles.optionsContainer}>

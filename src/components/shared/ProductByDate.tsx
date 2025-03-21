@@ -1,42 +1,63 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {Customer, Product} from '../../../types';
+import {Customer, SoldProduct} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
+import {useMemo} from 'react';
 
 type ProductsByDateProps = {
-  ArrWithDate: Product[];
+  ArrWithDate: SoldProduct[];
   customer: Customer;
-  onTabPressNavigate:string;
+  // onTabPressNavigate: string;
+  onTabPress:({ products, customer, date, }: {
+    products: SoldProduct[];
+    customer: Customer;
+    date: string;
+}) => void
 };
 type TabProps = {
-  i: Product[];
+  i: SoldProduct[];
   lastIndex?: boolean;
   date: string;
 };
 export const ProductsByDate: React.FC<ProductsByDateProps> = ({
   ArrWithDate,
   customer,
-  onTabPressNavigate
+  onTabPress,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const groupedObject = ArrWithDate.reduce<Record<string, Product[]>>(
+  const groupedObject = ArrWithDate.reduce<Record<string, SoldProduct[]>>(
     (acc, product) => {
-      const creationDate: string = new Date(product.createdAt).toDateString();
+      const creationDate: string = new Date(
+        new Date(product.createdAt).setHours(0, 0, 0, 0),
+      ).toDateString();
+
       if (!acc[creationDate]) {
         acc[creationDate] = [];
       }
-      acc[creationDate].push(product);
+
+      const existingProductIndex = acc[creationDate].findIndex(
+        p => p.id === product.id && p.addedAt === product.addedAt,
+      );
+
+      if (existingProductIndex !== -1) {
+        acc[creationDate][existingProductIndex].count += product.count;
+      } else {
+        acc[creationDate].push(product);
+      }
+
       return acc;
     },
-    {} as Record<string, Product[]>,
+    {} as Record<string, SoldProduct[]>,
   );
-  const groupedArr = Object.keys(groupedObject)
-    .map(m => ({
-      date: m.split(' ').join(', '),
-      products: groupedObject[m],
-    }))
-    .reverse();
+  const groupedArr = useMemo(() => {
+    return Object.keys(groupedObject)
+      .map(m => ({
+        date: m.split(' ').join(', '),
+        products: groupedObject[m],
+      }))
+      .reverse();
+  }, [ArrWithDate]);
   const Tab: React.FC<TabProps> = ({
     lastIndex = false,
     i,
@@ -52,13 +73,12 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
             backgroundColor: currentTheme.tab.bg,
           },
         ]}
-        onPress={() => navigate(onTabPressNavigate, {products: i, customer, date})}>
-        <Text style={[styles.date,{color: currentTheme.tab.label || "#000"}]}>
+        onPress={()=>onTabPress({products:i,date,customer}) }>
+                    {/* navigate(onTabPressNavigate, {products: i, customer, date}) */}
+        <Text style={[styles.date, {color: currentTheme.tab.label || '#000'}]}>
           {date}
         </Text>
-        <TouchableOpacity>
-          <Icon name="right" color={currentTheme.tab.icon} size={22} />
-        </TouchableOpacity>
+        <Icon name="right" color={currentTheme.tab.icon} size={22} />
       </TouchableOpacity>
     );
   };
@@ -66,9 +86,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
     <FlatList
       data={groupedArr}
       keyExtractor={s => s.date}
-      renderItem={({item}) => (
-        <Tab date={item.date} i={item.products} key={item.date} />
-      )}
+      renderItem={({item}) => <Tab date={item.date} i={item.products} />}
       nestedScrollEnabled
     />
   );

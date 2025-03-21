@@ -8,10 +8,12 @@ import {
   Button,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Icon from 'react-native-vector-icons/Feather';
-import {navigate} from '../../utils/nagivationUtils';
-import GetImage from '../../components/GetImage';
+import QRCode from 'react-native-qrcode-svg';
+import RecivePaymentByQRCode from '../../components/RecivePaymentByQRCode';
+import {CurrencyType} from '../../../enums';
 import SlideUpContainer from '../../components/SlideUpContainer';
+
+const value = `upi://pay?pa=gomzydhingra0001@okhdfcbank&pn=GomzyDev&mc=1234&tid=Txn7367289298&tr=Order1236&tn=Payment%20for%20Udhar%20%26%20Pending%20Bills&am=50&cu=INR`;
 
 const Test = () => {
   const [image, setImage] = useState<string | undefined>(undefined);
@@ -19,19 +21,20 @@ const Test = () => {
   return (
     <View style={styles.parent}>
       <View style={styles.container}>
-        {image && image.trim().length !== 0 && (
-          <View style={{borderRadius:70,overflow:'hidden'}}>
-            <Image source={{uri: image}} height={140} width={140} />
-          </View>
-        )}
-        <SlideUpContainer close={() => setOpen(false)} open={open}>
-          <GetImage
-            value={image}
-            setState={setImage}
-            callback={() => setOpen(false)}
+        <Button title="PAY" onPress={() => setOpen(true)} />
+        <SlideUpContainer
+          open={open}
+          opacity={0.2}
+          close={() => setOpen(false)}>
+          <RecivePaymentByQRCode
+            pa="gomzydhingra0001@okhdfcbank"
+            pn="Gomzy Dhingra"
+            amount={200}
+            cancel={() => {}}
+            onPaid={() => {}}
+            currency={CurrencyType.INR}
           />
         </SlideUpContainer>
-        <Button title="OPEN" onPress={() => setOpen(true)} />
       </View>
     </View>
   );

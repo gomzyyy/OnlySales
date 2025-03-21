@@ -18,7 +18,7 @@ import {
 } from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
-import {randomId, showToast} from '../../src/service/fn';
+import {checkDate, randomId, showToast} from '../../src/service/fn';
 
 type BusinessOwnerInitialStateType = {
   BusinessOwner: BusinessOwner;
@@ -124,10 +124,17 @@ const BusinessOwnerSlice = createSlice({
         phoneNumber?: BusinessOwner['phoneNumber'];
         businessType?: BusinessType;
         businessDescription?: BusinessOwner['businessDescription'];
+        image?: BusinessOwner['image'];
       }>,
     ) => {
-      const {name, userId, phoneNumber, businessType, businessDescription} =
-        action.payload;
+      const {
+        name,
+        userId,
+        phoneNumber,
+        businessType,
+        businessDescription,
+        image,
+      } = action.payload;
       const prevBusinessOwner = state.app.previousOwners;
       const ifExisting = prevBusinessOwner.find(s => s.userId === userId);
       if (!ifExisting) return;
@@ -136,6 +143,7 @@ const BusinessOwnerSlice = createSlice({
         name,
         phoneNumber,
         businessDescription,
+        image,
         businessType: businessType ?? BusinessType.RETAIL,
         updatedAt: Date.now().toString(),
       };
@@ -205,7 +213,6 @@ const BusinessOwnerSlice = createSlice({
         state.app.searchResults.customerResults = customers;
       }
       if (employees && type === 'EMPLOYEE') {
-        console.log("reireir")
         state.app.searchResults.employeeResults = employees;
       }
     },
@@ -259,19 +266,32 @@ const BusinessOwnerSlice = createSlice({
         state.BusinessOwner.customers.find(s => s.id === customer.id)
           ?.unpaidPayments || [];
 
-      const updatedUdhars = allUdhars.map(d => {
-        const updatedUdhar = newUdharList.find(c => c.id === d.id);
-        return updatedUdhar ? {...d, count: d.count + updatedUdhar.count} : d;
+      const updatedUdhars: SoldProduct[] = [...allUdhars];
+
+      newUdharList.forEach(newProduct => {
+        const existingProductIndex = updatedUdhars.findIndex(
+          d =>
+            d.id === newProduct.id &&
+            new Date(d.addedAt).toDateString() ===
+              new Date(newProduct.addedAt).toDateString(),
+        );
+
+        if (existingProductIndex !== -1) {
+          updatedUdhars[existingProductIndex] = {
+            ...updatedUdhars[existingProductIndex],
+            count:
+              (updatedUdhars[existingProductIndex].count || 0) +
+              (newProduct.count || 0),
+            addedAt: updatedUdhars[existingProductIndex].addedAt, // Keep original addedAt
+          };
+        } else {
+          updatedUdhars.push({...newProduct});
+        }
       });
-
-      const newUnpaidUdhars = newUdharList.filter(
-        c => !allUdhars.some(d => d.id === c.id),
-      );
-
-      const newAllUdhars = [...updatedUdhars, ...newUnpaidUdhars];
       const updatedCustomers = state.BusinessOwner.customers.map(s =>
-        s.id === customer.id ? {...s, unpaidPayments: newAllUdhars} : s,
+        s.id === customer.id ? {...s, unpaidPayments: updatedUdhars} : s,
       );
+
       state.BusinessOwner.customers = updatedCustomers;
       const newInventory = state.BusinessOwner.inventory.map(s => {
         const foundProduct = newUdharList.find(d => s.id === d.id);
@@ -283,6 +303,7 @@ const BusinessOwnerSlice = createSlice({
             }
           : s;
       });
+
       state.BusinessOwner.inventory = newInventory;
     },
 
@@ -305,6 +326,7 @@ const BusinessOwnerSlice = createSlice({
         };
       }
     },
+
     removePaidUdhar: (
       state,
       action: PayloadAction<{customer: Customer; product: SoldProduct}>,
@@ -320,7 +342,9 @@ const BusinessOwnerSlice = createSlice({
           ...state.BusinessOwner.customers[customerIndex],
           paidPayments:
             state.BusinessOwner.customers[customerIndex].paidPayments?.filter(
-              s => s.id !== product.id,
+              s =>
+                new Date(s.addedAt).toISOString().split('T')[0] !==
+                new Date(product.addedAt).toISOString().split('T')[0],
             ) || [],
         };
       }
@@ -444,6 +468,13 @@ const BusinessOwnerSlice = createSlice({
         s => (s.id === updateEmployee.id ? {...s, ...updateEmployee} : s),
       );
     },
+    removeEmployee: (state, action: PayloadAction<Employee>) => {
+      const deletedEmployee = action.payload;
+      state.BusinessOwner.EmployeeData =
+        state.BusinessOwner.EmployeeData.filter(
+          s => s.id !== deletedEmployee.id,
+        );
+    },
   },
 });
 export const {
@@ -469,5 +500,6 @@ export const {
   setTheme,
   createEmployee,
   updateEmployee,
+  removeEmployee,
 } = BusinessOwnerSlice.actions;
 export default BusinessOwnerSlice.reducer;

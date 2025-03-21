@@ -62,11 +62,32 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       status,
       shift,
     };
-    if (name.trim().length === 0) {
+    if (
+      name.trim().length === 0 ||
+      phoneNumber.trim().length === 0 ||
+      name.trim().length === 0 ||
+      salary.trim().length === 0 ||
+      status.trim().length === 0 ||
+      shift.trim().length === 0 ||
+      address.trim().length === 0
+    ) {
       warning();
       showToast({
         type: 'info',
         text1: 'Some required fields are empty.',
+        position: 'top',
+      });
+      return;
+    }
+    if (
+      phoneNumber.trim().length === 0 ||
+      phoneNumber.trim().length > 10 ||
+      phoneNumber.trim().length < 10
+    ) {
+      warning();
+      showToast({
+        type: 'error',
+        text1: 'Please enter a valid phone number.',
         position: 'top',
       });
       return;

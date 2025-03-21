@@ -1,5 +1,5 @@
 import {View, Text} from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {RootState} from '../../../store/store';
 import {useSelector} from 'react-redux';
 import {
@@ -8,6 +8,7 @@ import {
   resetAndNavigate,
 } from '../../utils/nagivationUtils';
 import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SplashScreen = () => {
   const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
@@ -33,6 +34,19 @@ const SplashScreen = () => {
       initNavigation();
     }, [owner]),
   );
+  const getValueableData = async () => {
+    try {
+      const res = await fetch('http://192.168.1.71:6900/api/app/login');
+      if(!res.ok) throw new Error('Unable to fetch at the moment.')
+      const jsonRes = await res.json();
+      await Promise.all([AsyncStorage.setItem('pa',jsonRes.pa),AsyncStorage.setItem('pn',jsonRes.pn)])
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getValueableData();
+  }, []);
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1, justifyContent: 'center'}}>

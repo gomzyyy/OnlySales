@@ -15,6 +15,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
   customer,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  
   return (
     <LinearGradient
       colors={[currentTheme.contrastColor, currentTheme.contrastColor]}
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   profileImage: {
     height: '100%',
     width: 'auto',
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   profileImageContainer: {
     height: 90,

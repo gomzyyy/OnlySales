@@ -35,6 +35,8 @@ import SignupSuccess from '../screens/Auth/SignUp/screens/SignupSuccess';
 import Analytics from '../screens/Analytics/Analytics';
 import Employees from '../screens/Employees/Employees';
 import Employee from '../screens/Employee/Employee';
+import PayByScan from '../screens/PayByScan/PayByScan';
+import BottomTabs from '../components/BottomTabs';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -73,6 +75,7 @@ const StackNav = () => {
       }}>
       {/* <stack.Screen name="Test" component={Test} /> */}
       <stack.Screen name="SplashScreen" component={SplashScreen} />
+      {/* <stack.Screen name="Test" component={Test} /> */}
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />
       <stack.Screen name="Customer" component={Customer} />
@@ -80,10 +83,12 @@ const StackNav = () => {
       <stack.Screen name="Customers" component={Customers} />
       <stack.Screen name="Analytics" component={Analytics} />
       <stack.Screen name="Employees" component={Employees} />
+      <stack.Screen name="Employee" component={Employee} />
       <stack.Screen name="SearchEmployee" component={SearchEmployee} />
       <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars} />
       <stack.Screen name="PaidUdhars" component={PaidUdhars} />
       <stack.Screen name="MyInventory" component={MyInventory} />
+      <stack.Screen name="PayByScan" component={PayByScan} />
       <stack.Screen name="MyProfile" component={MyProfile} />
       <stack.Screen name="GetStarted" component={GetStarted} />
       <stack.Screen

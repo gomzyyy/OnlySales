@@ -35,12 +35,6 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
 
   const handleSaveBtn = () => {
-    const customerData = {
-      name: name,
-      phoneNumber,
-      address,
-      image
-    };
     if (name.trim().length === 0) {
       warning();
       showToast({
@@ -50,6 +44,12 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       });
       return;
     }
+    const customerData = {
+      name,
+      phoneNumber,
+      address,
+      image,
+    };
     dispatch(createCustomers(customerData));
     showToast({
       type: 'success',

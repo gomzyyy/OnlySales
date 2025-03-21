@@ -35,7 +35,7 @@ const Tab: React.FC<TabProps> = ({title,onPress}): React.JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 14,
-    paddingVertical: 22,
+    paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 8,
