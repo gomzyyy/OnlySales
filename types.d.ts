@@ -7,6 +7,10 @@ import {
   EmploymentStatus,
   Shift,
   CurrencyType,
+  AssetType,
+  LibilityType,
+  LibilityStatus,
+  AssetStatus,
 } from './enums';
 
 export interface AppTheme {
@@ -19,7 +23,7 @@ export interface AppTheme {
   contrastColor: string;
   bgColor: string;
   textAlt: string;
-  bottomTabBg:string;
+  bottomTabBg: string;
   modal: ModalTheme;
   toggleBtn: ToogleBtnTheme;
   tab: TabTheme;
@@ -74,6 +78,7 @@ export interface User {
   name: string;
   phoneNumber?: string;
   image?: string | undefined;
+  email?: string;
   createdAt: string;
   updatedAt: string;
   address?: string;
@@ -94,6 +99,8 @@ export interface BusinessOwner extends User {
   businessDescription?: string;
   businessType?: BusinessType;
   EmployeeData: Employee[];
+  assets: Asset[];
+  liabilities: Liability[];
   inventory: Product[];
   starProducts?: Product[];
   customers: Customer[];
@@ -104,16 +111,19 @@ export interface BusinessOwner extends User {
 }
 
 export interface Employee extends User {
-  businessOwnerId: string;
+  businessOwner: string | BusinessOwner;
+  gender: string;
   department?: string; // Department name (e.g., IT, HR, Sales)
   position?: string; // Job title or role
   email?: string; // Work email
   hireDate: string; // Date of joining
   salary: number; // Salary details
   status: EmploymentStatus; // Employment status
+  statusDescription?: string;
   address?: string; // Employee's address
   skills?: string[]; // List of employee skills
   shift: Shift; // Work shift
+  shiftDescription?: string;
   reportsTo?: string; // Manager ID or name
 }
 
@@ -126,6 +136,7 @@ export interface Product {
   discountedPrice?: number;
   quantity: number;
   measurementType: QuantityType;
+  measurementTypeDescription?: string;
   stock?: number;
   productCost?: number;
   createdAt: string;
@@ -133,25 +144,45 @@ export interface Product {
 }
 
 export interface SoldProduct extends Product {
-  customerId:string;
+  buyer: string;
   addedAt: number;
   count: number;
 }
 
-// export interface SoldProductList{
-//   products:SoldProduct[];
-//   totalAmount:number;
-//   payableAmount:number;
-//   amountPaid:number
-// }
-
 export interface Asset {
-  id: string;
-  name: string;
-  type: string;
-  category: AssetCategory;
-  value: number;
-  acquiredDate: string;
-  description?: string;
-  documentUrl?: string;
+  id: string; // Unique identifier
+  name: string; // Name of the asset
+  tangible: boolean; // Type of asset (e.g., tangible, intangible)
+  category: AssetCategory; // Main category of the asset
+  categoryDescription?: string; // Description of the category
+  value: number; // Estimated value of the asset
+  acquiredDate: string; // Date when the asset was acquired
+  description?: string; // Additional details about the asset
+  documentUrl?: string; // URL to supporting documents or proof of ownership
+  assetType: AssetType;
+  appreciatingRate?: number;
+  depreciationRate?: number; // Annual depreciation rate (if applicable)
+  currentValue?: number; // Estimated current value after depreciation
+  location?: string; // Physical location of the asset
+  warrantyExpiryDate?: string; // Warranty or guarantee expiration date
+  status?: AssetStatus; // Asset status
+  lastMaintenanceDate?: string; // Last maintenance check (for equipment or machines)
+  nextMaintenanceDate?: string; // Next scheduled maintenance (if applicable)
+  ownerId?: string; // Reference to the business owner
+}
+
+export interface Liability {
+  id: string; // Unique identifier for the liability
+  name: string; // Name of the liability
+  type: LibilityType; // Type of liability
+  category: string; // Category of liability
+  categoryDescription?: string; // Description of the category
+  amount: number; // Original amount of the liability
+  interestRate?: number; // Interest rate (if applicable)
+  startDate: string; // Start date of the liability
+  dueDate: string; // Maturity or due date for payment
+  installmentAmount?: number; // Fixed installment amount (if applicable)
+  remainingBalance?: number; // Outstanding amount to be paid
+  status?: LibilityStatus; // Status of the liability
+  ownerId?: string; // Reference to the business owner
 }

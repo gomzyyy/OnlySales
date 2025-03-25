@@ -21,17 +21,20 @@ import {
 import {useTheme} from '../hooks';
 import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/Entypo';
+import Icon3 from 'react-native-vector-icons/FontAwesome';
 
 type GetImageProps = {
   value: string | undefined;
   setState: Dispatch<SetStateAction<string | undefined>>;
   callback?: () => void;
+  enabled?: boolean;
 };
 
 const GetImage: React.FC<GetImageProps> = ({
   value,
   setState,
   callback,
+  enabled = true,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const getImageFromImageLiberary = async () => {
@@ -116,12 +119,28 @@ const GetImage: React.FC<GetImageProps> = ({
           </View>
         )}
       </View>
-
-      <Button
-        title="Choose Image from Image Liberary"
-        onPress={getImageFromImageLiberary}
-      />
-      <Button title="Take a photo instead" onPress={takePhotoWithCamera} />
+      <View style={styles.getimageBtnContainer}>
+        <TouchableOpacity
+          onPress={() => enabled && getImageFromImageLiberary()}
+          style={[styles.getImageBtn, {backgroundColor: currentTheme.bgColor}]}
+          activeOpacity={0.7}>
+          <Icon3 name="photo" size={16} color={currentTheme.baseColor} />
+          <Text
+            style={[styles.getImageBtnText, {color: currentTheme.baseColor}]}>
+            Choose from gallary
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => enabled && takePhotoWithCamera}
+          style={[styles.getImageBtn, {backgroundColor: currentTheme.bgColor}]}
+          activeOpacity={0.7}>
+          <Icon1 name="camera" size={16} color={currentTheme.baseColor} />
+          <Text
+            style={[styles.getImageBtnText, {color: currentTheme.baseColor}]}>
+            Take Photo
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -130,7 +149,7 @@ const styles = StyleSheet.create({
   container: {
     gap: 12,
     justifyContent: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: 20,
     paddingVertical: 20,
     borderRadius: 20,
     marginBottom: 10,
@@ -153,6 +172,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 24,
     left: 24,
+  },
+  getimageBtnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  getImageBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 4,
+    alignItems: 'center',
+  },
+  getImageBtnText: {
+    fontSize: 16,
+    fontWeight: 'semibold',
   },
 });
 

@@ -5,11 +5,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {logout} from '../../../../store/slices/business';
 import {Confirm, showToast} from '../../../service/fn';
-import { resetAndNavigate } from '../../../utils/nagivationUtils';
-import { useTheme } from '../../../hooks';
+import {resetAndNavigate} from '../../../utils/nagivationUtils';
+import {useTheme} from '../../../hooks';
 
 const LogoutButton = () => {
-  const {currentTheme} = useTheme()
+  const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const {userId} = useSelector((s: RootState) => s.appData.BusinessOwner);
   const handleOnLogout = async () => {
@@ -20,17 +20,17 @@ const LogoutButton = () => {
     if (!res) return;
     dispatch(logout({userId}));
     showToast({type: 'success', text1: 'Logout success.'});
-    resetAndNavigate("GetStarted")
+    resetAndNavigate('GetStarted');
   };
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       style={[
         styles.button,
-        {marginBottom: 6, backgroundColor: colors.danger},
+        {marginBottom: 6, backgroundColor: currentTheme.contrastColor},
       ]}
       onPress={handleOnLogout}>
-      <Text style={[styles.buttonText, {color: currentTheme.contrastColor}]}>Logout</Text>
+      <Text style={[styles.buttonText, {color: colors.danger}]}>Logout</Text>
     </TouchableOpacity>
   );
 };
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 18,
     borderRadius: 8,
-    marginTop:20
+    marginTop: 20,
   },
   buttonText: {
     fontSize: 22,

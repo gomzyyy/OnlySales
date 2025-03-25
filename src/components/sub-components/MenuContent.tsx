@@ -47,18 +47,18 @@ const menuNav: menuNavContent[] = [
     disabled: false,
   },
   {
-    name: 'My Employees',
+    name: 'Employees',
     navigateTo: 'Employees',
     icon: (color: string) => (
       <Icon3 name="network-wired" color={color} size={26} />
     ),
-    disabled: true,
+    disabled: false,
   },
   {
     name: 'Analytics',
     navigateTo: 'Analytics',
     icon: (color: string) => <Icon2 name="analytics" color={color} size={26} />,
-    disabled: true,
+    disabled: false,
   },
 
   {
@@ -120,7 +120,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
             <TouchableOpacity
               style={[
                 styles.navigationTab,
-                {backgroundColor: currentTheme.fadeColor},
+                {backgroundColor: currentTheme.baseColor},
               ]}
               key={i}
               onPress={() => handleNavigationByMenu(m.navigateTo)}
@@ -150,15 +150,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 12,
+    paddingHorizontal: 14,
     borderRadius: 8,
     marginBottom: 20,
+    height: 120,
   },
   profileImageContainer: {
-    height: 50,
-    width: 50,
-    borderRadius: 25,
+    height: 90,
+    width: 90,
+    borderRadius: 45,
     overflow: 'hidden',
   },
   profileImage: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   navigationTab: {
     paddingHorizontal: 10,
-    paddingVertical: 20,
+    paddingVertical: 16,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',

@@ -104,7 +104,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 styles.searchQueryContainer,
                 {backgroundColor: currentTheme.contrastColor},
               ]}
-              onPress={() => navigate('Search')}>
+              onPress={() => navigate('SearchCustomer')}>
               <View
                 style={[
                   styles.searchQueryInput,

@@ -22,6 +22,18 @@ type HeaderProps = {
   customComponent?: boolean;
   renderItem?: React.ReactNode;
   customAction?: () => void;
+  customComponentActiveOpacity?:
+    | 0
+    | 0.1
+    | 0.2
+    | 0.3
+    | 0.4
+    | 0.5
+    | 0.6
+    | 0.7
+    | 0.8
+    | 0.9
+    | 1;
 };
 
 const Header: React.FC<HeaderProps> = ({
@@ -34,6 +46,7 @@ const Header: React.FC<HeaderProps> = ({
   customComponent = false,
   renderItem = <></>,
   customAction = () => {},
+  customComponentActiveOpacity = 0.5,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const navigation = useNavigation();
@@ -47,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 20,
-        backgroundColor: headerBgColor ?? ''
+        backgroundColor: headerBgColor ?? '',
       }}>
       {!backButtom && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>
@@ -71,9 +84,10 @@ const Header: React.FC<HeaderProps> = ({
       )}
       {customComponent && (
         <TouchableOpacity
-          activeOpacity={0.5}
+          activeOpacity={customComponentActiveOpacity}
           onPress={customAction}
-          style={styles.rightCustomBtn}>
+          style={styles.rightCustomBtn}
+          >
           {renderItem}
         </TouchableOpacity>
       )}

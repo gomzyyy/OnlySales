@@ -32,7 +32,7 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <View style={styles.container}>
         <QRCode
-          value={`upi://pay?pa=${pa || 'gomzydhingra0001@okhdfc'}&pn=${
+          value={`upi://pay?pa=${pa || 'gomzydhingra0001@okhdfcBank'}&pn=${
             pn || 'Khata App'
           }&mc=1234&tid=Txn${Date.now()}&tr=Order${randomId()}&tn=Payment%20for%20Udhar%20%26%20Pending%20Bills&am=${
             payableAmount || 0
@@ -47,11 +47,11 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
         <TouchableOpacity
           style={[styles.button, {backgroundColor: colors.dangerFade}]}
           onPress={cancel}>
-          <Text style={[styles.buttonText, {color: colors.danger}]}>Back</Text>
+          <Text style={[styles.buttonText, {color: colors.danger}]}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, {backgroundColor: currentTheme.bgColor}]}>
-          <Text style={[styles.buttonText, {color: currentTheme.baseColor}]}>
+          style={[styles.button, {backgroundColor: '#e6ffe6'}]}>
+          <Text style={[styles.buttonText, {color: '#9ec378'}]}>
             Invoice
           </Text>
         </TouchableOpacity>

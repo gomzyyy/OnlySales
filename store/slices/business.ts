@@ -37,6 +37,8 @@ const initialState: BusinessOwnerInitialStateType = {
     image: undefined,
     businessType: BusinessType.RETAIL,
     inventory: [],
+    assets: [],
+    liabilities: [],
     starProducts: [],
     accessPasscode: undefined,
     customers: [],
@@ -98,6 +100,8 @@ const BusinessOwnerSlice = createSlice({
         userId,
         phoneNumber: phoneNumber,
         EmployeeData: [],
+        assets: [],
+        liabilities: [],
         sessionId: Date.now(),
         role: AdminRole.OWNER,
         businessName,
@@ -442,14 +446,21 @@ const BusinessOwnerSlice = createSlice({
         status: Employee['status'];
         shift: Employee['shift'];
         phoneNumber: Employee['phoneNumber'];
+        gender: Employee['gender'];
+        address: Employee['address'];
+        image: Employee['image'];
       }>,
     ) => {
-      const {name, salary, status, shift, phoneNumber} = action.payload;
+      const {name, salary, status, shift, phoneNumber, gender, address, image} =
+        action.payload;
       state.BusinessOwner.EmployeeData.push({
         name,
         id: randomId(),
         phoneNumber,
-        businessOwnerId: state.BusinessOwner.id,
+        gender,
+        address,
+        image,
+        businessOwner: state.BusinessOwner.id,
         createdAt: Date.now().toString(),
         updatedAt: Date.now().toString(),
         hireDate: Date.now().toString(),
@@ -458,7 +469,17 @@ const BusinessOwnerSlice = createSlice({
         shift: shift || Shift.MORNING,
       });
     },
-    updateEmployee: (state, action: PayloadAction<Employee>) => {
+    updateEmployee: (
+      state,
+      action: PayloadAction<{
+        id: User['id'];
+        name: User['name'];
+        salary: Employee['salary'];
+        status: Employee['status'];
+        shift: Employee['shift'];
+        phoneNumber: Employee['phoneNumber'];
+      }>,
+    ) => {
       const updateEmployee = action.payload;
       const existingEmployee = state.BusinessOwner.EmployeeData.find(
         s => s.id === updateEmployee.id,

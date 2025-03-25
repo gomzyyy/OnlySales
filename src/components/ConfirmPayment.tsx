@@ -32,6 +32,9 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
   const {currentTheme} = useTheme();
 
   const handleSetAmount = (val: string) => {
+    if (val.trim().length === 0) {
+      setState(0);
+    }
     if (!isFloat(val)) {
       return;
     }
@@ -58,7 +61,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
         <Text
           style={{
             fontSize: 38,
-            color: currentTheme.contrastColor,
+            color: '#000',
             marginBottom: 10,
           }}>
           {currency}
@@ -68,7 +71,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
           onChangeText={handleSetAmount}
           style={[
             {
-              color: currentTheme.contrastColor,
+              color: '#000',
             },
             styles.input,
           ]}
@@ -86,12 +89,9 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.button,
-            {borderColor: currentTheme.baseColor, borderWidth: 2},
-          ]}
+          style={[styles.button, {borderColor: '#9ec378', borderWidth: 2}]}
           onPress={handlePay}>
-          <Text style={[styles.buttonText, {color: currentTheme.baseColor}]}>
+          <Text style={[styles.buttonText, {color: '#9ec378'}]}>
             Pay {`${value}`}
           </Text>
         </TouchableOpacity>

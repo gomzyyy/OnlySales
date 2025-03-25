@@ -4,10 +4,6 @@ import Toast from 'react-native-toast-message';
 import 'react-native-gesture-handler';
 import ReduxProvider from '../store/store';
 import Navigation from './navigation/Navigation';
-import DeviceInfo from 'react-native-device-info';
-
-const DeviceId = DeviceInfo.getAndroidId();
-console.log(DeviceId);
 
 function App(): React.JSX.Element {
   return (

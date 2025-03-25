@@ -19,7 +19,7 @@ const ThemePicker = () => {
     let themeData: AppTheme | undefined = Theme.find(s => s.name === theme);
     if (themeData) {
       dispatch(setTheme(themeData));
-      navigate('Dashboard');
+      navigate('SplashScreen');
     } else {
       showToast({type: 'error', text1: 'Unable to set theme.'});
       return;

@@ -10,18 +10,19 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import {showToast} from '../service/fn';
+import {modifyUserName, showToast} from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {createEmployee} from '../../store/slices/business';
 import {useHaptics, useTheme} from '../hooks/index';
 import GetImage from './GetImage';
 import SlideUpContainer from './SlideUpContainer';
-import {EmploymentStatus, Shift} from '../../enums';
+import {EmploymentStatus, Gender, Shift} from '../../enums';
 import {isNumber} from '../service/test';
 import {deviceHeight} from '../utils/Constants';
 import EmployementStatusPicker from './EmployementStatusPicker';
 import ShiftPicker from './ShiftPicker';
+import GenderPicker from './GenderPicker';
 
 type CreateEmployeeProps = {
   callback: () => void;
@@ -40,6 +41,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
   const [status, setStatus] = useState<EmploymentStatus>(
     EmploymentStatus.ACTIVE,
   );
+  const [gender, setGender] = useState<Gender>(Gender.MALE);
   const [shift, setShift] = useState<Shift>(Shift.MORNING);
   const [image, setImage] = useState<string | undefined>();
   const [address, setAddress] = useState<string>('');
@@ -53,15 +55,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       });
       return;
     }
-    const employeeData = {
-      name: name,
-      salary: Number(salary),
-      phoneNumber,
-      address,
-      image,
-      status,
-      shift,
-    };
+
     if (
       name.trim().length === 0 ||
       phoneNumber.trim().length === 0 ||
@@ -92,6 +86,16 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       });
       return;
     }
+    const employeeData = {
+      name: name,
+      salary: Number(salary),
+      phoneNumber,
+      gender,
+      address,
+      image,
+      status,
+      shift,
+    };
     dispatch(createEmployee(employeeData));
     showToast({
       type: 'success',
@@ -122,7 +126,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
             </Text>
             <TextInput
               value={name}
-              onChangeText={setName}
+              onChangeText={val => setName(p => (p = modifyUserName(val)))}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -183,13 +187,9 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Employment status?
+              Choose Gender:
             </Text>
-            <EmployementStatusPicker
-              value={status}
-              setState={setStatus}
-              enabled
-            />
+            <GenderPicker value={gender} setState={setGender} enabled />
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
@@ -197,6 +197,17 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               What about Shift?
             </Text>
             <ShiftPicker value={shift} setState={setShift} enabled />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Employment status?
+            </Text>
+            <EmployementStatusPicker
+              value={status}
+              setState={setStatus}
+              enabled
+            />
           </View>
           {image && image.trim().length !== 0 ? (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -231,7 +242,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
             </Text>
           </TouchableOpacity>
           <SlideUpContainer
-            opacity={0.2}
+            opacity={0.4}
             open={openImagePicker}
             close={closeImagePicker}>
             <GetImage
@@ -250,7 +261,7 @@ const styles = StyleSheet.create({
   createEmployeeContainer: {
     paddingVertical: 20,
     paddingHorizontal: 20,
-    height: deviceHeight * 0.58,
+    height: deviceHeight * 0.6,
     borderRadius: 20,
     marginBottom: 10,
     elevation: 30,
@@ -259,9 +270,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 10,
   },
   formContainer: {
-    marginTop: 20,
+    marginTop: 10,
     gap: 16,
   },
   inputTitleContainer: {
