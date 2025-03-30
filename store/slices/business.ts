@@ -33,7 +33,9 @@ const initialState: BusinessOwnerInitialStateType = {
     businessName: '',
     phoneNumber: undefined,
     sessionId: null,
+    password: '',
     role: AdminRole.OWNER,
+    equity: 100,
     image: undefined,
     businessType: BusinessType.RETAIL,
     inventory: [],
@@ -75,6 +77,7 @@ const BusinessOwnerSlice = createSlice({
         businessDescription?: BusinessOwner['businessDescription'];
         businessAddress?: BusinessOwner['businessAddress'];
         currency?: CurrencyType;
+        password: BusinessOwner['password'];
       }>,
     ) => {
       const {
@@ -86,6 +89,7 @@ const BusinessOwnerSlice = createSlice({
         businessDescription,
         businessAddress,
         currency,
+        password,
       } = action.payload;
       if (!name || !userId) {
         showToast({type: 'info', text1: 'Error: BusinessOwner.ts;'});
@@ -102,7 +106,9 @@ const BusinessOwnerSlice = createSlice({
         EmployeeData: [],
         assets: [],
         liabilities: [],
+        password,
         sessionId: Date.now(),
+        equity: 100,
         role: AdminRole.OWNER,
         businessName,
         businessDescription,
@@ -212,7 +218,6 @@ const BusinessOwnerSlice = createSlice({
       }>,
     ) => {
       const {customers, employees, type} = action.payload;
-      console.log(action.payload);
       if (customers && type === 'CUSTOMER') {
         state.app.searchResults.customerResults = customers;
       }
@@ -313,19 +318,27 @@ const BusinessOwnerSlice = createSlice({
 
     removeUdhar: (
       state,
-      action: PayloadAction<{customer: Customer; product: SoldProduct}>,
+      action: PayloadAction<{
+        customer: Customer;
+        product: SoldProduct;
+        addedDate: number;
+      }>,
     ) => {
-      const {customer, product} = action.payload;
+      const {customer, product, addedDate} = action.payload;
       const customerIndex = state.BusinessOwner.customers.findIndex(
         c => c.id === customer.id,
       );
-
       if (customerIndex !== -1) {
         state.BusinessOwner.customers[customerIndex] = {
           ...state.BusinessOwner.customers[customerIndex],
           unpaidPayments:
             state.BusinessOwner.customers[customerIndex].unpaidPayments?.filter(
-              s => s.id !== product.id,
+              s =>
+                !(
+                  s.id === product.id &&
+                  new Date(s.addedAt).setHours(0, 0, 0, 0) ===
+                    new Date(addedDate).setHours(0, 0, 0, 0)
+                ),
             ) || [],
         };
       }
@@ -460,6 +473,7 @@ const BusinessOwnerSlice = createSlice({
         gender,
         address,
         image,
+        role: AdminRole.EMPLOYEE,
         businessOwner: state.BusinessOwner.id,
         createdAt: Date.now().toString(),
         updatedAt: Date.now().toString(),
@@ -478,6 +492,8 @@ const BusinessOwnerSlice = createSlice({
         status: Employee['status'];
         shift: Employee['shift'];
         phoneNumber: Employee['phoneNumber'];
+        image: Employee['image'];
+        address: Employee['address']
       }>,
     ) => {
       const updateEmployee = action.payload;

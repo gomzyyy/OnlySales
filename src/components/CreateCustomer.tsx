@@ -15,7 +15,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
 import {createCustomers} from '../../store/slices/business';
 import {useHaptics, useTheme} from '../hooks/index';
-import GetImage from './GetImage';
+import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
 
 type CreateCustomerProps = {
@@ -153,10 +153,11 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
           opacity={0.2}
           open={openImagePicker}
           close={closeImagePicker}>
-          <GetImage
+          <FilePicker
             value={image}
             setState={setImage}
             callback={closeImagePicker}
+            type='image'
           />
         </SlideUpContainer>
       </View>

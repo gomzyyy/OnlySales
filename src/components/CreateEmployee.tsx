@@ -15,7 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {createEmployee} from '../../store/slices/business';
 import {useHaptics, useTheme} from '../hooks/index';
-import GetImage from './GetImage';
+import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
 import {EmploymentStatus, Gender, Shift} from '../../enums';
 import {isNumber} from '../service/test';
@@ -245,10 +245,11 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
             opacity={0.4}
             open={openImagePicker}
             close={closeImagePicker}>
-            <GetImage
+            <FilePicker
               value={image}
               setState={setImage}
               callback={closeImagePicker}
+              type='image'
             />
           </SlideUpContainer>
         </View>

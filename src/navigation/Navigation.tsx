@@ -7,11 +7,9 @@ import MenuContent from '../components/sub-components/MenuContent';
 import Settings from '../screens/Settings/Settings';
 import {navigationRef} from '../utils/nagivationUtils';
 import Customer from '../screens/Customer/Customer';
-import UnpaidUdhars from '../screens/Customer/screens/UnpaidUdhars';
 import MyInventory from '../screens/MyInventory/MyInventory';
 import SearchCustomer from '../screens/SearchCustomer/SearchCustomer';
 import SearchEmployee from '../screens/SearchEmpolyee/SearchEmployee';
-import PaidUdhars from '../screens/Customer/screens/PaidUdhars';
 import MyProfile from '../screens/Settings/screens/MyProfile';
 import Login from '../screens/Auth/Login/Login';
 import SignUp from '../screens/Auth/SignUp/SignUp';
@@ -36,7 +34,7 @@ import Analytics from '../screens/Analytics/Analytics';
 import Employees from '../screens/Employees/Employees';
 import Employee from '../screens/Employee/Employee';
 import PayByScan from '../screens/PayByScan/PayByScan';
-import BottomTabs from '../components/BottomTabs';
+import AppInfo from '../screens/Settings/screens/AppInfo';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -85,11 +83,10 @@ const StackNav = () => {
       <stack.Screen name="Employees" component={Employees} />
       <stack.Screen name="Employee" component={Employee} />
       <stack.Screen name="SearchEmployee" component={SearchEmployee} />
-      <stack.Screen name="UnpaidUdhars" component={UnpaidUdhars} />
-      <stack.Screen name="PaidUdhars" component={PaidUdhars} />
       <stack.Screen name="MyInventory" component={MyInventory} />
       <stack.Screen name="PayByScan" component={PayByScan} />
       <stack.Screen name="MyProfile" component={MyProfile} />
+      <stack.Screen name="AppInfo" component={AppInfo} />
       <stack.Screen name="GetStarted" component={GetStarted} />
       <stack.Screen
         name="Login"

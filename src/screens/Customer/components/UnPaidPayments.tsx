@@ -94,6 +94,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
                   i={item}
                   customer={customer}
                   onPay={() => openConfirmPay('SINGLE', item)}
+                  date={date}
                 />
               )}
               nestedScrollEnabled

@@ -35,10 +35,15 @@ export const Confirm = async (
   context?: string,
 ): Promise<boolean> => {
   return new Promise(resolve => {
-    Alert.alert(title, context && context, [
-      {text: 'OK', onPress: () => resolve(true), style: 'default'},
-      {text: 'CANCEL', onPress: () => resolve(false), style: 'cancel'},
-    ]);
+    Alert.alert(
+      title,
+      context && context,
+      [
+        {text: 'OK', onPress: () => resolve(true), style: 'default'},
+        {text: 'CANCEL', onPress: () => resolve(false), style: 'cancel'},
+      ],
+      {cancelable: true},
+    );
   });
 };
 export const randomId = () => uuidv4();
@@ -59,7 +64,6 @@ export const checkDate = ({
   matchByDay?: number;
 }) => {
   if (typeof date !== 'number') {
-    console.log('Invalid input');
     return {
       isExactMatch: false, // ✅ For matchByDay checking
       sameDay: false,
@@ -100,7 +104,7 @@ export const checkDate = ({
     (nowUTC.getMonth() - parsedDateUTC.getMonth());
 
   return {
-    isExactMatch: daysDifference === matchByDay-1, // ✅ Checks exact day difference
+    isExactMatch: daysDifference === matchByDay - 1, // ✅ Checks exact day difference
     sameDay: daysDifference === 0,
     thisMonth: monthDifference === 0,
     lastMonth: monthDifference === 1,

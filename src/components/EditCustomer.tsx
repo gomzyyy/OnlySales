@@ -19,7 +19,7 @@ import {showToast} from '../service/fn';
 import {updateCustomer} from '../../store/slices/business';
 import {useTheme} from '../hooks/index';
 import SlideUpContainer from './SlideUpContainer';
-import GetImage from './GetImage';
+import FilePicker from './FilePicker';
 
 type EditCustomerProps = {
   i: Customer;
@@ -145,10 +145,11 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
           opacity={0.2}
           open={openImagePicker}
           close={closeImagePicker}>
-          <GetImage
+          <FilePicker
             value={image}
             setState={setImage}
             callback={closeImagePicker}
+            type='image'
           />
         </SlideUpContainer>
       </ScrollView>

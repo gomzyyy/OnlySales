@@ -5,7 +5,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import {ReactNode} from 'react';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
@@ -20,7 +20,7 @@ type HeaderProps = {
   backButtom?: boolean;
   menuButton?: boolean;
   customComponent?: boolean;
-  renderItem?: React.ReactNode;
+  renderItem?: ReactNode;
   customAction?: () => void;
   customComponentActiveOpacity?:
     | 0
@@ -86,8 +86,7 @@ const Header: React.FC<HeaderProps> = ({
         <TouchableOpacity
           activeOpacity={customComponentActiveOpacity}
           onPress={customAction}
-          style={styles.rightCustomBtn}
-          >
+          style={styles.rightCustomBtn}>
           {renderItem}
         </TouchableOpacity>
       )}

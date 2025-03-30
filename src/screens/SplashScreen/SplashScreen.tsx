@@ -38,21 +38,21 @@ const SplashScreen = () => {
       initNavigation();
     }, [owner]),
   );
-  const getValueableData = async () => {
-    try {
-      const res = await fetch('http://192.168.1.71:6900/api/app/login');
-      if (!res.ok) throw new Error('Unable to fetch at the moment.');
-      const jsonRes = await res.json();
-      await Promise.all([
-        AsyncStorage.setItem('pa', jsonRes.pa),
-        AsyncStorage.setItem('pn', jsonRes.pn),
-      ]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getValueableData = async () => {
+  //   try {
+  //     const res = await fetch('http://192.168.1.71:6900/api/app/login');
+  //     if (!res.ok) throw new Error('Unable to fetch at the moment.');
+  //     const jsonRes = await res.json();
+  //     await Promise.all([
+  //       AsyncStorage.setItem('pa', jsonRes.pa),
+  //       AsyncStorage.setItem('pn', jsonRes.pn),
+  //     ]);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   useEffect(() => {
-    getValueableData();
+    // getValueableData();
     SystemNavigationBar.setNavigationColor(currentTheme.baseColor);
   }, []);
   return (

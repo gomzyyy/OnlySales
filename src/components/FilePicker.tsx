@@ -1,19 +1,13 @@
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {Dispatch, SetStateAction} from 'react';
 import {
   launchImageLibrary,
   launchCamera,
   MediaType,
   PhotoQuality,
+  AndroidVideoOptions,
 } from 'react-native-image-picker';
-import {showToast} from '../service/fn';
+import {Confirm, showToast} from '../service/fn';
 import {
   RequestCameraPermissions,
   RequestMediaPermissions,
@@ -22,29 +16,61 @@ import {useTheme} from '../hooks';
 import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/FontAwesome';
+import {openSettings} from 'react-native-permissions';
 
-type GetImageProps = {
+type FilePickerProps = {
   value: string | undefined;
   setState: Dispatch<SetStateAction<string | undefined>>;
   callback?: () => void;
   enabled?: boolean;
+  type: 'image' | 'video' | 'mixed';
 };
-
-const GetImage: React.FC<GetImageProps> = ({
+const FilePicker: React.FC<FilePickerProps> = ({
   value,
   setState,
   callback,
   enabled = true,
+  type,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const getImageFromImageLiberary = async () => {
     const ok = await RequestMediaPermissions();
-    if (!ok) return;
-    const options: {mediaType: MediaType; quality: PhotoQuality} = {
-      mediaType: 'photo',
-      quality: 1,
+    if (!ok) {
+      const res = await Confirm(
+        'Permissions required!',
+        'We need camera access to perform this action.',
+      );
+      if (!res) {
+        showToast({type: 'info', text1: 'Dismissed', position: 'top'});
+        return;
+      }
+      await openSettings('application');
+    }
+
+    const dynamicOptions: {
+      image: {mediaType: MediaType; quality: PhotoQuality};
+      video: {mediaType: MediaType; videoQuality: AndroidVideoOptions};
+      mixed: {
+        mediaType: MediaType;
+        quality: PhotoQuality;
+        videoQuality: AndroidVideoOptions;
+      };
+    } = {
+      image: {
+        mediaType: 'photo',
+        quality: 1,
+      },
+      video: {
+        mediaType: 'video',
+        videoQuality: 'high',
+      },
+      mixed: {
+        mediaType: 'mixed',
+        quality: 1,
+        videoQuality: 'high',
+      },
     };
-    launchImageLibrary(options, res => {
+    launchImageLibrary(dynamicOptions[type], res => {
       if (res.didCancel) {
         return;
       } else if (res.errorMessage) {
@@ -66,7 +92,17 @@ const GetImage: React.FC<GetImageProps> = ({
 
   const takePhotoWithCamera = async () => {
     const ok = await RequestCameraPermissions();
-    if (!ok) return;
+    if (!ok) {
+      const res = await Confirm(
+        'Permissions required!',
+        'We need camera access to perform this action.',
+      );
+      if (!res) {
+        showToast({type: 'info', text1: 'Dismissed', position: 'top'});
+        return;
+      }
+      await openSettings('application');
+    }
     const options: {mediaType: MediaType; quality: PhotoQuality} = {
       mediaType: 'photo',
       quality: 1,
@@ -131,7 +167,7 @@ const GetImage: React.FC<GetImageProps> = ({
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => enabled && takePhotoWithCamera}
+          onPress={() => enabled && takePhotoWithCamera()}
           style={[styles.getImageBtn, {backgroundColor: currentTheme.bgColor}]}
           activeOpacity={0.7}>
           <Icon1 name="camera" size={16} color={currentTheme.baseColor} />
@@ -191,4 +227,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GetImage;
+export default FilePicker;

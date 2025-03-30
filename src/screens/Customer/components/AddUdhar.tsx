@@ -66,7 +66,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             s && {
               ...s,
               createdAt: new Date(Date.now()
-              //  - (24*60*60*1000)
+              //  - (3*24*60*60*1000)
               ).toDateString(),
             },
         ),
@@ -105,10 +105,10 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     }
     const newProducts: SoldProduct = {
       ...product,
-      customerId:customer.id,
+      buyer:customer.id,
       count: count,
       addedAt: Date.now()
-      //  - (24*60*60*1000),
+      //  - (3*24*60*60*1000),
     };
     handleNewUdhars(newProducts);
   };

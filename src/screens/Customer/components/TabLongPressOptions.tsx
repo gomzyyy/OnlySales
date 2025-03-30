@@ -5,10 +5,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {Customer, SoldProduct} from '../../../../types';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {
-  removePaidUdhar,
-  removeUdhar,
-} from '../../../../store/slices/business';
+import {removePaidUdhar, removeUdhar} from '../../../../store/slices/business';
 import {useTheme} from '../../../hooks/index';
 
 type TabLongPressOptionsProps = {
@@ -16,6 +13,7 @@ type TabLongPressOptionsProps = {
   customer: Customer;
   close: Dispatch<SetStateAction<boolean>>;
   actionType: 'PAID' | 'UNPAID';
+  date: string;
 };
 
 const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
@@ -23,13 +21,15 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   customer,
   close,
   actionType,
+  date,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
   const dispatch = useDispatch<AppDispatch>();
   const handleDeleteProduct = () => {
+    const miliseconds = new Date(date.split(',').join(' ')).getTime();
     if (actionType === 'UNPAID') {
-      dispatch(removeUdhar({product, customer}));
+      dispatch(removeUdhar({product, customer, addedDate: miliseconds}));
       return;
     } else if (actionType === 'PAID') {
       dispatch(removePaidUdhar({product, customer}));

@@ -21,7 +21,7 @@ import EmployementStatusPicker from './EmployementStatusPicker';
 import ShiftPicker from './ShiftPicker';
 import {EmploymentStatus, Shift} from '../../enums';
 import SlideUpContainer from './SlideUpContainer';
-import GetImage from './GetImage';
+import FilePicker from './FilePicker';
 import {isNumber} from '../service/test';
 
 type EditCustomerProps = {
@@ -206,10 +206,11 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
             opacity={0.2}
             open={openImagePicker}
             close={closeImagePicker}>
-            <GetImage
+            <FilePicker
               value={image}
               setState={setImage}
               callback={closeImagePicker}
+              type='image'
             />
           </SlideUpContainer>
         </View>

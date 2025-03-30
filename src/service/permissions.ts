@@ -1,7 +1,7 @@
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
 import {Alert, Platform} from 'react-native';
 
-export const RequestMediaPermissions = async () => {
+export const RequestMediaPermissions = async (fallback?: () => void) => {
   const permissions =
     Platform.OS === 'android'
       ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
@@ -12,14 +12,11 @@ export const RequestMediaPermissions = async () => {
   if (requestPermission === RESULTS.GRANTED) {
     return true;
   } else {
-    Alert.alert(
-      'Media Permissions denied!',
-      'You can change permissions in settings',
-    );
+    fallback && fallback();
     return false;
   }
 };
-export const RequestCameraPermissions = async () => {
+export const RequestCameraPermissions = async (fallback?: () => void) => {
   const permissions =
     Platform.OS === 'android'
       ? PERMISSIONS.ANDROID.CAMERA
@@ -30,10 +27,7 @@ export const RequestCameraPermissions = async () => {
   if (requestPermission === RESULTS.GRANTED) {
     return true;
   } else {
-    Alert.alert(
-      'Camera Permissions denied!',
-      'You can change permissions in settings',
-    );
+    fallback && fallback();
     return false;
   }
 };

@@ -4,7 +4,7 @@ import {BusinessOwner} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
 import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
-import GetImage from '../../../components/GetImage';
+import FilePicker from '../../../components/FilePicker';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 
 type OwnerInfoProps = {
@@ -71,10 +71,11 @@ const OwnerInfo: React.FC<OwnerInfoProps> = ({
         open={openImagePicker}
         close={handleCloseImagePicker}
         opacity={0.2}>
-        <GetImage
+        <FilePicker
           value={profileImageValue}
           setState={setProfileImageValue}
           callback={handleCloseImagePicker}
+          type="image"
         />
       </SlideUpContainer>
     </View>

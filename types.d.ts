@@ -73,14 +73,17 @@ export interface App {
   appLocked: boolean;
 }
 
-export interface User {
+export interface CommonProps {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User extends CommonProps {
   name: string;
   phoneNumber?: string;
   image?: string | undefined;
   email?: string;
-  createdAt: string;
-  updatedAt: string;
   address?: string;
 }
 
@@ -88,18 +91,18 @@ export interface Customer extends User {
   businessOwnerId: string;
   unpaidPayments?: SoldProduct[];
   paidPayments?: SoldProduct[];
-  createdAt: string;
-  updatedAt?: string;
 }
 
 export interface BusinessOwner extends User {
   businessAddress?: string;
-  businessPartners?: BusinessOwner[];
+  password: string;
+  businessPartners?: Partner[];
   businessName?: string;
   businessDescription?: string;
   businessType?: BusinessType;
   EmployeeData: Employee[];
   assets: Asset[];
+  equity: Number;
   liabilities: Liability[];
   inventory: Product[];
   starProducts?: Product[];
@@ -110,6 +113,16 @@ export interface BusinessOwner extends User {
   userId: string;
 }
 
+export interface Partner extends User {
+  BusinessOwner:BusinessOwner;
+  password:string;
+  equity:number;
+  partnerId:string;
+  role:AdminRole;
+  sessionId:number;
+  accessPasscode:[string,string,string,string]
+}
+
 export interface Employee extends User {
   businessOwner: string | BusinessOwner;
   gender: string;
@@ -118,6 +131,7 @@ export interface Employee extends User {
   email?: string; // Work email
   hireDate: string; // Date of joining
   salary: number; // Salary details
+  role:AdminRole;
   status: EmploymentStatus; // Employment status
   statusDescription?: string;
   address?: string; // Employee's address
@@ -127,8 +141,7 @@ export interface Employee extends User {
   reportsTo?: string; // Manager ID or name
 }
 
-export interface Product {
-  id: string;
+export interface Product extends CommonProps {
   name: string;
   image?: string | undefined;
   totalSold: number;
@@ -139,8 +152,6 @@ export interface Product {
   measurementTypeDescription?: string;
   stock?: number;
   productCost?: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface SoldProduct extends Product {
@@ -149,8 +160,7 @@ export interface SoldProduct extends Product {
   count: number;
 }
 
-export interface Asset {
-  id: string; // Unique identifier
+export interface Asset extends CommonProps {
   name: string; // Name of the asset
   tangible: boolean; // Type of asset (e.g., tangible, intangible)
   category: AssetCategory; // Main category of the asset
@@ -171,8 +181,7 @@ export interface Asset {
   ownerId?: string; // Reference to the business owner
 }
 
-export interface Liability {
-  id: string; // Unique identifier for the liability
+export interface Liability extends CommonProps {
   name: string; // Name of the liability
   type: LibilityType; // Type of liability
   category: string; // Category of liability

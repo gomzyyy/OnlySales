@@ -20,8 +20,9 @@ import RolePicker from '../../../components/RolePicker';
 import BusinessTypePicker from '../../../components/BusinessTypePicker';
 import {isNumber} from '../../../service/test';
 import {back} from '../../../utils/nagivationUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MyProfile = () => {
+const AppInfo = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
@@ -74,7 +75,7 @@ const MyProfile = () => {
         phoneNumber,
         businessType,
         businessDescription,
-        image:profileImageValue
+        image: profileImageValue,
       }),
     );
     showToast({type: 'success', text1: 'Profile updated successfully.'});
@@ -99,6 +100,10 @@ const MyProfile = () => {
 
   useEffect(() => {
     checkIfEdited();
+    const getPa = async () => {
+      const pa = await AsyncStorage.getItem('pa');
+    };
+    getPa()
   }, [
     name,
     role,
@@ -115,7 +120,7 @@ const MyProfile = () => {
       style={styles.parent}>
       <ScrollView style={{flex: 1}}>
         <Header
-          name="My Profile"
+          name="App info"
           backButtom
           customComponent={edited}
           renderItem={
@@ -128,68 +133,8 @@ const MyProfile = () => {
           titleColor={currentTheme.header.textColor}
         />
         <View style={styles.settingsContainer}>
-          <View style={styles.infoContainer}>
-            <OwnerInfo
-              owner={owner}
-              profileImageValue={profileImageValue}
-              setProfileImageValue={setProfileImageValue}
-            />
-          </View>
-          <View style={styles.container}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Registered name:</Text>
-              <TextInput
-                value={name}
-                onChangeText={setName}
-                style={[
-                  styles.inputText,
-                  {borderColor: currentTheme.modal.inputBorder},
-                ]}
-                placeholder="Enter name"
-                placeholderTextColor={currentTheme.baseColor}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Registered Phone Number:</Text>
-              <TextInput
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                style={[
-                  styles.inputText,
-                  {borderColor: currentTheme.modal.inputBorder},
-                ]}
-                placeholder="Enter Phone Number"
-                placeholderTextColor={currentTheme.baseColor}
-                keyboardType="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Registered role:</Text>
-              <RolePicker value={owner.role} setState={setRole} />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Registered business type:</Text>
-              <BusinessTypePicker
-                enabled={true}
-                value={owner.businessType || BusinessType.RETAIL}
-                setState={setBusinessType}
-              />
-            </View>
-            {businessType === BusinessType.OTHER && (
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Registered business type:</Text>
-                <TextInput
-                  value={businessDescription}
-                  onChangeText={setBusinessDescription}
-                  style={[
-                    styles.inputText,
-                    {borderColor: currentTheme.modal.inputBorder},
-                  ]}
-                  placeholder="Describe your business here."
-                  placeholderTextColor={currentTheme.baseColor}
-                />
-              </View>
-            )}
+          <View style={{backgroundColor: currentTheme.baseColor}}>
+            <Text>Hello</Text>
           </View>
         </View>
       </ScrollView>
@@ -202,7 +147,6 @@ const styles = StyleSheet.create({
   infoContainer: {},
   settingsContainer: {
     paddingHorizontal: 10,
-    marginTop: 10,
     marginBottom: 40,
   },
   container: {
@@ -226,4 +170,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyProfile;
+export default AppInfo;

@@ -16,6 +16,7 @@ type TabProps = {
   actionType: 'PAID' | 'UNPAID';
   dummy?: boolean;
   onPay?: () => void;
+  date: string;
 };
 
 type ToogleButtonProps = {
@@ -54,7 +55,8 @@ const Tab: React.FC<TabProps> = ({
   customer,
   actionType,
   dummy = false,
-  onPay
+  onPay,
+  date
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
@@ -165,6 +167,7 @@ const Tab: React.FC<TabProps> = ({
             customer={customer}
             close={handleCloseTabOptions}
             actionType={actionType}
+            date={date}
           />
         </PopupContainer>
       </View>

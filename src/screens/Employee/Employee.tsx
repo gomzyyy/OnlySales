@@ -25,10 +25,11 @@ import {AppDispatch, RootState} from '../../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import ShiftPicker from '../../components/ShiftPicker';
 import SlideUpContainer from '../../components/SlideUpContainer';
-import GetImage from '../../components/GetImage';
+import FilePicker from '../../components/FilePicker';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 const NoProfile = require('../../assets/images/no-profile.jpg');
 import Icon from 'react-native-vector-icons/AntDesign';
+import {setImageAPI} from '../../api/api';
 
 type EmployeeParams = {
   employeeId: EmployeeType['id'];
@@ -64,6 +65,13 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
 
   const handleSaveBtn = () => {
+    if (!editable) {
+      showToast({
+        type: 'info',
+        text1: 'Cannot save or edit while Edit mode DISABLED.',
+      });
+      return;
+    }
     if (!isNumber(salary)) {
       showToast({
         type: 'error',
@@ -112,6 +120,9 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
       shift,
     };
     dispatch(updateEmployee(employeeData));
+    if (image && image.trim().length !== 0) {
+      setImageAPI({img: image, role: employee.role});
+    }
     showToast({
       type: 'success',
       text1: 'Employee updated Successfully.',
@@ -312,11 +323,12 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
             opacity={0.4}
             open={openImagePicker}
             close={handleCloseImagePicker}>
-            <GetImage
+            <FilePicker
               value={image}
               setState={setImage}
               callback={handleCloseImagePicker}
               enabled={editable}
+              type='image'
             />
           </SlideUpContainer>
         </View>
