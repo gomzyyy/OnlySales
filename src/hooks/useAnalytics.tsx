@@ -1,9 +1,9 @@
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
-import {Customer, SoldProduct, Product, BusinessOwner} from '../../types';
+import {Customer, SoldProduct, Product, Owner} from '../../types';
 import {checkDate} from '../service/fn';
 
-export interface useAnalyticsReturnType extends BusinessOwner {
+export interface useAnalyticsReturnType extends Owner {
   bestSellers: Product[];
   todaysMostSoldProducts: SoldProduct[];
   todaySales: SoldProduct[];
@@ -29,7 +29,7 @@ export interface useAnalyticsReturnType extends BusinessOwner {
 }
 
 const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const owner = useSelector((s: RootState) => s.appData.user as Owner);
   const bestSellers = [...owner.inventory]
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, bestSellerCount);

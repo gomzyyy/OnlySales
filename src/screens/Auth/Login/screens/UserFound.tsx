@@ -5,13 +5,13 @@ import {
   navigate,
 } from '../../../../utils/nagivationUtils';
 import {useRoute} from '@react-navigation/native';
-import {BusinessOwner} from '../../../../../types';
+import {Owner} from '../../../../../types';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
-import {login} from '../../../../../store/slices/business';
+// import {login} from '../../../../../store/slices/business';
 
 type UserFoundParams = {
-  user: BusinessOwner;
+  user: Owner;
 };
 const UserFound = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +20,7 @@ const UserFound = () => {
 
   useEffect(() => {
     const timeoutId: NodeJS.Timeout = setTimeout(() => {
-      dispatch(login({userId: user.userId}));
+      // dispatch(login({userId: user.userId}));
       navigate('Dashboard');
     }, 900);
     return () => {

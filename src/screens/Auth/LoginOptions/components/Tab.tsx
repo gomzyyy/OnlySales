@@ -4,14 +4,14 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Customer, BusinessOwner} from '../../../../../types';
+import {Customer, Owner} from '../../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../../hooks/index';
 import LongPressEnabled from '../../../../customComponents/LongPressEnabled';
 const EditCustomer = React.lazy(()=>import("../../../../components/EditCustomer"))
 
 type TabProps = {
-  i: BusinessOwner;
+  i: Owner;
   lastIndex?: boolean;
   handleOpenLongPressOptions?: (customer: Customer) => void;
   dummy?: boolean;

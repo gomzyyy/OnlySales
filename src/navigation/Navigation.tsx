@@ -22,7 +22,6 @@ import SetPasscode from '../screens/Auth/AppLock/SetPasscode/SetPasscode';
 import Unlock from '../screens/Auth/AppLock/Unlock/Unlock';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {toogleLockApp} from '../../store/slices/business';
 import {AppState} from 'react-native';
 import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
@@ -35,6 +34,7 @@ import Employees from '../screens/Employees/Employees';
 import Employee from '../screens/Employee/Employee';
 import PayByScan from '../screens/PayByScan/PayByScan';
 import AppInfo from '../screens/Settings/screens/AppInfo';
+import VerifyPassword from '../screens/Auth/Login/screens/VerifyUserPassword';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -42,20 +42,17 @@ const drawer = createDrawerNavigator();
 const StackNav = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const {accessPasscode} = useSelector(
-    (s: RootState) => s.appData.BusinessOwner,
-  );
   const {appLocked} = useSelector((s: RootState) => s.appData.app);
   useEffect(() => {
     const handleAppStateChange = (nextAppState: string) => {
-      if (
-        nextAppState === 'background' ||
-        (nextAppState === 'inactive' &&
-          accessPasscode &&
-          Array.isArray(accessPasscode))
-      ) {
-        dispatch(toogleLockApp(true));
-      }
+      // if (
+      //   nextAppState === 'background' ||
+      //   (nextAppState === 'inactive' &&
+      //     accessPasscode &&
+      //     Array.isArray(accessPasscode))
+      // ) {
+      //   dispatch(toogleLockApp(true));
+      // }
     };
     const subscription = AppState.addEventListener(
       'change',
@@ -64,7 +61,7 @@ const StackNav = () => {
     return () => {
       subscription.remove();
     };
-  }, [appLocked, accessPasscode, dispatch]);
+  }, [appLocked, dispatch]);
   return (
     <stack.Navigator
       screenOptions={{
@@ -88,6 +85,7 @@ const StackNav = () => {
       <stack.Screen name="MyProfile" component={MyProfile} />
       <stack.Screen name="AppInfo" component={AppInfo} />
       <stack.Screen name="GetStarted" component={GetStarted} />
+      <stack.Screen name="VerifyPassword" component={VerifyPassword} />
       <stack.Screen
         name="Login"
         options={{gestureEnabled: false}}

@@ -12,6 +12,7 @@ import {useSelector} from 'react-redux';
 import {dashboardHeaderTabs} from '../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useTheme} from '../hooks/index';
+import {Owner} from '../../types';
 
 type CustomerHeaderProps = {
   flex?: boolean;
@@ -22,7 +23,8 @@ const CustomerHeader: React.FC<CustomerHeaderProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const app = useSelector((s: RootState) => s.appData.app);
-  const c = useSelector((s: RootState) => s.appData.BusinessOwner.customers);
+  const owner: Owner = useSelector((s: RootState) => s.appData.user as Owner);
+  const c = owner.customers;
   return (
     <KeyboardAvoidingView
       style={{flex: flex ? 1 : 0}}

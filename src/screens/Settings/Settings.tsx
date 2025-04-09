@@ -3,15 +3,16 @@ import React from 'react';
 import Header from '../../components/Header';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import OwnerInfo from './components/OwnerInfo';
 import AccountCenter from './components/AccountCenter';
 import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
 import {useTheme} from '../../hooks';
+import UserInfo from './components/UserInfo';
 
 const Settings = () => {
   const {currentTheme} = useTheme();
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  console.log(user)
 
   return (
     <View style={styles.parent}>
@@ -28,10 +29,10 @@ const Settings = () => {
         ]}
         nestedScrollEnabled={true}>
         <View style={styles.infoContainer}>
-          <OwnerInfo
-            owner={owner}
+          <UserInfo
+            user={user}
             secure={true}
-            profileImageValue={owner.image}
+            profileImageValue={user?.image}
           />
         </View>
         <View style={styles.sectionsContainer}>

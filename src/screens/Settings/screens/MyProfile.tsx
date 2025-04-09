@@ -10,7 +10,7 @@ import React, {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import OwnerInfo from '../components/OwnerInfo';
+import OwnerInfo from '../components/UserInfo';
 import {TextInput} from 'react-native-gesture-handler';
 import {useTheme} from '../../../hooks/index';
 import {AdminRole, BusinessType} from '../../../../enums';

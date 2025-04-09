@@ -13,7 +13,7 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {useTheme} from '../../hooks';
 
 const SplashScreen = () => {
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const owner = useSelector((s: RootState) => s.appData.user);
   const app = useSelector((s: RootState) => s.appData.app);
 
   const {currentTheme} = useTheme();
@@ -22,16 +22,16 @@ const SplashScreen = () => {
     useCallback(() => {
       const initNavigation = async () => {
         prepareNavigation();
-        if (!owner?.sessionId) {
+        if (!owner) {
           setTimeout(() => resetAndNavigate('GetStarted'), 800);
         } else {
-          if (app.appLocked && owner.accessPasscode) {
-            setTimeout(
-              () => navigate('Unlock', {user: owner, logged: true}),
-              800,
-            );
-            return;
-          }
+          // if (app.appLocke) {
+          //   setTimeout(
+          //     () => navigate('Unlock', {user: owner, logged: true}),
+          //     800,
+          //   );
+          //   return;
+          // }
           setTimeout(() => resetAndNavigate('Dashboard'), 800);
         }
       };

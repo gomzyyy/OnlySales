@@ -1,7 +1,6 @@
 import {
   AdminRole,
   BusinessType,
-  QuantityType,
   AppThemeName,
   AssetCategory,
   EmploymentStatus,
@@ -11,6 +10,14 @@ import {
   LibilityType,
   LibilityStatus,
   AssetStatus,
+  Department,
+  Position,
+  ProductType,
+  MeasurementType,
+  PaymentState,
+  PaymentHistoryReferenceType,
+  UnknownPaymentType,
+  AccountTypeEnum,
 } from './enums';
 
 export interface AppTheme {
@@ -68,13 +75,13 @@ export interface App {
   currency: CurrencyType;
   currentTheme: AppTheme | undefined;
   defaultTheme: AppTheme;
-  previousOwners: BusinessOwner[];
+  previousOwners: Owner[] | Partner[] | Employee[];
   deviceId?: string | undefined;
   appLocked: boolean;
 }
 
 export interface CommonProps {
-  id: string;
+  _id: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -85,79 +92,135 @@ export interface User extends CommonProps {
   image?: string | undefined;
   email?: string;
   address?: string;
-}
-
-export interface Customer extends User {
-  businessOwnerId: string;
-  unpaidPayments?: SoldProduct[];
-  paidPayments?: SoldProduct[];
-}
-
-export interface BusinessOwner extends User {
-  businessAddress?: string;
-  password: string;
-  businessPartners?: Partner[];
-  businessName?: string;
-  businessDescription?: string;
-  businessType?: BusinessType;
-  EmployeeData: Employee[];
-  assets: Asset[];
-  equity: Number;
-  liabilities: Liability[];
-  inventory: Product[];
-  starProducts?: Product[];
-  customers: Customer[];
-  role: AdminRole;
-  sessionId: number | null;
-  accessPasscode?: [string, string, string, string] | undefined;
   userId: string;
 }
 
+export interface Customer extends User {
+  businessOwner: Owner | string;
+  buyedProducts: SoldProduct[];
+  createdBy: Owner | Partner | Employee | string;
+  createdByModel: AdminRole;
+}
+
+export interface AccountType extends CommonProps {
+  type: AccountTypeEnum;
+  connectedWith: Owner | Employee | Partner | string;
+  connectedWithType: AdminRole;
+  expiresAt?: Date;
+  initialisedAt?: Date;
+  renewalCount: number;
+}
+
+export interface OwnerProperties {
+  searchable: boolean;
+  isDisabled: boolean;
+  accessBusinessInfo: boolean;
+  isPrivate: boolean;
+  partnerSearchable: boolean;
+  employeeSearchable: boolean;
+}
+
+export interface Owner extends User {
+  password: string;
+  otp: OTP | undefined;
+  businessAddress: string;
+  equity: number;
+  businessName: string;
+  businessPhoneNumber: number;
+  businessPartners: Partner[];
+  gstNumber: string;
+  accountType: AccountType;
+  history: History;
+  properties: OwnerProperties;
+  businessDescription?: string;
+  businessType: BusinessType;
+  employeeData: Employee[];
+  inventory: Product[];
+  customers: Customer[];
+  role: AdminRole;
+  assets: Asset[];
+  liabilities: Liability[];
+  accessPasscode: [string, string, string, string] | undefined;
+}
+
+export interface OTP {
+  otp: string;
+  expiredAt: Date;
+  generatedAt: Date;
+}
+
+export interface CRUDPermissions {
+  create: boolean;
+  update: boolean;
+  delete: boolean;
+}
+
+export interface UserPermissions {
+  customer: CRUDPermissions;
+  employee: CRUDPermissions;
+  product: CRUDPermissions;
+  soldProduct: CRUDPermissions;
+  docs: CRUDPermissions;
+  analytics: {
+    accessable: boolean;
+  };
+}
+
 export interface Partner extends User {
-  BusinessOwner:BusinessOwner;
-  password:string;
-  equity:number;
-  partnerId:string;
-  role:AdminRole;
-  sessionId:number;
-  accessPasscode:[string,string,string,string]
+  BusinessOwner: Owner | string;
+  password: string;
+  equity: number;
+  role: AdminRole;
+  accessPasscode: [string, string, string, string];
+  permissions: UserPermissions;
 }
 
 export interface Employee extends User {
-  businessOwner: string | BusinessOwner;
+  businessOwner: string | Owner;
   gender: string;
-  department?: string; // Department name (e.g., IT, HR, Sales)
-  position?: string; // Job title or role
-  email?: string; // Work email
-  hireDate: string; // Date of joining
-  salary: number; // Salary details
-  role:AdminRole;
-  status: EmploymentStatus; // Employment status
+  password: string;
+  department: Department;
+  departmentDescription?: string;
+  position: Position;
+  positionDescription?: string;
+  hireDate: Date;
+  salary: number;
+  status: EmploymentStatus;
   statusDescription?: string;
-  address?: string; // Employee's address
-  skills?: string[]; // List of employee skills
-  shift: Shift; // Work shift
+  skills: string[];
+  shift: Shift;
   shiftDescription?: string;
-  reportsTo?: string; // Manager ID or name
+  reportsTo: Owner | Employee | Partner | string;
+  reportsToModel: AdminRole;
+  permissions: UserPermissions;
+  createdBy: Owner | Partner | Employee | string;
+  createdByModel: AdminRole;
 }
 
 export interface Product extends CommonProps {
   name: string;
-  image?: string | undefined;
+  businessOwner: Owner | string;
+  productType: ProductType;
+  image?: string;
   totalSold: number;
   basePrice: number;
-  discountedPrice?: number;
+  discounterPrice?: number;
   quantity: number;
-  measurementType: QuantityType;
+  measurementType: MeasurementType;
   measurementTypeDescription?: string;
-  stock?: number;
-  productCost?: number;
+  stock: number;
+  productCost: number;
+  createdBy: Owner | Partner | Employee | string;
+  createdByModel: AdminRole;
 }
 
-export interface SoldProduct extends Product {
+export interface SoldProduct {
+  product: Product | string;
   buyer: string;
-  addedAt: number;
+  state: PaymentState;
   count: number;
+  soldBy: Owner | Employee | Partner | string;
+  soldByModel: AdminRole;
 }
 
 export interface Asset extends CommonProps {
@@ -194,4 +257,59 @@ export interface Liability extends CommonProps {
   remainingBalance?: number; // Outstanding amount to be paid
   status?: LibilityStatus; // Status of the liability
   ownerId?: string; // Reference to the business owner
+}
+export interface SoldProductPaymentHistory extends CommonProps {
+  referenceType: PaymentHistoryReferenceType;
+  reference: SoldProduct | string;
+  info: {
+    name: string;
+    amount: number;
+  };
+  paymentDescription: string;
+  state: PaymentState;
+  disabled: boolean;
+}
+export interface SoldProductPaymentHistory extends CommonProps {
+  referenceType: PaymentHistoryReferenceType;
+  reference: SoldProduct | string;
+  info: {
+    name: string;
+    amount: number;
+  };
+  paymentDescription: string;
+  state: PaymentState;
+  disabled: boolean;
+}
+export interface UserDetail {
+  name?: string;
+  phoneNumber?: string;
+  address?: string;
+  email?: string;
+}
+export interface ItemDetail {
+  name1?: string;
+  price?: number;
+  quantity?: number;
+}
+export interface UnknownPaymentHistory extends CommonProps {
+  type: UnknownPaymentType;
+  paymentDescription: string;
+  details: {
+    to: UserDetails;
+    from: UserDetails;
+  };
+  payments: {
+    items: ItemDetail;
+  };
+  state: PaymentState;
+}
+export interface PaymentHistory {
+  payment: string;
+  paymentType: PaymentHistoryReferenceType;
+  createdAt: Date;
+  createdBy: Owner | Partner | Employee | string;
+  createdByModel: AdminRole;
+}
+export interface History {
+  payments: PaymentHistory[];
 }

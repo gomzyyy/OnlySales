@@ -15,7 +15,6 @@ import {navigate} from '../../../../utils/nagivationUtils';
 import BusinessTypePicker from '../../../../components/BusinessTypePicker';
 import {BusinessType, CurrencyType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
-import {setBusinessOwner} from '../../../../../store/slices/business';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
 import {showToast} from '../../../../service/fn';
@@ -86,7 +85,7 @@ const AskAboutUserInfo = () => {
       businessDiscription,
       currency
     };
-    dispatch(setBusinessOwner(signupData));
+    // dispatch(setBusinessOwner(signupData));
     navigate('SignupSuccess');
   };
   useEffect(() => {

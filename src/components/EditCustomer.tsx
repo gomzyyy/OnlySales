@@ -16,7 +16,6 @@ import {AppDispatch} from '../../store/store';
 import {useDispatch} from 'react-redux';
 import Tab from '../screens/Customer/components/Tab';
 import {showToast} from '../service/fn';
-import {updateCustomer} from '../../store/slices/business';
 import {useTheme} from '../hooks/index';
 import SlideUpContainer from './SlideUpContainer';
 import FilePicker from './FilePicker';
@@ -44,7 +43,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       close();
       return;
     }
-    dispatch(updateCustomer({...i, name,image,phoneNumber,address}));
+    // dispatch(updateCustomer({...i, name,image,phoneNumber,address}));
     close();
   };
   const closeImagePicker = () => setOpenImagePicker(false);

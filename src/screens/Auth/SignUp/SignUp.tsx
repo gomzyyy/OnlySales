@@ -18,15 +18,16 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {ScrollView} from 'react-native-gesture-handler';
 import {isNumber} from '../../../service/test';
+import {Owner} from '../../../../types';
+import {AdminRole} from '../../../../enums';
 
 const SignUp = () => {
   const {currentTheme} = useTheme();
-  const prevUsers = useSelector(
-    (s: RootState) => s.appData.app.previousOwners,
-  );
+  const prevUsers = useSelector((s: RootState) => s.appData.app.previousOwners);
   const [name, setName] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
+  const [businessPhoneNumber, setBusinessPhoneNumber] = useState<string>('');
 
   const handleCreateUser = () => {
     if (
@@ -52,7 +53,8 @@ const SignUp = () => {
     }
     if (
       (phoneNumber && phoneNumber.trim().length < 10) ||
-      (phoneNumber && phoneNumber.trim().length > 10)
+      (phoneNumber && phoneNumber.trim().length > 10) ||
+      businessPhoneNumber.trim().length !== 10
     ) {
       showToast({
         type: 'error',
@@ -60,7 +62,12 @@ const SignUp = () => {
       });
       return;
     }
-    navigate('AskAboutUserInfo', {name, userId});
+    navigate('AskAboutUserInfo', {
+      name,
+      userId,
+      phoneNumber: phoneNumber?.trim().length !== 0 ? phoneNumber : undefined,
+      businessPhoneNumber,
+    });
   };
 
   const handlePhoneNumberChange = (val: string) => {
@@ -90,7 +97,9 @@ const SignUp = () => {
             <Text style={styles.inputLabel}>Enter your name:</Text>
             <TextInput
               value={name}
-              onChangeText={(value)=>{setName(modifyUserName(value))}}
+              onChangeText={value => {
+                setName(modifyUserName(value));
+              }}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -112,9 +121,25 @@ const SignUp = () => {
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>
-          <View style={styles.inputContainer}>
+          {/* <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>
               Enter your Phone Number {'(optional)'}:
+            </Text>
+            <TextInput
+              value={phoneNumber?.toString() || ''}
+              onChangeText={value => handlePhoneNumberChange(value)}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="+91-"
+              placeholderTextColor={currentTheme.baseColor}
+              keyboardType="number-pad"
+            />
+          </View> */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>
+              Enter your Business Phone Number:
             </Text>
             <TextInput
               value={phoneNumber?.toString() || ''}
@@ -154,12 +179,12 @@ const SignUp = () => {
             </Text>
             <Text style={styles.descriptionseperationText}>or</Text>
             <Pressable
-              style={{justifyContent: 'center',marginBottom:40}}
-              onPress={() => navigate('Login')}>
+              style={{justifyContent: 'center', marginBottom: 40}}
+              onPress={() => navigate('Login', {role: AdminRole.OWNER})}>
               <Text
                 style={[
                   styles.descriptionText,
-                  {color: 'blue', fontWeight: 'bold'},
+                  {color: currentTheme.baseColor, fontWeight: 'bold'},
                 ]}>
                 Login
               </Text>

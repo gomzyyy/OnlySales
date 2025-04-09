@@ -13,7 +13,7 @@ import {navigate} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
 
 const GetStarted = () => {
-  const {currentTheme}=useTheme()
+  const {currentTheme} = useTheme();
   const [role, setRole] = useState<AdminRole>(AdminRole.OWNER);
   return (
     <View style={styles.container}>
@@ -21,16 +21,25 @@ const GetStarted = () => {
       <Text style={styles.subtitle}>
         Choose Either you are a Employee or Business Owner
       </Text>
-      <RolePicker value={role} setState={setRole} />
-      <TouchableOpacity style={[styles.getStartedButton,{backgroundColor:currentTheme.baseColor}]}
-      onPress={()=>navigate("Login",{role})}
-      >
-        <Text style={[styles.getStartedButtonText,{color:currentTheme.contrastColor}]}>Get Started</Text>
+      <RolePicker value={role} setState={setRole} enabled />
+      <TouchableOpacity
+        style={[
+          styles.getStartedButton,
+          {backgroundColor: currentTheme.baseColor},
+        ]}
+        onPress={() => navigate('Login', {role})}>
+        <Text
+          style={[
+            styles.getStartedButtonText,
+            {color: currentTheme.contrastColor},
+          ]}>
+          Get Started
+        </Text>
       </TouchableOpacity>
       <View style={styles.bottomDescriptionContainer}>
         <Text style={styles.descriptionText}>
-          *Currently Our App is Limited to Business Owners. Please wait for the further
-          Updates to use it as customer.
+          *Currently Our App is Limited to Business Owners. Please wait for the
+          further Updates to use it as customer.
         </Text>
       </View>
     </View>
@@ -49,7 +58,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 10,
-    textAlign:"center"
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,

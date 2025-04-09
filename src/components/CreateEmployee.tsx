@@ -13,7 +13,6 @@ import React, {useState} from 'react';
 import {modifyUserName, showToast} from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {createEmployee} from '../../store/slices/business';
 import {useHaptics, useTheme} from '../hooks/index';
 import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
@@ -96,7 +95,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       status,
       shift,
     };
-    dispatch(createEmployee(employeeData));
+    // dispatch(createEmployee(employeeData));
     showToast({
       type: 'success',
       text1: 'Employee created Successfully.',

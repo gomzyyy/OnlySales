@@ -15,8 +15,8 @@ const LoginOptions = () => {
       <Text style={styles.subTitle}>{`Please choose your Account below:`}</Text>
       <View style={styles.accountsListContainer}>
         <FlatList
-          data={recentUsers}
-          keyExtractor={s => s.id}
+          data={(recentUsers as any)}
+          keyExtractor={s => s.userId}
           renderItem={({item}) => (
             <Tab i={item}/>
           )}

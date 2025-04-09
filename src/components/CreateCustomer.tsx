@@ -13,7 +13,6 @@ import {deviceHeight} from '../utils/Constants';
 import {showToast} from '../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../store/store';
-import {createCustomers} from '../../store/slices/business';
 import {useHaptics, useTheme} from '../hooks/index';
 import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
@@ -50,7 +49,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       address,
       image,
     };
-    dispatch(createCustomers(customerData));
+    // dispatch(createCustomers(customerData));
     showToast({
       type: 'success',
       text1: 'Customer created Successfully.',

@@ -9,57 +9,55 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useTheme} from '../../../hooks/index';
+import {useTheme} from '../../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {navigate} from '../../../utils/nagivationUtils';
-import {deviceHeight} from '../../../utils/Constants';
-import {showToast} from '../../../service/fn';
+import {navigate} from '../../../../utils/nagivationUtils';
+import {deviceHeight} from '../../../../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
-import {AdminRole} from '../../../../enums';
-import RolePicker from '../../../components/RolePicker';
-import {findUserAPI} from '../../../api/api';
+import {AdminRole} from '../../../../../enums';
+import {loginAPI} from '../../../../api/api';
+import {setUser} from '../../../../../store/slices/business';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../../../../store/store';
+import {showToast} from '../../../../service/fn';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = () => {
+const VerifyPassword = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
-  const {role} = useRoute().params as {role: AdminRole};
+  const {role, name, userId} = useRoute().params as {
+    role: AdminRole;
+    name: string;
+    userId: string;
+  };
 
-  const [userId, setUserId] = useState<string>('');
-  const [selectedRole, setSelectedRole] = useState<AdminRole>(
-    role || AdminRole.OWNER,
-  );
+  const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+
   const roleLabel = (s: 'c' | 's') => {
     return (
-      (selectedRole === AdminRole.OWNER && (s === 'c' ? 'Owner' : 'owner')) ||
-      (selectedRole === AdminRole.PARTNER &&
-        (s === 'c' ? 'Partner' : 'partner')) ||
-      (selectedRole === AdminRole.EMPLOYEE &&
-        (s === 'c' ? 'Employee' : 'employee')) ||
+      (role === AdminRole.OWNER && (s === 'c' ? 'Owner' : 'owner')) ||
+      (role === AdminRole.PARTNER && (s === 'c' ? 'Partner' : 'partner')) ||
+      (role === AdminRole.EMPLOYEE && (s === 'c' ? 'Employee' : 'employee')) ||
       'user'
     );
   };
-  const findFromPrevUsers = async () => {
-    if (userId.trim().length < 4 || userId.trim().length > 16) {
-      showToast({
-        type: 'error',
-        text1: 'User ID should between 4-16 characters',
-      });
-      return;
-    }
-    const res = await findUserAPI({userId, role}, setLoading);
+  const login = async () => {
+    const res = await loginAPI({role, userId, password}, setLoading);
     if (res.success) {
-      navigate('VerifyPassword', {
-        name: res.data.name,
-        role: res.data.role,
-        userId,
-      });
-      return;
+      if (res.data && res.data.user && res.data.token) {
+        await AsyncStorage.setItem('accessToken', res.data.token);
+        dispatch(setUser(res.data.user));
+        showToast({type: 'success', text1: res.message});
+        navigate('Dashboard');
+        return;
+      } else {
+        showToast({type: 'error', text1: 'Internal server error occured.'});
+        return;
+      }
     } else {
-      showToast({
-        type: 'info',
-        text1: `No user found by ${userId}`,
-      });
+      showToast({type: 'error', text1: res.message});
       return;
     }
   };
@@ -68,24 +66,14 @@ const Login = () => {
     <KeyboardAvoidingView style={styles.parent}>
       <ScrollView style={{flex: 1}}>
         <Text style={styles.headerTitle}>
-          {`Welcome Back! Please Login by ${roleLabel('c')} ID to Get Started.`}
+          {`Welcome Back ${name}! Your account was tightly secured by us.`}
         </Text>
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Choose your role:</Text>
-            <RolePicker
-              value={selectedRole}
-              setState={setSelectedRole}
-              enabled
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>{`Enter your ${roleLabel(
-              's',
-            )} Id:`}</Text>
+            <Text style={styles.inputLabel}>Enter your password:</Text>
             <TextInput
-              value={userId}
-              onChangeText={setUserId}
+              value={password}
+              onChangeText={setPassword}
               style={[
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
@@ -100,7 +88,7 @@ const Login = () => {
               styles.proceedButton,
               {backgroundColor: currentTheme.baseColor},
             ]}
-            onPress={findFromPrevUsers}>
+            onPress={login}>
             <Text
               style={[
                 styles.proceedButtonText,
@@ -124,7 +112,7 @@ const Login = () => {
             By Proceeding, App will check if you are our Existing user or not.
           </Text>
           <Text style={styles.descriptionseperationText}>or</Text>
-          {selectedRole === AdminRole.OWNER ? (
+          {role === AdminRole.OWNER ? (
             <Pressable
               style={{justifyContent: 'center', marginBottom: 40}}
               onPress={() => navigate('SignUp')}>
@@ -175,6 +163,8 @@ const styles = StyleSheet.create({
   },
   inputText: {
     borderBottomWidth: 2,
+    // borderLeftWidth: 2,
+    // borderRadius: 8,
     height: 60,
     fontSize: 22,
     paddingHorizontal: 12,
@@ -203,4 +193,4 @@ const styles = StyleSheet.create({
   descriptionseperationText: {fontSize: 22, textAlign: 'center'},
 });
 
-export default Login;
+export default VerifyPassword;

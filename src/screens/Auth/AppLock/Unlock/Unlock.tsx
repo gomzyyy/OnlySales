@@ -8,7 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {BusinessOwner} from '../../../../../types';
+import {Owner} from '../../../../../types';
 import {useRoute} from '@react-navigation/native';
 import InputPasscode from '../../../../customComponents/InputPasscode';
 import {colors, deviceHeight} from '../../../../utils/Constants';
@@ -21,10 +21,10 @@ import {
 } from '../../../../utils/nagivationUtils';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
-import {login} from '../../../../../store/slices/business';
+// import {login} from '../../../../../store/slices/business';
 
 type UnlockParamsType = {
-  user: BusinessOwner;
+  user: Owner;
   logged?: boolean;
   navigateTo?: string;
   localCheck?: boolean;
@@ -54,7 +54,7 @@ const Unlock = () => {
         navigate(navigateTo);
         return;
       }
-      !logged && dispatch(login({userId: user.userId}));
+      // !logged && dispatch(login({userId: user.userId}));
       resetAndNavigate('Dashboard');
       return;
     } else {

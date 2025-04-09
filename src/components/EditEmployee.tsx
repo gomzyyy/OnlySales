@@ -15,7 +15,7 @@ import {Employee} from '../../types';
 import {AppDispatch, RootState} from '../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {showToast} from '../service/fn';
-import {updateEmployee} from '../../store/slices/business';
+// import {updateEmployee} from '../../store/slices/business';
 import {useTheme} from '../hooks/index';
 import EmployementStatusPicker from './EmployementStatusPicker';
 import ShiftPicker from './ShiftPicker';
@@ -59,18 +59,18 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       });
       return;
     }
-    dispatch(
-      updateEmployee({
-        ...i,
-        name,
-        salary: Number(salary),
-        status,
-        shift,
-        image,
-        phoneNumber,
-        address,
-      }),
-    );
+    // dispatch(
+    //   updateEmployee({
+    //     ...i,
+    //     name,
+    //     salary: Number(salary),
+    //     status,
+    //     shift,
+    //     image,
+    //     phoneNumber,
+    //     address,
+    //   }),
+    // );
     close();
   };
   const closeImagePicker = () => setOpenImagePicker(false);

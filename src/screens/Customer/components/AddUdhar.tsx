@@ -13,8 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import InventoryItem from './InventoryItem';
 import SearchBar from '../../SearchCustomer/components/subcomponents/SearchBar';
-import {Customer, SoldProduct, Product} from '../../../../types';
-import {addNewUdhar} from '../../../../store/slices/business';
+import {Customer, SoldProduct, Product, Owner} from '../../../../types';
 import {useTheme} from '../../../hooks/index';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -32,7 +31,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const inventory = useSelector(
-    (s: RootState) => s.appData.BusinessOwner.inventory,
+    (s: RootState) => (s.appData.user as Owner).inventory,
   );
   const sortedInventory: Product[] = [...inventory].sort(
     (a, b) => b.totalSold - a.totalSold,
@@ -115,12 +114,12 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
   const handleAddUdharBtn = () => {
     if (selectedProducts && selectedProducts.length !== 0) {
-      dispatch(
-        addNewUdhar({
-          customer,
-          products: selectedProducts,
-        }),
-      );
+      // dispatch(
+      //   addNewUdhar({
+      //     customer,
+      //     products: selectedProducts,
+      //   }),
+      // );
     }
     close && close();
   };

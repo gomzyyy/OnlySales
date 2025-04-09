@@ -75,7 +75,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
   const {currentTheme} = useTheme();
   const currRoute = navigationRef.current?.getCurrentRoute()?.name;
   const navigation = useNavigation();
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
+  const user = useSelector((s: RootState) => s.appData.user);
   const handleNavigationByMenu = (r: string): void => {
     if (currRoute === r) {
       navigation.dispatch(DrawerActions.closeDrawer());
@@ -97,8 +97,8 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
             <View style={styles.profileImageContainer}>
               <Image
                 source={
-                  owner.image && owner.image?.trim().length !== 0
-                    ? {uri: owner.image}
+                  user?.image && user.image?.trim().length !== 0
+                    ? {uri: user.image}
                     : NoProfile
                 }
                 style={styles.profileImage}
@@ -110,7 +110,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
                   styles.profileName,
                   {color: currentTheme.contrastColor},
                 ]}>
-                {owner.name}
+                {user?.name || ''}
               </Text>
             </View>
           </View>
@@ -129,7 +129,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
               {m.icon(currentTheme.contrastColor)}
               <Text
                 style={[styles.tabText, {color: currentTheme.contrastColor}]}>
-                {m.name}
+                {m.name || ''}
               </Text>
             </TouchableOpacity>
           ))}

@@ -1,6 +1,6 @@
 import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
 import React, {Dispatch, SetStateAction, useState} from 'react';
-import {BusinessOwner} from '../../../../types';
+import {Employee, Owner, Partner} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
 import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -8,14 +8,14 @@ import FilePicker from '../../../components/FilePicker';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 
 type OwnerInfoProps = {
-  owner: BusinessOwner;
+  user: Owner | Partner | Employee;
   secure?: boolean;
   profileImageValue?: string | undefined;
   setProfileImageValue?: Dispatch<SetStateAction<string | undefined>>;
 };
 
-const OwnerInfo: React.FC<OwnerInfoProps> = ({
-  owner,
+const UserInfo: React.FC<OwnerInfoProps> = ({
+  user,
   secure = false,
   profileImageValue,
   setProfileImageValue = () => {},
@@ -53,16 +53,16 @@ const OwnerInfo: React.FC<OwnerInfoProps> = ({
       </Pressable>
       <View style={styles.ownerInfoContainer}>
         <Text style={[styles.name, {color: currentTheme.baseColor}]}>
-          {owner.name}
+          {user.name}
         </Text>
         <View style={styles.phoneNumberContainer}>
           <Icon name="mobile1" color={currentTheme.baseColor} size={12} />
           <Text style={[styles.phoneNumber, {color: currentTheme.baseColor}]}>
             :{' '}
-            {owner.phoneNumber
+            {user.phoneNumber
               ? secure
-                ? `+91-${owner.phoneNumber?.slice(0, 5)}*****`
-                : `+91-${owner.phoneNumber}`
+                ? `+91-${user.phoneNumber?.slice(0, 5)}*****`
+                : `+91-${user.phoneNumber}`
               : 'N/A'}
           </Text>
         </View>
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
   phoneNumber: {fontSize: 16, textAlignVertical: 'center'},
 });
 
-export default OwnerInfo;
+export default UserInfo;

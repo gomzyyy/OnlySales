@@ -14,18 +14,19 @@ import InputPasscode from '../../../../customComponents/InputPasscode';
 import {colors, deviceHeight} from '../../../../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useTheme} from '../../../../hooks/index';
-import {
-  setAccessPassword,
-  toogleLockApp,
-} from '../../../../../store/slices/business';
+// import {
+//   setAccessPassword,
+//   toogleLockApp,
+// } from '../../../../../store/slices/business';
 import {back} from '../../../../utils/nagivationUtils';
 import {showToast} from '../../../../service/fn';
+import { Owner } from '../../../../../types';
 
 const SetPasscode = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const {accessPasscode} = useSelector(
-    (s: RootState) => s.appData.BusinessOwner,
+    (s: RootState) => s.appData.user as Owner,
   );
   const {appLocked} = useSelector((s: RootState) => s.appData.app);
   const [locked, setLocked] = useState<boolean>(false);
@@ -77,8 +78,8 @@ const SetPasscode = () => {
       });
       return;
     }
-    dispatch(setAccessPassword(newPasscode));
-    dispatch(toogleLockApp(true));
+    // dispatch(setAccessPassword(newPasscode));
+    // dispatch(toogleLockApp(true));
     showToast({
       type: 'success',
       text1: locked
