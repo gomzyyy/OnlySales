@@ -10,14 +10,20 @@ import SlideUpContainer from '../../components/SlideUpContainer';
 import AddProduct from './components/AddProduct';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import {useTheme} from '../../hooks/index';
+import {AdminRole} from '../../../enums';
+import {Employee, Owner, Partner} from '../../../types';
 
 const MyInventory = () => {
   const {currentTheme} = useTheme();
 
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
-  const inventoryItems = useSelector(
-    (s: RootState) => s.appData.BusinessOwner.inventory,
-  );
+  const user = useSelector((s: RootState) => s.appData.user)!;
+
+  const owner: Owner | undefined =
+    (user.role === AdminRole.OWNER && (user as Owner)) ||
+    (user.role === AdminRole.EMPLOYEE && (user as Employee).businessOwner) ||
+    (user.role === AdminRole.PARTNER && (user as Partner).businessOwner) ||
+    undefined;
+  const inventoryItems = owner?.inventory || [];
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);
 
@@ -35,7 +41,7 @@ const MyInventory = () => {
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Header
-        name={`${owner.businessName || owner.name}`}
+        name={`${user.name}`}
         backButtom
         customComponent={true}
         renderItem={<AddInventoryItemIcon />}

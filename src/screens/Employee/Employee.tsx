@@ -29,7 +29,7 @@ import FilePicker from '../../components/FilePicker';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 const NoProfile = require('../../assets/images/no-profile.jpg');
 import Icon from 'react-native-vector-icons/AntDesign';
-import {setImageAPI} from '../../api/api';
+import {setImageAPI} from '../../api/api.auth';
 
 type EmployeeParams = {
   employeeId: EmployeeType['id'];

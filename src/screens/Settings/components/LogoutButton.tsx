@@ -6,6 +6,7 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import {resetAndNavigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LogoutButton = () => {
   const {currentTheme} = useTheme();
@@ -17,7 +18,7 @@ const LogoutButton = () => {
       'this will log you out of this session.',
     );
     if (!res) return;
-    // dispatch(logout({userId}));
+    await AsyncStorage.removeItem('accessToken');
     showToast({type: 'success', text1: 'Logout success.'});
     resetAndNavigate('GetStarted');
   };

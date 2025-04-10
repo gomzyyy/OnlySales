@@ -1,58 +1,45 @@
 import {View, Text} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
-import {RootState} from '../../../store/store';
-import {useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   navigate,
   prepareNavigation,
   resetAndNavigate,
 } from '../../utils/nagivationUtils';
 import {useFocusEffect} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {validateTokenAPI} from '../../api/api.auth';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {useTheme} from '../../hooks';
+import {setUser} from '../../../store/slices/business';
 
 const SplashScreen = () => {
-  const owner = useSelector((s: RootState) => s.appData.user);
-  const app = useSelector((s: RootState) => s.appData.app);
-
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((s: RootState) => s.appData.user);
   const {currentTheme} = useTheme();
+  console.log(user);
 
   useFocusEffect(
     useCallback(() => {
       const initNavigation = async () => {
         prepareNavigation();
-        if (!owner) {
+        if (!user) {
           setTimeout(() => resetAndNavigate('GetStarted'), 800);
         } else {
-          // if (app.appLocke) {
-          //   setTimeout(
-          //     () => navigate('Unlock', {user: owner, logged: true}),
-          //     800,
-          //   );
-          //   return;
-          // }
-          setTimeout(() => resetAndNavigate('Dashboard'), 800);
+          const res = await validateTokenAPI({role: user.role});
+          // console.log(res.data.user);
+          if (res.success && res.data.user) {
+            dispatch(setUser(res.data.user));
+            resetAndNavigate('Dashboard');
+          } else {
+            setTimeout(() => resetAndNavigate('GetStarted'), 800);
+          }
         }
       };
       initNavigation();
-    }, [owner]),
+    }, [user]),
   );
-  // const getValueableData = async () => {
-  //   try {
-  //     const res = await fetch('http://192.168.1.71:6900/api/app/login');
-  //     if (!res.ok) throw new Error('Unable to fetch at the moment.');
-  //     const jsonRes = await res.json();
-  //     await Promise.all([
-  //       AsyncStorage.setItem('pa', jsonRes.pa),
-  //       AsyncStorage.setItem('pn', jsonRes.pn),
-  //     ]);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   useEffect(() => {
-    // getValueableData();
     SystemNavigationBar.setNavigationColor(currentTheme.baseColor);
   }, []);
   return (

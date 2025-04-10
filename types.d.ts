@@ -127,7 +127,7 @@ export interface Owner extends User {
   equity: number;
   businessName: string;
   businessPhoneNumber: number;
-  businessPartners: Partner[];
+  businessPartners: Partner[] | string[];
   gstNumber: string;
   accountType: AccountType;
   history: History;
@@ -167,7 +167,7 @@ export interface UserPermissions {
 }
 
 export interface Partner extends User {
-  BusinessOwner: Owner | string;
+  businessOwner: Owner;
   password: string;
   equity: number;
   role: AdminRole;
@@ -176,7 +176,7 @@ export interface Partner extends User {
 }
 
 export interface Employee extends User {
-  businessOwner: string | Owner;
+  businessOwner: Owner;
   gender: string;
   password: string;
   department: Department;
@@ -188,6 +188,7 @@ export interface Employee extends User {
   status: EmploymentStatus;
   statusDescription?: string;
   skills: string[];
+  role: AdminRole;
   shift: Shift;
   shiftDescription?: string;
   reportsTo: Owner | Employee | Partner | string;
@@ -214,7 +215,7 @@ export interface Product extends CommonProps {
   createdByModel: AdminRole;
 }
 
-export interface SoldProduct {
+export interface SoldProduct extends CommonProps {
   product: Product | string;
   buyer: string;
   state: PaymentState;
@@ -251,23 +252,13 @@ export interface Liability extends CommonProps {
   categoryDescription?: string; // Description of the category
   amount: number; // Original amount of the liability
   interestRate?: number; // Interest rate (if applicable)
+  documentUrl?: string;
   startDate: string; // Start date of the liability
   dueDate: string; // Maturity or due date for payment
   installmentAmount?: number; // Fixed installment amount (if applicable)
   remainingBalance?: number; // Outstanding amount to be paid
   status?: LibilityStatus; // Status of the liability
   ownerId?: string; // Reference to the business owner
-}
-export interface SoldProductPaymentHistory extends CommonProps {
-  referenceType: PaymentHistoryReferenceType;
-  reference: SoldProduct | string;
-  info: {
-    name: string;
-    amount: number;
-  };
-  paymentDescription: string;
-  state: PaymentState;
-  disabled: boolean;
 }
 export interface SoldProductPaymentHistory extends CommonProps {
   referenceType: PaymentHistoryReferenceType;

@@ -2,6 +2,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
 import {Customer, SoldProduct, Product, Owner} from '../../types';
 import {checkDate} from '../service/fn';
+import {PaymentState} from '../../enums';
 
 export interface useAnalyticsReturnType extends Owner {
   bestSellers: Product[];
@@ -33,68 +34,84 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   const bestSellers = [...owner.inventory]
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, bestSellerCount);
-  const customers = owner.customers;
-  const paidPayments = customers.flatMap(s => s.paidPayments || []);
-  const unpaidPayments = customers.flatMap(s => s.unpaidPayments || []);
+  const customers = owner.customers as Customer[];
+  const paidPayments = customers.flatMap(
+    s => s.buyedProducts.filter(s => s.state === PaymentState.PAID) || [],
+  );
+  const unpaidPayments = customers.flatMap(
+    s => s.buyedProducts.filter(s => s.state === PaymentState.UNPAID) || [],
+  );
   const soldProducts = [...paidPayments, ...unpaidPayments].map(s => ({
     ...s,
     totalSold: s.count,
   }));
   const soldThisMonth = soldProducts.filter(
-    g => checkDate({date: g.addedAt}).thisMonth,
+    g => checkDate({date: new Date(g.createdAt).getTime()}).thisMonth,
   );
   const todaySales = soldThisMonth.filter(
-    s => checkDate({date: s.addedAt}).sameDay,
+    s => checkDate({date: new Date(s.createdAt).getTime()}).sameDay,
   );
   const soldLastMonth = soldProducts.filter(
-    g => checkDate({date: g.addedAt}).lastMonth,
+    g => checkDate({date: new Date(g.createdAt).getTime()}).lastMonth,
   );
   const soldMoreThanFourMonthsAgo = soldProducts.filter(
-    g => checkDate({date: g.addedAt}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
   );
   const soldOneMonthAgo = soldProducts.filter(
-    g => checkDate({date: g.addedAt}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
   );
   const soldTwoMonthAgo = soldProducts.filter(
-    g => checkDate({date: g.addedAt}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
   );
   const soldThreeMonthAgo = soldProducts.filter(
-    g => checkDate({date: g.addedAt}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
   );
   const weeklySales = {
     today: todaySales,
     yesterday: soldProducts.filter(
-      s => checkDate({date: s.addedAt, matchByDay: 2}).isExactMatch,
+      s =>
+        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 2})
+          .isExactMatch,
     ),
     oneDayAgo: soldProducts.filter(
-      s => checkDate({date: s.addedAt, matchByDay: 3}).isExactMatch,
+      s =>
+        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 3})
+          .isExactMatch,
     ),
     twoDayAgo: soldProducts.filter(
-      s => checkDate({date: s.addedAt, matchByDay: 4}).isExactMatch,
+      s =>
+        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 4})
+          .isExactMatch,
     ),
     threeDayAgo: soldProducts.filter(
-      s => checkDate({date: s.addedAt, matchByDay: 5}).isExactMatch,
+      s =>
+        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 5})
+          .isExactMatch,
     ),
     fourDayAgo: soldProducts.filter(
-      s => checkDate({date: s.addedAt, matchByDay: 6}).isExactMatch,
+      s =>
+        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 6})
+          .isExactMatch,
     ),
     fiveDayAgo: soldProducts.filter(
-      s => checkDate({date: s.addedAt, matchByDay: 7}).isExactMatch,
+      s =>
+        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 7})
+          .isExactMatch,
     ),
   };
 
   const todaysMostSoldProductsRaw = todaySales
-    .filter(s => checkDate({date: s.addedAt}).sameDay)
+    .filter(s => checkDate({date: new Date(s.createdAt).getTime()}).sameDay)
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, 5);
 
   const todaysMostSoldProductsObj = todaysMostSoldProductsRaw.reduce<
     Record<string, SoldProduct>
   >((acc, product) => {
-    if (acc[product.id]) {
-      acc[product.id].totalSold += product.totalSold;
+    if (acc[product._id]) {
+      (acc[product._id].product as Product).totalSold += product.totalSold;
     } else {
-      acc[product.id] = {...product};
+      acc[product._id] = {...product};
     }
     return acc;
   }, {});

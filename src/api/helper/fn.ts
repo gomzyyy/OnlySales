@@ -1,43 +1,70 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SetStateAction} from 'react';
+
+export interface FetchReqPropType {
+  route: string;
+  method: string;
+  reqType: 'r' | 'cud' | 'media';
+  body?: any;
+  secure?: boolean;
+}
 
 const header = {
   r: {},
   cud: {'Content-Type': 'application/json'},
-  media: {'Content-Type': 'multipart/form-data'},
+  media: {},
 };
 
-const APIheaders = async (s: boolean, optType: 'r' | 'cud' | 'media') => {
+export const APIheaders = async (
+  secure: boolean,
+  optType: 'r' | 'cud' | 'media',
+) => {
   let token = null;
-  if (s) {
-    token = await AsyncStorage.getItem('token');
+  if (secure) {
+    token = await AsyncStorage.getItem('accessToken');
     if (!token) {
+      console.log('vjbirei');
       throw new Error('Secure API calls requires Access-Token!');
     }
-    return {...header[optType], authorization: `Bearer ${token}`};
+    const headers = {...header[optType], authorization: `Bearer ${token}`};
+    return headers;
   } else {
-    return header[optType];
+    const headers = header[optType];
+    console.log(headers);
+    return headers;
   }
 };
 
-const FetchReq = async (
-  route: string,
-  method: string,
-  reqType: 'r' | 'cud' | 'media',
-  body?: any,
-  secure: boolean = true,
-) => {
+const FetchAPI = async ({
+  reqType,
+  route,
+  body,
+  secure = true,
+  method,
+}: FetchReqPropType) => {
+  console.log(secure);
   try {
     const headers = await APIheaders(secure, reqType);
     const baseUrl = 'http://192.168.1.71:6900/api/app';
-    return fetch(baseUrl + route, {
+    const res = fetch(baseUrl + route, {
       method,
       headers,
       body,
     });
+    return res;
   } catch (error) {
     throw new Error(
       error instanceof Error ? error.message : 'Internal server error',
     );
   }
 };
-export {FetchReq};
+function handleBooleanState(
+  fn?: React.Dispatch<SetStateAction<boolean>>,
+  state?: boolean,
+) {
+  if (fn && state) {
+    fn(state);
+  }
+  return;
+}
+export {FetchAPI, handleBooleanState};

@@ -9,7 +9,7 @@ import Tab from './components/Tab';
 import CreateButton from '../../components/CreateButton';
 import SearchBar from './components/SearchBar';
 import Header from '../../components/Header';
-import {useTheme} from '../../hooks';
+import {useAnalytics, useTheme} from '../../hooks';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useHaptics} from '../../hooks';
 
@@ -17,9 +17,7 @@ const Customers = () => {
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
-  const customers = useSelector(
-    (s: RootState) => s.appData.BusinessOwner.customers,
-  );
+  const {customers} = useAnalytics();
   const handleCloseCreateCustomer = () => setopenCreateCustomer(false);
   const handleOpenCreateCustomer = () => {
     setopenCreateCustomer(true);
@@ -54,7 +52,7 @@ const Customers = () => {
           {customers.length !== 0 ? (
             <FlatList
               data={customers}
-              keyExtractor={s => s.id.toString()}
+              keyExtractor={s => s._id}
               nestedScrollEnabled
               renderItem={({item}) => <Tab i={item} />}
               style={{flex: 1}}

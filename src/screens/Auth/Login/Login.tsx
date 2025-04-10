@@ -18,7 +18,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
 import {AdminRole} from '../../../../enums';
 import RolePicker from '../../../components/RolePicker';
-import {findUserAPI} from '../../../api/api';
+import {findUserAPI} from '../../../api/api.auth';
 
 const Login = () => {
   const {currentTheme} = useTheme();

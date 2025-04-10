@@ -44,33 +44,33 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const [udharAmount, setUdharAmount] = useState<number>(0);
 
   const handleNewUdhars = (s: SoldProduct) => {
-    const alreadyExist: SoldProduct | undefined = selectedProducts
-      ? selectedProducts.find(f => f.id === s.id)
-      : undefined;
-    if (alreadyExist) {
-      if (alreadyExist.count === 0) {
-        return;
-      }
-      setSelectedProducts(prev =>
-        prev
-          ? prev.map(v =>
-              v.id === alreadyExist.id ? {...alreadyExist, count: s.count} : v,
-            )
-          : [{...s}],
-      );
-    } else {
-      setSelectedProducts(
-        [...(selectedProducts || []), {...s}].map(
-          s =>
-            s && {
-              ...s,
-              createdAt: new Date(Date.now()
-              //  - (3*24*60*60*1000)
-              ).toDateString(),
-            },
-        ),
-      );
-    }
+    // const alreadyExist: SoldProduct | undefined = selectedProducts
+    //   ? selectedProducts.find(f => f._id === s._id)
+    //   : undefined;
+    // if (alreadyExist) {
+    //   if (alreadyExist.count === 0) {
+    //     return;
+    //   }
+    //   setSelectedProducts(prev =>
+    //     prev
+    //       ? prev.map(v =>
+    //           v._id === alreadyExist._id ? {...alreadyExist, count: s.count} : v,
+    //         )
+    //       : [{...s}],
+    //   );
+    // } else {
+    //   setSelectedProducts(
+    //     [...(selectedProducts || []), {...s}].map(
+    //       s =>
+    //         s && {
+    //           ...s,
+    //           createdAt: new Date(Date.now()
+    //           //  - (3*24*60*60*1000)
+    //           ).toDateString(),
+    //         },
+    //     ),
+    //   );
+    // }
   };
 
   const handleSetUdharAmount = ({
@@ -82,45 +82,45 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     action: 'ADD' | 'MINUS';
     count: number;
   }) => {
-    if (action === 'ADD') {
-      setUdharAmount(
-        udharAmount +
-          Number(
-            product.discountedPrice === 0
-              ? product.basePrice
-              : product.discountedPrice,
-          ),
-      );
-    }
-    if (action === 'MINUS') {
-      setUdharAmount(
-        udharAmount -
-          Number(
-            product.discountedPrice === 0
-              ? product.basePrice
-              : product.discountedPrice,
-          ),
-      );
-    }
-    const newProducts: SoldProduct = {
-      ...product,
-      buyer:customer.id,
-      count: count,
-      addedAt: Date.now()
-      //  - (3*24*60*60*1000),
-    };
-    handleNewUdhars(newProducts);
+  //   if (action === 'ADD') {
+  //     setUdharAmount(
+  //       udharAmount +
+  //         Number(
+  //           product.discounterPrice === 0
+  //             ? product.basePrice
+  //             : product.discounterPrice,
+  //         ),
+  //     );
+  //   }
+  //   if (action === 'MINUS') {
+  //     setUdharAmount(
+  //       udharAmount -
+  //         Number(
+  //           product.discounterPrice === 0
+  //             ? product.basePrice
+  //             : product.discounterPrice,
+  //         ),
+  //     );
+  //   }
+  //   const newProducts: SoldProduct = {
+  //     ...product,
+  //     buyer:customer._id,
+  //     count: count,
+  //     addedAt: Date.now()
+  //     //  - (3*24*60*60*1000),
+  //   };
+  //   handleNewUdhars(newProducts);
   };
 
   const handleAddUdharBtn = () => {
-    if (selectedProducts && selectedProducts.length !== 0) {
-      // dispatch(
-      //   addNewUdhar({
-      //     customer,
-      //     products: selectedProducts,
-      //   }),
-      // );
-    }
+  //   if (selectedProducts && selectedProducts.length !== 0) {
+  //     // dispatch(
+  //     //   addNewUdhar({
+  //     //     customer,
+  //     //     products: selectedProducts,
+  //     //   }),
+  //     // );
+  //   }
     close && close();
   };
 

@@ -7,15 +7,22 @@ import {
   Platform,
   TouchableOpacity,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {showToast} from '../service/fn';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../store/store';
-import {useHaptics, useTheme} from '../hooks/index';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../store/store';
+import {useAnalytics, useHaptics, useTheme} from '../hooks/index';
 import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
+import {createCustomerAPI} from '../api/api.customer';
+import {AdminRole} from '../../enums';
+import {Employee, Partner} from '../../types';
+import {getOwnerAPI} from '../api/api.owner';
+import {setUser} from '../../store/slices/business';
+import {getUserAPI} from '../api/api.user';
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -24,16 +31,18 @@ type CreateCustomerProps = {
 const CreateCustomer: React.FC<CreateCustomerProps> = ({
   callback,
 }): React.JSX.Element => {
+  const dispatch = useDispatch<AppDispatch>();
   const {warning} = useHaptics();
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
+  const {role, _id} = useSelector((s: RootState) => s.appData.user)!;
   const [name, setName] = useState<string>('');
   const [phoneNumber, setphoneNumber] = useState<string>('');
   const [image, setImage] = useState<string | undefined>();
   const [address, setAddress] = useState<string>('');
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSaveBtn = () => {
+  const handleSaveBtn = async () => {
     if (name.trim().length === 0) {
       warning();
       showToast({
@@ -47,12 +56,44 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       name,
       phoneNumber,
       address,
-      image,
+      businessOwnerId:
+        (role === AdminRole.OWNER && _id) ||
+        (role === AdminRole.PARTNER &&
+          useSelector((s: RootState) => s.appData.user as Partner)!
+            .businessOwner._id) ||
+        (role === AdminRole.EMPLOYEE &&
+          useSelector((s: RootState) => s.appData.user as Employee)!
+            .businessOwner._id) ||
+        '',
     };
-    // dispatch(createCustomers(customerData));
+    const res = await createCustomerAPI(
+      {
+        query: {role, createdBy: role, creatorId: _id},
+        body: customerData,
+        media: {
+          image,
+        },
+      },
+      setLoading,
+    );
+    if (res.success && res.data.customer) {
+      const userRes = await getUserAPI({
+        role,
+      });
+      if (userRes.success && userRes.data.user) {
+        dispatch(setUser(userRes.data.user));
+        showToast({
+          type: 'success',
+          text1: res.message,
+          text2: 'Pleas add products to create Udhars.',
+        });
+        callback();
+        return;
+      }
+    }
     showToast({
-      type: 'success',
-      text1: 'Customer created Successfully.',
+      type: 'error',
+      text1: res.message,
       text2: 'Pleas add products to create Udhars.',
     });
     callback();
@@ -140,13 +181,32 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
           ]}
           activeOpacity={0.8}
           onPress={handleSaveBtn}>
-          <Text
-            style={[
-              styles.saveButtonText,
-              {color: currentTheme.modal.saveBtnText},
-            ]}>
-            Save
-          </Text>
+          {loading ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={[
+                  styles.saveButtonText,
+                  {color: currentTheme.modal.saveBtnText},
+                ]}>
+                Creating
+              </Text>
+              <ActivityIndicator size={18} color={currentTheme.contrastColor} />
+            </View>
+          ) : (
+            <Text
+              style={[
+                styles.saveButtonText,
+                {color: currentTheme.modal.saveBtnText},
+              ]}>
+              Save
+            </Text>
+          )}
         </TouchableOpacity>
         <SlideUpContainer
           opacity={0.2}
@@ -156,7 +216,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             value={image}
             setState={setImage}
             callback={closeImagePicker}
-            type='image'
+            type="image"
           />
         </SlideUpContainer>
       </View>

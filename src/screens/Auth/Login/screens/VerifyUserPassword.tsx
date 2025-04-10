@@ -16,7 +16,7 @@ import {deviceHeight} from '../../../../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
 import {AdminRole} from '../../../../../enums';
-import {loginAPI} from '../../../../api/api';
+import {loginAPI} from '../../../../api/api.auth';
 import {setUser} from '../../../../../store/slices/business';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';

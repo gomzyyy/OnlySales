@@ -1,0 +1,45 @@
+import {SetStateAction} from 'react';
+import {FetchAPI, handleBooleanState} from './helper/fn';
+import {CreateCustomerAPIReturnType, createCustomerData} from './types.api';
+
+export const createCustomerAPI = async (
+  data: createCustomerData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const {role, createdBy, creatorId} = data.query;
+    const formData = new FormData();
+    formData.append('name', data.body.name);
+    formData.append('businessOwnerId', data.body.businessOwnerId);
+    if (data.body.address) formData.append('address', data.body.address);
+    if (data.body.phoneNumber)
+      formData.append('phoneNumber', data.body.phoneNumber);
+    if (data.body.email) formData.append('email', data.body.email);
+    if (data.media?.image) {
+      const imageFile = {
+        uri: data.media.image,
+        type: 'image/jpeg',
+        name: 'profile.jpg',
+      };
+      formData.append('img', imageFile as any);
+    }
+    const fetching = await FetchAPI({
+      reqType: 'media',
+      route: `/create/customer?role=${role}&createdBy=${createdBy}&creatorId=${creatorId}`,
+      method: 'POST',
+      body: formData,
+    });
+    return (await fetching.json()) as CreateCustomerAPIReturnType;
+  } catch (error) {
+    return {
+      message: 'Internal server Error occured while fetching',
+      data: {
+        customer: undefined,
+      },
+      success: false,
+    } as CreateCustomerAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
