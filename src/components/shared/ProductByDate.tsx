@@ -37,7 +37,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
       }
 
       const existingProductIndex = acc[creationDate].findIndex(
-        p => p.id === product.id && p.addedAt === product.addedAt,
+        p => p._id === product._id && p.createdAt === product.createdAt,
       );
 
       if (existingProductIndex !== -1) {

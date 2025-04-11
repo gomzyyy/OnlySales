@@ -1,10 +1,10 @@
 export enum BusinessType {
-  RETAIL = 'retail',
-  WHOLESALE = 'wholesale',
-  MANUFACTURING = 'manufacturing',
-  SERVICE = 'service',
-  DISTRIBUTION = 'distribution',
-  OTHER = 'other',
+  RETAIL = 'Retail',
+  WHOLESALE = 'Wholesale',
+  MANUFACTURING = 'Manufacturing',
+  SERVICE = 'Service',
+  DISTRIBUTION = 'Distribution',
+  OTHER = 'Other',
 }
 export enum CurrencyType {
   INR = 'INR',

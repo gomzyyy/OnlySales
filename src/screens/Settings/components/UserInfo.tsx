@@ -59,10 +59,10 @@ const UserInfo: React.FC<OwnerInfoProps> = ({
           <Icon name="mobile1" color={currentTheme.baseColor} size={12} />
           <Text style={[styles.phoneNumber, {color: currentTheme.baseColor}]}>
             :{' '}
-            {user.phoneNumber
+            {user.phoneNumber?.value
               ? secure
-                ? `+91-${user.phoneNumber?.slice(0, 5)}*****`
-                : `+91-${user.phoneNumber}`
+                ? `+91-${user.phoneNumber?.value.slice(0, 5)}*****`
+                : `+91-${user.phoneNumber.value}`
               : 'N/A'}
           </Text>
         </View>

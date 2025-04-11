@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Customer, SoldProduct} from '../../../../types';
 import {deviceHeight} from '../../../utils/Constants';
-import {useTheme} from '../../../hooks';
+import {useAnalytics, useTheme} from '../../../hooks';
 import {RootState} from '../../../../store/store';
 import {useSelector} from 'react-redux';
 import PayButton from '../../../components/PayButton';
@@ -14,6 +14,7 @@ import {back} from '../../../utils/nagivationUtils';
 import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {PaymentState} from '../../../../enums';
 
 type PaidPaymentsProps = {
   customer: Customer;
@@ -30,14 +31,13 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
 
   const [amount, setAmount] = useState<number>(0);
   const [payableAmount, setPayableAmount] = useState<number>(0);
+  const {owner} = useAnalytics();
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const pp =
-    useSelector((s: RootState) => s.appData.BusinessOwner.customers)
-      .find(s => s.id === customer.id)
-      ?.paidPayments?.flatMap(d =>
-        products.filter(f => f.id === d.id && f.addedAt === d.addedAt),
-      ) || [];
+    owner.customers
+      .find(s => s._id === customer._id)
+      ?.buyedProducts?.filter(f => f.state === PaymentState.PAID) || [];
 
   const handleCloseConfirmPayment = () => {
     setAskConfirmPayment(false);
@@ -54,7 +54,11 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
   useEffect(() => {
     const amt = products.reduce(
       (acc, f) =>
-        acc + (f.discountedPrice ? f.discountedPrice : f.basePrice) * f.count,
+        acc +
+        (f.product.discounterPrice
+          ? f.product.discounterPrice
+          : f.product.basePrice) *
+          f.count,
       0,
     );
     setAmount(amt);
@@ -72,7 +76,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
           {pp.length !== 0 ? (
             <FlatList
               data={pp}
-              keyExtractor={i => i.addedAt.toString()}
+              keyExtractor={i => i.createdAt}
               renderItem={({item}) => (
                 <Tab
                   actionType="UNPAID"
@@ -81,9 +85,11 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
                   onPay={() =>
                     openConfirmPay(
                       'SINGLE',
-                      (item.discountedPrice || item.basePrice) * item.count,
+                      (item.product.discounterPrice || item.product.basePrice) *
+                        item.count,
                     )
                   }
+                  date={item.createdAt}
                 />
               )}
               nestedScrollEnabled

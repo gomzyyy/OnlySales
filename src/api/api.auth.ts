@@ -53,7 +53,6 @@ export const findUserAPI = async (
       secure: false,
     });
     const res = await fetching.json();
-    console.log(res);
     return res as {
       message: string;
       data: {name: string | undefined; role: AdminRole | undefined};

@@ -45,7 +45,7 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
   const currency = useSelector((s: RootState) => s.appData.app.currency);
 
   const employee = useSelector(
-    (s: RootState) => s.appData.BusinessOwner.EmployeeData,
+    (s: RootState) => s.appData.user.EmployeeData,
   ).find(d => d.id === employeeId)!;
 
   const dispatch = useDispatch<AppDispatch>();

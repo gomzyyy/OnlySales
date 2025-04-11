@@ -94,6 +94,29 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
               styles.infoContainer,
               {backgroundColor: currentTheme.baseColor},
             ]}>
+            <View
+              style={{
+                backgroundColor: currentTheme.contrastColor,
+                position: 'absolute',
+                paddingHorizontal: 4,
+                paddingVertical: 2,
+                borderRadius: 6,
+                right: 10,
+                top: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: currentTheme.baseColor,
+                  textAlign: 'center',
+                  fontStyle: 'italic',
+                  fontSize:14,
+                  fontWeight:600
+                }}>
+                {user?.role.toLowerCase()}
+              </Text>
+            </View>
             <View style={styles.profileImageContainer}>
               <Image
                 source={

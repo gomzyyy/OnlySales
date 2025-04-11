@@ -26,7 +26,6 @@ const SignUp = () => {
   const prevUsers = useSelector((s: RootState) => s.appData.app.previousOwners);
   const [name, setName] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState<string>('');
 
   const handleCreateUser = () => {
@@ -52,8 +51,8 @@ const SignUp = () => {
       return;
     }
     if (
-      (phoneNumber && phoneNumber.trim().length < 10) ||
-      (phoneNumber && phoneNumber.trim().length > 10) ||
+      (businessPhoneNumber && businessPhoneNumber.trim().length < 10) ||
+      (businessPhoneNumber && businessPhoneNumber.trim().length > 10) ||
       businessPhoneNumber.trim().length !== 10
     ) {
       showToast({
@@ -65,7 +64,6 @@ const SignUp = () => {
     navigate('AskAboutUserInfo', {
       name,
       userId,
-      phoneNumber: phoneNumber?.trim().length !== 0 ? phoneNumber : undefined,
       businessPhoneNumber,
     });
   };
@@ -80,7 +78,7 @@ const SignUp = () => {
       });
       return;
     }
-    setPhoneNumber(val);
+    setBusinessPhoneNumber(val);
   };
 
   return (
@@ -90,7 +88,7 @@ const SignUp = () => {
       <ScrollView style={{flex: 1}}>
         <Text style={styles.headerTitle}>Welcome to Signup Page!.</Text>
         <Text style={styles.subTitle}>
-          Please Add your credientials to Proceed.
+          Please Add your credentials to Proceed.
         </Text>
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
@@ -121,28 +119,12 @@ const SignUp = () => {
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>
-          {/* <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>
-              Enter your Phone Number {'(optional)'}:
-            </Text>
-            <TextInput
-              value={phoneNumber?.toString() || ''}
-              onChangeText={value => handlePhoneNumberChange(value)}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="+91-"
-              placeholderTextColor={currentTheme.baseColor}
-              keyboardType="number-pad"
-            />
-          </View> */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>
               Enter your Business Phone Number:
             </Text>
             <TextInput
-              value={phoneNumber?.toString() || ''}
+              value={businessPhoneNumber || ''}
               onChangeText={value => handlePhoneNumberChange(value)}
               style={[
                 styles.inputText,

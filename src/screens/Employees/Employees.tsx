@@ -1,7 +1,7 @@
 import {View, StyleSheet, FlatList} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
-import {useHaptics, useTheme} from '../../hooks';
+import {useAnalytics, useHaptics, useTheme} from '../../hooks';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import CreateEmployee from '../../components/CreateEmployee';
 import EmptyListMessage from '../../components/EmptyListMessage';
@@ -16,9 +16,8 @@ const Employees = () => {
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const [openCreateEmployee, setopenCreateEmployee] = useState<boolean>(false);
-  const employees = useSelector(
-    (s: RootState) => s.appData.BusinessOwner.EmployeeData,
-  );
+  const {owner} = useAnalytics();
+  const employees = owner.employeeData;
   const handleCloseCreateEmployee = () => setopenCreateEmployee(false);
   const handleOpenCreateEmployee = () => {
     setopenCreateEmployee(true);
@@ -53,7 +52,7 @@ const Employees = () => {
           {employees.length !== 0 ? (
             <FlatList
               data={employees}
-              keyExtractor={s => s.id.toString()}
+              keyExtractor={s => s._id}
               nestedScrollEnabled
               renderItem={({item}) => <Tab i={item} />}
               style={{flex: 1}}

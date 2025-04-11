@@ -15,30 +15,35 @@ import {TextInput} from 'react-native-gesture-handler';
 import {useTheme} from '../../../hooks/index';
 import {AdminRole, BusinessType} from '../../../../enums';
 import {Confirm, showToast} from '../../../service/fn';
-import {editBusinessOwner} from '../../../../store/slices/business';
 import RolePicker from '../../../components/RolePicker';
 import BusinessTypePicker from '../../../components/BusinessTypePicker';
 import {isNumber} from '../../../service/test';
 import {back} from '../../../utils/nagivationUtils';
+import {Employee, Owner, Partner} from '../../../../types';
 
 const MyProfile = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
-  const [name, setName] = useState<string>(owner.name);
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const owner =
+    (user.role === AdminRole.OWNER && (user as Owner)) ||
+    (user.role === AdminRole.EMPLOYEE && (user as Employee).businessOwner) ||
+    (user.role === AdminRole.PARTNER && (user as Partner).businessOwner) ||
+    undefined;
+  const [name, setName] = useState<string>(owner?.name || '');
   const [profileImageValue, setProfileImageValue] = useState<
     string | undefined
-  >(owner.image);
-  const [role, setRole] = useState<AdminRole>(owner.role);
+  >(owner?.image);
+  const [role, setRole] = useState<AdminRole>(owner?.role || AdminRole.OWNER);
   const [phoneNumber, setPhoneNumber] = useState<string>(
-    owner.phoneNumber ?? '',
+    owner?.phoneNumber?.value ?? '',
   );
   const [businessType, setBusinessType] = useState<BusinessType>(
-    owner.businessType || BusinessType.RETAIL,
+    owner?.businessType || BusinessType.RETAIL,
   );
   const [edited, setEdited] = useState<boolean>(false);
   const [businessDescription, setBusinessDescription] = useState<string>(
-    owner.businessDescription || '',
+    owner?.businessDescription || '',
   );
 
   const handleProfileEdit = async () => {
@@ -50,7 +55,11 @@ const MyProfile = () => {
       showToast({type: 'error', text1: 'Name should 4-16 characters long.'});
       return;
     }
-    if (owner.phoneNumber && phoneNumber !== owner.phoneNumber) {
+    if (
+      owner &&
+      owner.phoneNumber?.value &&
+      phoneNumber !== owner.phoneNumber.value
+    ) {
       if (
         phoneNumber.trim().length === 0 ||
         phoneNumber.trim().length > 10 ||
@@ -67,25 +76,26 @@ const MyProfile = () => {
       'are you sure you have entered correct details?',
     );
     if (!res) return;
-    dispatch(
-      editBusinessOwner({
-        name,
-        userId: owner.userId,
-        phoneNumber,
-        businessType,
-        businessDescription,
-        image:profileImageValue
-      }),
-    );
+    // dispatch(
+    //   editBusinessOwner({
+    //     name,
+    //     userId: owner.userId,
+    //     phoneNumber,
+    //     businessType,
+    //     businessDescription,
+    //     image:profileImageValue
+    //   }),
+    // );
     showToast({type: 'success', text1: 'Profile updated successfully.'});
     back();
   };
   const checkIfEdited = () => {
     if (
-      name.trim() !== owner.name.trim() ||
+      name.trim() !== owner?.name.trim() ||
       role !== owner.role ||
       businessType !== owner.businessType ||
-      (phoneNumber.trim().length !== 0 && phoneNumber !== owner.phoneNumber) ||
+      (phoneNumber.trim().length !== 0 &&
+        phoneNumber !== owner.phoneNumber?.value) ||
       (businessType === BusinessType.OTHER &&
         businessDescription.trim().length !== 0 &&
         businessDescription !== owner.businessDescription) ||
@@ -129,11 +139,11 @@ const MyProfile = () => {
         />
         <View style={styles.settingsContainer}>
           <View style={styles.infoContainer}>
-            <OwnerInfo
-              owner={owner}
-              profileImageValue={profileImageValue}
-              setProfileImageValue={setProfileImageValue}
-            />
+              <OwnerInfo
+                user={user}
+                profileImageValue={profileImageValue}
+                setProfileImageValue={setProfileImageValue}
+              />
           </View>
           <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -165,13 +175,13 @@ const MyProfile = () => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Registered role:</Text>
-              <RolePicker value={owner.role} setState={setRole} />
+              <RolePicker value={owner?.role || AdminRole.OWNER} setState={setRole} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Registered business type:</Text>
               <BusinessTypePicker
                 enabled={true}
-                value={owner.businessType || BusinessType.RETAIL}
+                value={owner?.businessType || BusinessType.RETAIL}
                 setState={setBusinessType}
               />
             </View>

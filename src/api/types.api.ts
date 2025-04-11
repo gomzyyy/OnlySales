@@ -1,4 +1,9 @@
-import {AdminRole, MeasurementType, ProductType} from '../../enums';
+import {
+  AdminRole,
+  BusinessType,
+  MeasurementType,
+  ProductType,
+} from '../../enums';
 import {Customer, Employee, Owner, Partner} from '../../types';
 
 export interface APIReturnType {
@@ -25,22 +30,24 @@ export interface LoginAPIReturnType extends APIReturnType {
 export interface SignupAPIReturnType extends APIReturnType {
   data: {
     user: Owner;
+    token: string;
   };
 }
 
 export interface SignupData {
-  name: string;
-  phoneNumber: string;
-  password: string;
-  email: string;
-  address: string;
-  ownerId: string;
-  businessAddress: string;
-  businessNake: string;
-  businessPhoneNumber: string;
-  businessDescription: string;
-  businessType: string;
-  role: AdminRole;
+  name: string;// //
+  phoneNumber?: string;
+  password: string;//
+  email: string;//
+  address?: string;
+  userId: string;// //
+  businessAddress: string;// //
+  businessName: string;// //
+  businessPhoneNumber: string;// //
+  businessDescription?: string; //
+  businessType: BusinessType;// //
+  role: AdminRole;//
+  gstNumber?: string;
 }
 export interface LoginData {
   password: string;

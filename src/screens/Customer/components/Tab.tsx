@@ -7,7 +7,6 @@ import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
 import {useTheme} from '../../../hooks/index';
-import {setToPaid, setToUnpaid} from '../../../../store/slices/business';
 
 type TabProps = {
   i: SoldProduct;
@@ -71,10 +70,10 @@ const Tab: React.FC<TabProps> = ({
 
   const handleMarkAs = async () => {
     if (actionType === 'PAID') {
-      dispatch(setToUnpaid({customer, product: i}));
+      // dispatch(setToUnpaid({customer, product: i}));
       return;
     } else if (actionType === 'UNPAID') {
-      dispatch(setToPaid({customer, product: i}));
+      // dispatch(setToPaid({customer, product: i}));
       return;
     } else {
       return;
@@ -95,7 +94,7 @@ const Tab: React.FC<TabProps> = ({
           <View style={{flexDirection: 'row', gap: 4}}>
             <Text
               style={[styles.customerName, {color: currentTheme.tab.label}]}>
-              {i.name} {`x${i.count}`}
+              {i.product.name} {`x${i.count}`}
             </Text>
             {actionType === 'PAID' && (
               <View
@@ -116,13 +115,13 @@ const Tab: React.FC<TabProps> = ({
 
           <Text style={[styles.productAmount, {color: currentTheme.baseColor}]}>
             {`${app.currency} ${
-              i.discountedPrice && i.discountedPrice !== 0
+              i.product.discounterPrice && i.product.discounterPrice !== 0
                 ? i.count === 0
-                  ? i.discountedPrice
-                  : (Number(i.discountedPrice) * Number(i.count)).toString()
+                  ? i.product.discounterPrice
+                  : (Number(i.product.discounterPrice) * Number(i.count)).toString()
                 : i.count === 0
-                ? i.basePrice
-                : (Number(i.basePrice) * Number(i.count)).toString()
+                ? i.product.basePrice
+                : (Number(i.product.basePrice) * Number(i.count)).toString()
             }`}
           </Text>
         </View>

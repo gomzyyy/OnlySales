@@ -9,20 +9,15 @@ import Tab from './components/Tab';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddProduct from './components/AddProduct';
 import EmptyListMessage from '../../components/EmptyListMessage';
-import {useTheme} from '../../hooks/index';
+import {useAnalytics, useTheme} from '../../hooks/index';
 import {AdminRole} from '../../../enums';
 import {Employee, Owner, Partner} from '../../../types';
 
 const MyInventory = () => {
   const {currentTheme} = useTheme();
-
+  const {owner} = useAnalytics();
   const user = useSelector((s: RootState) => s.appData.user)!;
 
-  const owner: Owner | undefined =
-    (user.role === AdminRole.OWNER && (user as Owner)) ||
-    (user.role === AdminRole.EMPLOYEE && (user as Employee).businessOwner) ||
-    (user.role === AdminRole.PARTNER && (user as Partner).businessOwner) ||
-    undefined;
   const inventoryItems = owner?.inventory || [];
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);

@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Customer, SoldProduct} from '../../../../types';
 import {deviceHeight} from '../../../utils/Constants';
-import {useTheme} from '../../../hooks';
+import {useAnalytics, useTheme} from '../../../hooks';
 import {RootState} from '../../../../store/store';
 import {useSelector} from 'react-redux';
 import PayButton from '../../../components/PayButton';
@@ -15,6 +15,7 @@ import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ScanQRToPay from '../../../components/ScanQRToPay';
+import {PaymentState} from '../../../../enums';
 
 type UnpaidPaymentsProps = {
   customer: Customer;
@@ -28,7 +29,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   date,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-
+  const {owner} = useAnalytics();
   const [amount, setAmount] = useState<number>(0);
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
@@ -36,11 +37,9 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   const [selectedProducts, setSelectedProducts] = useState<SoldProduct[]>([]);
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const up =
-    useSelector((s: RootState) => s.appData.BusinessOwner.customers)
-      .find(s => s.id === customer.id)
-      ?.unpaidPayments?.flatMap(d =>
-        products.filter(f => f.id === d.id && f.addedAt === d.addedAt),
-      ) || [];
+    owner.customers
+      .find(s => s._id === customer._id)
+      ?.buyedProducts?.filter(f => f.state === PaymentState.UNPAID) || [];
 
   const handleCloseConfirmPayment = () => {
     setAskConfirmPayment(false);
@@ -53,9 +52,9 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
       setPayableAmount(amount);
     } else if (payAs === 'SINGLE' && item) {
       setPayableAmount(
-        (item.discountedPrice && item.discountedPrice !== 0
-          ? item.discountedPrice
-          : item.basePrice) * item.count,
+        (item.product.discounterPrice && item.product.discounterPrice !== 0
+          ? item.product.discounterPrice
+          : item.product.basePrice) * item.count,
       );
     }
     setAskConfirmPayment(true);
@@ -69,7 +68,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   useEffect(() => {
     const amt = products.reduce(
       (acc, f) =>
-        acc + (f.discountedPrice ? f.discountedPrice : f.basePrice) * f.count,
+        acc + (f.product.discounterPrice ? f.product.discounterPrice : f.product.basePrice) * f.count,
       0,
     );
     setAmount(amt);
@@ -87,7 +86,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
           {up.length !== 0 ? (
             <FlatList
               data={up}
-              keyExtractor={i => i.addedAt.toString()}
+              keyExtractor={i => i.createdAt}
               renderItem={({item}) => (
                 <Tab
                   actionType="UNPAID"

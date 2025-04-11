@@ -7,11 +7,11 @@ import {Confirm, showToast} from '../../../service/fn';
 import {resetAndNavigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {deleteUser} from '../../../../store/slices/business';
 
 const LogoutButton = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const {userId} = useSelector((s: RootState) => s.appData.user)!;
   const handleOnLogout = async () => {
     const res = await Confirm(
       'Are you sure?',
@@ -19,6 +19,7 @@ const LogoutButton = () => {
     );
     if (!res) return;
     await AsyncStorage.removeItem('accessToken');
+    dispatch(deleteUser());
     showToast({type: 'success', text1: 'Logout success.'});
     resetAndNavigate('GetStarted');
   };

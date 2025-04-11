@@ -12,7 +12,6 @@ import UserInfo from './components/UserInfo';
 const Settings = () => {
   const {currentTheme} = useTheme();
   const user = useSelector((s: RootState) => s.appData.user)!;
-  console.log(user)
 
   return (
     <View style={styles.parent}>

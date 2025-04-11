@@ -23,14 +23,12 @@ export const APIheaders = async (
   if (secure) {
     token = await AsyncStorage.getItem('accessToken');
     if (!token) {
-      console.log('vjbirei');
       throw new Error('Secure API calls requires Access-Token!');
     }
     const headers = {...header[optType], authorization: `Bearer ${token}`};
     return headers;
   } else {
     const headers = header[optType];
-    console.log(headers);
     return headers;
   }
 };
@@ -42,7 +40,6 @@ const FetchAPI = async ({
   secure = true,
   method,
 }: FetchReqPropType) => {
-  console.log(secure);
   try {
     const headers = await APIheaders(secure, reqType);
     const baseUrl = 'http://192.168.1.71:6900/api/app';
@@ -62,7 +59,7 @@ function handleBooleanState(
   fn?: React.Dispatch<SetStateAction<boolean>>,
   state?: boolean,
 ) {
-  if (fn && state) {
+  if (fn && state !== undefined) {
     fn(state);
   }
   return;

@@ -104,7 +104,7 @@ export const checkDate = ({
     (nowUTC.getMonth() - parsedDateUTC.getMonth());
 
   return {
-    isExactMatch: daysDifference === matchByDay - 1, // ✅ Checks exact day difference
+    isExactMatch: daysDifference === matchByDay - 1,
     sameDay: daysDifference === 0,
     thisMonth: monthDifference === 0,
     lastMonth: monthDifference === 1,
@@ -113,7 +113,7 @@ export const checkDate = ({
     fourMonthsOld: monthDifference === 4,
     olderThanFourMonths: monthDifference > 4,
     monthsOld: monthDifference,
-    daysAgo: daysDifference, // ✅ Returns actual days old
+    daysAgo: daysDifference,
   };
 };
 
@@ -124,3 +124,11 @@ export const modifyUserName = (name: User['name']) => {
     .join(' ');
   return modifiedName;
 };
+
+export const validEmailRegex =
+  /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/i;
+
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/i;
+  return emailRegex.test(email.trim());
+}

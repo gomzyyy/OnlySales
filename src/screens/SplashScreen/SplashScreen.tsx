@@ -1,5 +1,5 @@
-import {View, Text} from 'react-native';
-import React, {useCallback, useEffect} from 'react';
+import {View, Text, ActivityIndicator} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {AppDispatch, RootState} from '../../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -17,26 +17,28 @@ const SplashScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user);
   const {currentTheme} = useTheme();
-  console.log(user);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useFocusEffect(
     useCallback(() => {
       const initNavigation = async () => {
         prepareNavigation();
         if (!user) {
-          setTimeout(() => resetAndNavigate('GetStarted'), 800);
+          resetAndNavigate('GetStarted');
         } else {
-          const res = await validateTokenAPI({role: user.role});
-          // console.log(res.data.user);
+          const res = await validateTokenAPI({role: user.role}, setLoading);
           if (res.success && res.data.user) {
             dispatch(setUser(res.data.user));
             resetAndNavigate('Dashboard');
           } else {
-            setTimeout(() => resetAndNavigate('GetStarted'), 800);
+            resetAndNavigate('GetStarted');
           }
         }
       };
-      initNavigation();
+      const timeoutId = setTimeout(() => initNavigation(), 800);
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }, [user]),
   );
   useEffect(() => {
@@ -54,6 +56,11 @@ const SplashScreen = () => {
           }}>
           Welcome
         </Text>
+        <View style={{marginTop: 40, height: 50}}>
+          {loading && (
+            <ActivityIndicator size={40} color={currentTheme.baseColor} />
+          )}
+        </View>
       </View>
     </View>
   );

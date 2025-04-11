@@ -12,10 +12,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import OwnerInfo from '../components/UserInfo';
 import {TextInput} from 'react-native-gesture-handler';
-import {useTheme} from '../../../hooks/index';
+import {useAnalytics, useTheme} from '../../../hooks/index';
 import {AdminRole, BusinessType} from '../../../../enums';
 import {Confirm, showToast} from '../../../service/fn';
-import {editBusinessOwner} from '../../../../store/slices/business';
 import RolePicker from '../../../components/RolePicker';
 import BusinessTypePicker from '../../../components/BusinessTypePicker';
 import {isNumber} from '../../../service/test';
@@ -25,14 +24,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AppInfo = () => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
-  const owner = useSelector((s: RootState) => s.appData.BusinessOwner);
-  const [name, setName] = useState<string>(owner.name);
+  const {owner} = useAnalytics();
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const [name, setName] = useState<string>(user.name);
   const [profileImageValue, setProfileImageValue] = useState<
     string | undefined
-  >(owner.image);
-  const [role, setRole] = useState<AdminRole>(owner.role);
+  >(user.image);
+  const [role, setRole] = useState<AdminRole>(user.role);
   const [phoneNumber, setPhoneNumber] = useState<string>(
-    owner.phoneNumber ?? '',
+    user.phoneNumber?.value || '',
   );
   const [businessType, setBusinessType] = useState<BusinessType>(
     owner.businessType || BusinessType.RETAIL,
@@ -51,7 +51,7 @@ const AppInfo = () => {
       showToast({type: 'error', text1: 'Name should 4-16 characters long.'});
       return;
     }
-    if (owner.phoneNumber && phoneNumber !== owner.phoneNumber) {
+    if (user.phoneNumber && phoneNumber !== user.phoneNumber.value) {
       if (
         phoneNumber.trim().length === 0 ||
         phoneNumber.trim().length > 10 ||
@@ -68,29 +68,20 @@ const AppInfo = () => {
       'are you sure you have entered correct details?',
     );
     if (!res) return;
-    dispatch(
-      editBusinessOwner({
-        name,
-        userId: owner.userId,
-        phoneNumber,
-        businessType,
-        businessDescription,
-        image: profileImageValue,
-      }),
-    );
     showToast({type: 'success', text1: 'Profile updated successfully.'});
     back();
   };
   const checkIfEdited = () => {
     if (
-      name.trim() !== owner.name.trim() ||
-      role !== owner.role ||
+      name.trim() !== user.name.trim() ||
+      role !== user.role ||
       businessType !== owner.businessType ||
-      (phoneNumber.trim().length !== 0 && phoneNumber !== owner.phoneNumber) ||
+      (phoneNumber.trim().length !== 0 &&
+        phoneNumber !== user.phoneNumber?.value) ||
       (businessType === BusinessType.OTHER &&
         businessDescription.trim().length !== 0 &&
         businessDescription !== owner.businessDescription) ||
-      owner.image !== profileImageValue
+      user.image !== profileImageValue
     ) {
       setEdited(true);
     } else {
@@ -103,7 +94,7 @@ const AppInfo = () => {
     const getPa = async () => {
       const pa = await AsyncStorage.getItem('pa');
     };
-    getPa()
+    getPa();
   }, [
     name,
     role,

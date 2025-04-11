@@ -12,10 +12,9 @@ import React, {useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
 import {Picker} from '@react-native-picker/picker';
-import {QuantityType} from '../../../../enums';
+import {MeasurementType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {addProductToInventory} from '../../../../store/slices/business';
 import {Confirm, showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
 import {isFloat, isNumber} from '../../../service/test';
@@ -34,8 +33,8 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const [quantity, setQuantity] = useState<string>('0');
   const [stock, setStock] = useState<string>('0');
   const [productCost, setProductCost] = useState<string>('0');
-  const [measurementType, setMeasurementType] = useState<QuantityType>(
-    QuantityType.GRAMS,
+  const [measurementType, setMeasurementType] = useState<MeasurementType>(
+    MeasurementType.GRAMS,
   );
 
   const handleOnSubmit = async () => {
@@ -87,23 +86,23 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       );
       if (!res) return;
     }
-    dispatch(
-      addProductToInventory({
-        product: {
-          id: Date.now().toString(),
-          name,
-          basePrice: Number(price),
-          discountedPrice: Number(discountedPrice),
-          quantity: Number(quantity),
-          totalSold: 0,
-          stock: Number(stock),
-          productCost: Number(productCost),
-          measurementType,
-          createdAt: new Date(Date.now()).toDateString(),
-          updatedAt: new Date(Date.now()).toDateString(),
-        },
-      }),
-    );
+    // dispatch(
+    //   addProductToInventory({
+    //     product: {
+    //       id: Date.now().toString(),
+    //       name,
+    //       basePrice: Number(price),
+    //       discountedPrice: Number(discountedPrice),
+    //       quantity: Number(quantity),
+    //       totalSold: 0,
+    //       stock: Number(stock),
+    //       productCost: Number(productCost),
+    //       measurementType,
+    //       createdAt: new Date(Date.now()).toDateString(),
+    //       updatedAt: new Date(Date.now()).toDateString(),
+    //     },
+    //   }),
+    // );
     close();
     showToast({
       type: 'success',

@@ -51,7 +51,7 @@ const Customers = () => {
           </View>
           {customers.length !== 0 ? (
             <FlatList
-              data={customers}
+              data={[...customers].reverse()}
               keyExtractor={s => s._id}
               nestedScrollEnabled
               renderItem={({item}) => <Tab i={item} />}

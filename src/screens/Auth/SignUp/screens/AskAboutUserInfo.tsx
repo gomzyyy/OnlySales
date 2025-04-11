@@ -13,34 +13,38 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {deviceHeight} from '../../../../utils/Constants';
 import {navigate} from '../../../../utils/nagivationUtils';
 import BusinessTypePicker from '../../../../components/BusinessTypePicker';
-import {BusinessType, CurrencyType} from '../../../../../enums';
+import {BusinessType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
-import {showToast} from '../../../../service/fn';
+import {isValidEmail, showToast} from '../../../../service/fn';
 import CurrencyPicker from '../../../../components/CurrencyPicker';
+import {signupAPI} from '../../../../api/api.auth';
 
 type AskAboutUserInfoParams = {
   name: string;
   userId: string;
+  businessPhoneNumber: string;
 };
 
 const AskAboutUserInfo = () => {
   const {params} = useRoute();
   const dispatch = useDispatch<AppDispatch>();
-  const {name, userId} = params as AskAboutUserInfoParams;
+  const {name, userId, businessPhoneNumber} = params as AskAboutUserInfoParams;
   const {currentTheme} = useTheme();
   const [businessType, setBusinessType] = useState<BusinessType>(
     BusinessType.RETAIL,
   );
-  const [currency, setCurrency] = useState<CurrencyType>(CurrencyType.INR);
   const [businessName, setBusinessName] = useState<string>('');
   const [askBusinessDescription, setAskBusinessDescription] =
     useState<boolean>(false);
-  const [businessDiscription, setBusinessDescription] = useState<string>('');
+  const [businessDiscription, setBusinessDescription] = useState<string | null>(
+    null,
+  );
   const [businessAddress, setBusinessAddress] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
 
-  const handleSetBusinessType = () => {
+  const handleSetBusinessType = async () => {
     if (
       !businessName ||
       businessName.trim().length === 0 ||
@@ -57,18 +61,21 @@ const AskAboutUserInfo = () => {
     ) {
       showToast({
         type: 'error',
-        text1: "Name & address should between 4-64 characters!",
+        text1: 'Name & address should between 4-64 characters!',
         position: 'top',
       });
       return;
     }
     if (
       (businessType === BusinessType.OTHER &&
+        businessDiscription &&
         businessDiscription.trim().length === 0) ||
       (businessType === BusinessType.OTHER &&
+        businessDiscription &&
         businessDiscription.trim().length < 4) ||
       (businessType === BusinessType.OTHER &&
-        businessDiscription.trim().length > 64)
+        businessDiscription &&
+        businessDiscription?.trim().length > 64)
     ) {
       showToast({
         type: 'error',
@@ -77,16 +84,26 @@ const AskAboutUserInfo = () => {
       });
       return;
     }
-    const signupData = {
+    if (!isValidEmail(email)) {
+      showToast({
+        type: 'error',
+        text1: 'Please enter a valid email.',
+        position: 'top',
+      });
+      return;
+    }
+    const params = {
       name,
       userId,
       businessName,
       businessType,
       businessDiscription,
-      currency
+      businessPhoneNumber,
+      businessAddress,
+      email,
     };
-    // dispatch(setBusinessOwner(signupData));
-    navigate('SignupSuccess');
+    console.log(params)
+    navigate('SetPassword', params);
   };
   useEffect(() => {
     if (businessType === BusinessType.OTHER) {
@@ -113,6 +130,20 @@ const AskAboutUserInfo = () => {
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Your business name here."
+              placeholderTextColor={currentTheme.baseColor}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Your Business email:</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="email here."
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>
@@ -143,7 +174,7 @@ const AskAboutUserInfo = () => {
                 Please describe your business in few words:
               </Text>
               <TextInput
-                value={businessDiscription}
+                value={businessDiscription || ''}
                 onChangeText={setBusinessDescription}
                 style={[
                   styles.inputText,
@@ -154,14 +185,6 @@ const AskAboutUserInfo = () => {
               />
             </View>
           )}
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Choose your currency:</Text>
-            <CurrencyPicker
-              enabled={true}
-              value={currency}
-              setState={setCurrency}
-            />
-          </View>
         </View>
 
         <View style={styles.buttonContainer}>

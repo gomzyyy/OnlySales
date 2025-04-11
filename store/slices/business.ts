@@ -53,7 +53,11 @@ const UserSlice = createSlice({
     deleteUser: state => {
       state.user = undefined;
     },
+    setTheme: (state, action: PayloadAction<AppTheme>) => {
+      const choosedTheme: AppTheme = action.payload;
+      state.app.currentTheme = choosedTheme;
+    },
   },
 });
-export const {setUser,deleteUser} = UserSlice.actions;
+export const {setUser, deleteUser, setTheme} = UserSlice.actions;
 export default UserSlice.reducer;

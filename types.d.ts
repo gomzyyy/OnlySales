@@ -88,9 +88,15 @@ export interface CommonProps {
 
 export interface User extends CommonProps {
   name: string;
-  phoneNumber?: string;
+  phoneNumber?: {
+    value: string;
+    verified: boolean;
+  };
   image?: string | undefined;
-  email?: string;
+  email?: {
+    value: string;
+    verified: boolean;
+  };
   address?: string;
   userId: string;
 }
@@ -191,16 +197,16 @@ export interface Employee extends User {
   role: AdminRole;
   shift: Shift;
   shiftDescription?: string;
-  reportsTo: Owner | Employee | Partner | string;
+  reportsTo: Owner | Employee | Partner;
   reportsToModel: AdminRole;
   permissions: UserPermissions;
-  createdBy: Owner | Partner | Employee | string;
+  createdBy: Owner | Partner | Employee;
   createdByModel: AdminRole;
 }
 
 export interface Product extends CommonProps {
   name: string;
-  businessOwner: Owner | string;
+  businessOwner: Owner;
   productType: ProductType;
   image?: string;
   totalSold: number;
@@ -211,12 +217,12 @@ export interface Product extends CommonProps {
   measurementTypeDescription?: string;
   stock: number;
   productCost: number;
-  createdBy: Owner | Partner | Employee | string;
+  createdBy: Owner | Partner | Employee;
   createdByModel: AdminRole;
 }
 
 export interface SoldProduct extends CommonProps {
-  product: Product | string;
+  product: Product;
   buyer: string;
   state: PaymentState;
   count: number;

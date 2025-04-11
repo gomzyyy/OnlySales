@@ -35,6 +35,7 @@ import Employee from '../screens/Employee/Employee';
 import PayByScan from '../screens/PayByScan/PayByScan';
 import AppInfo from '../screens/Settings/screens/AppInfo';
 import VerifyPassword from '../screens/Auth/Login/screens/VerifyUserPassword';
+import SetPassword from '../screens/Auth/SignUp/screens/SetPassword';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -70,7 +71,6 @@ const StackNav = () => {
       }}>
       {/* <stack.Screen name="Test" component={Test} /> */}
       <stack.Screen name="SplashScreen" component={SplashScreen} />
-      {/* <stack.Screen name="Test" component={Test} /> */}
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />
       <stack.Screen name="Customer" component={Customer} />
@@ -96,6 +96,7 @@ const StackNav = () => {
         options={{gestureEnabled: false}}
         component={SignUp}
       />
+      <stack.Screen name="SetPassword" component={SetPassword} />
       <stack.Screen
         name="UserNotFound"
         options={{gestureEnabled: false}}
