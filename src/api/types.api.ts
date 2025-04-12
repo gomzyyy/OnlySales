@@ -4,7 +4,14 @@ import {
   MeasurementType,
   ProductType,
 } from '../../enums';
-import {Customer, Employee, Owner, Partner} from '../../types';
+import {
+  Customer,
+  Employee,
+  Owner,
+  Partner,
+  Product,
+  SoldProduct,
+} from '../../types';
 
 export interface APIReturnType {
   message: string;
@@ -35,18 +42,18 @@ export interface SignupAPIReturnType extends APIReturnType {
 }
 
 export interface SignupData {
-  name: string;// //
+  name: string; // //
   phoneNumber?: string;
-  password: string;//
-  email: string;//
+  password: string; //
+  email: string; //
   address?: string;
-  userId: string;// //
-  businessAddress: string;// //
-  businessName: string;// //
-  businessPhoneNumber: string;// //
+  userId: string; // //
+  businessAddress: string; // //
+  businessName: string; // //
+  businessPhoneNumber: string; // //
   businessDescription?: string; //
-  businessType: BusinessType;// //
-  role: AdminRole;//
+  businessType: BusinessType; // //
+  role: AdminRole; //
   gstNumber?: string;
 }
 export interface LoginData {
@@ -115,4 +122,26 @@ export interface CreateProductAPIData {
   };
 }
 
-export interface CreateProductAPIReturnType extends APIReturnType {}
+export interface CreateProductAPIReturnType extends APIReturnType {
+  data: {
+    product: Product | undefined;
+  };
+}
+export interface SellProductData {
+  query: {
+    buyerId: string;
+    sellerId: string;
+    role: AdminRole;
+  };
+  body: {
+    productId: string;
+    count: number;
+  };
+}
+
+export interface SellProductAPIReturnType extends APIReturnType {
+  data: {
+    soldProduct: SoldProduct | undefined;
+    seller: Owner | Partner | Employee | undefined;
+  };
+}

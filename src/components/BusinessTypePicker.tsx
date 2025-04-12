@@ -14,7 +14,6 @@ type BusinessTypePickerProps = {
 
 const BusinessTypePicker:React.FC<BusinessTypePickerProps> = ({enabled=false,setState,value}):React.JSX.Element => {
   const {currentTheme} = useTheme();
-  console.log(BusinessType.RETAIL)
 
   return (
      <Picker

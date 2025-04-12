@@ -102,7 +102,6 @@ const AskAboutUserInfo = () => {
       businessAddress,
       email,
     };
-    console.log(params)
     navigate('SetPassword', params);
   };
   useEffect(() => {

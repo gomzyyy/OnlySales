@@ -34,7 +34,8 @@ const MyInventory = () => {
   };
 
   return (
-    <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
+    <View
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Header
         name={`${user.name}`}
         backButtom
@@ -43,6 +44,7 @@ const MyInventory = () => {
         customAction={handleAddButton}
         titleColor={currentTheme.header.textColor}
         headerBgColor={currentTheme.baseColor}
+        curved={true}
       />
       <View style={styles.contentContainer}>
         {inventoryItems.length === 0 ? (
@@ -87,9 +89,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   listContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    flexWrap: 'wrap',
+    // justifyContent: 'space-evenly',
+    // flexWrap: 'wrap',
   },
   assistTextContainer: {
     position: 'absolute',

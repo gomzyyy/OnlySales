@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
@@ -14,10 +15,15 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import InventoryItem from './InventoryItem';
 import SearchBar from '../../SearchCustomer/components/subcomponents/SearchBar';
 import {Customer, SoldProduct, Product, Owner} from '../../../../types';
-import {useTheme} from '../../../hooks/index';
+import {useAnalytics, useTheme} from '../../../hooks/index';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
+import {sellProductAPI} from '../../../api/api.soldproduct';
+import {SellProductAPIReturnType} from '../../../api/types.api';
+import {setUser} from '../../../../store/slices/business';
+import {getUserAPI} from '../../../api/api.user';
+import {showToast} from '../../../service/fn';
 
 type AddUdharProps = {
   close?: () => void;
@@ -29,10 +35,10 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   customer,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const {owner} = useAnalytics();
   const dispatch = useDispatch<AppDispatch>();
-  const inventory = useSelector(
-    (s: RootState) => (s.appData.user as Owner).inventory,
-  );
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const inventory = owner.inventory;
   const sortedInventory: Product[] = [...inventory].sort(
     (a, b) => b.totalSold - a.totalSold,
   );
@@ -40,37 +46,39 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const [inventoryItems, setInventoryItems] =
     useState<Product[]>(sortedInventory);
   const [query, setQuery] = useState<string>('');
-  const [selectedProducts, setSelectedProducts] = useState<SoldProduct[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<
+    {product: Product | undefined; count: number}[]
+  >([]);
   const [udharAmount, setUdharAmount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleNewUdhars = (s: SoldProduct) => {
-    // const alreadyExist: SoldProduct | undefined = selectedProducts
-    //   ? selectedProducts.find(f => f._id === s._id)
-    //   : undefined;
-    // if (alreadyExist) {
-    //   if (alreadyExist.count === 0) {
-    //     return;
-    //   }
-    //   setSelectedProducts(prev =>
-    //     prev
-    //       ? prev.map(v =>
-    //           v._id === alreadyExist._id ? {...alreadyExist, count: s.count} : v,
-    //         )
-    //       : [{...s}],
-    //   );
-    // } else {
-    //   setSelectedProducts(
-    //     [...(selectedProducts || []), {...s}].map(
-    //       s =>
-    //         s && {
-    //           ...s,
-    //           createdAt: new Date(Date.now()
-    //           //  - (3*24*60*60*1000)
-    //           ).toDateString(),
-    //         },
-    //     ),
-    //   );
-    // }
+  const handleNewUdhars = ({
+    product,
+    count,
+  }: {
+    product: Product;
+    count: number;
+  }) => {
+    const alreadyExist:
+      | {product: Product | undefined; count: number}
+      | undefined = selectedProducts.find(f => f.product?._id === product._id);
+    if (alreadyExist) {
+      if (alreadyExist.count === 0) {
+        return;
+      }
+      setSelectedProducts(p =>
+        p?.map(v => (v.product?._id ? {...v, count} : v)),
+      );
+    } else {
+      setSelectedProducts(
+        [...(selectedProducts || []), {product, count}].map(
+          s =>
+            s && {
+              ...s,
+            },
+        ),
+      );
+    }
   };
 
   const handleSetUdharAmount = ({
@@ -82,47 +90,81 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     action: 'ADD' | 'MINUS';
     count: number;
   }) => {
-  //   if (action === 'ADD') {
-  //     setUdharAmount(
-  //       udharAmount +
-  //         Number(
-  //           product.discounterPrice === 0
-  //             ? product.basePrice
-  //             : product.discounterPrice,
-  //         ),
-  //     );
-  //   }
-  //   if (action === 'MINUS') {
-  //     setUdharAmount(
-  //       udharAmount -
-  //         Number(
-  //           product.discounterPrice === 0
-  //             ? product.basePrice
-  //             : product.discounterPrice,
-  //         ),
-  //     );
-  //   }
-  //   const newProducts: SoldProduct = {
-  //     ...product,
-  //     buyer:customer._id,
-  //     count: count,
-  //     addedAt: Date.now()
-  //     //  - (3*24*60*60*1000),
-  //   };
-  //   handleNewUdhars(newProducts);
+    if (action === 'ADD') {
+      setUdharAmount(
+        udharAmount +
+          Number(
+            product.discounterPrice && product.discounterPrice !== 0
+              ? product.discounterPrice
+              : product.basePrice,
+          ),
+      );
+    }
+    if (action === 'MINUS') {
+      setUdharAmount(
+        udharAmount -
+          Number(
+            product.discounterPrice && product.discounterPrice !== 0
+              ? product.discounterPrice
+              : product.basePrice,
+          ),
+      );
+    }
+  };
+  const handleAddUdharBtn = async () => {
+    try {
+      for (const p of selectedProducts) {
+        if (p.product && p.count > 0) {
+          const res: SellProductAPIReturnType = await sellProductAPI(
+            {
+              query: {
+                buyerId: customer._id,
+                sellerId: user._id,
+                role: user.role,
+              },
+              body: {productId: p.product._id!, count: p.count},
+            },
+            setLoading,
+          );
+          if (
+            res &&
+            res.success &&
+            res.data &&
+            res.data.soldProduct &&
+            res.data.seller
+          ) {
+            dispatch(setUser(res.data.seller));
+          } else {
+            showToast({
+              type: 'error',
+              text1: `Error occurred while selling:: ${res.message}`,
+            });
+            return;
+          }
+        } else {
+          showToast({
+            type: 'error',
+            text1: `Error occurred while selling:: ${p.product?.name}__`,
+          });
+          close?.();
+          return;
+        }
+      }
+      showToast({
+        type: 'success',
+        text1: `Product(s) successfully sold.`,
+      });
+      close?.();
+    } catch (err) {
+      console.error(err);
+      showToast({
+        type: 'error',
+        text1: `Unexpected error occurred.`,
+      });
+    }
   };
 
-  const handleAddUdharBtn = () => {
-  //   if (selectedProducts && selectedProducts.length !== 0) {
-  //     // dispatch(
-  //     //   addNewUdhar({
-  //     //     customer,
-  //     //     products: selectedProducts,
-  //     //   }),
-  //     // );
-  //   }
-    close && close();
-  };
+  useEffect(() => {}, [selectedProducts]);
 
   useEffect(() => {
     if (query.trim().length !== 0) {
@@ -170,6 +212,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
                 key={i}
                 product={f}
                 callback={handleSetUdharAmount}
+                onSelectProduct={handleNewUdhars}
               />
             ))}
           </ScrollView>
@@ -193,8 +236,13 @@ const AddUdhar: React.FC<AddUdharProps> = ({
               ]}>
               {udharAmount === 0
                 ? 'Cancel'
+                : loading
+                ? 'Adding'
                 : `Add Udhar of ${currencyType} ${udharAmount}`}
             </Text>
+            {loading && (
+              <ActivityIndicator size={18} color={currentTheme.contrastColor} />
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -275,6 +323,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     flex: 2,
+    flexDirection: 'row',
+    gap: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   doneAddingText: {
     textAlign: 'center',
@@ -289,6 +341,7 @@ const styles = StyleSheet.create({
     gap: 6,
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   addProductText: {
     textAlign: 'center',

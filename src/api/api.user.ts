@@ -12,13 +12,15 @@ export const getUserAPI = async (
   try {
     const fetching = await FetchAPI({
       reqType: 'r',
-      route: `/get/user?role=${data.role}&uid`,
+      route: `/get/user?role=${data.role}`,
       method: 'GET',
     });
     return (await fetching.json()) as GetUserAPIReturnType;
   } catch (error) {
     return {
-      message: 'Internal server Error occured while fetching',
+      message:  error instanceof Error
+      ? error.message
+      : 'Internal server Error occured while fetching',
       data: {
         user: undefined,
       },

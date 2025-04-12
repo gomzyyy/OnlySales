@@ -34,7 +34,6 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
-  const [selectedProducts, setSelectedProducts] = useState<SoldProduct[]>([]);
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const up =
     owner.customers
@@ -68,7 +67,11 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   useEffect(() => {
     const amt = products.reduce(
       (acc, f) =>
-        acc + (f.product.discounterPrice ? f.product.discounterPrice : f.product.basePrice) * f.count,
+        acc +
+        (f.product.discounterPrice
+          ? f.product.discounterPrice
+          : f.product.basePrice) *
+          f.count,
       0,
     );
     setAmount(amt);

@@ -8,6 +8,10 @@ import {Customer, Employee} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {useAnalytics, useTheme} from '../../../hooks/index';
+import {
+  resetSearchResults,
+  setSearchResult,
+} from '../../../../store/slices/business';
 
 type HeaderProps = {
   searchBar?: boolean;
@@ -21,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
   const dispatch = useDispatch<AppDispatch>();
-  const customers = owner.customers
+  const customers = owner.customers;
   const [query, setQuery] = useState<string>('');
   const clearSearchText = () => setQuery('');
 
@@ -32,17 +36,17 @@ const Header: React.FC<HeaderProps> = ({
         s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
       );
     }
-    // result.length !== 0 &&
-      // dispatch(setSearchResult({customers: result, type: 'CUSTOMER'}));
+    result.length !== 0 &&
+      dispatch(setSearchResult({customers: result, type: 'CUSTOMER'}));
   };
   useEffect(() => {
     if (query.trim().length !== 0) {
       handleSearchQuery();
     } else {
-      // dispatch(resetSearchResults());
+      dispatch(resetSearchResults());
     }
     return () => {
-      // dispatch(resetSearchResults());
+      dispatch(resetSearchResults());
     };
   }, [query]);
 

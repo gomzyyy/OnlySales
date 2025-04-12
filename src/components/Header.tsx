@@ -34,6 +34,7 @@ type HeaderProps = {
     | 0.8
     | 0.9
     | 1;
+  curved?: boolean;
 };
 
 const Header: React.FC<HeaderProps> = ({
@@ -47,10 +48,15 @@ const Header: React.FC<HeaderProps> = ({
   renderItem = <></>,
   customAction = () => {},
   customComponentActiveOpacity = 0.5,
+  curved = false,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const navigation = useNavigation();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
+
+  const curvedBorders={
+      borderBottomRadius:20
+  }
 
   return (
     <View
@@ -61,6 +67,8 @@ const Header: React.FC<HeaderProps> = ({
         flexDirection: 'row',
         paddingHorizontal: 20,
         backgroundColor: headerBgColor ?? '',
+        borderBottomRightRadius:curved ? 10 : 0,
+        borderBottomLeftRadius:curved ? 10 : 0
       }}>
       {!backButtom && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>

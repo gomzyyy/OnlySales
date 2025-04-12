@@ -16,43 +16,27 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {todaysMostSoldProducts} = useAnalytics();
-
+  console.log(todaysMostSoldProducts);
   const currency = useSelector((s: RootState) => s.appData.app.currency);
+
+  const calculatePrice = (item: any) => {
+    const totalSold = Number(item?.product?.totalSold ?? 0);
+    const price = Number(
+      item?.product?.discounterPrice ?? item?.product?.basePrice ?? 0,
+    );
+    return totalSold * price;
+  };
+
+  const prices = todaysMostSoldProducts.slice(0, 5).map(calculatePrice);
+  const labels = todaysMostSoldProducts
+    .slice(0, 5)
+    .map(item => item.product.name);
+
   const data: Dataset = {
-    data: [
-      0,
-      todaysMostSoldProducts.length >= 1
-        ? todaysMostSoldProducts[0].totalSold *
-          (todaysMostSoldProducts[0].discountedPrice ||
-            todaysMostSoldProducts[0].basePrice)
-        : 0,
-
-      todaysMostSoldProducts.length >= 2
-        ? todaysMostSoldProducts[1].totalSold *
-          (todaysMostSoldProducts[1].discountedPrice ||
-            todaysMostSoldProducts[1].basePrice)
-        : 0,
-
-      todaysMostSoldProducts.length >= 3
-        ? todaysMostSoldProducts[2].totalSold *
-          (todaysMostSoldProducts[2].discountedPrice ||
-            todaysMostSoldProducts[2].basePrice)
-        : 0,
-
-      todaysMostSoldProducts.length >= 4
-        ? todaysMostSoldProducts[3].totalSold *
-          (todaysMostSoldProducts[3].discountedPrice ||
-            todaysMostSoldProducts[3].basePrice)
-        : 0,
-
-      todaysMostSoldProducts.length >= 5
-        ? todaysMostSoldProducts[4].totalSold *
-          (todaysMostSoldProducts[4].discountedPrice ||
-            todaysMostSoldProducts[4].basePrice)
-        : 0,
-    ].slice(0, todaysMostSoldProducts.length + 1),
+    data: [0, ...prices],
     color: opacity => `rgba(0,0,0,${opacity})`,
   };
+
   return (
     <TouchableOpacity
       style={styles.graphContainer}
@@ -60,7 +44,7 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
       activeOpacity={0.8}>
       <LineChart
         data={{
-          labels: ['', ...todaysMostSoldProducts.map(s => s.name)],
+          labels: ['', ...labels],
           datasets: [data],
         }}
         width={deviceWidth - 20}

@@ -19,10 +19,10 @@ import AddUdhar from './components/AddUdhar';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import {toogleState} from '../../service/fn';
-import {useTheme, useHaptics} from '../../hooks';
+import {useTheme, useHaptics, useAnalytics} from '../../hooks';
 import UnPaidPayments from './components/UnPaidPayments';
 import PaidPayments from './components/PaidPayments';
-import {AdminRole, PaymentState} from '../../../enums';
+import {PaymentState} from '../../../enums';
 
 type RouteParams = {
   customer: CustomerType;
@@ -33,16 +33,9 @@ const Customer = () => {
   const {currentTheme} = useTheme();
   const params = useRoute().params;
   const {customer} = params as RouteParams;
-  const user = useSelector((s: RootState) => s.appData.user);
+  const {owner} = useAnalytics();
 
-  const customers: CustomerType[] =
-    user?.role === AdminRole.OWNER
-      ? (user as Owner).customers
-      : user?.role === AdminRole.PARTNER
-      ? (user as Partner).businessOwner.customers
-      : user?.role === AdminRole.EMPLOYEE
-      ? (user as Employee).businessOwner.customers
-      : [];
+  const customers: CustomerType[] = owner.customers;
 
   const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
   const [paidPayments, setPaidPayments] = useState<SoldProduct[]>([]);
@@ -182,9 +175,9 @@ const Customer = () => {
 
       <SlideUpContainer
         open={addUdharVisible}
-        close={()=>setAddUdharVisible(false)}>
+        close={() => setAddUdharVisible(false)}>
         <AddUdhar
-          close={()=>setAddUdharVisible(false)}
+          close={() => setAddUdharVisible(false)}
           customer={currCustomer}
         />
       </SlideUpContainer>

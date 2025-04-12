@@ -18,7 +18,9 @@ export const getOwnerAPI = async (
     return (await fetching.json()) as GetOwnerAPIReturnType;
   } catch (error) {
     return {
-      message: 'Internal server Error occured while fetching',
+      message: error instanceof Error
+      ? error.message
+      : 'Internal server Error occured while fetching',
       data: {
         owner: undefined,
       },

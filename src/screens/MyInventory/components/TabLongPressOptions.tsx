@@ -5,7 +5,6 @@ import { Product} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {removeProductFromInventory} from '../../../../store/slices/business';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
 
@@ -27,7 +26,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
       'Once product removed, cannot be reversed! be careful of miss-touching removal button.',
     );
     if (res) {
-      dispatch(removeProductFromInventory({product:i}));
+      // dispatch(removeProductFromInventory({product:i}));
       showToast({type: 'success', text1: 'Customer removed successfully.'});
       close();
       return;

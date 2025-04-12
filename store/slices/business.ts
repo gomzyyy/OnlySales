@@ -57,7 +57,33 @@ const UserSlice = createSlice({
       const choosedTheme: AppTheme = action.payload;
       state.app.currentTheme = choosedTheme;
     },
+    setSearchResult: (
+      state,
+      action: PayloadAction<{
+        customers?: Customer[];
+        employees?: Employee[];
+        type: 'CUSTOMER' | 'EMPLOYEE';
+      }>,
+    ) => {
+      const {customers, employees, type} = action.payload;
+      if (customers && type === 'CUSTOMER') {
+        state.app.searchResults.customerResults = customers;
+      }
+      if (employees && type === 'EMPLOYEE') {
+        state.app.searchResults.employeeResults = employees;
+      }
+    },
+    resetSearchResults: state => {
+      state.app.searchResults.customerResults = [];
+      state.app.searchResults.employeeResults = [];
+    },
   },
 });
-export const {setUser, deleteUser, setTheme} = UserSlice.actions;
+export const {
+  setUser,
+  deleteUser,
+  setTheme,
+  setSearchResult,
+  resetSearchResults,
+} = UserSlice.actions;
 export default UserSlice.reducer;

@@ -8,6 +8,7 @@ import {Customer, Employee} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {useAnalytics, useTheme} from '../../../hooks/index';
+import { resetSearchResults, setSearchResult } from '../../../../store/slices/business';
 
 type HeaderProps = {
   searchBar?: boolean;
@@ -33,17 +34,17 @@ const Header: React.FC<HeaderProps> = ({
         s.name.trim().toLowerCase().includes(query.trim().toLowerCase()),
       );
     }
-    // result.length !== 0 &&
-    //   dispatch(setSearchResult({employees: result, type: 'EMPLOYEE'}));
+    result.length !== 0 &&
+      dispatch(setSearchResult({employees: result, type: 'EMPLOYEE'}));
   };
   useEffect(() => {
     if (query.trim().length !== 0) {
       handleSearchQuery();
     } else {
-      // dispatch(resetSearchResults());
+      dispatch(resetSearchResults());
     }
     return () => {
-      // dispatch(resetSearchResults());
+      dispatch(resetSearchResults());
     };
   }, [query]);
 

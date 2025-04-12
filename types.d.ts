@@ -102,9 +102,9 @@ export interface User extends CommonProps {
 }
 
 export interface Customer extends User {
-  businessOwner: Owner | string;
+  businessOwner: Owner;
   buyedProducts: SoldProduct[];
-  createdBy: Owner | Partner | Employee | string;
+  createdBy: Owner | Partner | Employee;
   createdByModel: AdminRole;
 }
 
@@ -133,7 +133,7 @@ export interface Owner extends User {
   equity: number;
   businessName: string;
   businessPhoneNumber: number;
-  businessPartners: Partner[] | string[];
+  businessPartners: Partner[];
   gstNumber: string;
   accountType: AccountType;
   history: History;

@@ -1,4 +1,4 @@
-import {Text, StyleSheet, View, ScrollView} from 'react-native';
+import {Text, StyleSheet, View, ScrollView, Image} from 'react-native';
 import React, {useState} from 'react';
 import {Product} from '../../../../types';
 import {useTheme} from '../../../hooks/index';
@@ -10,6 +10,7 @@ import TabLongPressOptions from './TabLongPressOptions';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {deviceWidth} from '../../../utils/Constants';
+const NoPhoto = require('../../../assets/images/no-profile.jpg');
 
 type TabProps = {
   i: Product;
@@ -38,13 +39,12 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.contrastColor,
+            backgroundColor: currentTheme.baseColor,
           },
         ]}>
         <View
           style={[styles.tabLabel, {backgroundColor: currentTheme.baseColor}]}>
-          <Text
-            style={[styles.productName, {color: currentTheme.tab.text}]}>
+          <Text style={[styles.productName, {color: currentTheme.tab.text}]}>
             {i.name}
           </Text>
         </View>
@@ -53,49 +53,66 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
             styles.productInfoContainer,
             {backgroundColor: currentTheme.baseColor},
           ]}>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-              Price: {`${currency}${i.basePrice}`}
-            </Text>
+          <View style={styles.imageContainer}>
+            <Image
+              source={i.image ? {uri: i.image} : NoPhoto}
+              height={120}
+              width={120}
+              style={{
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: currentTheme.contrastColor,
+              }}
+            />
           </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-              Discounted price: {`${currency} ${i.discountedPrice}`}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-              Includes: {i.quantity} {i.measurementType}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-              Total sold: {i.totalSold}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-              Stock: {i.stock}
-            </Text>
-          </View>
-
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-              Product cost: {`${currency} ${i.productCost}`}
-            </Text>
-          </View>
-          {i.productCost && (
+          <View>
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-                Net Profit/sale:{' '}
-                {`${
-                 parseFloat(( i.discountedPrice && i.discountedPrice > 0
-                    ? (i.discountedPrice / i.productCost) * 100
-                    : (i.basePrice / i.productCost) * 100).toFixed(2))
-                }%`}
+                Price: {`${currency} ${i.basePrice}`}
               </Text>
             </View>
-          )}
+            {i.discounterPrice && (
+              <View style={styles.infoContainer}>
+                <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                  Discounted price: {`${currency} ${i.discounterPrice}`}
+                </Text>
+              </View>
+            )}
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                Includes: {i.quantity} {i.measurementType}
+              </Text>
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                Total sold: {i.totalSold}
+              </Text>
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                Stock: {i.stock}
+              </Text>
+            </View>
+
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                Product cost: {`${currency} ${i.productCost}`}
+              </Text>
+            </View>
+            {i.productCost && (
+              <View style={styles.infoContainer}>
+                <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                  Net Profit/sale:{' '}
+                  {`${parseFloat(
+                    (i.discounterPrice && i.discounterPrice > 0
+                      ? (i.discounterPrice / i.productCost) * 100 - 100
+                      : (i.basePrice / i.productCost) * 100 - 100
+                    ).toFixed(1),
+                  )}%`}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
         <SlideUpContainer open={openEditing} close={handleCloseEditing}>
           <EditProduct product={i} close={handleCloseEditing} />
@@ -114,17 +131,13 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 6,
     paddingVertical: 6,
-    justifyContent: 'space-between',
-    borderRadius: 8,
-    height: 210,
-    width: deviceWidth * 0.45,
-    maxWidth: 300,
+    borderRadius: 16,
   },
   tabLabel: {
     flexDirection: 'row',
     justifyContent: 'center',
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 10,
   },
   productName: {
     fontSize: 20,
@@ -133,8 +146,14 @@ const styles = StyleSheet.create({
   productInfoContainer: {
     flex: 1,
     marginTop: 4,
-    borderRadius: 6,
-    padding: 4,
+    borderRadius: 10,
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   infoContainer: {
     marginTop: 6,

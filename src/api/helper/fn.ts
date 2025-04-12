@@ -25,7 +25,7 @@ export const APIheaders = async (
     if (!token) {
       throw new Error('Secure API calls requires Access-Token!');
     }
-    const headers = {...header[optType], authorization: `Bearer ${token}`};
+    const headers = {...header[optType], Authorization: `Bearer ${token}`};
     return headers;
   } else {
     const headers = header[optType];

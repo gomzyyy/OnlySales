@@ -6,12 +6,9 @@ export const createProductAPI = async (
   data: CreateProductAPIData,
   setState: React.Dispatch<SetStateAction<boolean>>,
 ) => {
-    handleBooleanState(setState, true);
+  handleBooleanState(setState, true);
   try {
     const formData = new FormData();
-    formData.append('creatorId', data.query.creatorId);
-    formData.append('role', data.query.role);
-    formData.append('ownerId', data.query.ownerId);
     formData.append('name', data.body.name);
     formData.append('basePrice', data.body.basePrice.toString());
     formData.append('quantity', data.body.quantity.toString());
@@ -27,7 +24,7 @@ export const createProductAPI = async (
       );
     }
     if (data.media.image) {
-      formData.append('image', {
+      formData.append('img', {
         uri: data.media.image,
         type: 'image/jpeg',
         name: 'product.jpg',
@@ -35,7 +32,7 @@ export const createProductAPI = async (
     }
 
     const fetching = await FetchAPI({
-      route: `/create/product`,
+      route: `/create/product?role=${data.query.role}&creatorId=${data.query.creatorId}&ownerId=${data.query.ownerId}`,
       reqType: 'media',
       method: 'POST',
       body: formData,
@@ -44,9 +41,11 @@ export const createProductAPI = async (
     return (await fetching.json()) as CreateProductAPIReturnType;
   } catch (error) {
     return {
-      message: 'Internal server Error occured while fetching',
+      message: error instanceof Error
+      ? error.message
+      : 'Internal server Error occured while fetching',
       data: {
-        customer: undefined,
+        product: undefined,
       },
       success: false,
     } as CreateProductAPIReturnType;

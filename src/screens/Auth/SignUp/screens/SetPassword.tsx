@@ -98,7 +98,6 @@ const SetPassword = () => {
       role: AdminRole.OWNER,
     };
     const res = await signupAPI(signupData, setLoading);
-    console.log(res)
     if (res.success && res.data && res.data.user && res.data.token) {
       await AsyncStorage.setItem('accessToken', res.data.token);
       dispatch(setUser(res.data.user));

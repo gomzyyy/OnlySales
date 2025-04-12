@@ -32,8 +32,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       soldThisMonth.reduce(
         (acc, s) =>
           acc +
-          ((s.discountedPrice ? s.discountedPrice : s.basePrice) *
-            s.totalSold || 0),
+          ((s.product.discounterPrice ? s.product.discounterPrice: s.product.basePrice) *
+            s.product.totalSold || 0),
         0,
       ),
     [soldThisMonth],
@@ -43,8 +43,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       todaySales.reduce(
         (acc, s) =>
           acc +
-          ((s.discountedPrice ? s.discountedPrice : s.basePrice) *
-            s.totalSold || 0),
+        ((s.product.discounterPrice ? s.product.discounterPrice: s.product.basePrice) *
+        s.product.totalSold || 0),
         0,
       ),
     [todaySales],

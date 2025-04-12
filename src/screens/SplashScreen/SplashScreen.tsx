@@ -18,14 +18,11 @@ const SplashScreen = () => {
   const user = useSelector((s: RootState) => s.appData.user);
   const {currentTheme} = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
-
   useFocusEffect(
     useCallback(() => {
       const initNavigation = async () => {
         prepareNavigation();
-        if (!user) {
-          resetAndNavigate('GetStarted');
-        } else {
+        if (user && user._id) {
           const res = await validateTokenAPI({role: user.role}, setLoading);
           if (res.success && res.data.user) {
             dispatch(setUser(res.data.user));
@@ -33,6 +30,8 @@ const SplashScreen = () => {
           } else {
             resetAndNavigate('GetStarted');
           }
+        } else {
+          resetAndNavigate('GetStarted');
         }
       };
       const timeoutId = setTimeout(() => initNavigation(), 800);

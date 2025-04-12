@@ -194,7 +194,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
                   styles.saveButtonText,
                   {color: currentTheme.modal.saveBtnText},
                 ]}>
-                Creating
+                Please wait
               </Text>
               <ActivityIndicator size={18} color={currentTheme.contrastColor} />
             </View>

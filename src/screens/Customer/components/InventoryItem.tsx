@@ -18,6 +18,10 @@ type InventoryItemProps = {
     action: 'ADD' | 'MINUS';
     count: number;
   }) => void;
+  onSelectProduct: (data: {
+    product: Product;
+    count: number;
+  }) => void;
 };
 
 const InventoryItem: React.FC<InventoryItemProps> = ({
@@ -25,6 +29,7 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
   addIcon = true,
   removeIcon = true,
   callback,
+  onSelectProduct
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
@@ -44,6 +49,10 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
       }
       const data = {product, action, count: newCount};
       callback(data);
+      onSelectProduct({
+        product,
+        count: newCount,
+      });
       return newCount;
     });
   };
@@ -73,7 +82,10 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
         <Text
           style={[
             styles.itemText,
-            {color:product.stock === 0 ? colors.danger : currentTheme.baseColor},
+            {
+              color:
+                product.stock === 0 ? colors.danger : currentTheme.baseColor,
+            },
           ]}>{`${count}  ${product.name}`}</Text>
         <TouchableOpacity onPress={() => handlePlusMinus('MINUS')}>
           {removeIcon && (

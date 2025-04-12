@@ -12,12 +12,11 @@ import {deviceHeight} from '../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
 import {Product} from '../../../../types';
 import {Picker} from '@react-native-picker/picker';
-import {QuantityType} from '../../../../enums';
+import {MeasurementType} from '../../../../enums';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
-import { editInventoryProduct } from '../../../../store/slices/business';
 
 type EditProductProps = {
   product: Product;
@@ -33,10 +32,10 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
   const [name, setName] = useState<string>(product.name);
   const [price, setPrice] = useState<number>(product.basePrice);
   const [discountedPrice, setDiscountedPrice] = useState<number>(
-    product.discountedPrice ?? 0,
+    product.discounterPrice ?? 0,
   );
   const [quantity, setQuantity] = useState<number>(product.quantity);
-  const [measurementType, setMeasurementType] = useState<QuantityType>(
+  const [measurementType, setMeasurementType] = useState<MeasurementType>(
     product.measurementType,
   );
 
@@ -45,18 +44,18 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
       const res = Confirm('Are you sure to put the price 0?');
       if (!res) return;
     }
-    const updatedProduct: Product = {
-      id: product.id,
-      name: name.length !== 0 ? name : product.name,
-      basePrice: price,
-      discountedPrice,
-      quantity,
-      measurementType,
-      createdAt: product.createdAt,
-      updatedAt: Date.now().toString(),
-      totalSold: product.totalSold,
-    };
-    dispatch(editInventoryProduct({product:updatedProduct}))
+    // const updatedProduct: Product = {
+    //   _id: product.id,
+    //   name: name.length !== 0 ? name : product.name,
+    //   basePrice: price,
+    //   discountedPrice,
+    //   quantity,
+    //   measurementType,
+    //   createdAt: product.createdAt,
+    //   updatedAt: Date.now().toString(),
+    //   totalSold: product.totalSold,
+    // };
+    // dispatch(editInventoryProduct({product:updatedProduct}))
     close();
     showToast({
       type: 'success',

@@ -7,18 +7,25 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Button,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
 import {Picker} from '@react-native-picker/picker';
-import {MeasurementType} from '../../../../enums';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../store/store';
+import {MeasurementType, ProductType} from '../../../../enums';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
-import {useTheme} from '../../../hooks/index';
+import {useAnalytics, useTheme} from '../../../hooks/index';
 import {isFloat, isNumber} from '../../../service/test';
-import Slider from '@react-native-community/slider';
+import {createProductAPI} from '../../../api/api.product';
+import ProductTypePicker from '../../../components/ProductTypePicker';
+import SlideUpContainer from '../../../components/SlideUpContainer';
+import FilePicker from '../../../components/FilePicker';
+import {getUserAPI} from '../../../api/api.user';
+import {setUser} from '../../../../store/slices/business';
 
 type EditProductProps = {
   close: () => void;
@@ -27,18 +34,26 @@ type EditProductProps = {
 const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const {owner} = useAnalytics();
+  const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
   const [price, setPrice] = useState<string>('0');
   const [discountedPrice, setDiscountedPrice] = useState<string>('0');
-  const [quantity, setQuantity] = useState<string>('0');
+  const [quantity, setQuantity] = useState<string>('1');
   const [stock, setStock] = useState<string>('0');
+  const [image, setImage] = useState<string | undefined>();
+  const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
   const [productCost, setProductCost] = useState<string>('0');
   const [measurementType, setMeasurementType] = useState<MeasurementType>(
     MeasurementType.GRAMS,
   );
+  const [productType, setProductType] = useState<ProductType>(
+    ProductType.PHYSICAL,
+  );
 
   const handleOnSubmit = async () => {
-    const res = {
+    const userRes = {
       res1: isNumber(price),
       res2: isNumber(discountedPrice),
       res3: isNumber(quantity),
@@ -54,7 +69,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       );
       return;
     }
-    if (!res.res1 || !res.res2 || !res.res3) {
+    if (!userRes.res1 || !userRes.res2 || !userRes.res3) {
       Alert.alert(
         'Invalid input!',
         "Numeric entities can't include alphabets and symbols",
@@ -70,46 +85,68 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
         'Are you sure?',
         'You are trying to put the item price 0, please double check before creating.',
       );
-      if (!res) return;
+      return;
     }
     if (Number(stock) === 0) {
       const res = await Confirm(
         "Stock value can't be zero!",
         'stock is required to keep a record and analytical calculations.',
       );
-      if (!res) return;
+      return;
     }
-    if (Number(productCost) === 0) {
-      const res = await Confirm(
-        'Making cost value is required!',
-        'making cost is required to keep a record and analytical calculations.',
+    const newProductData = {
+      query: {
+        creatorId: user._id,
+        ownerId: owner._id,
+        role: user.role,
+      },
+      body: {
+        name,
+        basePrice: Number(price),
+        quantity: Number(quantity),
+        measurementType,
+        stock: Number(stock),
+        productCost: Number(productCost),
+        productType,
+        discountedPrice:
+          Number(discountedPrice) === 0 ? undefined : Number(discountedPrice),
+      },
+      media: {
+        image,
+      },
+    };
+    const res = await createProductAPI(newProductData, setLoading);
+    if (res.success && res.data.product) {
+      const userRes = await getUserAPI(
+        {
+          role: user.role,
+        },
+        setLoading,
       );
-      if (!res) return;
+      if (userRes.success && userRes.data.user) {
+        dispatch(setUser(userRes.data.user));
+        showToast({
+          type: 'success',
+          text1: res.message,
+          text2: 'Pleas add products to create Udhars.',
+        });
+        close();
+        return;
+      }
+      showToast({
+        type: 'success',
+        text1: `Product ${res.data.product.name} Created successfully`,
+      });
+      return;
+    } else {
+      close();
+      showToast({
+        type: 'error',
+        text1: res.message,
+      });
     }
-    // dispatch(
-    //   addProductToInventory({
-    //     product: {
-    //       id: Date.now().toString(),
-    //       name,
-    //       basePrice: Number(price),
-    //       discountedPrice: Number(discountedPrice),
-    //       quantity: Number(quantity),
-    //       totalSold: 0,
-    //       stock: Number(stock),
-    //       productCost: Number(productCost),
-    //       measurementType,
-    //       createdAt: new Date(Date.now()).toDateString(),
-    //       updatedAt: new Date(Date.now()).toDateString(),
-    //     },
-    //   }),
-    // );
-    close();
-    showToast({
-      type: 'success',
-      text1: `Product Created successfully`,
-    });
   };
-
+  const closeImagePicker = () => setOpenImagePicker(false);
   return (
     <KeyboardAvoidingView
       style={[
@@ -133,6 +170,14 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               ]}
               placeholder="Enter name"
               placeholderTextColor={currentTheme.baseColor}
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text style={styles.inputLabel}>Product Type*</Text>
+            <ProductTypePicker
+              value={productType}
+              setState={setProductType}
+              enabled
             />
           </View>
           <View style={styles.inputTitleContainer}>
@@ -215,27 +260,29 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               keyboardType="numeric"
             />
           </View>
-          <View style={[styles.inputTitleContainer, {gap: 5}]}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              Estimated Making cost:{' '}
-              {`${productCost.trim().length !== 0 ? productCost : '0'}`}
-            </Text>
-            <TextInput
-              value={productCost}
-              onChangeText={value => setProductCost(value)}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter Estimated Making cost"
-              placeholderTextColor={currentTheme.baseColor}
-              keyboardType="numeric"
-            />
-          </View>
+          {productType === ProductType.PHYSICAL && (
+            <View style={[styles.inputTitleContainer, {gap: 5}]}>
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.inputText},
+                ]}>
+                Estimated Making cost:{' '}
+                {`${productCost.trim().length !== 0 ? productCost : '0'}`}
+              </Text>
+              <TextInput
+                value={productCost}
+                onChangeText={value => setProductCost(value)}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Enter Estimated Making cost"
+                placeholderTextColor={currentTheme.baseColor}
+                keyboardType="numeric"
+              />
+            </View>
+          )}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[
@@ -255,15 +302,32 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                   backgroundColor: currentTheme.modal.pickerbg,
                 },
               ]}>
-              <Picker.Item label="Ml" value={'ml'} />
-              <Picker.Item label="Litre" value={'litre'} />
-              <Picker.Item label="Kilograms" value={'kilograms'} />
-              <Picker.Item label="Grams" value={'grams'} />
-              <Picker.Item label="Pcs" value={'pcs'} />
-              <Picker.Item label="Pack" value={'pack'} />
-              <Picker.Item label="Dozen" value={'dozen'} />
+              <Picker.Item label="Ml" value={MeasurementType.ML} />
+              <Picker.Item label="Litre" value={MeasurementType.LITRE} />
+              <Picker.Item label="Kilograms" value={MeasurementType.KILOGRAM} />
+              <Picker.Item label="Grams" value={MeasurementType.GRAMS} />
+              <Picker.Item label="Pcs" value={MeasurementType.PCS} />
+              <Picker.Item label="Pack" value={MeasurementType.PACK} />
+              <Picker.Item label="Dozen" value={MeasurementType.DOZEN} />
             </Picker>
           </View>
+          {image && image.trim().length !== 0 ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
+              <Button title="Remove" onPress={() => setImage(undefined)} />
+            </View>
+          ) : (
+            <View
+              style={{
+                paddingHorizontal: 40,
+                alignItems: 'center',
+              }}>
+              <Button
+                title="Choose Image"
+                onPress={() => setOpenImagePicker(true)}
+              />
+            </View>
+          )}
           <TouchableOpacity
             style={[
               styles.saveButton,
@@ -271,9 +335,25 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
             ]}
             activeOpacity={0.8}
             onPress={handleOnSubmit}>
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>
+              {loading ? 'Saving' : 'Save'}
+            </Text>
+            {loading && (
+              <ActivityIndicator size={18} color={currentTheme.contrastColor} />
+            )}
           </TouchableOpacity>
         </View>
+        <SlideUpContainer
+          opacity={0.2}
+          open={openImagePicker}
+          close={closeImagePicker}>
+          <FilePicker
+            value={image}
+            setState={setImage}
+            callback={closeImagePicker}
+            type="image"
+          />
+        </SlideUpContainer>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -317,6 +397,10 @@ const styles = StyleSheet.create({
   saveButton: {
     paddingVertical: 16,
     borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   saveButtonText: {
     textAlign: 'center',

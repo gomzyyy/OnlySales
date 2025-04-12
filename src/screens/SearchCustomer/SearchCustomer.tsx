@@ -39,7 +39,7 @@ const SearchCustomer = () => {
             </Text>
             <FlatList
               data={searchResults}
-              keyExtractor={s => s.id}
+              keyExtractor={s => s._id}
               renderItem={({item}) => <Tab i={item} />}
               nestedScrollEnabled
             />
