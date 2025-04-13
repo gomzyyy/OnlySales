@@ -346,7 +346,8 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
         <SlideUpContainer
           opacity={0.2}
           open={openImagePicker}
-          close={closeImagePicker}>
+          close={closeImagePicker}
+          height={image ? 300 : 116}>
           <FilePicker
             value={image}
             setState={setImage}

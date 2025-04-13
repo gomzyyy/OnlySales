@@ -23,6 +23,7 @@ import {useTheme, useHaptics, useAnalytics} from '../../hooks';
 import UnPaidPayments from './components/UnPaidPayments';
 import PaidPayments from './components/PaidPayments';
 import {PaymentState} from '../../../enums';
+import { deviceHeight } from '../../utils/Constants';
 
 type RouteParams = {
   customer: CustomerType;
@@ -175,7 +176,9 @@ const Customer = () => {
 
       <SlideUpContainer
         open={addUdharVisible}
-        close={() => setAddUdharVisible(false)}>
+        close={() => setAddUdharVisible(false)}
+        height={deviceHeight * 0.55}
+        >
         <AddUdhar
           close={() => setAddUdharVisible(false)}
           customer={currCustomer}
@@ -185,7 +188,9 @@ const Customer = () => {
       <SlideUpContainer
         open={openUnpaidSheet}
         close={() => setOpenUnpaidSheet(false)}
-        opacity={0.7}>
+        opacity={0.7}
+        height={ deviceHeight * 0.75}
+        >
         <UnPaidPayments
           date={unpaidProps.date}
           customer={unpaidProps.customer}
@@ -196,7 +201,9 @@ const Customer = () => {
       <SlideUpContainer
         open={openPaidSheet}
         close={() => setOpenPaidSheet(false)}
-        opacity={0.7}>
+        opacity={0.7}
+        height={deviceHeight * 0.75}
+        >
         <PaidPayments
           date={paidProps.date}
           customer={paidProps.customer}

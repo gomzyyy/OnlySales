@@ -11,6 +11,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Tab from './components/tab';
+import { deviceHeight } from '../../utils/Constants';
 
 const Employees = () => {
   const {lightTap} = useHaptics();
@@ -71,7 +72,8 @@ const Employees = () => {
       {openCreateEmployee && (
         <SlideUpContainer
           open={openCreateEmployee}
-          close={handleCloseCreateEmployee}>
+          close={handleCloseCreateEmployee}
+          height={deviceHeight * 0.62}>
           <CreateEmployee callback={handleCloseCreateEmployee} />
         </SlideUpContainer>
       )}

@@ -1,11 +1,18 @@
 import {Modal, StyleSheet, Pressable} from 'react-native';
-import React, {PropsWithChildren} from 'react';
+import React, {PropsWithChildren, useEffect} from 'react';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+} from 'react-native-reanimated';
+import {deviceHeight} from '../utils/Constants';
 
 type SlideUpContainerProps = PropsWithChildren<{
   open: boolean;
   close: () => void;
   opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
   padding?: boolean;
+  height?: number;
 }>;
 
 const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
@@ -14,14 +21,36 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   close,
   opacity = 0.1,
   padding = false,
+  height = deviceHeight,
 }): React.JSX.Element => {
+  const childHeight = useSharedValue(0);
+  const childAnimatedStyles = useAnimatedStyle(() => {
+    return {
+      height: withTiming(childHeight.value, {
+        duration: 100,
+      }),
+      justifyContent: 'flex-end',
+    };
+  });
+
+  const closeSlideUpContainer = () => {
+    childHeight.value = 0;
+    setTimeout(() => {
+      close();
+    }, 200);
+  };
+
+  useEffect(() => {
+    setTimeout(() => (childHeight.value = height), 100);
+  }, [open]);
+
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       statusBarTranslucent={true}
       visible={open}
-      onRequestClose={close}
+      onRequestClose={closeSlideUpContainer}
       hardwareAccelerated={true}>
       <Pressable
         style={[
@@ -31,8 +60,10 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
             paddingHorizontal: padding ? 14 : 10,
           },
         ]}
-        onPress={close}>
-        <Pressable onPress={e => e.stopPropagation()}>{children}</Pressable>
+        onPress={closeSlideUpContainer}>
+        <Pressable onPress={e => e.stopPropagation()}>
+          <Animated.View style={childAnimatedStyles}>{children}</Animated.View>
+        </Pressable>
       </Pressable>
     </Modal>
   );

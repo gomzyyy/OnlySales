@@ -12,6 +12,7 @@ import Header from '../../components/Header';
 import {useAnalytics, useTheme} from '../../hooks';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useHaptics} from '../../hooks';
+import { deviceHeight } from '../../utils/Constants';
 
 const Customers = () => {
   const {lightTap} = useHaptics();
@@ -68,7 +69,9 @@ const Customers = () => {
       {openCreateCustomer && (
         <SlideUpContainer
           open={openCreateCustomer}
-          close={handleCloseCreateCustomer}>
+          close={handleCloseCreateCustomer}
+          height={deviceHeight * 0.6}
+          >
           <CreateCustomer callback={handleCloseCreateCustomer} />
         </SlideUpContainer>
       )}

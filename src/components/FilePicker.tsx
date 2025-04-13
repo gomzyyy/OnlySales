@@ -155,7 +155,11 @@ const FilePicker: React.FC<FilePickerProps> = ({
           </View>
         )}
       </View>
-      <View style={styles.getimageBtnContainer}>
+      <View
+        style={[
+          styles.getimageBtnContainer,
+          {flexDirection: value ? 'row' : 'column', gap: value ? 10 : 20},
+        ]}>
         <TouchableOpacity
           onPress={() => enabled && getImageFromImageLiberary()}
           style={[styles.getImageBtn, {backgroundColor: currentTheme.bgColor}]}
@@ -189,12 +193,13 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderRadius: 20,
     marginBottom: 10,
+    height: 180,
   },
   imageContainer: {
-    height: 104,
-    width: 104,
+    height: 100,
+    width: 100,
     padding: 4,
-    borderRadius: 52,
+    borderRadius: 20,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
@@ -210,7 +215,6 @@ const styles = StyleSheet.create({
     left: 24,
   },
   getimageBtnContainer: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
   },
   getImageBtn: {
@@ -220,6 +224,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 4,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   getImageBtnText: {
     fontSize: 16,

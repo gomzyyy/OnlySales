@@ -16,7 +16,6 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {todaysMostSoldProducts} = useAnalytics();
-  console.log(todaysMostSoldProducts);
   const currency = useSelector((s: RootState) => s.appData.app.currency);
 
   const calculatePrice = (item: any) => {
@@ -33,7 +32,7 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
     .map(item => item.product.name);
 
   const data: Dataset = {
-    data: [0, ...prices],
+    data: [0, ...prices] as number[],
     color: opacity => `rgba(0,0,0,${opacity})`,
   };
 
@@ -60,6 +59,7 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
           barPercentage: 0.5,
         }}
         style={{marginVertical: 10, borderRadius: 10}}
+        bezier
       />
     </TouchableOpacity>
   );

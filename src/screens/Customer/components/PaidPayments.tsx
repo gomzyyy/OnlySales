@@ -129,7 +129,9 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
       <SlideUpContainer
         open={askConfirmPayment}
         close={handleCloseConfirmPayment}
-        opacity={0.4}>
+        opacity={0.4}
+        height={deviceHeight * 0.5}
+        >
         <ConfirmPayment
           value={payableAmount}
           setState={setPayableAmount}

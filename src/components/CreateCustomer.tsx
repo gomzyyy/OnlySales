@@ -99,7 +99,14 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
     callback();
   };
 
-  const closeImagePicker = () => setOpenImagePicker(false);
+  const cancelImagePicker = () => {
+    setImage(undefined);
+    setOpenImagePicker(false);
+  };
+
+  const closeImagePicker = () => {
+    setOpenImagePicker(false);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -211,7 +218,8 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
         <SlideUpContainer
           opacity={0.2}
           open={openImagePicker}
-          close={closeImagePicker}>
+          close={cancelImagePicker}
+          height={180}>
           <FilePicker
             value={image}
             setState={setImage}
@@ -228,7 +236,7 @@ const styles = StyleSheet.create({
   createCustomerContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    // height: deviceHeight * 0.55,
+    height: deviceHeight * 0.58,
     borderRadius: 20,
     marginBottom: 10,
     elevation: 30,

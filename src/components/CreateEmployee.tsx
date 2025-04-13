@@ -243,12 +243,13 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
           <SlideUpContainer
             opacity={0.4}
             open={openImagePicker}
-            close={closeImagePicker}>
+            close={closeImagePicker}
+            height={image ? 300 : 116}>
             <FilePicker
               value={image}
               setState={setImage}
               callback={closeImagePicker}
-              type='image'
+              type="image"
             />
           </SlideUpContainer>
         </View>

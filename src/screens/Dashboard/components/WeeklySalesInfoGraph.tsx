@@ -22,37 +22,51 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
       0,
       weeklySales.today.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.yesterday.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.oneDayAgo.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.twoDayAgo.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.threeDayAgo.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.fourDayAgo.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.fiveDayAgo.reduce(
         (arr, curr) =>
-          arr + curr.product.totalSold * (curr.product.discounterPrice || curr.product.basePrice),
+          arr +
+          curr.product.totalSold *
+            (curr.product.discounterPrice || curr.product.basePrice),
         0,
       ),
     ],
@@ -82,6 +96,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
           barPercentage: 0.5,
         }}
         style={{marginVertical: 10, borderRadius: 10}}
+        bezier
       />
     </TouchableOpacity>
   );

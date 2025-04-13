@@ -1,18 +1,20 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import React, {SetStateAction} from 'react';
-import {colors, deviceHeight} from '../utils/Constants';
-import {useTheme} from '../hooks';
-import {isFloat} from '../service/test';
-import {CurrencyType} from '../../enums';
+import {TouchableOpacity, View} from 'react-native';
+import React, {SetStateAction, useEffect} from 'react';
+import {StyleSheet} from 'react-native';
+import Header from '../../components/Header';
+import {useTheme} from '../../hooks';
+import QRCode from 'react-native-qrcode-svg';
+import {useRoute} from '@react-navigation/native';
+import {randomId} from '../../service/fn';
+import {CurrencyType} from '../../../enums';
+import {back} from '../../utils/nagivationUtils';
+import {Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {isFloat} from '../../service/test';
+import {colors, deviceHeight} from '../../utils/Constants';
+import {TextInput} from 'react-native-gesture-handler';
 
-type ConfirmPaymentProps = {
+type RequestedPaymentProps = {
   value: number;
   setState: React.Dispatch<SetStateAction<number>>;
   cancel: () => void;
@@ -21,7 +23,7 @@ type ConfirmPaymentProps = {
   editable?: boolean;
 };
 
-const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
+const RequestedPayment: React.FC<RequestedPaymentProps> = ({
   value,
   setState,
   cancel,
@@ -30,7 +32,6 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
   editable = true,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-
   const handleSetAmount = (val: string) => {
     if (val.trim().length === 0) {
       setState(0);
@@ -99,6 +100,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   parent: {
     height: deviceHeight,
@@ -141,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmPayment;
+export default RequestedPayment;

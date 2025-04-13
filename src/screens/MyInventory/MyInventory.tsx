@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {deviceWidth} from '../../utils/Constants';
+import {deviceHeight, deviceWidth} from '../../utils/Constants';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
@@ -72,7 +72,8 @@ const MyInventory = () => {
       {openAddProduct && (
         <SlideUpContainer
           open={openAddProduct}
-          close={() => setOpenAddProduct(false)}>
+          close={() => setOpenAddProduct(false)}
+          height={deviceHeight * 0.62}>
           <AddProduct close={() => setOpenAddProduct(false)} />
         </SlideUpContainer>
       )}

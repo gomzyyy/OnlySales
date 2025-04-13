@@ -145,3 +145,23 @@ export interface SellProductAPIReturnType extends APIReturnType {
     seller: Owner | Partner | Employee | undefined;
   };
 }
+
+export interface RequestOtpAPIData {
+  query: {
+    uid: string;
+    role: AdminRole;
+  };
+  body: {
+    updatedEmail?: string;
+  };
+}
+export interface RequestOtpAPReturnType extends APIReturnType {}
+
+export interface ValidateOtpAPIData {
+  query: {role: string; uid: string};
+  body: {
+    otp: string;
+  };
+}
+
+export interface ValidateOtpAPReturnType extends APIReturnType {}

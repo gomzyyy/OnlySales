@@ -1,8 +1,15 @@
-import {View, StyleSheet, ScrollView, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Alert,
+  Pressable,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
-import {prepareNavigation} from '../../utils/nagivationUtils';
+import {navigate, prepareNavigation} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -16,6 +23,13 @@ import ConfirmPayment from '../../components/ConfirmPayment';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import ScanQRToPay from '../../components/ScanQRToPay';
+import {colors, deviceHeight} from '../../utils/Constants';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+import RequestedPayment from '../ConfirmRequestedPayment/ConfirmRequestedPayment';
 
 const DashboardOptions = [
   {
@@ -55,33 +69,40 @@ const Dashboard = () => {
   const {currentTheme} = useTheme();
   const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
   const [openQRCode, setOpenQRCode] = useState<boolean>(false);
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const {currency} = useSelector((s: RootState) => s.appData.app);
 
   const [payableAmount, setPayableAmount] = useState<number>(0);
 
-  const handleCloseRequestPayment = () => setOpenRequestPayment(false);
   const handleOpenRequestPayment = () => setOpenRequestPayment(true);
-
   const handleCloseQRCode = () => {
     setPayableAmount(0);
     setOpenQRCode(false);
   };
-  const handleOpenQRCode = () => {
-    if (payableAmount === 0) {
-      Alert.alert('Invalid input!', 'Amount cannot be zero.');
-      return;
-    }
-    setOpenRequestPayment(false);
-    setOpenQRCode(true);
-  };
+  const unverifiedAlertHeight = useSharedValue(0);
 
-  const {currency} = useSelector((s: RootState) => s.appData.app);
+  const unverifiedAlertAnimatedStyles = useAnimatedStyle(() => {
+    return {
+      height: withTiming(unverifiedAlertHeight.value, {duration: 200}),
+    };
+  });
+  const closeUnverifiedAlert = () => (unverifiedAlertHeight.value = 0);
 
   useEffect(() => {
     prepareNavigation();
+    let unverifiedAlertAnimatedStylesToogleTimeoutId: NodeJS.Timeout | null;
+    if (user.email && !user.email.verified) {
+      unverifiedAlertAnimatedStylesToogleTimeoutId = setTimeout(
+        () => (unverifiedAlertHeight.value = 30),
+        1500,
+      );
+    }
     return () => {
       setPayableAmount(0);
       setOpenRequestPayment(false);
       setOpenQRCode(false);
+      unverifiedAlertAnimatedStylesToogleTimeoutId &&
+        clearTimeout(unverifiedAlertAnimatedStylesToogleTimeoutId);
     };
   }, []);
   return (
@@ -92,6 +113,51 @@ const Dashboard = () => {
           menuButton
           titleColor={currentTheme.header.textColor}
         />
+        {!user.email?.verified && (
+          <Animated.View
+            style={[
+              {
+                backgroundColor: currentTheme.contrastColor,
+                borderBottomRightRadius: 14,
+                borderBottomLeftRadius: 14,
+                marginBottom: 10,
+                alignItems: 'center',
+                flexDirection: 'row',
+                paddingHorizontal: 10,
+                justifyContent: 'space-between',
+                position: 'static',
+                top: 0,
+                elevation: 10,
+              },
+              unverifiedAlertAnimatedStyles,
+            ]}>
+            <Text style={{fontSize: 16, color: colors.danger}}>
+              You're email is not verified!
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 8,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Pressable
+                onPress={() => {
+                  unverifiedAlertHeight.value = 0;
+                  navigate('RequestOTPEmail');
+                }}>
+                <Text style={{fontSize: 16, color: currentTheme.baseColor}}>
+                  click to verify.
+                </Text>
+              </Pressable>
+              <Pressable
+                style={{alignItems: 'center'}}
+                onPress={closeUnverifiedAlert}>
+                <Icon name="close" size={14} />
+              </Pressable>
+            </View>
+          </Animated.View>
+        )}
         <View style={styles.contentContainer}>
           <DashboardHeader flex={false} />
           <View style={{paddingHorizontal: 10}}>
@@ -131,21 +197,10 @@ const Dashboard = () => {
         </View>
       </ScrollView>
       <SlideUpContainer
-        open={openRequestPayment}
-        close={handleCloseRequestPayment}
-        opacity={0.6}>
-        <ConfirmPayment
-          cancel={handleCloseRequestPayment}
-          callback={handleOpenQRCode}
-          currency={currency}
-          value={payableAmount}
-          setState={setPayableAmount}
-        />
-      </SlideUpContainer>
-      <SlideUpContainer
         open={openQRCode}
         close={handleCloseQRCode}
-        opacity={0.6}>
+        opacity={0.6}
+        height={deviceHeight * 0.5}>
         <ScanQRToPay
           cancel={handleCloseQRCode}
           callback={() => {}}

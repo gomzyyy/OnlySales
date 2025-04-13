@@ -38,7 +38,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>(i.name);
-  const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber || '');
+  const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber?.value || '');
   const [image, setImage] = useState<string | undefined>(undefined);
   const [address, setAddress] = useState<string>(i.address || '');
   const [salary, setSalary] = useState<string>(i.salary.toString());
@@ -59,18 +59,6 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       });
       return;
     }
-    // dispatch(
-    //   updateEmployee({
-    //     ...i,
-    //     name,
-    //     salary: Number(salary),
-    //     status,
-    //     shift,
-    //     image,
-    //     phoneNumber,
-    //     address,
-    //   }),
-    // );
     close();
   };
   const closeImagePicker = () => setOpenImagePicker(false);
@@ -205,7 +193,9 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
           <SlideUpContainer
             opacity={0.2}
             open={openImagePicker}
-            close={closeImagePicker}>
+            close={closeImagePicker}
+            height={deviceHeight * 0.52}
+            >
             <FilePicker
               value={image}
               setState={setImage}

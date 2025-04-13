@@ -35,10 +35,6 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
   const {currency} = useSelector((s: RootState) => s.appData.app);
-  const up =
-    owner.customers
-      .find(s => s._id === customer._id)
-      ?.buyedProducts?.filter(f => f.state === PaymentState.UNPAID) || [];
 
   const handleCloseConfirmPayment = () => {
     setAskConfirmPayment(false);
@@ -86,9 +82,9 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
         style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
         <CustomerInfo customer={customer} />
         <View style={styles.itemListContainer}>
-          {up.length !== 0 ? (
+          {products.length !== 0 ? (
             <FlatList
-              data={up}
+              data={products}
               keyExtractor={i => i.createdAt}
               renderItem={({item}) => (
                 <Tab
@@ -136,7 +132,9 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
       <SlideUpContainer
         open={askConfirmPayment}
         close={handleCloseConfirmPayment}
-        opacity={0.5}>
+        opacity={0.5}
+        height={deviceHeight * 0.5}
+        >
         <ConfirmPayment
           value={payableAmount}
           setState={setPayableAmount}
@@ -149,7 +147,9 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
       <SlideUpContainer
         open={willingToPay}
         close={handleCloseQRCode}
-        opacity={0.4}>
+        opacity={0.4}
+        height={deviceHeight * 0.5}
+        >
         <ScanQRToPay
           payableAmount={payableAmount}
           cancel={handleCloseQRCode}

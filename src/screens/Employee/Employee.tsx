@@ -14,10 +14,9 @@ import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {Employee as EmployeeType} from '../../../types';
 import Header from '../../components/Header';
-import {useHaptics, useTheme} from '../../hooks';
+import {useAnalytics, useHaptics, useTheme} from '../../hooks';
 import {colors} from '../../utils/Constants';
 import EmployementStatusPicker from '../../components/EmployementStatusPicker';
-import {updateEmployee} from '../../../store/slices/business';
 import {modifyUserName, showToast} from '../../service/fn';
 import {isNumber} from '../../service/test';
 import {EmploymentStatus, Shift} from '../../../enums';
@@ -29,10 +28,9 @@ import FilePicker from '../../components/FilePicker';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 const NoProfile = require('../../assets/images/no-profile.jpg');
 import Icon from 'react-native-vector-icons/AntDesign';
-import {setImageAPI} from '../../api/api.auth';
 
 type EmployeeParams = {
-  employeeId: EmployeeType['id'];
+  employeeId: EmployeeType['_id'];
 };
 
 type EmployeeProps = {};
@@ -40,18 +38,17 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {warning} = useHaptics();
   const {params} = useRoute();
+  const {owner} = useAnalytics()
   const {employeeId} = params as EmployeeParams;
   const [editable, setEditable] = useState<boolean>(false);
   const currency = useSelector((s: RootState) => s.appData.app.currency);
 
-  const employee = useSelector(
-    (s: RootState) => s.appData.user.EmployeeData,
-  ).find(d => d.id === employeeId)!;
+  const employee =owner.employeeData.find((s)=>s._id === employeeId)!;
 
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>(employee.name || '');
   const [phoneNumber, setphoneNumber] = useState<string>(
-    employee.phoneNumber || '',
+    employee.phoneNumber?.value || '',
   );
   const [salary, setSalary] = useState<string>(
     employee.salary.toString() || '',
@@ -110,7 +107,7 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
       return;
     }
     const employeeData = {
-      id: employee.id,
+      id: employee._id,
       name,
       salary: Number(salary),
       phoneNumber,
@@ -119,10 +116,10 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
       status,
       shift,
     };
-    dispatch(updateEmployee(employeeData));
-    if (image && image.trim().length !== 0) {
-      setImageAPI({img: image, role: employee.role});
-    }
+    // dispatch(updateEmployee(employeeData));
+    // if (image && image.trim().length !== 0) {
+    //   setImageAPI({img: image, role: employee.role});
+    // }
     showToast({
       type: 'success',
       text1: 'Employee updated Successfully.',

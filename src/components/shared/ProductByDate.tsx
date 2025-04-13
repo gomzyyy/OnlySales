@@ -9,11 +9,15 @@ type ProductsByDateProps = {
   ArrWithDate: SoldProduct[];
   customer: Customer;
   // onTabPressNavigate: string;
-  onTabPress:({ products, customer, date, }: {
+  onTabPress: ({
+    products,
+    customer,
+    date,
+  }: {
     products: SoldProduct[];
     customer: Customer;
     date: string;
-}) => void
+  }) => void;
 };
 type TabProps = {
   i: SoldProduct[];
@@ -73,8 +77,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
             backgroundColor: currentTheme.tab.bg,
           },
         ]}
-        onPress={()=>onTabPress({products:i,date,customer}) }>
-                    {/* navigate(onTabPressNavigate, {products: i, customer, date}) */}
+        onPress={() => onTabPress({products: i, date, customer})}>
         <Text style={[styles.date, {color: currentTheme.tab.label || '#000'}]}>
           {date}
         </Text>

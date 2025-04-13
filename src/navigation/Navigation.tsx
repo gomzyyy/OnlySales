@@ -32,10 +32,11 @@ import SignupSuccess from '../screens/Auth/SignUp/screens/SignupSuccess';
 import Analytics from '../screens/Analytics/Analytics';
 import Employees from '../screens/Employees/Employees';
 import Employee from '../screens/Employee/Employee';
-import PayByScan from '../screens/PayByScan/PayByScan';
 import AppInfo from '../screens/Settings/screens/AppInfo';
 import VerifyPassword from '../screens/Auth/Login/screens/VerifyUserPassword';
 import SetPassword from '../screens/Auth/SignUp/screens/SetPassword';
+import RequestOTPEmail from '../screens/Auth/Validate/Email/RequestOTPEmail';
+import VerifyEmail from '../screens/Auth/Validate/Email/VerifyEmail';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -81,11 +82,12 @@ const StackNav = () => {
       <stack.Screen name="Employee" component={Employee} />
       <stack.Screen name="SearchEmployee" component={SearchEmployee} />
       <stack.Screen name="MyInventory" component={MyInventory} />
-      <stack.Screen name="PayByScan" component={PayByScan} />
       <stack.Screen name="MyProfile" component={MyProfile} />
       <stack.Screen name="AppInfo" component={AppInfo} />
       <stack.Screen name="GetStarted" component={GetStarted} />
       <stack.Screen name="VerifyPassword" component={VerifyPassword} />
+      <stack.Screen name="RequestOTPEmail" component={RequestOTPEmail} />
+      <stack.Screen name="VerifyEmail" component={VerifyEmail} />
       <stack.Screen
         name="Login"
         options={{gestureEnabled: false}}

@@ -38,7 +38,7 @@ const Tab: React.FC<TabProps> = ({
   };
   const handleCloseEditCustomer = () => setOpenEditCustomer(false);
   const handleLongPressCancelAction = () =>
-    navigate('Employee', {employeeId: i.id});
+    navigate('Employee', {employeeId: i._id});
 
   return (
     <LongPressEnabled

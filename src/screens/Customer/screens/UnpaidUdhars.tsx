@@ -73,7 +73,7 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
           {products.length !== 0 ? (
             <FlatList
               data={products}
-              keyExtractor={i => i.addedAt.toString()}
+              keyExtractor={i => i.createdAt}
               renderItem={({item}) => (
                 <Tab
                   actionType="UNPAID"
@@ -82,7 +82,7 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
                   onPay={() =>
                     openConfirmPay(
                       'SINGLE',
-                      (item.discountedPrice || item.basePrice) * item.count,
+                      (item.product.discounterPrice || item.product.basePrice) * item.count,
                     )
                   }
                 />
@@ -126,7 +126,8 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
         close={handleCloseConfirmPayment}
         opacity={0.4}>
         <ConfirmPayment
-          payableAmount={payableAmount}
+          value={payableAmount}
+          setState={setPayableAmount}
           cancel={handleCloseConfirmPayment}
           currency={currency}
           callback={handleCloseConfirmPayment}

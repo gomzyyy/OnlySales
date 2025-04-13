@@ -1,8 +1,4 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import {Customer, Employee} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -12,7 +8,10 @@ import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
-const EditCustomer = React.lazy(()=>import("../../../components/EditCustomer"))
+import { deviceHeight } from '../../../utils/Constants';
+const EditCustomer = React.lazy(
+  () => import('../../../components/EditCustomer'),
+);
 
 type TabProps = {
   i: Customer;
@@ -39,11 +38,13 @@ const Tab: React.FC<TabProps> = ({
     setOpenEditCustomer(true);
   };
   const handleCloseEditCustomer = () => setOpenEditCustomer(false);
-  const handleLongPressCancelAction=()=>navigate('Customer', {customer: i})
+  const handleLongPressCancelAction = () => navigate('Customer', {customer: i});
 
   return (
-    <LongPressEnabled longPressCanceledAction={handleLongPressCancelAction} longPressAction={handleOpenLongPressOptions} dummy={dummy} >
-      
+    <LongPressEnabled
+      longPressCanceledAction={handleLongPressCancelAction}
+      longPressAction={handleOpenLongPressOptions}
+      dummy={dummy}>
       <View
         style={[
           styles.container,
@@ -55,7 +56,7 @@ const Tab: React.FC<TabProps> = ({
         <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
           {i.name}
         </Text>
-       
+
         <Icon name="right" color={currentTheme.tab.icon} size={22} />
         {openTabOptions && i && (
           <PopupContainer
@@ -74,7 +75,7 @@ const Tab: React.FC<TabProps> = ({
             open={openEditCustomer}
             close={handleCloseEditCustomer}
             opacity={0.8}
-            >
+            height={deviceHeight * 0.52}>
             <EditCustomer i={i} close={handleCloseEditCustomer} />
           </SlideUpContainer>
         )}
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   absolute: {
-    position: "absolute",
+    position: 'absolute',
   },
   customerName: {
     fontSize: 20,

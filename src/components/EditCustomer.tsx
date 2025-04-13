@@ -143,7 +143,9 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
         <SlideUpContainer
           opacity={0.2}
           open={openImagePicker}
-          close={closeImagePicker}>
+          close={closeImagePicker}
+          height={deviceHeight * 0.52}
+          >
           <FilePicker
             value={image}
             setState={setImage}

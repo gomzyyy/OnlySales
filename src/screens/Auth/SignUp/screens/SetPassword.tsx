@@ -176,7 +176,7 @@ const SetPassword = () => {
               Proceed
             </Text>
             {loading ? (
-              <ActivityIndicator />
+              <ActivityIndicator color={currentTheme.contrastColor} size={18} />
             ) : (
               <Icon
                 name="rightcircle"
