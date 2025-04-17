@@ -10,7 +10,7 @@ import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {back} from '../utils/nagivationUtils';
-import {useTheme} from '../hooks/index';
+import {useAnalytics, useTheme} from '../hooks/index';
 
 type HeaderProps = {
   name?: string;
@@ -35,6 +35,7 @@ type HeaderProps = {
     | 0.9
     | 1;
   curved?: boolean;
+  customTitle?: ReactNode;
 };
 
 const Header: React.FC<HeaderProps> = ({
@@ -49,14 +50,12 @@ const Header: React.FC<HeaderProps> = ({
   customAction = () => {},
   customComponentActiveOpacity = 0.5,
   curved = false,
+  customTitle,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const navigation = useNavigation();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
-
-  const curvedBorders={
-      borderBottomRadius:20
-  }
+  const {owner} = useAnalytics();
 
   return (
     <View
@@ -67,8 +66,8 @@ const Header: React.FC<HeaderProps> = ({
         flexDirection: 'row',
         paddingHorizontal: 20,
         backgroundColor: headerBgColor ?? '',
-        borderBottomRightRadius:curved ? 10 : 0,
-        borderBottomLeftRadius:curved ? 10 : 0
+        borderBottomRightRadius: curved ? 10 : 0,
+        borderBottomLeftRadius: curved ? 10 : 0,
       }}>
       {!backButtom && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>
@@ -81,14 +80,20 @@ const Header: React.FC<HeaderProps> = ({
         </Pressable>
       )}
       {showTitle && (
-        <Text
-          style={{
-            fontSize: 22,
-            fontWeight: 'bold',
-            color: titleColor,
-          }}>
-          {name}
-        </Text>
+        <View style={{alignItems: 'center', gap: 4}}>
+          {customTitle ? (
+            customTitle
+          ) : (
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: 'bold',
+                color: titleColor,
+              }}>
+              {name}
+            </Text>
+          )}
+        </View>
       )}
       {customComponent && (
         <TouchableOpacity

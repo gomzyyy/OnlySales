@@ -55,8 +55,8 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
     const amt = products.reduce(
       (acc, f) =>
         acc +
-        (f.product.discounterPrice
-          ? f.product.discounterPrice
+        (f.product.discountedPrice
+          ? f.product.discountedPrice
           : f.product.basePrice) *
           f.count,
       0,
@@ -85,7 +85,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
                   onPay={() =>
                     openConfirmPay(
                       'SINGLE',
-                      (item.product.discounterPrice || item.product.basePrice) *
+                      (item.product.discountedPrice || item.product.basePrice) *
                         item.count,
                     )
                   }

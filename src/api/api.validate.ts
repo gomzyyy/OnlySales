@@ -4,6 +4,8 @@ import {
   RequestOtpAPReturnType,
   ValidateOtpAPIData,
   ValidateOtpAPReturnType,
+  ValidateReferralCodeAPIData,
+  ValidateReferralCodeAPReturnType,
 } from './types.api';
 import {FetchAPI, handleBooleanState} from './helper/fn';
 
@@ -61,6 +63,34 @@ export const ValidateEmailOtpAPI = async (
       },
       success: false,
     } as ValidateOtpAPReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+export const ValidateReferralCodeOtpAPI = async (
+  data: ValidateReferralCodeAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const fetching = await FetchAPI({
+      reqType: 'cud',
+      route: `/validate/referralCode?rc=${data.query.referralCode}`,
+      method: 'POST',
+      secure: false,
+    });
+    return (await fetching.json()) as ValidateReferralCodeAPReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        user: undefined,
+      },
+      success: false,
+    } as ValidateReferralCodeAPReturnType;
   } finally {
     handleBooleanState(setState, false);
   }

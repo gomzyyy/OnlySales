@@ -82,7 +82,7 @@ const UnpaidUdhars: React.FC<UnpaidUdharsProps> = ({
                   onPay={() =>
                     openConfirmPay(
                       'SINGLE',
-                      (item.product.discounterPrice || item.product.basePrice) * item.count,
+                      (item.product.discountedPrice || item.product.basePrice) * item.count,
                     )
                   }
                 />

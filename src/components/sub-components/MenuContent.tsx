@@ -1,12 +1,9 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
 import React from 'react';
 import {
   DrawerContentScrollView,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
-import Icon1 from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/MaterialIcons';
-import Icon3 from 'react-native-vector-icons/FontAwesome5';
 import {navigate} from '../../utils/nagivationUtils';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
@@ -15,59 +12,8 @@ import {DrawerActions} from '@react-navigation/native';
 import {navigationRef} from '../../utils/nagivationUtils';
 const NoProfile = require('../../assets/images/no-profile.jpg');
 import {useTheme} from '../../hooks/index';
-
-type menuNavContent = {
-  name: string;
-  navigateTo: string;
-  icon: (color: string) => React.JSX.Element;
-  disabled: boolean;
-};
-
-const menuNav: menuNavContent[] = [
-  // {
-  //   name: 'Dashboard',
-  //   navigateTo: 'Dashboard',
-  //   icon: (color: string) => (
-  //     <Icon1 name="people-sharp" color={color} size={26} />
-  //   ),
-  // disabled:false
-  // },
-  {
-    name: 'Inventory',
-    navigateTo: 'MyInventory',
-    icon: (color: string) => <Icon1 name="fast-food" color={color} size={26} />,
-    disabled: false,
-  },
-  {
-    name: 'Customers',
-    navigateTo: 'Customers',
-    icon: (color: string) => (
-      <Icon1 name="people-sharp" color={color} size={26} />
-    ),
-    disabled: false,
-  },
-  {
-    name: 'Employees',
-    navigateTo: 'Employees',
-    icon: (color: string) => (
-      <Icon3 name="network-wired" color={color} size={26} />
-    ),
-    disabled: false,
-  },
-  {
-    name: 'Analytics',
-    navigateTo: 'Analytics',
-    icon: (color: string) => <Icon2 name="analytics" color={color} size={26} />,
-    disabled: false,
-  },
-
-  {
-    name: 'Settings',
-    navigateTo: 'Settings',
-    icon: (color: string) => <Icon1 name="settings" color={color} size={26} />,
-    disabled: false,
-  },
-];
+import LogoutButton from '../../screens/Settings/components/LogoutButton';
+import MenuTab, {AppSettingsData, ManagementData, ToolsData} from './menu_data';
 
 const MenuContent: React.FC<DrawerContentComponentProps> = (
   props,
@@ -75,7 +21,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
   const {currentTheme} = useTheme();
   const currRoute = navigationRef.current?.getCurrentRoute()?.name;
   const navigation = useNavigation();
-  const user = useSelector((s: RootState) => s.appData.user);
+  const user = useSelector((s: RootState) => s.appData.user)!;
   const handleNavigationByMenu = (r: string): void => {
     if (currRoute === r) {
       navigation.dispatch(DrawerActions.closeDrawer());
@@ -87,77 +33,131 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
   return (
     <View
       style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
-      <DrawerContentScrollView style={{flex: 1}} nestedScrollEnabled {...props}>
-        <View style={styles.innterContainer}>
+      <View style={styles.innterContainer}>
+        <View
+          style={[
+            styles.infoContainer,
+            {backgroundColor: currentTheme.baseColor},
+          ]}>
           <View
-            style={[
-              styles.infoContainer,
-              {backgroundColor: currentTheme.baseColor},
-            ]}>
-            <View
+            style={{
+              backgroundColor: currentTheme.contrastColor,
+              position: 'absolute',
+              paddingHorizontal: 4,
+              paddingVertical: 2,
+              borderRadius: 6,
+              right: 10,
+              top: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text
               style={{
-                backgroundColor: currentTheme.contrastColor,
-                position: 'absolute',
-                paddingHorizontal: 4,
-                paddingVertical: 2,
-                borderRadius: 6,
-                right: 10,
-                top: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
+                color: currentTheme.baseColor,
+                textAlign: 'center',
+                fontStyle: 'italic',
+                fontSize: 14,
+                fontWeight: 600,
               }}>
-              <Text
-                style={{
-                  color: currentTheme.baseColor,
-                  textAlign: 'center',
-                  fontStyle: 'italic',
-                  fontSize:14,
-                  fontWeight:600
-                }}>
-                {user?.role.toLowerCase()}
-              </Text>
-            </View>
-            <View style={styles.profileImageContainer}>
-              <Image
-                source={
-                  user?.image && user.image?.trim().length !== 0
-                    ? {uri: user.image}
-                    : NoProfile
-                }
-                style={styles.profileImage}
-              />
-            </View>
-            <View style={styles.profileNameContainer}>
-              <Text
-                style={[
-                  styles.profileName,
-                  {color: currentTheme.contrastColor},
-                ]}>
-                {user?.name || ''}
-              </Text>
-            </View>
+              {user.role.toLowerCase()}
+            </Text>
+          </View>
+          <View style={styles.profileImageContainer}>
+            <Image
+              source={
+                user.image && user.image?.trim().length !== 0
+                  ? {uri: user.image}
+                  : NoProfile
+              }
+              style={styles.profileImage}
+            />
+          </View>
+          <View style={styles.profileNameContainer}>
+            <Text
+              style={[styles.profileName, {color: currentTheme.contrastColor}]}>
+              {user.name}
+            </Text>
           </View>
         </View>
-        <View style={styles.navigtionTabContainer}>
-          {menuNav.map((m, i) => (
-            <TouchableOpacity
-              style={[
-                styles.navigationTab,
-                {backgroundColor: currentTheme.baseColor},
-              ]}
-              key={i}
-              onPress={() => handleNavigationByMenu(m.navigateTo)}
-              activeOpacity={0.8}
-              disabled={m.disabled}>
-              {m.icon(currentTheme.contrastColor)}
+      </View>
+      <DrawerContentScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{height: 500}}
+        nestedScrollEnabled
+        {...props}>
+        <ScrollView
+          style={{borderRadius: 20}}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{gap: 10}}>
+          <View
+            style={[
+              styles.navigtionTabContainer,
+              {backgroundColor: currentTheme.fadeColor},
+            ]}>
+            <View style={{paddingHorizontal: 10}}>
               <Text
-                style={[styles.tabText, {color: currentTheme.contrastColor}]}>
-                {m.name || ''}
+                style={{
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: currentTheme.baseColor,
+                }}>
+                Management
               </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+            </View>
+            {ManagementData.map((m, i) => (
+              <MenuTab tabData={m} key={i} />
+            ))}
+          </View>
+          <View
+            style={[
+              styles.navigtionTabContainer,
+              {backgroundColor: currentTheme.fadeColor},
+            ]}>
+            <View style={{paddingHorizontal: 10}}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: currentTheme.baseColor,
+                }}>
+                Business & Tools
+              </Text>
+            </View>
+            {ToolsData.map((m, i) => (
+              <MenuTab tabData={m} key={i} />
+            ))}
+          </View>
+
+          <View
+            style={[
+              styles.navigtionTabContainer,
+              {backgroundColor: currentTheme.fadeColor},
+            ]}>
+            <View style={{paddingHorizontal: 10}}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: currentTheme.baseColor,
+                }}>
+                User & App
+              </Text>
+            </View>
+            {AppSettingsData.map((m, i) => (
+              <MenuTab tabData={m} key={i} />
+            ))}
+          </View>
+        </ScrollView>
       </DrawerContentScrollView>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          width: '100%',
+          paddingHorizontal: 20,
+        }}>
+        <LogoutButton theme="red" />
+      </View>
     </View>
   );
 };
@@ -166,21 +166,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 30,
-    paddingHorizontal: 5,
+    paddingRight: 10,
   },
-  innterContainer: {},
+  innterContainer: {
+    paddingHorizontal: 16,
+  },
   infoContainer: {
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
     paddingHorizontal: 14,
     borderRadius: 8,
-    marginBottom: 20,
-    height: 120,
+    marginBottom: 15,
+    height: 110,
   },
   profileImageContainer: {
-    height: 90,
-    width: 90,
+    height: 70,
+    width: 70,
     borderRadius: 45,
     overflow: 'hidden',
   },
@@ -194,19 +196,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   navigtionTabContainer: {
-    gap: 8,
-    paddingRight: 20,
-  },
-  navigationTab: {
-    paddingHorizontal: 10,
-    paddingVertical: 16,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  tabText: {
-    fontSize: 20,
+    gap: 10,
+    paddingRight: 40,
+    paddingLeft: 10,
+    paddingVertical: 10,
+    borderRadius: 20,
+    height: '80%',
+    flex: 1,
   },
 });
 

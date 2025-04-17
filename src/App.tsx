@@ -4,6 +4,8 @@ import Toast from 'react-native-toast-message';
 import 'react-native-gesture-handler';
 import ReduxProvider from '../store/store';
 import Navigation from './navigation/Navigation';
+import {Text} from 'react-native';
+import { useTheme } from './hooks';
 
 function App(): React.JSX.Element {
   return (
@@ -15,6 +17,7 @@ function App(): React.JSX.Element {
         </SafeAreaView>
       </View>
       <Toast position="bottom" visibilityTime={6000} />
+     
     </ReduxProvider>
   );
 }

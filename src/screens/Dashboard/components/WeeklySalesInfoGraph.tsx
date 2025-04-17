@@ -23,50 +23,50 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
       weeklySales.today.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+          curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.yesterday.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+        curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.oneDayAgo.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+        curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.twoDayAgo.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+        curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.threeDayAgo.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+        curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.fourDayAgo.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+        curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
       weeklySales.fiveDayAgo.reduce(
         (arr, curr) =>
           arr +
-          curr.product.totalSold *
-            (curr.product.discounterPrice || curr.product.basePrice),
+        curr.count *
+            (curr.product.discountedPrice || curr.product.basePrice),
         0,
       ),
     ],

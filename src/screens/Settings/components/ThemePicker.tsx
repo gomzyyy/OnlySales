@@ -38,14 +38,14 @@ const ThemePicker = () => {
       selectedValue={currentTheme?.name}
       onValueChange={(value: AppThemeName) => handleThemeChange(value)}
       dropdownIconColor={currentTheme?.modal.pickerText}>
-      <Picker.Item
+      {/* <Picker.Item
         label={`${AppThemeName.PURPLE} 🟣`}
         value={AppThemeName.PURPLE}
-      />
-      <Picker.Item
+      /> */}
+      {/* <Picker.Item
         label={`${AppThemeName.YELLOW} 🟡`}
         value={AppThemeName.YELLOW}
-      />
+      /> */}
       <Picker.Item label={`${AppThemeName.RED} 🔴`} value={AppThemeName.RED} />
       <Picker.Item
         label={`${AppThemeName.GREEN} 🟢`}
@@ -55,10 +55,10 @@ const ThemePicker = () => {
         label={`${AppThemeName.BLUE} 🔵`}
         value={AppThemeName.BLUE}
       />
-      <Picker.Item
+      {/* <Picker.Item
         label={`${AppThemeName.CORAL} 🟠`}
         value={AppThemeName.CORAL}
-      />
+      /> */}
     </Picker>
   );
 };

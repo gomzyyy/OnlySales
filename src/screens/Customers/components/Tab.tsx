@@ -1,4 +1,4 @@
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, Image} from 'react-native';
 import React, {useState} from 'react';
 import {Customer, Employee} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -8,7 +8,9 @@ import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
-import { deviceHeight } from '../../../utils/Constants';
+import {deviceHeight} from '../../../utils/Constants';
+const NoPhoto = require('../../../assets/images/no-profile.jpg');
+
 const EditCustomer = React.lazy(
   () => import('../../../components/EditCustomer'),
 );
@@ -53,23 +55,34 @@ const Tab: React.FC<TabProps> = ({
             backgroundColor: currentTheme.tab.bg,
           },
         ]}>
-        <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
-          {i.name}
-        </Text>
+        <View style={{height: 50, width: 50, overflow: 'hidden'}}>
+          <Image
+            source={
+              i.image && i.image.trim().length !== 0 ? {uri: i.image} : NoPhoto
+            }
+            style={[styles.profileImage,{borderColor:currentTheme.baseColor}]}
+          />
+        </View>
+        <View style={styles.innerContainer}>
+          <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
+            {i.name}
+          </Text>
 
-        <Icon name="right" color={currentTheme.tab.icon} size={22} />
-        {openTabOptions && i && (
-          <PopupContainer
-            open={openTabOptions}
-            close={handleCloseLongPressOptions}
-            padding>
-            <TabLongPressOptions
-              triggerEdit={handleOpenEditCustomer}
-              i={i}
+          <Icon name="right" color={currentTheme.tab.icon} size={22} />
+          {openTabOptions && i && (
+            <PopupContainer
+              open={openTabOptions}
               close={handleCloseLongPressOptions}
-            />
-          </PopupContainer>
-        )}
+              padding>
+              <TabLongPressOptions
+                triggerEdit={handleOpenEditCustomer}
+                i={i}
+                close={handleCloseLongPressOptions}
+              />
+            </PopupContainer>
+          )}
+        </View>
+
         {openEditCustomer && i && (
           <SlideUpContainer
             open={openEditCustomer}
@@ -86,17 +99,29 @@ const Tab: React.FC<TabProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 14,
-    paddingVertical: 18,
+    paddingVertical: 8,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     borderRadius: 8,
+    alignItems: 'center',
+    gap:12
+  },
+  profileImage: {
+    height: 50,
+    width: 50,
+    resizeMode: 'cover',
+    borderRadius: 16,
+  },
+  innerContainer:{
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    flex:1
   },
   absolute: {
     position: 'absolute',
   },
   customerName: {
-    fontSize: 20,
-    fontWeight: '400',
+    fontSize: 22,
+    fontWeight: '500',
   },
 });
 

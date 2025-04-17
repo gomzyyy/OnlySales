@@ -2,6 +2,7 @@ import {
   AdminRole,
   BusinessType,
   MeasurementType,
+  PaymentHistoryReferenceType,
   ProductType,
 } from '../../enums';
 import {
@@ -11,6 +12,8 @@ import {
   Partner,
   Product,
   SoldProduct,
+  SoldProductPaymentHistory,
+  UnknownPaymentHistory,
 } from '../../types';
 
 export interface APIReturnType {
@@ -55,6 +58,7 @@ export interface SignupData {
   businessType: BusinessType; // //
   role: AdminRole; //
   gstNumber?: string;
+  uniqueReferralCode?: string;
 }
 export interface LoginData {
   password: string;
@@ -83,6 +87,16 @@ export interface CreateCustomerAPIReturnType extends APIReturnType {
     customer: Customer | undefined;
   };
 }
+
+export interface DeleteCustomerData {
+  query: {
+    customerId: string;
+    role: AdminRole;
+  };
+}
+
+export interface DeleteCustomerAPIReturnType extends APIReturnType {}
+
 export interface GetOwnerAPIReturnType extends APIReturnType {
   data: {
     owner: Owner | undefined;
@@ -127,6 +141,17 @@ export interface CreateProductAPIReturnType extends APIReturnType {
     product: Product | undefined;
   };
 }
+
+export interface DeleteProductAPIData {
+  query: {
+    productId: string;
+    role: AdminRole;
+    uid: string;
+  };
+}
+
+export interface DeleteProductAPIReturnType extends APIReturnType {}
+
 export interface SellProductData {
   query: {
     buyerId: string;
@@ -165,3 +190,27 @@ export interface ValidateOtpAPIData {
 }
 
 export interface ValidateOtpAPReturnType extends APIReturnType {}
+
+export interface ValidateReferralCodeAPReturnType extends APIReturnType {}
+export interface ValidateReferralCodeAPIData {
+  query: {
+    referralCode: string;
+  };
+}
+export interface GetSinglePaymentHistoryAPIData {
+  query: {
+    role: AdminRole;
+    paymentType: PaymentHistoryReferenceType;
+    paymentId: string;
+    creatorId: string;
+    createdBy: AdminRole;
+  };
+}
+export interface GetSinglePaymentHistoryAPIReturnType extends APIReturnType {
+  data: {
+    paymentDetails:
+      | SoldProductPaymentHistory
+      | UnknownPaymentHistory
+      | undefined;
+  };
+}

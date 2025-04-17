@@ -115,10 +115,10 @@ const Tab: React.FC<TabProps> = ({
 
           <Text style={[styles.productAmount, {color: currentTheme.baseColor}]}>
             {`${app.currency} ${
-              i.product.discounterPrice && i.product.discounterPrice !== 0
+              i.product.discountedPrice && i.product.discountedPrice !== 0
                 ? i.count === 0
-                  ? i.product.discounterPrice
-                  : (Number(i.product.discounterPrice) * Number(i.count)).toString()
+                  ? i.product.discountedPrice
+                  : (Number(i.product.discountedPrice) * Number(i.count)).toString()
                 : i.count === 0
                 ? i.product.basePrice
                 : (Number(i.product.basePrice) * Number(i.count)).toString()

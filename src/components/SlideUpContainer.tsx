@@ -27,9 +27,10 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   const childAnimatedStyles = useAnimatedStyle(() => {
     return {
       height: withTiming(childHeight.value, {
-        duration: 100,
+        duration: 200,
       }),
       justifyContent: 'flex-end',
+      overflow:'hidden'
     };
   });
 
@@ -37,12 +38,15 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
     childHeight.value = 0;
     setTimeout(() => {
       close();
-    }, 200);
+    }, 250);
   };
 
   useEffect(() => {
-    setTimeout(() => (childHeight.value = height), 100);
-  }, [open]);
+    if(open){
+      childHeight.value = 0;
+      setTimeout(() => (childHeight.value = height+30), 50);
+    }
+  }, [open,height]);
 
   return (
     <Modal

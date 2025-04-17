@@ -8,8 +8,15 @@ import {resetAndNavigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {deleteUser} from '../../../../store/slices/business';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
-const LogoutButton = () => {
+type LogoutButtonProps = {
+  theme?: 'red' | 'white';
+};
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({
+  theme = 'white',
+}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const handleOnLogout = async () => {
@@ -28,9 +35,16 @@ const LogoutButton = () => {
       activeOpacity={0.8}
       style={[
         styles.button,
-        {marginBottom: 6, backgroundColor: currentTheme.contrastColor},
+        {
+          marginBottom: 6,
+          backgroundColor:
+            (theme === 'red' && colors.dangerFade) ||
+            (theme === 'white' && currentTheme.contrastColor) ||
+            '',
+        },
       ]}
       onPress={handleOnLogout}>
+      <Icon name="logout" size={20} color={colors.danger} />
       <Text style={[styles.buttonText, {color: colors.danger}]}>Logout</Text>
     </TouchableOpacity>
   );
@@ -42,6 +56,10 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 8,
     marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap:8
   },
   buttonText: {
     fontSize: 22,

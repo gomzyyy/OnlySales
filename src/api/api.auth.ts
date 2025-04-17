@@ -83,6 +83,7 @@ export const signupAPI = async (
 ) => {
   handleBooleanState(setState, true);
   try {
+    console.log(data);
     const body = JSON.stringify(data);
     const fetching = await FetchAPI({
       reqType: 'cud',

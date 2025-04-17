@@ -1,15 +1,16 @@
-import {Text, StyleSheet, View, ScrollView, Image} from 'react-native';
-import React, {useState} from 'react';
-import {Product} from '../../../../types';
-import {useTheme} from '../../../hooks/index';
+import { Text, StyleSheet, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { Product } from '../../../../types';
+import { useTheme } from '../../../hooks/index';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import EditProduct from '../components/EditCreateProduct';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
-import {deviceWidth} from '../../../utils/Constants';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store/store';
+import { deviceWidth } from '../../../utils/Constants';
+
 const NoPhoto = require('../../../assets/images/no-profile.jpg');
 
 type TabProps = {
@@ -17,9 +18,9 @@ type TabProps = {
   lastIndex?: boolean;
 };
 
-const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
-  const {currentTheme} = useTheme();
-  const {currency} = useSelector((s: RootState) => s.appData.app);
+const Tab: React.FC<TabProps> = ({ i, lastIndex = false }): React.JSX.Element => {
+  const { currentTheme } = useTheme();
+  const { currency } = useSelector((s: RootState) => s.appData.app);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
   const [openLongPressOptions, setOpenLongPressOptions] =
     useState<boolean>(false);
@@ -27,9 +28,11 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
   const handleClickingTab = () => {
     setOpenEditing(true);
   };
+
   const handleOpenLongPressOptions = () => setOpenLongPressOptions(true);
   const handleCloseLongPressOptions = () => setOpenLongPressOptions(false);
   const handleCloseEditing = () => setOpenEditing(false);
+
   return (
     <LongPressEnabled
       longPressCanceledAction={handleClickingTab}
@@ -39,73 +42,72 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.baseColor,
+            backgroundColor: currentTheme?.baseColor || '#fff', // Ensure fallback to a default color
           },
         ]}>
         <View
-          style={[styles.tabLabel, {backgroundColor: currentTheme.baseColor}]}>
-          <Text style={[styles.productName, {color: currentTheme.tab.text}]}>
+          style={[styles.tabLabel, { backgroundColor: currentTheme?.baseColor }]}>
+          <Text style={[styles.productName, { color: currentTheme?.tab.text }]}>
             {i.name}
           </Text>
         </View>
         <View
           style={[
             styles.productInfoContainer,
-            {backgroundColor: currentTheme.baseColor},
+            { backgroundColor: currentTheme?.baseColor },
           ]}>
           <View style={styles.imageContainer}>
             <Image
-              source={i.image ? {uri: i.image} : NoPhoto}
-              height={120}
-              width={120}
+              source={i.image ? { uri: i.image } : NoPhoto}
               style={{
+                height: 120,
+                width: 120,
                 borderRadius: 20,
                 borderWidth: 1,
-                borderColor: currentTheme.contrastColor,
+                borderColor: currentTheme?.contrastColor || '#000',
               }}
             />
           </View>
           <View>
             <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
                 Price: {`${currency} ${i.basePrice}`}
               </Text>
             </View>
-            {i.discounterPrice && (
+            {i.discountedPrice && (
               <View style={styles.infoContainer}>
-                <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
-                  Discounted price: {`${currency} ${i.discounterPrice}`}
+                <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
+                  Discounted price: {`${currency} ${i.discountedPrice}`}
                 </Text>
               </View>
             )}
             <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
                 Includes: {i.quantity} {i.measurementType}
               </Text>
             </View>
             <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
                 Total sold: {i.totalSold}
               </Text>
             </View>
             <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
                 Stock: {i.stock}
               </Text>
             </View>
-
             <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+              <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
                 Product cost: {`${currency} ${i.productCost}`}
               </Text>
             </View>
             {i.productCost && (
               <View style={styles.infoContainer}>
-                <Text style={[styles.infoText, {color: currentTheme.tab.text}]}>
+                <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
                   Net Profit/sale:{' '}
                   {`${parseFloat(
-                    (i.discounterPrice && i.discounterPrice > 0
-                      ? (i.discounterPrice / i.productCost) * 100 - 100
+                    (i.discountedPrice && i.discountedPrice > 0
+                      ? (i.discountedPrice / i.productCost) * 100 - 100
                       : (i.basePrice / i.productCost) * 100 - 100
                     ).toFixed(1),
                   )}%`}
@@ -127,6 +129,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     </LongPressEnabled>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 6,

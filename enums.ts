@@ -35,12 +35,12 @@ export enum AdminRole {
   EMPLOYEE = 'Employee',
 }
 export enum AppThemeName {
-  PURPLE = 'Midnight Orchid',
+  // PURPLE = 'Midnight Orchid',
   RED = 'Blood Moon',
-  YELLOW = 'Molten Gold',
+  // YELLOW = 'Molten Gold',
   GREEN = 'Cyber Lime',
   BLUE = 'Deep Ocean',
-  CORAL = 'Salmon Mist',
+  // CORAL = 'Salmon Mist',
 }
 
 export enum AssetCategory {
@@ -168,7 +168,8 @@ export enum PaymentState {
   PENDING = 'PENDING',
 }
 export enum PaymentHistoryReferenceType {
-  SOLD_PRODUCT = 'SoldProduct',
+  SOLD_PRODUCT = 'SoldProductPaymentHistory',
+  UNKNOWN = 'UnknownPaymentHistory',
 }
 export enum UnknownPaymentType {
   CREDIT = 'CREDIT',

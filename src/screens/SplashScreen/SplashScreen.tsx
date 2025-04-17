@@ -24,6 +24,7 @@ const SplashScreen = () => {
         prepareNavigation();
         if (user && user._id) {
           const res = await validateTokenAPI({role: user.role}, setLoading);
+          console.log(res)
           if (res.success && res.data.user) {
             dispatch(setUser(res.data.user));
             resetAndNavigate('Dashboard');

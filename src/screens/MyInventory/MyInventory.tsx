@@ -47,13 +47,7 @@ const MyInventory = () => {
         curved={true}
       />
       <View style={styles.contentContainer}>
-        {inventoryItems.length === 0 ? (
-          <EmptyListMessage
-            title="No Items in your inventory!"
-            context="Click on PLUS button to add a new item."
-            textColor={currentTheme.contrastColor}
-          />
-        ) : (
+        {inventoryItems.length > 0 && (
           <ScrollView
             contentContainerStyle={styles.listContainer}
             showsHorizontalScrollIndicator={false}
@@ -65,8 +59,10 @@ const MyInventory = () => {
         )}
       </View>
       <View style={styles.assistTextContainer}>
-        <Text style={[styles.assistText, {color: currentTheme.contrastColor}]}>
-          Click to edit Inventory item.
+        <Text style={[styles.assistText, {color: currentTheme.baseColor}]}>
+          {inventoryItems.length === 0
+            ? 'Your Inventory is Empty'
+            : 'Click to edit Inventory item.'}
         </Text>
       </View>
       {openAddProduct && (
@@ -98,6 +94,7 @@ const styles = StyleSheet.create({
     bottom: 6,
     width: deviceWidth,
     paddingVertical: 20,
+    borderRadius:10
   },
   assistText: {
     textAlign: 'center',

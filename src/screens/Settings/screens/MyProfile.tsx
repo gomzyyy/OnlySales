@@ -136,14 +136,15 @@ const MyProfile = () => {
           customAction={handleProfileEdit}
           headerBgColor={currentTheme.baseColor}
           titleColor={currentTheme.header.textColor}
+          curved={true}
         />
         <View style={styles.settingsContainer}>
           <View style={styles.infoContainer}>
-              <OwnerInfo
-                user={user}
-                profileImageValue={profileImageValue}
-                setProfileImageValue={setProfileImageValue}
-              />
+            <OwnerInfo
+              user={user}
+              profileImageValue={profileImageValue}
+              setProfileImageValue={setProfileImageValue}
+            />
           </View>
           <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -175,7 +176,10 @@ const MyProfile = () => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Registered role:</Text>
-              <RolePicker value={owner?.role || AdminRole.OWNER} setState={setRole} />
+              <RolePicker
+                value={owner?.role || AdminRole.OWNER}
+                setState={setRole}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Registered business type:</Text>

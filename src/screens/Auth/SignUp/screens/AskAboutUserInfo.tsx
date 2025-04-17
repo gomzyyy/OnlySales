@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   ScrollView,
+  Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useTheme} from '../../../../hooks/index';
@@ -20,6 +22,7 @@ import {AppDispatch} from '../../../../../store/store';
 import {isValidEmail, showToast} from '../../../../service/fn';
 import CurrencyPicker from '../../../../components/CurrencyPicker';
 import {signupAPI} from '../../../../api/api.auth';
+import {ValidateReferralCodeOtpAPI} from '../../../../api/api.validate';
 
 type AskAboutUserInfoParams = {
   name: string;
@@ -29,7 +32,6 @@ type AskAboutUserInfoParams = {
 
 const AskAboutUserInfo = () => {
   const {params} = useRoute();
-  const dispatch = useDispatch<AppDispatch>();
   const {name, userId, businessPhoneNumber} = params as AskAboutUserInfoParams;
   const {currentTheme} = useTheme();
   const [businessType, setBusinessType] = useState<BusinessType>(
@@ -43,6 +45,11 @@ const AskAboutUserInfo = () => {
   );
   const [businessAddress, setBusinessAddress] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [hasReferralCode, setHasReferralCode] = useState<boolean>(false);
+  const [hasPromoCode, setHasPromoCode] = useState<boolean>(false);
+  const [promoCode, setPromoCode] = useState<string | undefined>('');
+  const [referralCode, setReferralCode] = useState<string | undefined>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSetBusinessType = async () => {
     if (
@@ -92,6 +99,20 @@ const AskAboutUserInfo = () => {
       });
       return;
     }
+    if (referralCode && referralCode.trim().length === 0) {
+      setReferralCode(undefined);
+    }
+    if (referralCode) {
+      const res = await ValidateReferralCodeOtpAPI(
+        {query: {referralCode}},
+        setLoading,
+      );
+      console.log(res);
+      if (!res.success) {
+        showToast({type: 'error', text1: res.message});
+        return;
+      }
+    }
     const params = {
       name,
       userId,
@@ -101,6 +122,7 @@ const AskAboutUserInfo = () => {
       businessPhoneNumber,
       businessAddress,
       email,
+      referralCode,
     };
     navigate('SetPassword', params);
   };
@@ -111,6 +133,7 @@ const AskAboutUserInfo = () => {
       setAskBusinessDescription(false);
     }
   }, [businessType]);
+
   return (
     <KeyboardAvoidingView style={styles.parent}>
       <ScrollView style={{flex: 1}}>
@@ -159,6 +182,86 @@ const AskAboutUserInfo = () => {
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>
+          <View style={{flexDirection: 'row'}}>
+            <Pressable
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 10,
+                paddingHorizontal: 10,
+                marginTop: 10,
+              }}
+              onPress={() => setHasReferralCode(!hasReferralCode)}>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 7,
+                  height: 14,
+                  width: 14,
+                  padding: 3,
+                }}>
+                <View
+                  style={{
+                    backgroundColor: hasReferralCode
+                      ? currentTheme.baseColor
+                      : '',
+                    flex: 1,
+                    borderRadius: 10,
+                  }}
+                />
+              </View>
+              <Text style={{fontSize: 14, fontWeight: 400}}>
+                I have a referral code!
+              </Text>
+            </Pressable>
+            <Pressable
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 10,
+                paddingHorizontal: 10,
+                marginTop: 10,
+              }}
+              onPress={() => setHasPromoCode(!hasPromoCode)}>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 7,
+                  height: 14,
+                  width: 14,
+                  padding: 3,
+                }}>
+                <View
+                  style={{
+                    backgroundColor: hasPromoCode ? currentTheme.baseColor : '',
+                    flex: 1,
+                    borderRadius: 10,
+                  }}
+                />
+              </View>
+              <Text style={{fontSize: 14, fontWeight: 400}}>
+                I have a promo code!
+              </Text>
+            </Pressable>
+          </View>
+          {hasReferralCode && (
+            <View style={[styles.inputContainer, {marginTop: 0}]}>
+              <Text style={styles.inputLabel}>Enter Referral code:</Text>
+              <TextInput
+                value={referralCode}
+                onChangeText={v => setReferralCode(v.toUpperCase())}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Referral code here."
+                placeholderTextColor={currentTheme.baseColor}
+              />
+              <Text style={{fontSize: 12, fontWeight: 400}}>
+                *Get Full Access with a 7-Day Premium Pass using Referral Code!
+              </Text>
+            </View>
+          )}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Choose your business type:</Text>
             <BusinessTypePicker
@@ -201,11 +304,15 @@ const AskAboutUserInfo = () => {
               ]}>
               Next
             </Text>
-            <Icon
-              name="rightcircle"
-              size={22}
-              color={currentTheme.contrastColor}
-            />
+            {loading ? (
+              <ActivityIndicator size={18} color={currentTheme.contrastColor} />
+            ) : (
+              <Icon
+                name="rightcircle"
+                size={22}
+                color={currentTheme.contrastColor}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>

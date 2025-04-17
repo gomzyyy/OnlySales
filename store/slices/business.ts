@@ -3,23 +3,23 @@ import {
   Owner,
   App,
   Customer,
-  Product,
-  SoldProduct,
+  // Product,
+  // SoldProduct,
   AppTheme,
   Employee,
-  User,
+  // User,
   Partner,
 } from '../../types';
 import {
-  AdminRole,
-  BusinessType,
+  // AdminRole,
+  // BusinessType,
   CurrencyType,
-  EmploymentStatus,
-  Shift,
+  // EmploymentStatus,
+  // Shift,
 } from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
-import {checkDate, randomId, showToast} from '../../src/service/fn';
+// import {checkDate, randomId, showToast} from '../../src/service/fn';
 
 type appstate = {
   user: Owner | Partner | Employee | undefined;
@@ -35,7 +35,7 @@ const initialState: appstate = {
       employeeResults: [],
     },
     currentTheme: undefined,
-    defaultTheme: Theme[4],
+    defaultTheme: Theme[3],
     previousOwners: [],
     deviceId: undefined,
     appLocked: false,

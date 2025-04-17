@@ -94,8 +94,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
       setUdharAmount(
         udharAmount +
           Number(
-            product.discounterPrice && product.discounterPrice !== 0
-              ? product.discounterPrice
+            product.discountedPrice && product.discountedPrice !== 0
+              ? product.discountedPrice
               : product.basePrice,
           ),
       );
@@ -104,8 +104,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
       setUdharAmount(
         udharAmount -
           Number(
-            product.discounterPrice && product.discounterPrice !== 0
-              ? product.discounterPrice
+            product.discountedPrice && product.discountedPrice !== 0
+              ? product.discountedPrice
               : product.basePrice,
           ),
       );

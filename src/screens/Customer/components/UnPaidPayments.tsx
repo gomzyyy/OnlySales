@@ -47,8 +47,8 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
       setPayableAmount(amount);
     } else if (payAs === 'SINGLE' && item) {
       setPayableAmount(
-        (item.product.discounterPrice && item.product.discounterPrice !== 0
-          ? item.product.discounterPrice
+        (item.product.discountedPrice && item.product.discountedPrice !== 0
+          ? item.product.discountedPrice
           : item.product.basePrice) * item.count,
       );
     }
@@ -64,8 +64,8 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
     const amt = products.reduce(
       (acc, f) =>
         acc +
-        (f.product.discounterPrice
-          ? f.product.discounterPrice
+        (f.product.discountedPrice
+          ? f.product.discountedPrice
           : f.product.basePrice) *
           f.count,
       0,

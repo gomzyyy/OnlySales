@@ -95,7 +95,7 @@ const VerifyEmail = () => {
               onChangeText={setOtp}
               style={[
                 styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
+                {borderColor: currentTheme.modal.inputBorder,color:'black'},
               ]}
               placeholder={`Your OTP here.`}
               placeholderTextColor={currentTheme.baseColor}

@@ -32,6 +32,7 @@ type SetPasswordParams = {
   businessPhoneNumber: string;
   businessAddress: string;
   email: string;
+  referralCode: string | undefined;
 };
 
 const SetPassword = () => {
@@ -46,9 +47,10 @@ const SetPassword = () => {
     businessName,
     businessType,
     email,
+    referralCode,
   } = params as SetPasswordParams;
   const {currentTheme} = useTheme();
-
+  let refCode: string | undefined;
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [passwordMatched, setPasswordMatched] = useState<boolean>(true);
@@ -96,6 +98,7 @@ const SetPassword = () => {
       email,
       password,
       role: AdminRole.OWNER,
+      uniqueReferralCode: referralCode,
     };
     const res = await signupAPI(signupData, setLoading);
     if (res.success && res.data && res.data.user && res.data.token) {

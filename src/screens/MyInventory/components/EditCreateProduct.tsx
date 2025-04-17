@@ -32,7 +32,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
   const [name, setName] = useState<string>(product.name);
   const [price, setPrice] = useState<number>(product.basePrice);
   const [discountedPrice, setDiscountedPrice] = useState<number>(
-    product.discounterPrice ?? 0,
+    product.discountedPrice ?? 0,
   );
   const [quantity, setQuantity] = useState<number>(product.quantity);
   const [measurementType, setMeasurementType] = useState<MeasurementType>(

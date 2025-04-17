@@ -21,7 +21,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
   const calculateTotal = (sales: any[]) => {
     return sales.reduce((sum, item) => {
       const totalSold = Number(item?.product?.totalSold ?? 0);
-      const price = Number(item?.product?.discounterPrice ?? item?.product?.basePrice ?? 0);
+      const price = Number(item?.product?.discountedPrice ?? item?.product?.basePrice ?? 0);
       return sum + totalSold * price;
     }, 0);
   };

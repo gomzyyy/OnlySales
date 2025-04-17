@@ -110,7 +110,7 @@ export interface Customer extends User {
 
 export interface AccountType extends CommonProps {
   type: AccountTypeEnum;
-  connectedWith: Owner | Employee | Partner | string;
+  connectedWith: Owner | Employee | Partner;
   connectedWithType: AdminRole;
   expiresAt?: Date;
   initialisedAt?: Date;
@@ -127,6 +127,8 @@ export interface OwnerProperties {
 }
 
 export interface Owner extends User {
+  referralCode: string;
+  credits: Number;
   password: string;
   otp: OTP | undefined;
   businessAddress: string;
@@ -211,7 +213,7 @@ export interface Product extends CommonProps {
   image?: string;
   totalSold: number;
   basePrice: number;
-  discounterPrice?: number;
+  discountedPrice?: number;
   quantity: number;
   measurementType: MeasurementType;
   measurementTypeDescription?: string;
@@ -223,7 +225,7 @@ export interface Product extends CommonProps {
 
 export interface SoldProduct extends CommonProps {
   product: Product;
-  buyer: string;
+  buyer: Customer | string;
   state: PaymentState;
   count: number;
   soldBy: Owner | Employee | Partner | string;
@@ -268,7 +270,7 @@ export interface Liability extends CommonProps {
 }
 export interface SoldProductPaymentHistory extends CommonProps {
   referenceType: PaymentHistoryReferenceType;
-  reference: SoldProduct | string;
+  reference: SoldProduct;
   info: {
     name: string;
     amount: number;
@@ -300,12 +302,16 @@ export interface UnknownPaymentHistory extends CommonProps {
   };
   state: PaymentState;
 }
-export interface PaymentHistory {
+export interface PaymentHistory extends CommonProps {
   payment: string;
   paymentType: PaymentHistoryReferenceType;
   createdAt: Date;
-  createdBy: Owner | Partner | Employee | string;
+  createdBy:string;
   createdByModel: AdminRole;
+  title: string;
+  amount: number;
+  shortNote: string;
+  type: UnknownPaymentType;
 }
 export interface History {
   payments: PaymentHistory[];

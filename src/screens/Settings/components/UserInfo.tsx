@@ -70,7 +70,8 @@ const UserInfo: React.FC<OwnerInfoProps> = ({
       <SlideUpContainer
         open={openImagePicker}
         close={handleCloseImagePicker}
-        opacity={0.2}>
+        opacity={0.2}
+        height={180}>
         <FilePicker
           value={profileImageValue}
           setState={setProfileImageValue}
@@ -78,6 +79,29 @@ const UserInfo: React.FC<OwnerInfoProps> = ({
           type="image"
         />
       </SlideUpContainer>
+      <View
+        style={{
+          backgroundColor: currentTheme.baseColor,
+          position: 'absolute',
+          paddingHorizontal: 4,
+          paddingVertical: 2,
+          borderRadius: 6,
+          right: 10,
+          top: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: currentTheme.contrastColor,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            fontSize: 14,
+            fontWeight: 600,
+          }}>
+          {user.role.toLowerCase()}
+        </Text>
+      </View>
     </View>
   );
 };

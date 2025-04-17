@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Dashboard from '../screens/Dashboard/Dashboard';
@@ -22,7 +22,7 @@ import SetPasscode from '../screens/Auth/AppLock/SetPasscode/SetPasscode';
 import Unlock from '../screens/Auth/AppLock/Unlock/Unlock';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {AppState} from 'react-native';
+import {AppState, Text, View} from 'react-native';
 import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
 import {useTheme} from '../hooks/index';
@@ -37,12 +37,21 @@ import VerifyPassword from '../screens/Auth/Login/screens/VerifyUserPassword';
 import SetPassword from '../screens/Auth/SignUp/screens/SetPassword';
 import RequestOTPEmail from '../screens/Auth/Validate/Email/RequestOTPEmail';
 import VerifyEmail from '../screens/Auth/Validate/Email/VerifyEmail';
+import {colors} from '../utils/Constants';
+import {useNetInfo} from '@react-native-community/netinfo';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import PaymentHistory from '../screens/History/PaymentHistory/PaymentHistory';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
 const StackNav = () => {
   const {currentTheme} = useTheme();
+
   const dispatch = useDispatch<AppDispatch>();
   const {appLocked} = useSelector((s: RootState) => s.appData.app);
   useEffect(() => {
@@ -88,6 +97,7 @@ const StackNav = () => {
       <stack.Screen name="VerifyPassword" component={VerifyPassword} />
       <stack.Screen name="RequestOTPEmail" component={RequestOTPEmail} />
       <stack.Screen name="VerifyEmail" component={VerifyEmail} />
+      <stack.Screen name="PaymentHistory" component={PaymentHistory} />
       <stack.Screen
         name="Login"
         options={{gestureEnabled: false}}
@@ -140,6 +150,33 @@ const StackNav = () => {
 };
 
 const Navigation = () => {
+  const {currentTheme} = useTheme();
+  const {isConnected} = useNetInfo();
+
+  const [prevIsConnected, setPrevIsConnected] = useState<boolean>(true);
+
+  const bottomNetworkStateContainerHeight = useSharedValue(0);
+  const bottomNetworkStateContainerAnimatedstyles = useAnimatedStyle(() => {
+    return {
+      height: withTiming(bottomNetworkStateContainerHeight.value, {
+        duration: 100,
+      }),
+    };
+  });
+
+  useEffect(() => {
+    if (!isConnected) {
+      setTimeout(() => (bottomNetworkStateContainerHeight.value = 18), 2000);
+      setPrevIsConnected(false);
+    } else if (!prevIsConnected && isConnected) {
+      setTimeout(() => (bottomNetworkStateContainerHeight.value = 0), 200);
+      setTimeout(() => (bottomNetworkStateContainerHeight.value = 18), 200);
+      setTimeout(() => (bottomNetworkStateContainerHeight.value = 0), 2000);
+    } else {
+      setTimeout(() => (bottomNetworkStateContainerHeight.value = 0), 200);
+    }
+  }, [isConnected]);
+
   return (
     <NavigationContainer ref={navigationRef}>
       <drawer.Navigator
@@ -150,6 +187,24 @@ const Navigation = () => {
         }}>
         <drawer.Screen name="Home" component={StackNav} />
       </drawer.Navigator>
+      <Animated.View
+        style={[
+          {
+            backgroundColor: currentTheme.contrastColor,
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 18,
+          },
+          bottomNetworkStateContainerAnimatedstyles,
+        ]}>
+        <Text
+          style={{
+            fontWeight: 400,
+            color: isConnected ? currentTheme.baseColor : colors.danger,
+          }}>
+          {isConnected ? 'connected' : 'No connection'}
+        </Text>
+      </Animated.View>
     </NavigationContainer>
   );
 };

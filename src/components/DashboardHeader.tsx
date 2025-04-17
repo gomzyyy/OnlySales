@@ -26,14 +26,15 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const {currentTheme} = useTheme();
   const {soldThisMonth = [], todaySales = []} = useAnalytics();
   const app = useSelector((s: RootState) => s.appData.app);
-
+  console.log(todaySales);
   const totalMonthlySales = useMemo(
     () =>
       soldThisMonth.reduce(
         (acc, s) =>
           acc +
-          ((s.product.discounterPrice ? s.product.discounterPrice: s.product.basePrice) *
-            s.product.totalSold || 0),
+          ((s.product.discountedPrice
+            ? s.product.discountedPrice
+            : s.product.basePrice) * s.count || 0),
         0,
       ),
     [soldThisMonth],
@@ -43,8 +44,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       todaySales.reduce(
         (acc, s) =>
           acc +
-        ((s.product.discounterPrice ? s.product.discounterPrice: s.product.basePrice) *
-        s.product.totalSold || 0),
+          ((s.product.discountedPrice
+            ? s.product.discountedPrice
+            : s.product.basePrice) * s.count || 0),
         0,
       ),
     [todaySales],
@@ -115,7 +117,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     styles.searchQueryInputText,
                     {color: currentTheme.baseColor},
                   ]}>
-                  Search customer by name
+                  Search Tools & Features
                 </Text>
               </View>
             </Pressable>

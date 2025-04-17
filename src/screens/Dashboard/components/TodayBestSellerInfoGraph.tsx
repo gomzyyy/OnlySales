@@ -19,9 +19,9 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
   const currency = useSelector((s: RootState) => s.appData.app.currency);
 
   const calculatePrice = (item: any) => {
-    const totalSold = Number(item?.product?.totalSold ?? 0);
+    const totalSold = Number(item.product.totalSold ?? 0);
     const price = Number(
-      item?.product?.discounterPrice ?? item?.product?.basePrice ?? 0,
+      item.product.discountedPrice ?? item.product.basePrice ?? 0,
     );
     return totalSold * price;
   };

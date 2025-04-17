@@ -1,12 +1,15 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
+import React, {useState} from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
-import { Product} from '../../../../types';
+import {Product} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
+import {deleteProductAPI} from '../../../api/api.product';
+import {validateTokenAPI} from '../../../api/api.auth';
+import {setUser} from '../../../../store/slices/business';
 
 type TabLongPressOptionsProps = {
   i: Product;
@@ -19,16 +22,34 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
+  const user = useSelector((s: RootState) => s.appData.user)!;
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleDeleteCustomer = async (): Promise<void> => {
     const res = await Confirm(
       'Are you sure you want to remove this product?',
       'Once product removed, cannot be reversed! be careful of miss-touching removal button.',
     );
+    const deleteProductData = {
+      query: {
+        uid: user._id,
+        role: user.role,
+        productId: i._id,
+      },
+    };
     if (res) {
-      // dispatch(removeProductFromInventory({product:i}));
-      showToast({type: 'success', text1: 'Customer removed successfully.'});
-      close();
+      const res = await deleteProductAPI(deleteProductData, setLoading);
+      if (res.success) {
+        const data = {
+          role: user.role,
+        };
+        const updatedUser = await validateTokenAPI(data, setLoading);
+        if (updatedUser.success && updatedUser.data && updatedUser.data.user) {
+          dispatch(setUser(updatedUser.data.user));
+        }
+      }
+      showToast({type: 'success', text1: res.message});
       return;
     }
   };
@@ -42,14 +63,11 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
           activeOpacity={0.8}
           onPress={handleDeleteCustomer}>
-          <Text
-            style={[
-              styles.buttonDangerText,
-              {color: colors.danger},
-            ]}>
+          <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
             Delete
           </Text>
-          <Icon name="delete" size={18} color={colors.danger} />
+         {loading ? <ActivityIndicator color={colors.danger} size={16} />
+         : <Icon name="delete" size={18} color={colors.danger} />}
         </TouchableOpacity>
       </View>
     </View>
@@ -62,7 +80,7 @@ const styles = StyleSheet.create({
     height: deviceHeight * 0.18,
     borderRadius: 20,
     marginTop: 60,
-    elevation:30,
+    elevation: 30,
   },
   label: {
     fontSize: 20,

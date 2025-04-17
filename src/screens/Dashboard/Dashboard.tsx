@@ -10,7 +10,7 @@ import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
 import {navigate, prepareNavigation} from '../../utils/nagivationUtils';
-import {useTheme} from '../../hooks/index';
+import {useAnalytics, useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
@@ -67,6 +67,7 @@ const DashboardOptions = [
 
 const Dashboard = () => {
   const {currentTheme} = useTheme();
+  const {owner} = useAnalytics();
   const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
   const [openQRCode, setOpenQRCode] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user)!;
@@ -107,6 +108,7 @@ const Dashboard = () => {
   }, []);
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
+     
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
           name="Dashboard"
@@ -183,14 +185,14 @@ const Dashboard = () => {
           <View style={styles.graphContainer}>
             <Text
               style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
-              Today's best-sellers {'(sales-product)'}
+              Today's best-sellers {'(sales per product)'}
             </Text>
             <TodayBestSellerInfoGraph />
           </View>
           <View style={styles.graphContainer}>
             <Text
               style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
-              Past 7 Day Recap {'(sales-day)'}
+              Past 7 Day Recap {'(sales per day)'}
             </Text>
             <WeeklySalesInfoGraph />
           </View>
