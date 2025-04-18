@@ -26,11 +26,6 @@ const PaymentHistory = () => {
               enable={paymentHistory.length !== 0}
             />
           </View>
-          {/* <View>
-            <Pressable />
-            <Pressable />
-            <Pressable />
-          </View> */}
           {paymentHistory.length !== 0 ? (
             <FlatList
               data={paymentHistory}
@@ -44,7 +39,7 @@ const PaymentHistory = () => {
             <View style={{flex: 1}}>
               <EmptyListMessage
                 textColor={currentTheme.header.textColor}
-                title="No Employee data available"
+                title="No Payment History yet!"
               />
             </View>
           )}

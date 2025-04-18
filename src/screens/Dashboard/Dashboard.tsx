@@ -15,11 +15,11 @@ import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/AntDesign';
+import Icon4 from 'react-native-vector-icons/MaterialIcons';
 import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 import FloatingPayButton from './components/FloatingPayButton';
 import SlideUpContainer from '../../components/SlideUpContainer';
-import ConfirmPayment from '../../components/ConfirmPayment';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import ScanQRToPay from '../../components/ScanQRToPay';
@@ -114,6 +114,12 @@ const Dashboard = () => {
           name="Dashboard"
           menuButton
           titleColor={currentTheme.header.textColor}
+          customComponent={true}
+          renderItem={<Icon4
+                    name="qr-code-scanner"
+                    size={26}
+                    color={currentTheme.contrastColor}
+                  />}
         />
         {!user.email?.verified && (
           <Animated.View
@@ -212,7 +218,7 @@ const Dashboard = () => {
           payableAmount={payableAmount}
         />
       </SlideUpContainer>
-      <FloatingPayButton pressAction={handleOpenRequestPayment} />
+      {/* <FloatingPayButton pressAction={handleOpenRequestPayment} /> */}
     </View>
   );
 };

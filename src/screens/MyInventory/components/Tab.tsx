@@ -9,9 +9,8 @@ import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/store';
-import { deviceWidth } from '../../../utils/Constants';
 
-const NoPhoto = require('../../../assets/images/no-profile.jpg');
+const NoPhoto = require('../../../assets/images/no_product_image.jpg');
 
 type TabProps = {
   i: Product;

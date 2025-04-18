@@ -151,7 +151,7 @@ const Tab: React.FC<TabProps> = ({
         <SlideUpContainer
           open={openSoldProductHistoryDetails}
           close={handleCloseSoldProductPaymentsDetails}
-          height={deviceHeight * 0.3}
+          height={deviceHeight * 0.36}
           opacity={0.5}
           >
           <SoldProductPaymentDetailContainer

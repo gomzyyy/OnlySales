@@ -2,7 +2,6 @@ import {View, Text, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import {navigate} from '../../../../utils/nagivationUtils';
 import {useTheme} from '../../../../hooks';
-import {useRoute} from '@react-navigation/native';
 
 type SearchBarProps = {
   textColor?: string;

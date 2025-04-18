@@ -1,16 +1,17 @@
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
-import React from 'react';
-import {colors, deviceHeight} from '../../../../utils/Constants';
-import {useTheme} from '../../../../hooks';
-import {
-  Customer,
-  Employee,
-  Owner,
-  Partner,
-  SoldProductPaymentHistory,
-} from '../../../../../types';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../../store/store';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../../../../hooks';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../../store/store';
+import { Customer, Employee, Owner, Partner, SoldProductPaymentHistory } from '../../../../../types';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
+import { deviceHeight } from '../../../../utils/Constants';
 
 type ConfirmPaymentProps = {
   details: SoldProductPaymentHistory | undefined;
@@ -19,52 +20,70 @@ type ConfirmPaymentProps = {
 
 const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
   details,
-  callback,
 }): React.JSX.Element => {
-  const {currentTheme} = useTheme();
-  const {currency} = useSelector((s: RootState) => s.appData.app);
+  const { currentTheme } = useTheme();
+  const { currency } = useSelector((s: RootState) => s.appData.app);
+
+  const opacity = useSharedValue(0.3);
+
+  useEffect(() => {
+    if (!details) {
+      opacity.value = withRepeat(
+        withSequence(
+          withTiming(0.8, { duration: 500 }),
+          withTiming(0.3, { duration: 500 })
+        ),
+        -1,
+        true
+      );
+    }
+  }, [details]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   return (
     <View
-      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
-      <Text style={[styles.label, {color: currentTheme.baseColor}]}>
+      style={[styles.parent, { backgroundColor: currentTheme.contrastColor }]}
+    >
+      <Text style={[styles.label, { color: currentTheme.baseColor }]}>
         Payment History
       </Text>
 
       {details ? (
         <View style={styles.detailSection}>
           <Text style={styles.textItem}>
-            <Text style={styles.bold}>Product:</Text> {details.info.name}
+            <Text style={styles.bold}>Product: </Text>
+            {details.info.name}
           </Text>
           <Text style={styles.textItem}>
-            <Text style={styles.bold}>Amount:</Text> {currency}{' '}
-            {details.info.amount}
+            <Text style={styles.bold}>Amount: </Text>
+            {currency} {details.info.amount}
           </Text>
           <Text style={styles.textItem}>
-            <Text style={styles.bold}>Description:</Text>{' '}
+            <Text style={styles.bold}>Description: </Text>
             {details.paymentDescription}
           </Text>
           <Text style={styles.textItem}>
-            <Text style={styles.bold}>Date:</Text>{' '}
+            <Text style={styles.bold}>Date: </Text>
             {new Date(details.createdAt).toDateString()}
           </Text>
           <Text style={styles.textItem}>
-            <Text style={styles.bold}>Sold By:</Text>{' '}
+            <Text style={styles.bold}>Sold By: </Text>
             {(details.reference.soldBy as Owner | Employee | Partner).name ||
               'N/A'}
           </Text>
           <Text style={styles.textItem}>
-            <Text style={styles.bold}>Buyer:</Text>{' '}
+            <Text style={styles.bold}>Buyer: </Text>
             {(details.reference.buyer as Customer).name || 'N/A'}
           </Text>
         </View>
       ) : (
-        <View style={styles.loader}>
-          <ActivityIndicator
-            size={40}
-            color={currentTheme.baseColor}
-            style={{marginBottom: 40}}
-          />
+        <View style={styles.detailSection}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Animated.View key={i} style={[styles.skeletonBox, animatedStyle]} />
+          ))}
         </View>
       )}
     </View>
@@ -73,7 +92,7 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight * 0.3,
+    height: deviceHeight*0.35,
     marginBottom: 10,
     borderRadius: 20,
     padding: 20,
@@ -82,7 +101,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   detailSection: {
     flex: 1,
@@ -90,15 +109,17 @@ const styles = StyleSheet.create({
   },
   textItem: {
     fontSize: 16,
-    marginBottom: 5,
+    marginBottom: 6,
   },
   bold: {
     fontWeight: 'bold',
   },
-  loader: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  skeletonBox: {
+    height: 18,
+    backgroundColor: '#ccc',
+    borderRadius: 4,
+    width: '95%',
+    alignSelf: 'center',
   },
 });
 

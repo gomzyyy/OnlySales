@@ -58,14 +58,14 @@ export const toogleState = (
 };
 export const checkDate = ({
   date,
-  matchByDay = 1, // Default: Check if the date is today
+  matchByDay = 1,
 }: {
   date: number;
   matchByDay?: number;
 }) => {
   if (typeof date !== 'number') {
     return {
-      isExactMatch: false, // ✅ For matchByDay checking
+      isExactMatch: false,
       sameDay: false,
       thisMonth: false,
       lastMonth: false,
@@ -74,14 +74,13 @@ export const checkDate = ({
       fourMonthsOld: false,
       olderThanFourMonths: false,
       monthsOld: null,
-      daysAgo: null, // ✅ How many days old
+      daysAgo: null,
     };
   }
 
   const parsedDate = new Date(date);
   const now = new Date();
 
-  // Normalize both dates to remove time and compare only dates
   const nowUTC = new Date(
     now.getUTCFullYear(),
     now.getUTCMonth(),
@@ -94,11 +93,9 @@ export const checkDate = ({
     parsedDate.getUTCDate(),
   );
 
-  // Calculate full days difference
   const timeDifference = nowUTC.getTime() - parsedDateUTC.getTime();
   const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-  // Calculate month difference
   const monthDifference =
     (nowUTC.getFullYear() - parsedDateUTC.getFullYear()) * 12 +
     (nowUTC.getMonth() - parsedDateUTC.getMonth());
@@ -132,3 +129,19 @@ export function isValidEmail(email: string): boolean {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/i;
   return emailRegex.test(email.trim());
 }
+
+export const formatNumber = (num: number): string => {
+  if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+  } else if (num >= 10_00_00_000) {
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M'; // fallback for large numbers not in billions
+  } else if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  } else if (num >= 100_000) {
+    return (num / 1_000).toFixed(0) + 'K';
+  } else if (num >= 1_000) {
+    return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+  } else {
+    return num.toString();
+  }
+};

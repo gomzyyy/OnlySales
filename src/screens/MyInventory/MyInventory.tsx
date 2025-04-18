@@ -8,10 +8,8 @@ import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddProduct from './components/AddProduct';
-import EmptyListMessage from '../../components/EmptyListMessage';
 import {useAnalytics, useTheme} from '../../hooks/index';
-import {AdminRole} from '../../../enums';
-import {Employee, Owner, Partner} from '../../../types';
+
 
 const MyInventory = () => {
   const {currentTheme} = useTheme();

@@ -37,6 +37,8 @@ import VerifyPassword from '../screens/Auth/Login/screens/VerifyUserPassword';
 import SetPassword from '../screens/Auth/SignUp/screens/SetPassword';
 import RequestOTPEmail from '../screens/Auth/Validate/Email/RequestOTPEmail';
 import VerifyEmail from '../screens/Auth/Validate/Email/VerifyEmail';
+import EMICalculator from '../screens/Tools/EMICalculator/EMICalculator';
+
 import {colors} from '../utils/Constants';
 import {useNetInfo} from '@react-native-community/netinfo';
 import Animated, {
@@ -144,6 +146,11 @@ const StackNav = () => {
         name="LoginOptions"
         options={{gestureEnabled: false}}
         component={LoginOptions}
+      />
+      <stack.Screen
+        name="EMICalculator"
+        options={{gestureEnabled: false}}
+        component={EMICalculator}
       />
     </stack.Navigator>
   );

@@ -13,6 +13,7 @@ import {useAnalytics, useTheme} from '../../hooks';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useHaptics} from '../../hooks';
 import { deviceHeight } from '../../utils/Constants';
+import CreateUnknownPayment from '../../components/CreateUnknownPayment';
 
 const Customers = () => {
   const {lightTap} = useHaptics();
@@ -70,9 +71,10 @@ const Customers = () => {
         <SlideUpContainer
           open={openCreateCustomer}
           close={handleCloseCreateCustomer}
-          height={deviceHeight * 0.6}
+          height={deviceHeight * 0.82}
           >
-          <CreateCustomer callback={handleCloseCreateCustomer} />
+            <CreateUnknownPayment callback={handleCloseCreateCustomer} />
+          {/* <CreateCustomer callback={handleCloseCreateCustomer} /> */}
         </SlideUpContainer>
       )}
     </View>
