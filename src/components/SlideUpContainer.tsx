@@ -38,13 +38,13 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
     childHeight.value = 0;
     setTimeout(() => {
       close();
-    }, 220);
+    }, 100);
   };
 
   useEffect(() => {
     if(open){
       childHeight.value = 0;
-      setTimeout(() => (childHeight.value = height+30), 20);
+      setTimeout(() => (childHeight.value = height+30), 40);
     }
   }, [open,height]);
 
@@ -56,7 +56,7 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
       visible={open}
       onRequestClose={closeSlideUpContainer}
       hardwareAccelerated={true}
-      presentationStyle='formSheet'
+      // presentationStyle='formSheet'
       >
       <Pressable
         style={[

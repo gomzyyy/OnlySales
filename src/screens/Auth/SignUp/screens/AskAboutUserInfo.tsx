@@ -107,7 +107,6 @@ const AskAboutUserInfo = () => {
         {query: {referralCode}},
         setLoading,
       );
-      console.log(res);
       if (!res.success) {
         showToast({type: 'error', text1: res.message});
         return;

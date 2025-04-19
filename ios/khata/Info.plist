@@ -31,6 +31,15 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>UIBackgroundModes</key>
+<array>
+  <string>fetch</string>
+  <string>remote-notification</string>
+</array>
+
+<key>NSUserNotificationUsageDescription</key>
+<string>We need your permission to send you notifications.</string>
+
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photos to upload images.</string>
     <key>NSCameraUsageDescription</key>

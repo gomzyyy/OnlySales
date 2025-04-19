@@ -135,7 +135,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           barPercentage: 0.5,
         }}
-        style={{marginVertical: 10, borderRadius: 10}}
+        style={{borderRadius: 10}}
         bezier
         onDataPointClick={({index}) => handleDotTap(index)}
         renderDotContent={({index, indexData, x, y}) =>

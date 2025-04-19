@@ -9,6 +9,7 @@ import {
 import React, {ReactNode} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {useTheme} from '../hooks/index';
+import Animated from 'react-native-reanimated';
 
 type PopupContainerProps = {
   children: ReactNode;
@@ -16,6 +17,7 @@ type PopupContainerProps = {
   close: () => void;
   bgcolor?: string;
   padding?: boolean;
+  opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
 };
 
 const PopupContainer: React.FC<PopupContainerProps> = ({
@@ -39,7 +41,10 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
           {backgroundColor: bgcolor, paddingHorizontal: padding ? 20 : 10},
         ]}
         onPress={close}>
-        <Pressable onPress={e => e.stopPropagation()}>{children}</Pressable>
+        <Pressable onPress={e => e.stopPropagation()}>
+          {' '}
+          <Animated.View>{children}</Animated.View>
+        </Pressable>
       </Pressable>
     </Modal>
   );
