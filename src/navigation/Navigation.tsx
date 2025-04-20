@@ -47,6 +47,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import PaymentHistory from '../screens/History/PaymentHistory/PaymentHistory';
+import BottomTabs from '../components/BottomTabs';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();

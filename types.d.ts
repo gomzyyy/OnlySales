@@ -20,6 +20,10 @@ import {
   AccountTypeEnum,
 } from './enums';
 
+declare global {
+  var __turboModuleProxy: any | undefined;
+}
+
 export interface AppTheme {
   name: AppThemeName;
   baseColor: string;

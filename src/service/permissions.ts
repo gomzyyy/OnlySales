@@ -44,45 +44,81 @@ export const RequestCameraPermissions = async (fallback?: () => void) => {
     return false;
   }
 };
-
-export const RequestNotificationPermission = async (fallback?: () => void) => {
+type PermissionResult = {
+  notification_permissions: boolean;
+  write_contact_permissions: boolean;
+  read_contact_permissions: boolean;
+}
+export const RequestUXPermission = async (
+  fallback?: () => void,
+): Promise<PermissionResult> => {
   try {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          return true;
-        } else {
-          const res = await Confirm(
-            'Notification Permission denied',
-            'We need notification permissions to send you notifications for better user experience',
-          );
-          if (res) {
-            openSettings('application');
-          } else {
-            fallback && fallback();
-            return false;
-          }
+    if (Platform.OS !== 'android') {
+      return {
+        notification_permissions: false,
+        write_contact_permissions: false,
+        read_contact_permissions: false,
+      };
+    }
+
+    const permissions = {
+      'android.permission.POST_NOTIFICATIONS': {
+        key: 'notification_permissions',
+        title: 'Notification Permission Required',
+        message:
+          'We need notification access to keep you informed. Please enable it in settings.',
+      },
+      'android.permission.WRITE_CONTACTS': {
+        key: 'write_contact_permissions',
+        title: 'Contact Permission Required',
+        message:
+          'We need contact access to enhance your experience. Please enable it in settings.',
+      },
+      'android.permission.READ_CONTACTS': {
+        key: 'read_contact_permissions',
+        title: 'Contact Permission Required',
+        message:
+          'We need contact access to enhance your experience. Please enable it in settings.',
+      },
+    };
+
+    const requestKeys = Object.keys(permissions) as Array<keyof typeof permissions>;
+    const res = await PermissionsAndroid.requestMultiple(requestKeys);
+
+    const results: Record<string, boolean> = {};
+
+    for (const perm of requestKeys) {
+      const result = res[perm];
+      const key = permissions[perm].key;
+
+      if (result === PermissionsAndroid.RESULTS.GRANTED) {
+        results[key] = true;
+      } else {
+        results[key] = false;
+
+        let message = permissions[perm].message;
+        if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+          message += '\n\nYou have permanently denied this permission. Please enable it from settings.';
         }
-      } catch (error) {
-        fallback && fallback();
-        return false;
+
+        const userRes = await Confirm(permissions[perm].title, message);
+        if (userRes) {
+          await openSettings('application');
+        }
       }
     }
-    // const enabled =
-    //   authStatus === AuthorizationStatus.AUTHORIZED ||
-    //   authStatus === AuthorizationStatus.PROVISIONAL;
 
-    // if (enabled) {
-    //   return true;
-    // } else {
-    //   fallback && fallback();
-    //   return false;
-    // }
+    return {
+      notification_permissions: results.notification_permissions || false,
+      write_contact_permissions: results.write_contact_permissions || false,
+      read_contact_permissions: results.read_contact_permissions || false,
+    };
   } catch (error) {
     fallback && fallback();
-    return false;
+    return {
+      notification_permissions: false,
+      write_contact_permissions: false,
+      read_contact_permissions: false,
+    };
   }
 };

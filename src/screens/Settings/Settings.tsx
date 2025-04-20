@@ -8,6 +8,7 @@ import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
 import {useTheme} from '../../hooks';
 import UserInfo from './components/UserInfo';
+import BottomTabs from '../../components/BottomTabs';
 
 const Settings = () => {
   const {currentTheme} = useTheme();
@@ -28,11 +29,7 @@ const Settings = () => {
         ]}
         nestedScrollEnabled={true}>
         <View style={styles.infoContainer}>
-          <UserInfo
-            user={user}
-            secure={true}
-            profileImageValue={user?.image}
-          />
+          <UserInfo user={user} secure={true} profileImageValue={user?.image} />
         </View>
         <View style={styles.sectionsContainer}>
           <Text style={[styles.label, {color: currentTheme.contrastColor}]}>

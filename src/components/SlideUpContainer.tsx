@@ -56,7 +56,6 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
       visible={open}
       onRequestClose={closeSlideUpContainer}
       hardwareAccelerated={true}
-      // presentationStyle='formSheet'
       >
       <Pressable
         style={[

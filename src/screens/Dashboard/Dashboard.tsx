@@ -5,6 +5,8 @@ import {
   Text,
   Alert,
   Pressable,
+  PermissionsAndroid,
+  Modal,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
@@ -29,7 +31,8 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import RequestedPayment from '../ConfirmRequestedPayment/ConfirmRequestedPayment';
+import {RequestUXPermission} from '../../service/permissions';
+import SearchTools from './components/SearchTools';
 
 const DashboardOptions = [
   {
@@ -69,17 +72,12 @@ const Dashboard = () => {
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
   const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
-  const [openQRCode, setOpenQRCode] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user)!;
   const {currency} = useSelector((s: RootState) => s.appData.app);
 
   const [payableAmount, setPayableAmount] = useState<number>(0);
+  const [searchTools, setSearchTools] = useState<string>('');
 
-  const handleOpenRequestPayment = () => setOpenRequestPayment(true);
-  const handleCloseQRCode = () => {
-    setPayableAmount(0);
-    setOpenQRCode(false);
-  };
   const unverifiedAlertHeight = useSharedValue(0);
 
   const unverifiedAlertAnimatedStyles = useAnimatedStyle(() => {
@@ -101,25 +99,26 @@ const Dashboard = () => {
     return () => {
       setPayableAmount(0);
       setOpenRequestPayment(false);
-      setOpenQRCode(false);
+      // setOpenQRCode(false);
       unverifiedAlertAnimatedStylesToogleTimeoutId &&
         clearTimeout(unverifiedAlertAnimatedStylesToogleTimeoutId);
     };
   }, []);
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
-     
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
           name="Dashboard"
           menuButton
           titleColor={currentTheme.header.textColor}
           customComponent={true}
-          renderItem={<Icon4
-                    name="qr-code-scanner"
-                    size={26}
-                    color={currentTheme.contrastColor}
-                  />}
+          renderItem={
+            <Icon4
+              name="qr-code-scanner"
+              size={26}
+              color={currentTheme.contrastColor}
+            />
+          }
         />
         {!user.email?.verified && (
           <Animated.View
@@ -140,7 +139,7 @@ const Dashboard = () => {
               unverifiedAlertAnimatedStyles,
             ]}>
             <Text style={{fontSize: 16, color: colors.danger}}>
-              You're email is not verified!
+              Your email is not verified!
             </Text>
             <View
               style={{
@@ -204,21 +203,6 @@ const Dashboard = () => {
           </View>
         </View>
       </ScrollView>
-      <SlideUpContainer
-        open={openQRCode}
-        close={handleCloseQRCode}
-        opacity={0.6}
-        height={deviceHeight * 0.5}>
-        <ScanQRToPay
-          cancel={handleCloseQRCode}
-          callback={() => {}}
-          currency={currency}
-          pa="gomzydhingra0001@okhdfcbank"
-          pn="Khata App"
-          payableAmount={payableAmount}
-        />
-      </SlideUpContainer>
-      {/* <FloatingPayButton pressAction={handleOpenRequestPayment} /> */}
     </View>
   );
 };
@@ -226,6 +210,7 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
+    paddingBottom: 90,
   },
   navigationBtnsContainer: {
     alignItems: 'flex-start',
@@ -248,3 +233,20 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
+
+{
+  /* <SlideUpContainer
+        open={openQRCode}
+        close={handleCloseQRCode}
+        opacity={0.6}
+        height={deviceHeight * 0.5}>
+        <ScanQRToPay
+          cancel={handleCloseQRCode}
+          callback={() => {}}
+          currency={currency}
+          pa="gomzydhingra0001@okhdfcbank"
+          pn="Khata App"
+          payableAmount={payableAmount}
+        />
+      </SlideUpContainer> */
+}

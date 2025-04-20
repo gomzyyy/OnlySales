@@ -17,11 +17,13 @@ import {useFocusEffect} from '@react-navigation/native';
 type DashboardHeaderProps = {
   searchBar?: boolean;
   flex?: boolean;
+  searchBarPressAction?:()=>void
 };
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   searchBar = true,
   flex = true,
+  searchBarPressAction
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {soldThisMonth = [], todaySales = []} = useAnalytics();
@@ -105,7 +107,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 styles.searchQueryContainer,
                 {backgroundColor: currentTheme.contrastColor},
               ]}
-              onPress={() => navigate('SearchCustomer')}>
+              onPress={searchBarPressAction}>
               <View
                 style={[
                   styles.searchQueryInput,

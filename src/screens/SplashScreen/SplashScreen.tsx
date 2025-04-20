@@ -9,7 +9,7 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {useTheme} from '../../hooks';
 import {setUser} from '../../../store/slices/business';
 import {getFCMToken} from '../../api/fcm/fn';
-import {RequestNotificationPermission} from '../../service/permissions';
+import {RequestUXPermission} from '../../service/permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SplashScreen = () => {
@@ -40,9 +40,8 @@ const SplashScreen = () => {
     }, [user]),
   );
   const getFireAppToken = async () => {
-    const granted = await RequestNotificationPermission();
-    console.log(granted);
-    if (granted) {
+    const {notification_permissions} = await RequestUXPermission();
+    if (notification_permissions) {
       const token = await getFCMToken();
       if (token) {
         await AsyncStorage.setItem('fcmtoken', token);

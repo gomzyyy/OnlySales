@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {useHaptics} from '../../hooks';
 import { deviceHeight } from '../../utils/Constants';
 import CreateUnknownPayment from '../../components/CreateUnknownPayment';
+import BottomTabs from '../../components/BottomTabs';
 
 const Customers = () => {
   const {lightTap} = useHaptics();
@@ -57,7 +58,7 @@ const Customers = () => {
               keyExtractor={s => s._id}
               nestedScrollEnabled
               renderItem={({item}) => <Tab i={item} />}
-              style={{flex: 1}}
+              style={{flex: 1,paddingBottom:90}}
               showsVerticalScrollIndicator={false}
             />
           ) : (

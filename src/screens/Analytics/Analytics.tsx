@@ -2,6 +2,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import Header from '../../components/Header';
 import {useTheme} from '../../hooks';
+import BottomTabs from '../../components/BottomTabs';
 
 const Analytics = () => {
   const {currentTheme} = useTheme();
