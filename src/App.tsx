@@ -5,7 +5,8 @@ import 'react-native-gesture-handler';
 import ReduxProvider from '../store/store';
 import Navigation from './navigation/Navigation';
 import {Text} from 'react-native';
-import { useTheme } from './hooks';
+import {useTheme} from './hooks';
+import Test from './screens/Test/Test';
 
 function App(): React.JSX.Element {
   return (
@@ -13,11 +14,11 @@ function App(): React.JSX.Element {
       <View style={{flex: 1}}>
         <SafeAreaView style={{flex: 1}}>
           <StatusBar />
+          {/* <Test /> */}
           <Navigation />
         </SafeAreaView>
       </View>
       <Toast position="bottom" visibilityTime={6000} />
-     
     </ReduxProvider>
   );
 }

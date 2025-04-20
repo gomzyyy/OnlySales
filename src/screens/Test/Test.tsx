@@ -12,12 +12,16 @@ import QRCode from 'react-native-qrcode-svg';
 import RecivePaymentByQRCode from '../../components/RecivePaymentByQRCode';
 import {CurrencyType} from '../../../enums';
 import SlideUpContainer from '../../components/SlideUpContainer';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store/store';
 
 const value = `upi://pay?pa=gomzydhingra0001@okhdfcbank&pn=GomzyDev&mc=1234&tid=Txn7367289298&tr=Order1236&tn=Payment%20for%20Udhar%20%26%20Pending%20Bills&am=50&cu=INR`;
 
 const Test = () => {
   const [image, setImage] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState<boolean>(false);
+  const user = useSelector((s: RootState) => s.appData.user);
+  console.log(user);
   return (
     <View style={styles.parent}>
       <View style={styles.container}>

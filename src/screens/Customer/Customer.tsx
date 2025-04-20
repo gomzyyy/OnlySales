@@ -202,12 +202,12 @@ const Customer = () => {
           products={paidProps.products}
         />
       </SlideUpContainer>
-      <PopupContainer
+      {/* <PopupContainer
         open={openSuccessPopup}
         close={() => setOpenSuccessPopup(false)}
         opacity={0.7}>
         <SuccessScreen title="Hello" buttonText="World" />
-      </PopupContainer>
+      </PopupContainer> */}
     </View>
   );
 };

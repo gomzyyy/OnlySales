@@ -21,7 +21,8 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
   const {currentTheme} = useTheme();
   const currRoute = navigationRef.current?.getCurrentRoute()?.name;
   const navigation = useNavigation();
-  const user = useSelector((s: RootState) => s.appData.user)!;
+  const user = useSelector((s: RootState) => s.appData.user);
+
   const handleNavigationByMenu = (r: string): void => {
     if (currRoute === r) {
       navigation.dispatch(DrawerActions.closeDrawer());
@@ -30,6 +31,18 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
     navigate(r);
     navigation.dispatch(DrawerActions.closeDrawer());
   };
+
+  if (!user) {
+    return (
+      <View
+        style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
+        <Text style={{textAlign: 'center', marginTop: 50, fontSize: 16}}>
+          Loading user...
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View
       style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
@@ -57,15 +70,15 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
                 textAlign: 'center',
                 fontStyle: 'italic',
                 fontSize: 14,
-                fontWeight: 600,
+                fontWeight: '600',
               }}>
-              {user.role.toLowerCase()}
+              {user?.role?.toLowerCase() || 'guest'}
             </Text>
           </View>
           <View style={styles.profileImageContainer}>
             <Image
               source={
-                user.image && user.image?.trim().length !== 0
+                user.image && user.image.trim().length !== 0
                   ? {uri: user.image}
                   : NoProfile
               }
@@ -75,7 +88,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
           <View style={styles.profileNameContainer}>
             <Text
               style={[styles.profileName, {color: currentTheme.contrastColor}]}>
-              {user.name}
+              {user?.name || 'Anonymous'}
             </Text>
           </View>
         </View>
