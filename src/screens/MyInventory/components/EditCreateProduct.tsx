@@ -17,6 +17,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
+import { useTranslation } from 'react-i18next';
 
 type EditProductProps = {
   product: Product;
@@ -28,7 +29,9 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
   close,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
+  const {t} = useTranslation('inventory');
+
   const [name, setName] = useState<string>(product.name);
   const [price, setPrice] = useState<number>(product.basePrice);
   const [discountedPrice, setDiscountedPrice] = useState<number>(
@@ -41,9 +44,11 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
 
   const handleOnSubmit = () => {
     if (price === 0) {
-      const res = Confirm('Are you sure to put the price 0?');
+      const res = Confirm(t('i_confirm_zero_price'));
       if (!res) return;
     }
+
+    // Uncomment when dispatching logic is added
     // const updatedProduct: Product = {
     //   _id: product.id,
     //   name: name.length !== 0 ? name : product.name,
@@ -56,10 +61,11 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
     //   totalSold: product.totalSold,
     // };
     // dispatch(editInventoryProduct({product:updatedProduct}))
+
     close();
     showToast({
       type: 'success',
-      text1: `Product Edited successfully: ${product.name}`,
+      text1: `${t('i_product_edited_successfully')}: ${product.name}`,
     });
   };
 
@@ -75,94 +81,67 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}>
         <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-          Edit Product: {product.name}
+          {t('i_header_title')}: {product.name}
         </Text>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              Product name*
+            <Text style={[styles.inputLabel, {color: currentTheme.modal.inputText}]}>
+              {t('i_input_name_label')}*
             </Text>
             <TextInput
               value={name}
               onChangeText={setName}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter name"
+              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              placeholder={t('i_input_name_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>
+
           <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              Product price*
+            <Text style={[styles.inputLabel, {color: currentTheme.modal.inputText}]}>
+              {t('i_input_price_label')}*
             </Text>
             <TextInput
               value={price.toString()}
               onChangeText={s => setPrice(Number(s) || 0)}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter price"
+              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              placeholder={t('i_input_price_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
           </View>
+
           <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              Product discounted price
+            <Text style={[styles.inputLabel, {color: currentTheme.modal.inputText}]}>
+              {t('i_input_discount_label')}
             </Text>
             <TextInput
               value={discountedPrice.toString()}
               onChangeText={s => setDiscountedPrice(Number(s) || 0)}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter discounted price"
+              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              placeholder={t('i_input_discount_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
           </View>
+
           <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              Product quantity*
+            <Text style={[styles.inputLabel, {color: currentTheme.modal.inputText}]}>
+              {t('i_input_quantity_label')}*
             </Text>
             <TextInput
               value={quantity.toString()}
               onChangeText={value => setQuantity(Number(value))}
               style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
-              placeholder="Enter quantity"
+              placeholder={t('i_input_quantity_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
           </View>
+
           <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {
-                  color: currentTheme.modal.inputText,
-                },
-              ]}>
-              Product measurement type
+            <Text style={[styles.inputLabel, {color: currentTheme.modal.inputText}]}>
+              {t('i_input_measurement_label')}
             </Text>
             <Picker
               selectedValue={measurementType}
@@ -184,14 +163,12 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
               <Picker.Item label="Dozen" value={'dozen'} />
             </Picker>
           </View>
+
           <TouchableOpacity
-            style={[
-              styles.saveButton,
-              {backgroundColor: currentTheme.baseColor},
-            ]}
+            style={[styles.saveButton, {backgroundColor: currentTheme.baseColor}]}
             activeOpacity={0.8}
             onPress={handleOnSubmit}>
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>{t('i_save')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

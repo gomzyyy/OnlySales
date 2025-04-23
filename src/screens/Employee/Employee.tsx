@@ -9,17 +9,19 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  DimensionValue,
+  FlexAlignType,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Employee as EmployeeType} from '../../../types';
+import {Employee as EmployeeType, Partner} from '../../../types';
 import Header from '../../components/Header';
 import {useAnalytics, useHaptics, useTheme} from '../../hooks';
 import {colors} from '../../utils/Constants';
 import EmployementStatusPicker from '../../components/EmployementStatusPicker';
 import {modifyUserName, showToast} from '../../service/fn';
 import {isNumber} from '../../service/test';
-import {EmploymentStatus, Shift} from '../../../enums';
+import {AdminRole, EmploymentStatus, Shift} from '../../../enums';
 import {AppDispatch, RootState} from '../../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import ShiftPicker from '../../components/ShiftPicker';
@@ -28,6 +30,12 @@ import FilePicker from '../../components/FilePicker';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 const NoProfile = require('../../assets/images/no-profile.jpg');
 import Icon from 'react-native-vector-icons/AntDesign';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 type EmployeeParams = {
   employeeId: EmployeeType['_id'];
@@ -38,12 +46,13 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {warning} = useHaptics();
   const {params} = useRoute();
-  const {owner} = useAnalytics()
+  const {owner} = useAnalytics();
   const {employeeId} = params as EmployeeParams;
   const [editable, setEditable] = useState<boolean>(false);
   const currency = useSelector((s: RootState) => s.appData.app.currency);
+  const user = useSelector((s: RootState) => s.appData.user)!;
 
-  const employee =owner.employeeData.find((s)=>s._id === employeeId)!;
+  const employee = owner.employeeData.find(s => s._id === employeeId)!;
 
   const dispatch = useDispatch<AppDispatch>();
   const [name, setName] = useState<string>(employee.name || '');
@@ -129,46 +138,84 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
   const handleCloseImagePicker = () => setOpenImagePicker(false);
   const handleOpenImagePicker = () => setOpenImagePicker(true);
 
-  const ToogleEditMode = (): React.JSX.Element => {
+  const ToggleEditMode = (): JSX.Element => {
+    const knobOffset = useSharedValue(20);
+
+    useEffect(() => {
+      if (!editable) {
+        knobOffset.value = withTiming(0, {
+          duration: 200,
+          easing: Easing.inOut(Easing.ease),
+        });
+      } else {
+        knobOffset.value = withTiming(20, {
+          duration: 200,
+          easing: Easing.inOut(Easing.ease),
+        });
+      }
+    }, [editable]);
+
+    const knobStyle = useAnimatedStyle(() => ({
+      transform: [{translateX: knobOffset.value}],
+    }));
+
     return (
       <View
-        style={{
-          height: 20,
-          borderWidth: 1,
-          width: 40,
-          borderRadius: 16,
-          borderColor: currentTheme.header.textColor,
-          backgroundColor: currentTheme.contrastColor,
-        }}>
-        <View
-          style={{
-            width: 20,
-            borderRadius: 16,
-            height: '100%',
-            backgroundColor: editable ? colors.oliveGreen : colors.danger,
-            position: 'absolute',
-            left: !editable ? 0 : 'auto',
-            right: editable ? 0 : 'auto',
-          }}
-        />
+        style={[
+          toogleBtnStyles.toggleContainer,
+          {
+            borderColor: currentTheme.header.textColor,
+            backgroundColor: currentTheme.contrastColor,
+          },
+        ]}>
+        <Animated.View
+          style={[
+            toogleBtnStyles.knob,
+            {
+              backgroundColor: editable ? colors.oliveGreen : colors.danger,
+            },
+            knobStyle,
+          ]}>
+          <ActivityIndicator size={12} color={'white'} />
+        </Animated.View>
       </View>
     );
   };
+
+  const toogleEditState = () => {
+    if (
+      (user.role === AdminRole.PARTNER &&
+        !(user as Partner).permissions.employee.update) ||
+      (user.role === AdminRole.EMPLOYEE &&
+        !(user as EmployeeType).permissions.employee.update)
+    ) {
+      showToast({
+        type: 'error',
+        text1: 'You are not authorised of editing employees',
+      });
+      return;
+    }
+    setEditable(p => !p);
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.parent}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView style={{flex: 1}}>
-        <Header
-          name={employee.name}
-          headerBgColor={currentTheme.baseColor}
-          titleColor={currentTheme.header.textColor}
-          backButtom
-          customComponent={true}
-          renderItem={<ToogleEditMode />}
-          customAction={() => setEditable(p => !p)}
-          customComponentActiveOpacity={1}
-        />
+      <Header
+        name={employee.name}
+        headerBgColor={currentTheme.baseColor}
+        titleColor={currentTheme.header.textColor}
+        backButtom
+        customComponent={true}
+        renderItem={<ToggleEditMode />}
+        customAction={toogleEditState}
+        customComponentActiveOpacity={1}
+        curved
+      />
+      <ScrollView
+        style={{flex: 1, marginBottom: 10}}
+        showsVerticalScrollIndicator={false}>
         <View
           style={{
             flexDirection: 'row',
@@ -187,9 +234,6 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
           <Pressable
             style={styles.profileImageContainer}
             onPress={handleOpenImagePicker}>
-            <View style={styles.editIcon}>
-              <Icon name="edit" size={16} color={currentTheme.baseColor} />
-            </View>
             <Image
               source={
                 image && image.trim().length !== 0 ? {uri: image} : NoProfile
@@ -197,6 +241,25 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
               style={styles.profileImage}
             />
           </Pressable>
+
+          {image && image.trim().length !== 0 ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
+              <Button title="Remove" onPress={() => setImage(undefined)} />
+            </View>
+          ) : (
+            <View
+              style={{
+                paddingHorizontal: 40,
+                alignItems: 'center',
+              }}>
+              <Button
+                title="Choose Profile Image"
+                onPress={() => setOpenImagePicker(true)}
+              />
+            </View>
+          )}
+
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
@@ -284,52 +347,44 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
             </Text>
             <ShiftPicker value={shift} setState={setShift} enabled={editable} />
           </View>
-          {image && image.trim().length !== 0 ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
-              <Button title="Remove" onPress={() => setImage(undefined)} />
-            </View>
-          ) : (
-            <View
-              style={{
-                paddingHorizontal: 40,
-                alignItems: 'center',
-              }}>
-              <Button
-                title="Choose Profile Image"
-                onPress={() => setOpenImagePicker(true)}
-              />
-            </View>
-          )}
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              {backgroundColor: currentTheme.modal.saveBtnbg},
-            ]}
-            activeOpacity={0.8}
-            onPress={handleSaveBtn}>
+
+          <View style={styles.inputTitleContainer}>
             <Text
-              style={[
-                styles.saveButtonText,
-                {color: currentTheme.modal.saveBtnText},
-              ]}>
-              Save
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Permissions
             </Text>
-          </TouchableOpacity>
+            <View style={{}}></View>
+          </View>
+
           <SlideUpContainer
             opacity={0.4}
             open={openImagePicker}
-            close={handleCloseImagePicker}>
+            close={handleCloseImagePicker}
+            height={180}>
             <FilePicker
               value={image}
               setState={setImage}
               callback={handleCloseImagePicker}
               enabled={editable}
-              type='image'
+              type="image"
             />
           </SlideUpContainer>
         </View>
       </ScrollView>
+      <Pressable
+        style={[
+          styles.saveButton,
+          {backgroundColor: currentTheme.modal.saveBtnbg},
+        ]}
+        onPress={handleSaveBtn}>
+        <Text
+          style={[
+            styles.saveButtonText,
+            {color: currentTheme.modal.saveBtnText},
+          ]}>
+          Save
+        </Text>
+      </Pressable>
     </KeyboardAvoidingView>
   );
 };
@@ -342,14 +397,15 @@ const styles = StyleSheet.create({
   },
   profileImageContainer: {
     height: 90,
-    width: 90,
     borderRadius: 45,
-    elevation: 10,
+    // elevation: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   editIcon: {position: 'absolute', zIndex: 20, right: 0, bottom: 0},
   profileImage: {
-    height: '100%',
-    width: 'auto',
+    height: 90,
+    width: 90,
     resizeMode: 'cover',
     borderRadius: 45,
   },
@@ -370,12 +426,29 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     paddingVertical: 16,
-    borderRadius: 8,
   },
   saveButtonText: {
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 20,
+  },
+});
+
+const toogleBtnStyles = StyleSheet.create({
+  toggleContainer: {
+    height: 20,
+    width: 40,
+    borderRadius: 16,
+    borderWidth: 1,
+    justifyContent: 'center',
+    padding: 1,
+  },
+  knob: {
+    width: 16,
+    height: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 export default Employee;

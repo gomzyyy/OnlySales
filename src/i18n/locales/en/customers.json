@@ -1,0 +1,10 @@
+{
+    "header_title": "Customer",
+    "cs_header_dummy_searchplaceholder_withdata":"Search by name",
+    "cs_header_dummy_searchplaceholder_withoutdata":"Click on Plus Icon to create.",
+    "cs_delete": "Delete",
+    "cs_deleting": "Deleting",
+    "cs_edit": "Edit",
+    "cs_confirmRemove": "Are you sure you want to remove this Employee?",
+    "cs_confirmWarning": "Once Employee removed, cannot be reversed! be careful of miss-touching removal button."
+}  

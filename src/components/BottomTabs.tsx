@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const validRoutes = ['Dashboard', 'Analytics', 'Customers', 'Settings'];
+const validRoutes = ['Dashboard', 'Analytics', 'Customers', 'Employees'];
 
 const bottomTabs = [
   {

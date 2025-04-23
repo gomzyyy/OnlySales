@@ -9,14 +9,16 @@ import Tab from './components/Tab';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddProduct from './components/AddProduct';
 import {useAnalytics, useTheme} from '../../hooks/index';
-
+import {useTranslation} from 'react-i18next';
 
 const MyInventory = () => {
   const {currentTheme} = useTheme();
+  const {t} = useTranslation('inventory');
   const {owner} = useAnalytics();
   const user = useSelector((s: RootState) => s.appData.user)!;
 
-  const inventoryItems = owner?.inventory || [];
+  const inventoryItems =
+    owner?.inventory.filter(s => s.disabled === false) || [];
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);
 
@@ -25,7 +27,7 @@ const MyInventory = () => {
       <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
         <Icon name="plus" color={currentTheme.header.textColor} size={20} />
         <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
-          Add Item
+          {t('i_add_item')}
         </Text>
       </View>
     );
@@ -59,8 +61,8 @@ const MyInventory = () => {
       <View style={styles.assistTextContainer}>
         <Text style={[styles.assistText, {color: currentTheme.baseColor}]}>
           {inventoryItems.length === 0
-            ? 'Your Inventory is Empty'
-            : 'Click to edit Inventory item.'}
+            ? t('i_inventory_empty')
+            : t('i_inventory_edit_hint')}
         </Text>
       </View>
       {openAddProduct && (
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
     bottom: 6,
     width: deviceWidth,
     paddingVertical: 20,
-    borderRadius:10
+    borderRadius: 10,
   },
   assistText: {
     textAlign: 'center',

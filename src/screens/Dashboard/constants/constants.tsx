@@ -15,21 +15,43 @@ export const ToolsIconContainer = ({
 }) => {
   const {currentTheme} = useTheme();
   return (
-    <View style={{backgroundColor: currentTheme.baseColor}}>
-      {children ? children : <Text>{label}</Text>}
+    <View
+      style={[
+        iconStyles.iconContainer,
+        {backgroundColor: currentTheme.baseColor},
+      ]}>
+      {children ? (
+        children
+      ) : (
+        <Text
+          style={[iconStyles.iconText, {color: currentTheme.contrastColor}]}>
+          {label}
+        </Text>
+      )}
     </View>
   );
 };
 
-export const tools_data = [
-  {
-    id: 1,
-    title: 'EMI Calculator',
-    navigateTo: 'EMICalculator',
-    icon: <ToolsIconContainer label="EMI" />,
-    keyWords: ['emi', 'calculator', 'interest', 'loan'],
+const iconStyles = StyleSheet.create({
+  iconContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 7,
+    borderRadius: 4,
   },
-];
+  iconText: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+});
+
+type ToolsData = {
+  id: number;
+  title: string;
+  navigateTo: string;
+  icon: (color?: string) => React.JSX.Element;
+  keywords: string[];
+  disabled: boolean;
+};
 
 type QuickStartTabProps = PropsWithChildren<{
   title: string;
@@ -50,9 +72,9 @@ export const QuickStartTab: React.FC<QuickStartTabProps> = ({
         styles.pressableContainer,
         {backgroundColor: currentTheme.baseColor},
       ]}
-      onPress={()=>{
-        lightTap
-        pressAction && pressAction()
+      onPress={() => {
+        lightTap;
+        pressAction && pressAction();
       }}>
       {children}
       <Text

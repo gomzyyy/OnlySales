@@ -2,6 +2,7 @@ import {View, Text, Pressable, StyleSheet} from 'react-native';
 import React from 'react';
 import {navigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks/index';
+import { useTranslation } from 'react-i18next';
 
 type SearchBarProps = {
   textColor?: string;
@@ -12,6 +13,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   textColor = '#000',
   enable = false,
 }): React.JSX.Element => {
+  const {t}=useTranslation('customers')
   const {currentTheme} = useTheme();
   return (
     <Pressable
@@ -27,7 +29,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             styles.searchQueryInputText,
             {color: currentTheme.baseColor},
           ]}>
-          {enable ? 'Search by name' : 'Click on Plus Icon to create.'}
+          {enable ? t('cs_header_dummy_searchplaceholder_withdata') : t('cs_header_dummy_searchplaceholder_withoutdata')}
         </Text>
       </View>
     </Pressable>

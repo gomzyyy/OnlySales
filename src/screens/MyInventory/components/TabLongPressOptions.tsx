@@ -10,6 +10,7 @@ import {useTheme} from '../../../hooks/index';
 import {deleteProductAPI} from '../../../api/api.product';
 import {validateTokenAPI} from '../../../api/api.auth';
 import {setUser} from '../../../../store/slices/business';
+import { useTranslation } from 'react-i18next';
 
 type TabLongPressOptionsProps = {
   i: Product;
@@ -22,6 +23,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
+  const {t} = useTranslation('inventory')
   const user = useSelector((s: RootState) => s.appData.user)!;
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,7 +66,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           activeOpacity={0.8}
           onPress={handleDeleteCustomer}>
           <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            Delete
+            {t('i_tab_options_delete')}
           </Text>
          {loading ? <ActivityIndicator color={colors.danger} size={16} />
          : <Icon name="delete" size={18} color={colors.danger} />}

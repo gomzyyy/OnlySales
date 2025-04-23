@@ -9,7 +9,7 @@ import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/store';
-
+import { useTranslation } from 'react-i18next';
 const NoPhoto = require('../../../assets/images/no_product_image.jpg');
 
 type TabProps = {
@@ -19,6 +19,7 @@ type TabProps = {
 
 const Tab: React.FC<TabProps> = ({ i, lastIndex = false }): React.JSX.Element => {
   const { currentTheme } = useTheme();
+const {t} = useTranslation('inventory')
   const { currency } = useSelector((s: RootState) => s.appData.app);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
   const [openLongPressOptions, setOpenLongPressOptions] =
@@ -70,40 +71,40 @@ const Tab: React.FC<TabProps> = ({ i, lastIndex = false }): React.JSX.Element =>
           <View>
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                Price: {`${currency} ${i.basePrice}`}
+                {t('i_tab_price')}: {`${currency} ${i.basePrice}`}
               </Text>
             </View>
             {i.discountedPrice && (
               <View style={styles.infoContainer}>
                 <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                  Discounted price: {`${currency} ${i.discountedPrice}`}
+                {t('i_tab_discountedPrice')}: {`${currency} ${i.discountedPrice}`}
                 </Text>
               </View>
             )}
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                Includes: {i.quantity} {i.measurementType}
+              {t('i_tab_includes')}: {i.quantity} {i.measurementType}
               </Text>
             </View>
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                Total sold: {i.totalSold}
+              {t('i_tab_totalSold')}: {i.totalSold}
               </Text>
             </View>
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                Stock: {i.stock}
+              {t('i_tab_stock')}: {i.stock}
               </Text>
             </View>
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                Product cost: {`${currency} ${i.productCost}`}
+              {t('i_tab_productCost')}: {`${currency} ${i.productCost}`}
               </Text>
             </View>
             {i.productCost && (
               <View style={styles.infoContainer}>
                 <Text style={[styles.infoText, { color: currentTheme?.tab.text }]}>
-                  Net Profit/sale:{' '}
+                {t('i_tab_netProfit')}:{' '}
                   {`${parseFloat(
                     (i.discountedPrice && i.discountedPrice > 0
                       ? (i.discountedPrice / i.productCost) * 100 - 100

@@ -14,9 +14,10 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {useHaptics} from '../../hooks';
 import { deviceHeight } from '../../utils/Constants';
 import CreateUnknownPayment from '../../components/CreateUnknownPayment';
-import BottomTabs from '../../components/BottomTabs';
+import { useTranslation } from 'react-i18next';
 
 const Customers = () => {
+  const {t} = useTranslation('customers')
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
@@ -29,7 +30,7 @@ const Customers = () => {
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <Header
-        name="Customers"
+        name={t('header_title')}
         backButtom={true}
         titleColor={currentTheme.header.textColor}
         customComponent={true}
@@ -72,10 +73,10 @@ const Customers = () => {
         <SlideUpContainer
           open={openCreateCustomer}
           close={handleCloseCreateCustomer}
-          height={deviceHeight * 0.82}
+          height={deviceHeight * 0.58}
           >
-            <CreateUnknownPayment callback={handleCloseCreateCustomer} />
-          {/* <CreateCustomer callback={handleCloseCreateCustomer} /> */}
+            {/* <CreateUnknownPayment callback={handleCloseCreateCustomer} /> */}
+          <CreateCustomer callback={handleCloseCreateCustomer} />
         </SlideUpContainer>
       )}
     </View>

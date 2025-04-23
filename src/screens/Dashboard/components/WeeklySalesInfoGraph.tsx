@@ -18,6 +18,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {formatNumber} from '../../../service/fn';
+import {useTranslation} from 'react-i18next';
 
 type MonthlySalesInfoGraphProps = {
   pressActions?: () => void;
@@ -26,6 +27,8 @@ type MonthlySalesInfoGraphProps = {
 const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
   pressActions = () => {},
 }): React.JSX.Element => {
+  const {t} = useTranslation('dashboard');
+
   const {currentTheme} = useTheme();
   const {weeklySales} = useAnalytics();
 
@@ -113,13 +116,13 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
         data={{
           labels: [
             '',
-            'Today',
-            'Yesterday',
-            '3d Ago',
-            '4d Ago',
-            '5d Ago',
-            '6d Ago',
-            '7d Ago',
+            t('d_weeklysalesinfograph_today'),
+            t('d_weeklysalesinfograph_yesterday'),
+            t('d_weeklysalesinfograph_3dago'),
+            t('d_weeklysalesinfograph_4dago'),
+            t('d_weeklysalesinfograph_5dago'),
+            t('d_weeklysalesinfograph_6dago'),
+            t('d_weeklysalesinfograph_7dago'),
           ],
           datasets: [data],
         }}

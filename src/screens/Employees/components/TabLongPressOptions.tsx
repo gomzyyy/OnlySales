@@ -5,7 +5,7 @@ import {Employee} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../store/store';
-import {removeEmployee} from '../../../../store/slices/business';
+// import {removeEmployee} from '../../../../store/slices/business';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
 
@@ -29,8 +29,8 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
       'Once Employee removed, cannot be reversed! be careful of miss-touching removal button.',
     );
     if (res) {
-      dispatch(removeEmployee(i));
-      showToast({type: 'success', text1: 'Employee removed successfully.'});
+      // dispatch(removeEmployee(i));
+      // showToast({type: 'success', text1: 'Employee removed successfully.'});
       close();
       return;
     }
@@ -50,19 +50,6 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           </Text>
           <Icon name="delete" size={18} color={colors.danger} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonEdit}
-          activeOpacity={0.8}
-          onPress={triggerEdit}>
-          <Text
-            style={[
-              styles.buttonEditText,
-              {color: currentTheme.modal.inputText},
-            ]}>
-            Edit
-          </Text>
-          <Icon name="edit" size={18} color={colors.iconBlack} />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -71,7 +58,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 const styles = StyleSheet.create({
   parent: {
     paddingTop: 20,
-    height: deviceHeight * 0.26,
+    height: deviceHeight * 0.18,
     borderRadius: 20,
     marginTop: 60,
     elevation: 30,

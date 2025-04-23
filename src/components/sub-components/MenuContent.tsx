@@ -14,6 +14,7 @@ const NoProfile = require('../../assets/images/no-profile.jpg');
 import {useTheme} from '../../hooks/index';
 import LogoutButton from '../../screens/Settings/components/LogoutButton';
 import MenuTab, {AppSettingsData, ManagementData, ToolsData} from './menu_data';
+import { deviceHeight } from '../../utils/Constants';
 
 const MenuContent: React.FC<DrawerContentComponentProps> = (
   props,
@@ -35,7 +36,10 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
   if (!user) {
     return (
       <View
-        style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
+        style={[
+          styles.container,
+          {backgroundColor: currentTheme.contrastColor},
+        ]}>
         <Text style={{textAlign: 'center', marginTop: 50, fontSize: 16}}>
           Loading user...
         </Text>
@@ -95,7 +99,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
       </View>
       <DrawerContentScrollView
         style={{flex: 1}}
-        contentContainerStyle={{height: 500}}
+        contentContainerStyle={{height: '80%'}}
         nestedScrollEnabled
         {...props}>
         <ScrollView
@@ -165,9 +169,10 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
       <View
         style={{
           position: 'absolute',
-          bottom: 20,
+          bottom: 10,
           width: '100%',
-          paddingHorizontal: 20,
+          paddingHorizontal: 10,
+          backgroundColor: currentTheme.contrastColor
         }}>
         <LogoutButton theme="red" />
       </View>

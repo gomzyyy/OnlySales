@@ -7,6 +7,8 @@ import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
 import {useTheme} from '../../../hooks/index';
+import {useTranslation} from 'react-i18next';
+import {colors} from '../../../utils/Constants';
 
 type TabProps = {
   i: SoldProduct;
@@ -16,6 +18,7 @@ type TabProps = {
   dummy?: boolean;
   onPay?: () => void;
   date: string;
+  closeParent:()=>void
 };
 
 type ToogleButtonProps = {
@@ -55,8 +58,10 @@ const Tab: React.FC<TabProps> = ({
   actionType,
   dummy = false,
   onPay,
-  date
+  date,
+  closeParent
 }): React.JSX.Element => {
+  const {t} = useTranslation('customer');
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -91,11 +96,23 @@ const Tab: React.FC<TabProps> = ({
           },
         ]}>
         <View style={styles.tabInfo}>
-          <View style={{flexDirection: 'row', gap: 4}}>
+          <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
             <Text
               style={[styles.customerName, {color: currentTheme.tab.label}]}>
               {i.product.name} {`x${i.count}`}
             </Text>
+            {i.product.disabled && (
+              <Text
+                style={{
+                  color: colors.danger,
+                  backgroundColor: colors.dangerFade,
+                  padding: 3,
+                  borderRadius: 6,
+                  fontSize: 10,
+                }}>
+                DELETED
+              </Text>
+            )}
             {actionType === 'PAID' && (
               <View
                 style={[
@@ -107,7 +124,7 @@ const Tab: React.FC<TabProps> = ({
                     styles.MarkAsPaidText,
                     {color: currentTheme.tab.label},
                   ]}>
-                  Paid
+                  {t('c_paid_flag')}
                 </Text>
               </View>
             )}
@@ -118,7 +135,9 @@ const Tab: React.FC<TabProps> = ({
               i.product.discountedPrice && i.product.discountedPrice !== 0
                 ? i.count === 0
                   ? i.product.discountedPrice
-                  : (Number(i.product.discountedPrice) * Number(i.count)).toString()
+                  : (
+                      Number(i.product.discountedPrice) * Number(i.count)
+                    ).toString()
                 : i.count === 0
                 ? i.product.basePrice
                 : (Number(i.product.basePrice) * Number(i.count)).toString()
@@ -136,7 +155,7 @@ const Tab: React.FC<TabProps> = ({
               onPress={handleMarkAs}>
               <Text
                 style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
-                {'Mark as *Unpaid'}
+                {t('c_markasunpaid')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -152,7 +171,7 @@ const Tab: React.FC<TabProps> = ({
               onPress={() => onPay && onPay()}>
               <Text
                 style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
-                {'Pay'}
+                {t('c_pay_btn')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -162,11 +181,13 @@ const Tab: React.FC<TabProps> = ({
           close={() => setLongPressActionOpen(false)}
           padding={true}>
           <TabLongPressOptions
-            product={i}
+            soldProduct={i}
             customer={customer}
-            close={handleCloseTabOptions}
             actionType={actionType}
             date={date}
+            close={() =>{
+              closeParent();
+               setLongPressActionOpen(false);}}
           />
         </PopupContainer>
       </View>
@@ -176,7 +197,7 @@ const Tab: React.FC<TabProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 8,
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -191,7 +212,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   customerName: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '400',
   },
   productAmount: {

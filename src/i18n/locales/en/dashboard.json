@@ -1,0 +1,21 @@
+{
+  "header_title": "Dashboard",
+  "d_header_thismonth":"This Month",
+  "d_header_today":"Today",
+  "d_header_dummy_searchplaceholder":"Search Tools & Features",
+  "d_options_inventory":"Inventory",
+  "d_options_analytics":"Analytics",
+  "d_options_employees":"Employees",
+  "d_options_customers":"Customers",
+ "d_todaybestseller_title":"Today's Best-sellers (Sales/Product)",
+ "d_weeklysalesinfograph_title":"Past 7-Day Recap (Sales/Day)",
+ "d_weeklysalesinfograph_today":"Today",
+ "d_weeklysalesinfograph_yesterday":"Yesterday",
+ "d_weeklysalesinfograph_3dago":"3d ago",
+ "d_weeklysalesinfograph_4dago":"4d ago",
+ "d_weeklysalesinfograph_5dago":"5d ago",
+ "d_weeklysalesinfograph_6dago":"6d ago",
+ "d_weeklysalesinfograph_7dago":"7d ago",
+ "d_email_not_verified":"Your email is not verified!",
+ "d_email_not_verified_clicktoverify":"click to verify."
+}

@@ -18,6 +18,7 @@ import {PaymentState} from '../../../enums';
 import {deviceHeight} from '../../utils/Constants';
 import SuccessScreen from '../../components/SuccessScreen';
 import PopupContainer from '../../components/PopUp';
+import { useTranslation } from 'react-i18next';
 
 type RouteParams = {
   customer: CustomerType;
@@ -26,10 +27,10 @@ type RouteParams = {
 const Customer = () => {
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
+  const {t} = useTranslation('customer')
   const params = useRoute().params;
   const {customer} = params as RouteParams;
   const {owner} = useAnalytics();
-
   const customers: CustomerType[] = owner.customers;
 
   const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
@@ -89,7 +90,7 @@ const Customer = () => {
     <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
       <Icon name="plus" color={currentTheme.header.textColor} size={20} />
       <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
-        Add
+        {t('c_header_add')}
       </Text>
     </View>
   );
@@ -119,7 +120,7 @@ const Customer = () => {
             }}
             style={{flex: 1}}>
             <ToogleButton
-              title="Pending Payments"
+              title={t('c_pendingpayments')}
               textColor={currentTheme.contrastColor}
               border={content === 'UNPAID'}
               borderColor={currentTheme.contrastColor}
@@ -132,7 +133,7 @@ const Customer = () => {
             }}
             style={{flex: 1}}>
             <ToogleButton
-              title="Paid Payments"
+              title={t('c_paidpayments')}
               textColor={currentTheme.contrastColor}
               border={content === 'PAID'}
               borderColor={currentTheme.contrastColor}
@@ -150,7 +151,7 @@ const Customer = () => {
               />
             ) : (
               <EmptyListMessage
-                title="HURRAY! No Pending Payments"
+                title={t('c_empty_unpaid_title')}
                 textColor={currentTheme.contrastColor}
               />
             )
@@ -162,7 +163,7 @@ const Customer = () => {
             />
           ) : (
             <EmptyListMessage
-              title="Oops! No Paid Payments"
+              title={t('c_empty_paid_title')}
               textColor={currentTheme.contrastColor}
             />
           )}
@@ -188,6 +189,7 @@ const Customer = () => {
           date={unpaidProps.date}
           customer={unpaidProps.customer}
           products={unpaidProps.products}
+          close={()=>setOpenUnpaidSheet(false)}
         />
       </SlideUpContainer>
 
@@ -200,14 +202,9 @@ const Customer = () => {
           date={paidProps.date}
           customer={paidProps.customer}
           products={paidProps.products}
+          close={()=>setOpenPaidSheet(false)}
         />
       </SlideUpContainer>
-      {/* <PopupContainer
-        open={openSuccessPopup}
-        close={() => setOpenSuccessPopup(false)}
-        opacity={0.7}>
-        <SuccessScreen title="Hello" buttonText="World" />
-      </PopupContainer> */}
     </View>
   );
 };

@@ -26,6 +26,7 @@ import SlideUpContainer from '../../../components/SlideUpContainer';
 import FilePicker from '../../../components/FilePicker';
 import {getUserAPI} from '../../../api/api.user';
 import {setUser} from '../../../../store/slices/business';
+import {useTranslation} from 'react-i18next';
 
 type EditProductProps = {
   close: () => void;
@@ -33,6 +34,7 @@ type EditProductProps = {
 
 const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const {t} = useTranslation('inventory');
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
   const {owner} = useAnalytics();
@@ -155,12 +157,17 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-        Add new Product
+        {t('i_addinventoryitem_heading')}
       </Text>
-      <ScrollView style={{flex: 1}} nestedScrollEnabled>
+      <ScrollView
+        style={{flex: 1}}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
-            <Text style={styles.inputLabel}>Product name*</Text>
+            <Text style={styles.inputLabel}>
+              {t('i_addinventoryitem_label_itemname')}
+            </Text>
             <TextInput
               value={name}
               onChangeText={setName}
@@ -168,12 +175,14 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter name"
+              placeholder={t('i_addinventoryitem_placeholder_itemname')}
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>
           <View style={styles.inputTitleContainer}>
-            <Text style={styles.inputLabel}>Product Type*</Text>
+            <Text style={styles.inputLabel}>
+              {t('i_addinventoryitem_label_itemtype')}
+            </Text>
             <ProductTypePicker
               value={productType}
               setState={setProductType}
@@ -186,7 +195,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputLabel,
                 {color: currentTheme.modal.inputText},
               ]}>
-              Product price*
+              {t('i_addinventoryitem_label_itemprice')}
             </Text>
             <TextInput
               value={price}
@@ -195,7 +204,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter price"
+              placeholder={t('i_addinventoryitem_placeholder_price')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
@@ -206,7 +215,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputLabel,
                 {color: currentTheme.modal.inputText},
               ]}>
-              Product discounted price
+              {t('i_addinventoryitem_label_itemdiscountedprice')}
             </Text>
             <TextInput
               value={discountedPrice}
@@ -215,7 +224,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter discounted price"
+              placeholder={t('i_addinventoryitem_placeholder_discountedprice')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
@@ -226,7 +235,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputLabel,
                 {color: currentTheme.modal.inputText},
               ]}>
-              Product quantity*
+              {t('i_addinventoryitem_label_itemquantity')}
             </Text>
             <TextInput
               value={quantity}
@@ -235,7 +244,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter quantity"
+              placeholder={t('i_addinventoryitem_placeholder_quantity')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
@@ -246,7 +255,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputLabel,
                 {color: currentTheme.modal.inputText},
               ]}>
-              Product Stock*
+              {t('i_addinventoryitem_label_itemstock')}
             </Text>
             <TextInput
               value={stock}
@@ -255,7 +264,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter Stock"
+              placeholder=  {t('i_addinventoryitem_placeholder_stock')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
             />
@@ -267,8 +276,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                   styles.inputLabel,
                   {color: currentTheme.modal.inputText},
                 ]}>
-                Estimated Making cost:{' '}
-                {`${productCost.trim().length !== 0 ? productCost : '0'}`}
+                {t('i_addinventoryitem_label_itemmakingcost')}{' '}
               </Text>
               <TextInput
                 value={productCost}
@@ -277,7 +285,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                   styles.inputText,
                   {borderColor: currentTheme.modal.inputBorder},
                 ]}
-                placeholder="Enter Estimated Making cost"
+                placeholder= {t('i_addinventoryitem_placeholder_makingcost')}
                 placeholderTextColor={currentTheme.baseColor}
                 keyboardType="numeric"
               />
@@ -289,7 +297,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 styles.inputLabel,
                 {color: currentTheme.modal.inputText},
               ]}>
-              Product measurement type
+              {t('i_addinventoryitem_label_itemmeasurementtype')}
             </Text>
             <Picker
               selectedValue={measurementType}
@@ -314,7 +322,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
           {image && image.trim().length !== 0 ? (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
-              <Button title="Remove" onPress={() => setImage(undefined)} />
+              <Button title={t('i_addinventoryitem_label_itemremoveimagetext')} onPress={() => setImage(undefined)} />
             </View>
           ) : (
             <View
@@ -323,7 +331,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 alignItems: 'center',
               }}>
               <Button
-                title="Choose Image"
+                title={t('i_addinventoryitem_label_itemchooseimagetext')}
                 onPress={() => setOpenImagePicker(true)}
               />
             </View>
@@ -336,7 +344,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
             activeOpacity={0.8}
             onPress={handleOnSubmit}>
             <Text style={styles.saveButtonText}>
-              {loading ? 'Saving' : 'Save'}
+              {loading ? t('i_addinventoryitem_label_itemsaving') : t('i_addinventoryitem_label_itemsave')}
             </Text>
             {loading && (
               <ActivityIndicator size={18} color={currentTheme.contrastColor} />
@@ -347,7 +355,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
           opacity={0.2}
           open={openImagePicker}
           close={closeImagePicker}
-          height={image ? 300 : 116}>
+          height={180}>
           <FilePicker
             value={image}
             setState={setImage}

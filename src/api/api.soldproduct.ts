@@ -1,6 +1,11 @@
 import {SetStateAction} from 'react';
 import {FetchAPI, handleBooleanState} from './helper/fn';
-import {SellProductAPIReturnType, SellProductData} from './types.api';
+import {
+  DeleteProductData,
+  DeleteSoldProductAPIReturnType,
+  SellProductAPIReturnType,
+  SellProductData,
+} from './types.api';
 
 export const sellProductAPI = async (
   data: SellProductData,
@@ -28,6 +33,35 @@ export const sellProductAPI = async (
       },
       success: false,
     } as SellProductAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+
+export const deleteSoldProductAPI = async (
+  data: DeleteProductData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const {soldProductId, role} = data.query;
+    const fetching = await FetchAPI({
+      route: `/delete/sold-product?soldProductId=${soldProductId}&role=${role}`,
+      reqType: 'cud',
+      method: 'POST',
+    });
+    return (await fetching.json()) as DeleteSoldProductAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        soldProduct: undefined,
+      },
+      success: false,
+    } as DeleteSoldProductAPIReturnType;
   } finally {
     handleBooleanState(setState, false);
   }

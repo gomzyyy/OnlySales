@@ -1,5 +1,5 @@
 import {View, StyleSheet, FlatList, Text, Pressable} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import Header from '../../../components/Header';
 import {useAnalytics, useHaptics, useTheme} from '../../../hooks';
 import EmptyListMessage from '../../../components/EmptyListMessage';
@@ -9,7 +9,13 @@ import SearchBar from './components/SearchBar';
 const PaymentHistory = () => {
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
-  const paymentHistory = owner.history.payments;
+  const [paymentsOnScreen, setPaymentsOnScreen] = useState<number>(20);
+
+  const handlePaymentsOnScreenIncrement = () => {};
+
+  const paymentHistory = [...owner.history.payments]
+    .reverse()
+    .slice(0, paymentsOnScreen);
 
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
@@ -31,7 +37,9 @@ const PaymentHistory = () => {
               data={paymentHistory}
               keyExtractor={s => s._id}
               nestedScrollEnabled
-              renderItem={({item}) => <Tab i={item} />}
+              renderItem={({item, index}) => (
+                <Tab i={item} lastIndex={index === paymentHistory.length-1} />
+              )}
               style={{flex: 1}}
               showsVerticalScrollIndicator={false}
             />

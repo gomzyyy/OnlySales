@@ -15,20 +15,23 @@ import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {PaymentState} from '../../../../enums';
+import { useTranslation } from 'react-i18next';
 
 type PaidPaymentsProps = {
   customer: Customer;
   date: string;
   products: SoldProduct[];
+  close:()=>void
 };
 
 const PaidPayments: React.FC<PaidPaymentsProps> = ({
   customer,
   products,
   date,
+  close
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-
+const {t} = useTranslation('customer')
   const [amount, setAmount] = useState<number>(0);
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const {owner} = useAnalytics();
@@ -67,7 +70,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
-        Pending Payments
+      {t('p_paidpayments_title')}
       </Text>
       <View
         style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
@@ -90,6 +93,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
                     )
                   }
                   date={item.createdAt}
+                  closeParent={close}
                 />
               )}
               nestedScrollEnabled
@@ -97,7 +101,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
           ) : (
             <View style={styles.emptyListContainer}>
               <EmptyListMessage
-                title="HOORAY! No UNPAID Payments at the momment."
+                title={t('p_paidpayments_nodata_title')}
                 textColor={currentTheme.contrastColor}
               />
               <TouchableOpacity
@@ -122,7 +126,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
       </View>
       {products.length !== 0 && (
         <PayButton
-          label={`Pay ${currency} ${amount}`}
+        label={t('p_paidpayments_paybtn', {currency, amount})}
           pressAction={() => openConfirmPay('WHOLE')}
         />
       )}

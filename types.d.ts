@@ -215,6 +215,7 @@ export interface Product extends CommonProps {
   businessOwner: Owner;
   productType: ProductType;
   image?: string;
+  disabled:boolean
   totalSold: number;
   basePrice: number;
   discountedPrice?: number;
@@ -231,6 +232,7 @@ export interface SoldProduct extends CommonProps {
   product: Product;
   buyer: Customer | string;
   state: PaymentState;
+  disabled:boolean
   count: number;
   soldBy: Owner | Employee | Partner | string;
   soldByModel: AdminRole;

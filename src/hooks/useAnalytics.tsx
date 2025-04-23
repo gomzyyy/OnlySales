@@ -39,17 +39,26 @@ export interface useAnalyticsReturnType extends Owner {
 
 const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   const user = useSelector((s: RootState) => s.appData.user)!;
-  const owner: Owner =
-    (user.role === AdminRole.OWNER && (user as Owner)) ||
-    (user.role === AdminRole.PARTNER && (user as Partner).businessOwner) ||
-    (user.role === AdminRole.EMPLOYEE && (user as Employee).businessOwner) ||
-    undefined!;
+  let owner: Owner;
+
+  if (user.role === AdminRole.OWNER) {
+    owner = user as Owner;
+  } else if (user.role === AdminRole.PARTNER) {
+    owner = (user as Partner).businessOwner;
+  } else if (user.role === AdminRole.EMPLOYEE) {
+    owner = (user as Employee).businessOwner;
+  } else {
+    throw new Error('Invalid role or missing business owner');
+  }
   const bestSellers = [...owner.inventory]
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, bestSellerCount);
   const customers = owner.customers as Customer[];
   const paidPayments = customers.flatMap(
-    s => s.buyedProducts.filter(s => s.state === PaymentState.PAID) || [],
+    s =>
+      s.buyedProducts.filter(
+        s => s.state === PaymentState.PAID && !s.disabled,
+      ) || [],
   );
   const unpaidPayments = customers.flatMap(
     s => s.buyedProducts.filter(s => s.state === PaymentState.UNPAID) || [],

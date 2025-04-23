@@ -22,8 +22,9 @@ import {navigate} from '../../../utils/nagivationUtils';
 import {sellProductAPI} from '../../../api/api.soldproduct';
 import {SellProductAPIReturnType} from '../../../api/types.api';
 import {setUser} from '../../../../store/slices/business';
-import {getUserAPI} from '../../../api/api.user';
 import {showToast} from '../../../service/fn';
+import {useTranslation} from 'react-i18next';
+import {validateTokenAPI} from '../../../api/api.auth';
 
 type AddUdharProps = {
   close?: () => void;
@@ -35,6 +36,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   customer,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const {t} = useTranslation('customer');
   const {owner} = useAnalytics();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
@@ -126,46 +128,46 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             },
             setLoading,
           );
-          if (
-            res &&
-            res.success &&
-            res.data &&
-            res.data.soldProduct &&
-            res.data.seller
-          ) {
-            dispatch(setUser(res.data.seller));
+
+          if (res.success) {
+            const userRes = await validateTokenAPI({role: user.role});
+            if (userRes.success && userRes.data && userRes.data.user) {
+              dispatch(setUser(userRes.data.user));
+            }
+            showToast({
+              type: 'success',
+              text1: t('c_addproduct_success'),
+            });
+            close?.();
+            return;
           } else {
             showToast({
               type: 'error',
-              text1: `Error occurred while selling:: ${res.message}`,
+              text1: t('c_addproduct_error_response', {errorMessage: res.message}),
             });
+            close?.();
             return;
           }
         } else {
           showToast({
             type: 'error',
-            text1: `Error occurred while selling:: ${p.product?.name}__`,
+            text1: t('c_addproduct_error_item', {productName: p.product?.name}),
           });
           close?.();
           return;
         }
       }
       showToast({
-        type: 'success',
-        text1: `Product(s) successfully sold.`,
+        type: 'info',
+        text1: t('c_addproduct_error_generic'),
       });
-      close?.();
     } catch (err) {
-      console.error(err);
       showToast({
         type: 'error',
-        text1: `Unexpected error occurred.`,
+        text1: t('c_addproduct_error_generic'),
       });
     }
   };
-
-  useEffect(() => {}, [selectedProducts]);
-
   useEffect(() => {
     if (query.trim().length !== 0) {
       const queryResults = inventoryItems.filter(s =>
@@ -195,7 +197,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           width={0.9}
           autoFocus={false}
           shadow={3}
-          placeholderText="Search Products"
+          placeholderText={t('c_addproduct_title')}
         />
       </View>
       <View style={styles.productsContainer}>
@@ -207,18 +209,21 @@ const AddUdhar: React.FC<AddUdharProps> = ({
               flexDirection: 'row',
               flexWrap: 'wrap',
             }}>
-            {inventoryItems.map((f, i) => (
-              <InventoryItem
-                key={i}
-                product={f}
-                callback={handleSetUdharAmount}
-                onSelectProduct={handleNewUdhars}
-              />
-            ))}
+            {inventoryItems.map(
+              (f, i) =>
+                !f.disabled && (
+                  <InventoryItem
+                    key={i}
+                    product={f}
+                    callback={handleSetUdharAmount}
+                    onSelectProduct={handleNewUdhars}
+                  />
+                ),
+            )}
           </ScrollView>
         ) : (
           <View style={{flex: 1}}>
-            <EmptyListMessage title="No Products to show." />
+            <EmptyListMessage title={t('c_noproducts')} />
           </View>
         )}
         <View style={{flexDirection: 'row', gap: 6}}>
@@ -235,10 +240,13 @@ const AddUdhar: React.FC<AddUdharProps> = ({
                 {color: currentTheme.modal.saveBtnText},
               ]}>
               {udharAmount === 0
-                ? 'Cancel'
+                ? t('c_addproduct_cancel')
                 : loading
-                ? 'Adding'
-                : `Add Udhar of ${currencyType} ${udharAmount}`}
+                ? t('c_addproduct_adding')
+                : t('c_addproduct_addudhar', {
+                    currency: currencyType,
+                    amount: udharAmount,
+                  })}
             </Text>
             {loading && (
               <ActivityIndicator size={18} color={currentTheme.contrastColor} />

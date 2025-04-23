@@ -24,8 +24,9 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
   children,
   open,
   close,
-  bgcolor = 'rgba(0,0,0,0.1)',
+  bgcolor = `rgba(0,0,0,${'0.5'})`,
   padding = false,
+  opacity = 0.6
 }): React.JSX.Element => {
   return (
     <Modal
@@ -42,7 +43,6 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
         ]}
         onPress={close}>
         <Pressable onPress={e => e.stopPropagation()}>
-          {' '}
           <Animated.View>{children}</Animated.View>
         </Pressable>
       </Pressable>

@@ -16,6 +16,7 @@ import {useTheme} from '../../../hooks/index';
 import {deleteCustomerAPI} from '../../../api/api.customer';
 import {validateTokenAPI} from '../../../api/api.auth';
 import {setUser} from '../../../../store/slices/business';
+import {useTranslation} from 'react-i18next';
 
 type TabLongPressOptionsProps = {
   i: Customer;
@@ -30,6 +31,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
+  const {t} = useTranslation('customers');
   const user = useSelector((s: RootState) => s.appData.user)!;
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -74,7 +76,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           activeOpacity={0.8}
           onPress={handleDeleteEmployee}>
           <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            {loading ? 'Deleting' : 'Delete'}
+            {loading ? t('cs_delete') : t('cs_deleting')}
           </Text>
           {loading ? (
             <ActivityIndicator size={18} color={colors.danger} />
@@ -91,7 +93,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
               styles.buttonEditText,
               {color: currentTheme.modal.inputText},
             ]}>
-            Edit
+            {t('cs_edit')}
           </Text>
           <Icon name="edit" size={18} color={colors.iconBlack} />
         </TouchableOpacity>

@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/Entypo';
+import {useTranslation} from 'react-i18next';
 
 type CustomerInfoProps = {
   customer: Customer;
@@ -15,7 +16,8 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
   customer,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  
+  const {t} = useTranslation('customer');
+
   return (
     <LinearGradient
       colors={[currentTheme.contrastColor, currentTheme.contrastColor]}
@@ -37,13 +39,17 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
         <View style={styles.phoneNumberContainer}>
           <Icon name="mobile1" color={currentTheme.baseColor} />
           <Text style={[styles.phoneNumber, {color: currentTheme.baseColor}]}>
-            {customer.phoneNumber ? `+91-${customer.phoneNumber}` : 'N/A'}
+            {customer.phoneNumber
+              ? `+91-${customer.phoneNumber}`
+              : t('c_customerinfo_nophonenumber')}
           </Text>
         </View>
         <View style={styles.addressContainer}>
           <Icon1 name="location-pin" size={16} color={currentTheme.baseColor} />
           <Text style={[styles.address, {color: currentTheme.baseColor}]}>
-            {customer.address ? `${customer.address}` : 'N/A'}
+            {customer.address
+              ? `${customer.address}`
+              : t('c_customerinfo_nolocation')}
           </Text>
         </View>
       </View>

@@ -31,9 +31,10 @@ type TabProps = {
 
 const Tab: React.FC<TabProps> = ({
   i,
-  lastIndex = false,
+  lastIndex=false,
   dummy = false,
 }): React.JSX.Element => {
+  console.log(lastIndex)
   const {currentTheme} = useTheme();
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const user = useSelector((s: RootState) => s.appData.user)!;
@@ -67,7 +68,7 @@ const Tab: React.FC<TabProps> = ({
         paymentId: i.payment,
         paymentType: i.paymentType,
       },
-    };
+    }
     const res = await getSinglePaymentHistory(data, setLoading);
     if (res.success && res.data && res.data.paymentDetails) {
       if (i.paymentType === PaymentHistoryReferenceType.SOLD_PRODUCT) {
@@ -95,7 +96,7 @@ const Tab: React.FC<TabProps> = ({
         style={[
           styles.container,
           {
-            marginBottom: lastIndex ? 70 : 6,
+            marginBottom: lastIndex ? 80 : 8,
             backgroundColor: currentTheme.tab.bg,
           },
         ]}>
@@ -152,8 +153,7 @@ const Tab: React.FC<TabProps> = ({
           open={openSoldProductHistoryDetails}
           close={handleCloseSoldProductPaymentsDetails}
           height={deviceHeight * 0.36}
-          opacity={0.5}
-          >
+          opacity={0.5}>
           <SoldProductPaymentDetailContainer
             details={soldProductPaymentDetails}
           />
@@ -174,9 +174,9 @@ const styles = StyleSheet.create({
   absolute: {
     position: 'absolute',
   },
-  infoContainer: {flex: 6, gap: 4},
+  infoContainer: {flex: 7, gap: 4},
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
   },
   shortnote: {
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   paymentDetailsContainer: {
     alignItems: 'flex-end',
     justifyContent: 'center',
-    flex: 2,
+    flex: 3,
   },
   amount: {
     fontSize: 16,

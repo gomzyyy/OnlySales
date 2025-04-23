@@ -171,6 +171,15 @@ export interface SellProductAPIReturnType extends APIReturnType {
   };
 }
 
+export interface DeleteProductData {
+  query: {
+    soldProductId: string;
+    role: AdminRole;
+  };
+}
+
+export interface DeleteSoldProductAPIReturnType extends APIReturnType {}
+
 export interface RequestOtpAPIData {
   query: {
     uid: string;
@@ -214,3 +223,38 @@ export interface GetSinglePaymentHistoryAPIReturnType extends APIReturnType {
       | undefined;
   };
 }
+
+export interface CreateEmployeeAPIData {
+  query: {
+    creatorId: string;
+    createdBy: string;
+    role:AdminRole;
+  };
+  body: {
+    name: string;
+    userId: string;
+    phoneNumber?: string;
+    password: string;
+    position: string;
+    positionDescription?: string;
+    email: string;
+    address?: string;
+    gender: string;
+    department: string;
+    departmentDescription?: string;
+    salary: number;
+    status: string;
+    statusDescription?: string;
+    skills?: string[]; // assuming it's an array of skills
+    shift: string;
+    shiftDescription?: string;
+    reportsToModel?: string;
+    businessOwnerId: string;
+    hrUid?: string;
+  };
+  media:{
+    image?: string;
+  }
+};
+
+export interface CreateEmployeeReturnType extends APIReturnType{}

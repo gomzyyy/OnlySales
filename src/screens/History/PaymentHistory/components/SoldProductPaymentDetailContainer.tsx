@@ -1,9 +1,15 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../../../../hooks';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../../store/store';
-import { Customer, Employee, Owner, Partner, SoldProductPaymentHistory } from '../../../../../types';
+import React, {useEffect} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {useTheme} from '../../../../hooks';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../../store/store';
+import {
+  Customer,
+  Employee,
+  Owner,
+  Partner,
+  SoldProductPaymentHistory,
+} from '../../../../../types';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -11,7 +17,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { deviceHeight } from '../../../../utils/Constants';
+import {colors, deviceHeight} from '../../../../utils/Constants';
 
 type ConfirmPaymentProps = {
   details: SoldProductPaymentHistory | undefined;
@@ -21,33 +27,61 @@ type ConfirmPaymentProps = {
 const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
   details,
 }): React.JSX.Element => {
-  const { currentTheme } = useTheme();
-  const { currency } = useSelector((s: RootState) => s.appData.app);
+  const {currentTheme} = useTheme();
+  const {currency} = useSelector((s: RootState) => s.appData.app);
 
-  const opacity = useSharedValue(0.3);
+  const skeletonOpacity = useSharedValue(0.3);
+  const deletedTextOpacity = useSharedValue(0);
 
   useEffect(() => {
     if (!details) {
-      opacity.value = withRepeat(
+      skeletonOpacity.value = withRepeat(
         withSequence(
-          withTiming(0.8, { duration: 500 }),
-          withTiming(0.3, { duration: 500 })
+          withTiming(0.8, {duration: 500}),
+          withTiming(0.3, {duration: 500}),
         ),
         -1,
-        true
+        true,
       );
+    } else {
+      if (details.disabled) {
+        setTimeout(
+          () => (deletedTextOpacity.value = withTiming(1, {duration: 200})),
+          200,
+        );
+      }
     }
   }, [details]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
+  const skeletonAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: skeletonOpacity.value,
+  }));
+  const deletedTextAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: deletedTextOpacity.value,
   }));
 
   return (
     <View
-      style={[styles.parent, { backgroundColor: currentTheme.contrastColor }]}
-    >
-      <Text style={[styles.label, { color: currentTheme.baseColor }]}>
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
+      {details && (
+        <Animated.Text
+          style={[
+            {
+              position: 'absolute',
+              top: 22,
+              right: 20,
+              fontWeight: '600',
+              backgroundColor: colors.dangerFade,
+              padding: 4,
+              borderRadius: 6,
+              color: colors.danger,
+            },
+            deletedTextAnimatedStyle,
+          ]}>
+          DELETED
+        </Animated.Text>
+      )}
+      <Text style={[styles.label, {color: currentTheme.baseColor}]}>
         Payment History
       </Text>
 
@@ -71,7 +105,7 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
           </Text>
           <Text style={styles.textItem}>
             <Text style={styles.bold}>Sold By: </Text>
-            {(details.reference.soldBy as Owner | Employee | Partner).name ||
+            {(details.reference.soldBy as Owner | Employee | Partner)?.name ||
               'N/A'}
           </Text>
           <Text style={styles.textItem}>
@@ -81,8 +115,11 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
         </View>
       ) : (
         <View style={styles.detailSection}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Animated.View key={i} style={[styles.skeletonBox, animatedStyle]} />
+          {Array.from({length: 6}).map((_, i) => (
+            <Animated.View
+              key={i}
+              style={[styles.skeletonBox, skeletonAnimatedStyle]}
+            />
           ))}
         </View>
       )}
@@ -92,7 +129,7 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight*0.35,
+    height: deviceHeight * 0.35,
     marginBottom: 10,
     borderRadius: 20,
     padding: 20,

@@ -15,21 +15,23 @@ import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ScanQRToPay from '../../../components/ScanQRToPay';
-import {PaymentState} from '../../../../enums';
+import { useTranslation } from 'react-i18next';
 
 type UnpaidPaymentsProps = {
   customer: Customer;
   date: string;
   products: SoldProduct[];
+  close:()=>void
 };
 
 const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   customer,
   products,
   date,
+  close
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const {owner} = useAnalytics();
+  const {t} = useTranslation('customer')
   const [amount, setAmount] = useState<number>(0);
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
@@ -76,7 +78,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
-        Pending Payments
+        {t('c_pendingpayments')}
       </Text>
       <View
         style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
@@ -93,6 +95,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
                   customer={customer}
                   onPay={() => openConfirmPay('SINGLE', item)}
                   date={date}
+                  closeParent={close}
                 />
               )}
               nestedScrollEnabled
@@ -100,7 +103,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
           ) : (
             <View style={styles.emptyListContainer}>
               <EmptyListMessage
-                title="HOORAY! No UNPAID Payments at the momment."
+                title={t('c_empty_unpaid_alert')}
                 textColor={currentTheme.contrastColor}
               />
               <TouchableOpacity
@@ -125,7 +128,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
       </View>
       {products.length !== 0 && (
         <PayButton
-          label={`Pay ${currency} ${amount}`}
+          label={`${t('c_pay_btn')} ${currency} ${amount}`}
           pressAction={() => openConfirmPay('WHOLE')}
         />
       )}

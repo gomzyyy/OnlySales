@@ -1,18 +1,9 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  Alert,
-  Pressable,
-  PermissionsAndroid,
-  Modal,
-} from 'react-native';
+import {View, StyleSheet, ScrollView, Text, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
 import {navigate, prepareNavigation} from '../../utils/nagivationUtils';
-import {useAnalytics, useTheme} from '../../hooks/index';
+import {useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
@@ -20,63 +11,60 @@ import Icon3 from 'react-native-vector-icons/AntDesign';
 import Icon4 from 'react-native-vector-icons/MaterialIcons';
 import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
-import FloatingPayButton from './components/FloatingPayButton';
-import SlideUpContainer from '../../components/SlideUpContainer';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import ScanQRToPay from '../../components/ScanQRToPay';
-import {colors, deviceHeight} from '../../utils/Constants';
+import {colors} from '../../utils/Constants';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import {RequestUXPermission} from '../../service/permissions';
-import SearchTools from './components/SearchTools';
-
-const DashboardOptions = [
-  {
-    id: 0,
-    title: 'Inventory',
-    navigateTo: 'MyInventory',
-    icon: (color: string) => (
-      <Icon3 name="codepen-circle" size={24} color={color} />
-    ),
-  },
-
-  {
-    id: 1,
-    title: 'Analytics',
-    navigateTo: 'Analytics',
-    icon: (color: string) => <Icon2 name="analytics" size={24} color={color} />,
-  },
-  {
-    id: 3,
-    title: 'Employees',
-    navigateTo: 'Employees',
-    icon: (color: string) => (
-      <Icon name="people-sharp" size={24} color={color} />
-    ),
-  },
-  {
-    id: 4,
-    title: 'Customers',
-    navigateTo: 'Customers',
-    icon: (color: string) => (
-      <Icon name="people-sharp" size={24} color={color} />
-    ),
-  },
-];
+import {useTranslation} from 'react-i18next';
 
 const Dashboard = () => {
+  const {t} = useTranslation('dashboard');
+
+  const DashboardOptions = [
+    {
+      id: 0,
+      title: t('d_options_inventory'),
+      navigateTo: 'MyInventory',
+      icon: (color: string) => (
+        <Icon3 name="codepen-circle" size={24} color={color} />
+      ),
+    },
+
+    {
+      id: 1,
+      title: t('d_options_analytics'),
+      navigateTo: 'Analytics',
+      icon: (color: string) => (
+        <Icon2 name="analytics" size={24} color={color} />
+      ),
+    },
+    {
+      id: 3,
+      title: t('d_options_employees'),
+      navigateTo: 'Employees',
+      icon: (color: string) => (
+        <Icon name="people-sharp" size={24} color={color} />
+      ),
+    },
+    {
+      id: 4,
+      title: t('d_options_customers'),
+      navigateTo: 'Customers',
+      icon: (color: string) => (
+        <Icon name="people-sharp" size={24} color={color} />
+      ),
+    },
+  ];
+
   const {currentTheme} = useTheme();
-  const {owner} = useAnalytics();
   const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user)!;
-  const {currency} = useSelector((s: RootState) => s.appData.app);
 
   const [payableAmount, setPayableAmount] = useState<number>(0);
-  const [searchTools, setSearchTools] = useState<string>('');
 
   const unverifiedAlertHeight = useSharedValue(0);
 
@@ -99,7 +87,6 @@ const Dashboard = () => {
     return () => {
       setPayableAmount(0);
       setOpenRequestPayment(false);
-      // setOpenQRCode(false);
       unverifiedAlertAnimatedStylesToogleTimeoutId &&
         clearTimeout(unverifiedAlertAnimatedStylesToogleTimeoutId);
     };
@@ -108,7 +95,7 @@ const Dashboard = () => {
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
-          name="Dashboard"
+          name={t('header_title')}
           menuButton
           titleColor={currentTheme.header.textColor}
           customComponent={true}
@@ -139,7 +126,7 @@ const Dashboard = () => {
               unverifiedAlertAnimatedStyles,
             ]}>
             <Text style={{fontSize: 16, color: colors.danger}}>
-              Your email is not verified!
+              {t('d_email_not_verified')}
             </Text>
             <View
               style={{
@@ -154,7 +141,7 @@ const Dashboard = () => {
                   navigate('RequestOTPEmail');
                 }}>
                 <Text style={{fontSize: 16, color: currentTheme.baseColor}}>
-                  click to verify.
+                  {t('d_email_not_verified_clicktoverify')}
                 </Text>
               </Pressable>
               <Pressable
@@ -166,7 +153,7 @@ const Dashboard = () => {
           </Animated.View>
         )}
         <View style={styles.contentContainer}>
-          <DashboardHeader flex={false} />
+          <DashboardHeader flex={false} searchBarPressAction={()=>navigate('SearchFeatures')} />
           <View style={{paddingHorizontal: 10}}>
             <View
               style={{
@@ -190,14 +177,14 @@ const Dashboard = () => {
           <View style={styles.graphContainer}>
             <Text
               style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
-              Today's best-sellers {'(sales per product)'}
+              {t('d_todaybestseller_title')}
             </Text>
             <TodayBestSellerInfoGraph />
           </View>
           <View style={styles.graphContainer}>
             <Text
               style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
-              Past 7 Day Recap {'(sales per day)'}
+              {t('d_weeklysalesinfograph_title')}
             </Text>
             <WeeklySalesInfoGraph />
           </View>

@@ -21,7 +21,6 @@ const Test = () => {
   const [image, setImage] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user);
-  console.log(user);
   return (
     <View style={styles.parent}>
       <View style={styles.container}>

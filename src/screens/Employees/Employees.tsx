@@ -11,56 +11,53 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Tab from './components/tab';
-import { deviceHeight } from '../../utils/Constants';
+import {deviceHeight} from '../../utils/Constants';
 
 const Employees = () => {
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
-  const [openCreateEmployee, setopenCreateEmployee] = useState<boolean>(false);
+  const [openCreateEmployee, setOpenCreateEmployee] = useState(false);
   const {owner} = useAnalytics();
   const employees = owner.employeeData;
-  const handleCloseCreateEmployee = () => setopenCreateEmployee(false);
+
+  const handleCloseCreateEmployee = () => setOpenCreateEmployee(false);
   const handleOpenCreateEmployee = () => {
-    setopenCreateEmployee(true);
+    setOpenCreateEmployee(true);
     lightTap();
   };
+
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
+    <View style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
       <Header
         name="Employees"
-        backButtom={true}
+        backButtom
         titleColor={currentTheme.header.textColor}
-        customComponent={true}
-        renderItem={
-          <Icon name="plus" size={24} color={currentTheme.header.textColor} />
-        }
-        customAction={() => {
-          setopenCreateEmployee(true);
-          lightTap();
-        }}
+        customComponent
+        renderItem={<Icon name="plus" size={22} color={currentTheme.header.textColor} />}
+        customAction={handleOpenCreateEmployee}
       />
-      <View style={styles.contentContainer}>
-        {!openCreateEmployee && (
-          <CreateButton open={handleOpenCreateEmployee} />
-        )}
-        <View style={{flex: 1}}>
-          <View style={styles.searchBarContainer}>
+
+      <View style={styles.contentWrapper}>
+        {!openCreateEmployee && <CreateButton open={handleOpenCreateEmployee} />}
+
+        <View style={styles.innerContent}>
+          <View style={styles.searchBarWrapper}>
             <SearchBar
               textColor={currentTheme.header.textColor}
-              enable={employees.length !== 0}
+              enable={employees.length > 0}
             />
           </View>
-          {employees.length !== 0 ? (
+
+          {employees.length > 0 ? (
             <FlatList
               data={employees}
-              keyExtractor={s => s._id}
-              nestedScrollEnabled
+              keyExtractor={item => item._id}
               renderItem={({item}) => <Tab i={item} />}
-              style={{flex: 1}}
+              contentContainerStyle={styles.listContainer}
               showsVerticalScrollIndicator={false}
             />
           ) : (
-            <View style={{flex: 1}}>
+            <View style={styles.emptyState}>
               <EmptyListMessage
                 textColor={currentTheme.header.textColor}
                 title="No Employee data available"
@@ -69,21 +66,44 @@ const Employees = () => {
           )}
         </View>
       </View>
-      {openCreateEmployee && (
-        <SlideUpContainer
-          open={openCreateEmployee}
-          close={handleCloseCreateEmployee}
-          height={deviceHeight * 0.62}>
-          <CreateEmployee callback={handleCloseCreateEmployee} />
-        </SlideUpContainer>
-      )}
+
+      <SlideUpContainer
+        open={openCreateEmployee}
+        close={handleCloseCreateEmployee}
+        height={deviceHeight * 0.62}>
+        <CreateEmployee callback={handleCloseCreateEmployee} />
+      </SlideUpContainer>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  searchBarContainer: {paddingVertical: 20},
-  contentContainer: {flex: 1, paddingHorizontal: 10},
+  container: {
+    flex: 1,
+  },
+  contentWrapper: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  innerContent: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    borderRadius: 16,
+    paddingBottom: 10,
+  },
+  searchBarWrapper: {
+    paddingVertical: 16,
+  },
+  listContainer: {
+    gap: 10,
+    paddingBottom: 20,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default Employees;

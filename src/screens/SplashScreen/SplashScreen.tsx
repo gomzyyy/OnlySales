@@ -45,7 +45,6 @@ const SplashScreen = () => {
       const token = await getFCMToken();
       if (token) {
         await AsyncStorage.setItem('fcmtoken', token);
-        console.log(token);
       }
     }
   };

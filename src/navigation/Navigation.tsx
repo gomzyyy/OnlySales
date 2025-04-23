@@ -27,7 +27,6 @@ import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
 import {useTheme} from '../hooks/index';
 import Customers from '../screens/Customers/Customers';
-import Test from '../screens/Test/Test';
 import SignupSuccess from '../screens/Auth/SignUp/screens/SignupSuccess';
 import Analytics from '../screens/Analytics/Analytics';
 import Employees from '../screens/Employees/Employees';
@@ -47,7 +46,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import PaymentHistory from '../screens/History/PaymentHistory/PaymentHistory';
-import BottomTabs from '../components/BottomTabs';
+import SearchFeatures from '../screens/SearchFeatures/SearchFeatures';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -82,7 +81,6 @@ const StackNav = () => {
         headerShown: false,
         statusBarBackgroundColor: currentTheme.baseColor,
       }}>
-      {/* <stack.Screen name="Test" component={Test} /> */}
       <stack.Screen name="SplashScreen" component={SplashScreen} />
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />
@@ -101,6 +99,7 @@ const StackNav = () => {
       <stack.Screen name="RequestOTPEmail" component={RequestOTPEmail} />
       <stack.Screen name="VerifyEmail" component={VerifyEmail} />
       <stack.Screen name="PaymentHistory" component={PaymentHistory} />
+      <stack.Screen name="SearchFeatures" component={SearchFeatures} />
       <stack.Screen
         name="Login"
         options={{gestureEnabled: false}}
