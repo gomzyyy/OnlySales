@@ -46,7 +46,10 @@
 <string>We need your permission to use speech recognition</string>
 <key>NSMicrophoneUsageDescription</key>
 <string>We need your permission to use the microphone</string>
-
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need your location to provide personalized content.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need your location to provide personalized content.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photos to upload images.</string>

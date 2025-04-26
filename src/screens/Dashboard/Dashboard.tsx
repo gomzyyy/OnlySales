@@ -1,4 +1,11 @@
-import {View, StyleSheet, ScrollView, Text, Pressable} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Pressable,
+  TextInput,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
@@ -8,18 +15,20 @@ import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/AntDesign';
-import Icon4 from 'react-native-vector-icons/MaterialIcons';
+import Icon4 from 'react-native-vector-icons/Entypo';
 import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import {colors} from '../../utils/Constants';
+import {colors, deviceHeight} from '../../utils/Constants';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
 import {useTranslation} from 'react-i18next';
+import SlideUpContainer from '../../components/SlideUpContainer';
+import useQuery from './hooks/hooks';
 
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
@@ -62,6 +71,8 @@ const Dashboard = () => {
 
   const {currentTheme} = useTheme();
   const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
+  const [openQuery, setOpenQuery] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>('');
   const user = useSelector((s: RootState) => s.appData.user)!;
 
   const [payableAmount, setPayableAmount] = useState<number>(0);
@@ -91,6 +102,19 @@ const Dashboard = () => {
         clearTimeout(unverifiedAlertAnimatedStylesToogleTimeoutId);
     };
   }, []);
+
+  const {
+    customersByQuery,
+    CustomerTab,
+    soldProductsByQueryDate,
+    DateWithSoldProductTab,
+  } = useQuery({query});
+
+  const closeQuery = () => {
+    setOpenQuery(false);
+    setQuery('');
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
@@ -100,12 +124,9 @@ const Dashboard = () => {
           titleColor={currentTheme.header.textColor}
           customComponent={true}
           renderItem={
-            <Icon4
-              name="qr-code-scanner"
-              size={26}
-              color={currentTheme.contrastColor}
-            />
+            <Icon4 name="code" size={26} color={currentTheme.contrastColor} />
           }
+          customAction={() => setOpenQuery(true)}
         />
         {!user.email?.verified && (
           <Animated.View
@@ -153,7 +174,10 @@ const Dashboard = () => {
           </Animated.View>
         )}
         <View style={styles.contentContainer}>
-          <DashboardHeader flex={false} searchBarPressAction={()=>navigate('SearchFeatures')} />
+          <DashboardHeader
+            flex={false}
+            searchBarPressAction={() => navigate('SearchFeatures')}
+          />
           <View style={{paddingHorizontal: 10}}>
             <View
               style={{
@@ -188,6 +212,60 @@ const Dashboard = () => {
             </Text>
             <WeeklySalesInfoGraph />
           </View>
+          <SlideUpContainer
+            open={openQuery}
+            close={closeQuery}
+            height={deviceHeight * 0.36}>
+            <View
+              style={{
+                minHeight: deviceHeight * 0.36,
+                height: 'auto',
+                backgroundColor: currentTheme.contrastColor,
+                marginBottom: 10,
+                borderRadius: 20,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+              }}>
+              <ScrollView style={{flex: 1}}>
+                <Text
+                  style={{fontSize: 20, fontWeight: 600, textAlign: 'center'}}>
+                  Run a Query
+                </Text>
+                <TextInput
+                  value={query}
+                  onChangeText={setQuery}
+                  style={[
+                    styles.inputText,
+                    {borderColor: currentTheme.modal.inputBorder},
+                  ]}
+                  placeholder="enter your query"
+                  placeholderTextColor={'grey'}
+                />
+                {customersByQuery.length > 0 && (
+                  <View style={{marginTop: 10}}>
+                    <Text
+                      style={{fontSize: 16, fontWeight: 600, paddingLeft: 20}}>
+                      Found customers:
+                    </Text>
+                    {customersByQuery.map(s => (
+                      <CustomerTab key={s._id} customer={s} />
+                    ))}
+                  </View>
+                )}
+                {soldProductsByQueryDate.length !== 0 && (
+                  <View style={{marginTop: 10}}>
+                    <Text
+                      style={{fontSize: 16, fontWeight: 600, paddingLeft: 20}}>
+                      Found records:
+                    </Text>
+                    {soldProductsByQueryDate.map(s => (
+                      <DateWithSoldProductTab key={s.date} data={s} />
+                    ))}
+                  </View>
+                )}
+              </ScrollView>
+            </View>
+          </SlideUpContainer>
         </View>
       </ScrollView>
     </View>
@@ -206,6 +284,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexWrap: 'wrap',
     gap: 10,
+  },
+  inputText: {
+    borderWidth: 2,
+    borderRadius: 8,
+    height: 50,
+    fontSize: 18,
+    paddingHorizontal: 12,
+    marginTop: 30,
   },
   graphContainer: {
     flex: 1,

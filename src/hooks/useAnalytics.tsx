@@ -7,6 +7,7 @@ import {
   Owner,
   Partner,
   Employee,
+  Review,
 } from '../../types';
 import {checkDate} from '../service/fn';
 import {AdminRole, PaymentState} from '../../enums';
@@ -35,6 +36,7 @@ export interface useAnalyticsReturnType extends Owner {
     fourDayAgo: SoldProduct[];
     fiveDayAgo: SoldProduct[];
   };
+  newReviews: Review[];
 }
 
 const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
@@ -138,7 +140,9 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     return acc;
   }, {});
   const todaysMostSoldProducts = Object.values(todaysMostSoldProductsObj);
-
+  const newReviews =(owner.reviews || []).filter(r =>
+      checkDate({date: new Date(r.createdAt).getTime(), matchByDay: 1}),
+    ) || [];
   return {
     ...owner,
     owner,
@@ -156,6 +160,7 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     soldTwoMonthAgo,
     soldThreeMonthAgo,
     soldMoreThanFourMonthsAgo,
+    newReviews,
   };
 };
 

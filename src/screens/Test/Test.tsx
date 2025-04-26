@@ -14,6 +14,8 @@ import {CurrencyType} from '../../../enums';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
+import {deviceHeight} from '../../utils/Constants';
+import GeoLocation from '@react-native-community/geolocation';
 
 const value = `upi://pay?pa=gomzydhingra0001@okhdfcbank&pn=GomzyDev&mc=1234&tid=Txn7367289298&tr=Order1236&tn=Payment%20for%20Udhar%20%26%20Pending%20Bills&am=50&cu=INR`;
 
@@ -21,14 +23,19 @@ const Test = () => {
   const [image, setImage] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user);
+
+  GeoLocation.getCurrentPosition(success => console.log(success));
+
   return (
     <View style={styles.parent}>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <Button title="PAY" onPress={() => setOpen(true)} />
         <SlideUpContainer
           open={open}
           opacity={0.2}
-          close={() => setOpen(false)}>
+          close={() => setOpen(false)}
+          height={deviceHeight * 0.45}
+          >
           <RecivePaymentByQRCode
             pa="gomzydhingra0001@okhdfcbank"
             pn="Gomzy Dhingra"
@@ -38,7 +45,7 @@ const Test = () => {
             currency={CurrencyType.INR}
           />
         </SlideUpContainer>
-      </View>
+      </View> */}
     </View>
   );
 };

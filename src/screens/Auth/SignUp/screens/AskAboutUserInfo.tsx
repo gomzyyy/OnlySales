@@ -123,7 +123,7 @@ const AskAboutUserInfo = () => {
       email,
       referralCode,
     };
-    navigate('SetPassword', params);
+    navigate('GetUserSignupImage', params);
   };
   useEffect(() => {
     if (businessType === BusinessType.OTHER) {
@@ -132,6 +132,13 @@ const AskAboutUserInfo = () => {
       setAskBusinessDescription(false);
     }
   }, [businessType]);
+
+  const handleToogleReferralCode = () => {
+    if (referralCode && referralCode.trim().length !== 0) {
+      setReferralCode(undefined);
+    }
+    setHasReferralCode(!hasReferralCode);
+  };
 
   return (
     <KeyboardAvoidingView style={styles.parent}>
@@ -190,7 +197,7 @@ const AskAboutUserInfo = () => {
                 paddingHorizontal: 10,
                 marginTop: 10,
               }}
-              onPress={() => setHasReferralCode(!hasReferralCode)}>
+              onPress={handleToogleReferralCode}>
               <View
                 style={{
                   borderWidth: 1,

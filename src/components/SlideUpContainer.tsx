@@ -38,7 +38,7 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
     childHeight.value = 0;
     setTimeout(() => {
       close();
-    }, 100);
+    }, 160);
   };
 
   useEffect(() => {

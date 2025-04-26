@@ -83,15 +83,31 @@ export const signupAPI = async (
 ) => {
   handleBooleanState(setState, true);
   try {
-    const body = JSON.stringify(data);
+    // console.log(data);
+    const formData = new FormData();
+    if (data.media.image) {
+      const imageFile = {
+        uri: data.media.image,
+        type: 'image/jpeg',
+        name: 'profile.jpg',
+      };
+      formData.append('img', imageFile as any);
+    }
+    Object.entries(data.body).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+    // console.log(formData);
     const fetching = await FetchAPI({
-      reqType: 'cud',
+      reqType: 'media',
       route: '/signup',
       secure: false,
       method: 'POST',
-      body,
+      body: formData,
     });
     const res = await fetching.json();
+    console.log(res)
     return res as SignupAPIReturnType;
   } catch (error) {
     return {

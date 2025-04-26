@@ -48,7 +48,8 @@ type PermissionResult = {
   notification_permissions: boolean;
   write_contact_permissions: boolean;
   read_contact_permissions: boolean;
-}
+  fine_location_permissions: boolean;
+};
 export const RequestUXPermission = async (
   fallback?: () => void,
 ): Promise<PermissionResult> => {
@@ -58,6 +59,7 @@ export const RequestUXPermission = async (
         notification_permissions: false,
         write_contact_permissions: false,
         read_contact_permissions: false,
+        fine_location_permissions: false,
       };
     }
 
@@ -80,9 +82,17 @@ export const RequestUXPermission = async (
         message:
           'We need contact access to enhance your experience. Please enable it in settings.',
       },
+      'android.permission.ACCESS_FINE_LOCATION': {
+        key: 'fine_location_permissions',
+        title: 'Notification Permission Required',
+        message:
+          'We need notification access to keep you informed. Please enable it in settings.',
+      },
     };
 
-    const requestKeys = Object.keys(permissions) as Array<keyof typeof permissions>;
+    const requestKeys = Object.keys(permissions) as Array<
+      keyof typeof permissions
+    >;
     const res = await PermissionsAndroid.requestMultiple(requestKeys);
 
     const results: Record<string, boolean> = {};
@@ -98,7 +108,8 @@ export const RequestUXPermission = async (
 
         let message = permissions[perm].message;
         if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-          message += '\n\nYou have permanently denied this permission. Please enable it from settings.';
+          message +=
+            '\n\nYou have permanently denied this permission. Please enable it from settings.';
         }
 
         const userRes = await Confirm(permissions[perm].title, message);
@@ -112,6 +123,7 @@ export const RequestUXPermission = async (
       notification_permissions: results.notification_permissions || false,
       write_contact_permissions: results.write_contact_permissions || false,
       read_contact_permissions: results.read_contact_permissions || false,
+      fine_location_permissions: results.fine_location_permissions || false,
     };
   } catch (error) {
     fallback && fallback();
@@ -119,6 +131,7 @@ export const RequestUXPermission = async (
       notification_permissions: false,
       write_contact_permissions: false,
       read_contact_permissions: false,
+      fine_location_permissions: false,
     };
   }
 };

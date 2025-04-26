@@ -34,6 +34,14 @@ export enum AdminRole {
   PARTNER = 'Partner',
   EMPLOYEE = 'Employee',
 }
+
+export enum LocationRef {
+  OWNER = 'Owner',
+  PARTNER = 'Partner',
+  EMPLOYEE = 'Employee',
+  CUSTOMER = 'Customer',
+}
+
 export enum AppThemeName {
   // PURPLE = 'Midnight Orchid',
   RED = 'Blood Moon',
@@ -179,4 +187,14 @@ export enum AccountTypeEnum {
   REGULAR = 'Regular',
   PREMIUM = 'Premium',
   ON_TRIAL = 'OnTrial',
+}
+export enum ReviewRefType {
+  PRODUCT = 'Product',
+  OWNER = 'Owner',
+}
+export enum UserRefType {
+  OWNER = 'Owner',
+}
+export enum ReviewerType {
+  CUSTOMER = 'Customer',
 }

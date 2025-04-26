@@ -45,20 +45,26 @@ export interface SignupAPIReturnType extends APIReturnType {
 }
 
 export interface SignupData {
-  name: string; // //
-  phoneNumber?: string;
-  password: string; //
-  email: string; //
-  address?: string;
-  userId: string; // //
-  businessAddress: string; // //
-  businessName: string; // //
-  businessPhoneNumber: string; // //
-  businessDescription?: string; //
-  businessType: BusinessType; // //
-  role: AdminRole; //
-  gstNumber?: string;
-  uniqueReferralCode?: string;
+  query: {};
+  body: {
+    name: string; // //
+    phoneNumber?: string;
+    password: string; //
+    email: string; //
+    address?: string;
+    userId: string; // //
+    businessAddress: string; // //
+    businessName: string; // //
+    businessPhoneNumber: string; // //
+    businessDescription?: string; //
+    businessType: BusinessType; // //
+    role: AdminRole; //
+    gstNumber?: string;
+    uniqueReferralCode?: string;
+  };
+  media: {
+    image: string | undefined;
+  };
 }
 export interface LoginData {
   password: string;
@@ -228,7 +234,7 @@ export interface CreateEmployeeAPIData {
   query: {
     creatorId: string;
     createdBy: string;
-    role:AdminRole;
+    role: AdminRole;
   };
   body: {
     name: string;
@@ -252,9 +258,38 @@ export interface CreateEmployeeAPIData {
     businessOwnerId: string;
     hrUid?: string;
   };
-  media:{
+  media: {
     image?: string;
-  }
-};
+  };
+}
 
-export interface CreateEmployeeReturnType extends APIReturnType{}
+export interface CreateEmployeeReturnType extends APIReturnType {}
+
+export interface UpdateUserLocationAPIData {
+  query: {
+    role: AdminRole;
+  };
+  body: {
+    periodicLatitude?: number;
+    periodicLongitude?: number;
+    liveLatitude?: number;
+    liveLongitude?: number;
+  };
+}
+
+export interface UpdateUserLocationReturnType extends APIReturnType {}
+
+export interface GetUserByIdAPIData {
+  query: {
+    role: AdminRole;
+    userId: string;
+    reqFor: AdminRole;
+  };
+}
+
+export interface GetUserByIdAPIReturnType extends APIReturnType {
+  data: {
+    user: Owner | Employee | Partner | undefined;
+    userType: AdminRole | undefined;
+  };
+}

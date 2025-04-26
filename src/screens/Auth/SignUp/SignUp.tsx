@@ -85,7 +85,7 @@ const SignUp = () => {
     <KeyboardAvoidingView
       style={styles.parent}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.headerTitle}>Welcome to Signup Page!.</Text>
         <Text style={styles.subTitle}>
           Please Add your credentials to Proceed.
@@ -194,10 +194,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: deviceHeight * 0.1,
+    marginTop: deviceHeight * 0.09,
   },
   formContainer: {
-    marginTop: deviceHeight * 0.02,
+    marginTop: deviceHeight * 0.04,
     gap: 10,
   },
   inputContainer: {

@@ -37,7 +37,6 @@ import SetPassword from '../screens/Auth/SignUp/screens/SetPassword';
 import RequestOTPEmail from '../screens/Auth/Validate/Email/RequestOTPEmail';
 import VerifyEmail from '../screens/Auth/Validate/Email/VerifyEmail';
 import EMICalculator from '../screens/Tools/EMICalculator/EMICalculator';
-
 import {colors} from '../utils/Constants';
 import {useNetInfo} from '@react-native-community/netinfo';
 import Animated, {
@@ -47,7 +46,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import PaymentHistory from '../screens/History/PaymentHistory/PaymentHistory';
 import SearchFeatures from '../screens/SearchFeatures/SearchFeatures';
-
+import GetUserSignupImage from '../screens/Auth/SignUp/screens/GetUserSignupImage';
+import UITest from '../screens/Test/UITest';
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
@@ -82,6 +82,7 @@ const StackNav = () => {
         statusBarBackgroundColor: currentTheme.baseColor,
       }}>
       <stack.Screen name="SplashScreen" component={SplashScreen} />
+      <stack.Screen name="UITest" component={UITest} />
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />
       <stack.Screen name="Customer" component={Customer} />
@@ -127,6 +128,7 @@ const StackNav = () => {
         options={{gestureEnabled: false}}
         component={UserFound}
       />
+      <stack.Screen name="GetUserSignupImage" component={GetUserSignupImage} />
       <stack.Screen
         name="SetPasscode"
         options={{gestureEnabled: false}}

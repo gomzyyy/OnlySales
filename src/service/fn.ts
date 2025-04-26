@@ -23,7 +23,7 @@ export const showToast = ({
     text2,
     text1Style: {fontSize: 16},
     text2Style: {fontSize: 12},
-    position,
+    position:'top',
     onPress: pressAction,
   });
 };

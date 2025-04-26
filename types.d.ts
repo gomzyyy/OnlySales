@@ -18,6 +18,10 @@ import {
   PaymentHistoryReferenceType,
   UnknownPaymentType,
   AccountTypeEnum,
+  LocationRef,
+  ReviewRefType,
+  UserRefType,
+  ReviewerType,
 } from './enums';
 
 declare global {
@@ -88,6 +92,18 @@ export interface CommonProps {
   _id: string;
   createdAt: string;
   updatedAt: string;
+  __v: number;
+}
+
+export interface Review extends CommonProps {
+  reviewRef: string;
+  reviewRefType: ReviewRefType;
+  userRef: string;
+  userRefType: UserRefType;
+  reviewer: string;
+  reviewerType: ReviewerType;
+  rating: number;
+  feedback: string;
 }
 
 export interface User extends CommonProps {
@@ -103,6 +119,22 @@ export interface User extends CommonProps {
   };
   address?: string;
   userId: string;
+  location: Location;
+}
+
+export interface Location extends CommonProps {
+  userId: string;
+  locationRef: LocationRef;
+  type: {
+    live: {
+      longitude: number;
+      latitude: number;
+    };
+    periodic: {
+      longitude: number;
+      latitude: number;
+    };
+  };
 }
 
 export interface Customer extends User {
@@ -133,12 +165,17 @@ export interface OwnerProperties {
 export interface Owner extends User {
   referralCode: string;
   credits: Number;
+  reviews: Review[];
+  recommendations: Customer[];
   password: string;
   otp: OTP | undefined;
   businessAddress: string;
   equity: number;
   businessName: string;
-  businessPhoneNumber: number;
+  businessPhoneNumber: {
+    value: string;
+    verified: boolean;
+  };
   businessPartners: Partner[];
   gstNumber: string;
   accountType: AccountType;
@@ -215,8 +252,9 @@ export interface Product extends CommonProps {
   businessOwner: Owner;
   productType: ProductType;
   image?: string;
-  disabled:boolean
+  disabled: boolean;
   totalSold: number;
+  reviews: Review;
   basePrice: number;
   discountedPrice?: number;
   quantity: number;
@@ -232,7 +270,7 @@ export interface SoldProduct extends CommonProps {
   product: Product;
   buyer: Customer | string;
   state: PaymentState;
-  disabled:boolean
+  disabled: boolean;
   count: number;
   soldBy: Owner | Employee | Partner | string;
   soldByModel: AdminRole;
@@ -312,7 +350,7 @@ export interface PaymentHistory extends CommonProps {
   payment: string;
   paymentType: PaymentHistoryReferenceType;
   createdAt: Date;
-  createdBy:string;
+  createdBy: string;
   createdByModel: AdminRole;
   title: string;
   amount: number;

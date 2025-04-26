@@ -33,6 +33,7 @@ type SetPasswordParams = {
   businessAddress: string;
   email: string;
   referralCode: string | undefined;
+  image: string | undefined;
 };
 
 const SetPassword = () => {
@@ -48,6 +49,7 @@ const SetPassword = () => {
     businessType,
     email,
     referralCode,
+    image,
   } = params as SetPasswordParams;
   const {currentTheme} = useTheme();
   let refCode: string | undefined;
@@ -88,17 +90,23 @@ const SetPassword = () => {
       return;
     }
     const signupData = {
-      name,
-      userId,
-      businessPhoneNumber,
-      businessAddress,
-      businessDiscription,
-      businessName,
-      businessType,
-      email,
-      password,
-      role: AdminRole.OWNER,
-      uniqueReferralCode: referralCode,
+      query: {},
+      body: {
+        name,
+        userId,
+        businessPhoneNumber,
+        businessAddress,
+        businessDiscription,
+        businessName,
+        businessType,
+        email,
+        password,
+        role: AdminRole.OWNER,
+        uniqueReferralCode: referralCode && referralCode.trim().length !== 0 ? referralCode : undefined,
+      },
+      media: {
+        image,
+      },
     };
     const res = await signupAPI(signupData, setLoading);
     if (res.success && res.data && res.data.user && res.data.token) {
@@ -121,9 +129,9 @@ const SetPassword = () => {
   return (
     <KeyboardAvoidingView style={styles.parent}>
       <ScrollView style={{flex: 1}}>
-        <Text style={styles.title}>Let's Talk about your business.</Text>
+        <Text style={styles.title}>Finishing up.</Text>
         <Text style={styles.subTitle}>
-          Please let us know about your business.
+          Make your account secure by setting up a login password.
         </Text>
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>

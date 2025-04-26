@@ -3,6 +3,7 @@ import React from 'react';
 import {deviceWidth} from '../../../../utils/Constants';
 import {TextInput} from 'react-native-gesture-handler';
 import {useTheme} from '../../../../hooks/index';
+import { useTranslation } from 'react-i18next';
 
 type SearchBarProps = {
   query: string;
@@ -19,9 +20,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
   width,
   autoFocus = true,
   shadow = 5,
-  placeholderText = 'Search here',
+  placeholderText,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+ const {t} = useTranslation('dashboard')
 
   return (
     <View
@@ -43,7 +45,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         ]}
         value={query}
         onChangeText={setQuery}
-        placeholder={placeholderText}
+        placeholder={t('d_header_dummy_searchplaceholder')}
         placeholderTextColor={currentTheme.baseColor}
         autoFocus={autoFocus}
       />

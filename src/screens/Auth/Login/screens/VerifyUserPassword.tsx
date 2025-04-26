@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerTitle: {
-    fontSize: 30,
+    fontSize: 26,
     fontStyle: 'italic',
     fontWeight: 'bold',
     textAlign: 'center',

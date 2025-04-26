@@ -11,20 +11,45 @@ import {setUser} from '../../../store/slices/business';
 import {getFCMToken} from '../../api/fcm/fn';
 import {RequestUXPermission} from '../../service/permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {updateUserLocationAPI} from '../../api/api.ucontrol';
+import Geolocation from '@react-native-community/geolocation';
 
 const SplashScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user);
   const {currentTheme} = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
+
   useFocusEffect(
     useCallback(() => {
       const initNavigation = async () => {
         prepareNavigation();
         if (user && user._id) {
           const res = await validateTokenAPI({role: user.role}, setLoading);
+          const {fine_location_permissions} = await RequestUXPermission();
           if (res.success && res.data.user) {
             dispatch(setUser(res.data.user));
+            Geolocation.getCurrentPosition(
+              async curr => {
+                const latitude = curr.coords.latitude;
+                const longitude = curr.coords.longitude;
+                if (res.data.user) {
+                  const locationData = {
+                    query: {role: res.data.user.role},
+                    body: {
+                      periodicLatitude: latitude,
+                      periodicLongitude: longitude,
+                    },
+                  };
+                  await updateUserLocationAPI(locationData, setLoading);
+                }
+              },
+              error => {
+                console.error('Geolocation error:', error);
+                resetAndNavigate('Dashboard');
+              },
+              // {enableHighAccuracy: true, timeout: 30000, maximumAge: 10000},
+            );
             resetAndNavigate('Dashboard');
           } else {
             resetAndNavigate('GetStarted');
@@ -33,6 +58,7 @@ const SplashScreen = () => {
           resetAndNavigate('GetStarted');
         }
       };
+
       const timeoutId = setTimeout(() => initNavigation(), 800);
       return () => {
         clearTimeout(timeoutId);

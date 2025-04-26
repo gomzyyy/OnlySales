@@ -1,14 +1,17 @@
 import {SetStateAction} from 'react';
-import {FetchAPI} from './helper/fn';
-import {GetUserAPIReturnType,GetUserAPIData} from './types.api';
+import {FetchAPI, handleBooleanState} from './helper/fn';
+import {
+  GetUserAPIReturnType,
+  GetUserAPIData,
+  GetUserByIdAPIData,
+  GetUserByIdAPIReturnType,
+} from './types.api';
 
 export const getUserAPI = async (
   data: GetUserAPIData,
   setState?: React.Dispatch<SetStateAction<boolean>>,
 ) => {
-  if (setState) {
-    setState(true);
-  }
+  handleBooleanState(setState, true);
   try {
     const fetching = await FetchAPI({
       reqType: 'r',
@@ -18,17 +21,46 @@ export const getUserAPI = async (
     return (await fetching.json()) as GetUserAPIReturnType;
   } catch (error) {
     return {
-      message:  error instanceof Error
-      ? error.message
-      : 'Internal server Error occured while fetching',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
       data: {
         user: undefined,
       },
       success: false,
     } as GetUserAPIReturnType;
   } finally {
-    if (setState) {
-      setState(false);
-    }
+    handleBooleanState(setState, false);
+  }
+};
+
+export const getUserByIdAPI = async (
+  data: GetUserByIdAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const {role, userId, reqFor} = data.query;
+
+    const fetching = await FetchAPI({
+      reqType: 'r',
+      method: 'GET',
+      route: `/query/4/user?role=${role}&userId=${userId}&reqFor=${reqFor}`,
+    });
+    return (await fetching.json()) as GetUserByIdAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        user: undefined,
+      },
+      success: false,
+    } as GetUserByIdAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
   }
 };
