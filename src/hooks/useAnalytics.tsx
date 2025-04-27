@@ -36,6 +36,7 @@ export interface useAnalyticsReturnType extends Owner {
     fourDayAgo: SoldProduct[];
     fiveDayAgo: SoldProduct[];
   };
+  mergedweeklySales:SoldProduct[];
   newReviews: Review[];
 }
 
@@ -143,6 +144,7 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   const newReviews =(owner.reviews || []).filter(r =>
       checkDate({date: new Date(r.createdAt).getTime(), matchByDay: 1}),
     ) || [];
+const mergedweeklySales = [...weeklySales.today,...weeklySales.oneDayAgo,...weeklySales.twoDayAgo,...weeklySales.fiveDayAgo,...weeklySales.fourDayAgo,...weeklySales.threeDayAgo,...weeklySales.yesterday]
   return {
     ...owner,
     owner,
@@ -161,6 +163,7 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     soldThreeMonthAgo,
     soldMoreThanFourMonthsAgo,
     newReviews,
+    mergedweeklySales
   };
 };
 

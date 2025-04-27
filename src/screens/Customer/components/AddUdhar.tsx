@@ -117,18 +117,19 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     try {
       for (const p of selectedProducts) {
         if (p.product && p.count > 0) {
-          const res: SellProductAPIReturnType = await sellProductAPI(
-            {
-              query: {
-                buyerId: customer._id,
-                sellerId: user._id,
-                role: user.role,
-              },
-              body: {productId: p.product._id!, count: p.count},
+          const data = {
+            query: {
+              buyerId: customer._id,
+              sellerId: user._id,
+              role: user.role,
             },
+            body: {productId: p.product._id!, count: p.count},
+          };
+          console.log(data);
+          const res: SellProductAPIReturnType = await sellProductAPI(
+            data,
             setLoading,
           );
-
           if (res.success) {
             const userRes = await validateTokenAPI({role: user.role});
             if (userRes.success && userRes.data && userRes.data.user) {
@@ -143,7 +144,9 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           } else {
             showToast({
               type: 'error',
-              text1: t('c_addproduct_error_response', {errorMessage: res.message}),
+              text1: t('c_addproduct_error_response', {
+                errorMessage: res.message,
+              }),
             });
             close?.();
             return;

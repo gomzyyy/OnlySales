@@ -215,7 +215,7 @@ const Dashboard = () => {
           <SlideUpContainer
             open={openQuery}
             close={closeQuery}
-            height={deviceHeight * 0.36}>
+            >
             <View
               style={{
                 minHeight: deviceHeight * 0.36,

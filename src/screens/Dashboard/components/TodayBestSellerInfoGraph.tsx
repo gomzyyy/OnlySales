@@ -1,11 +1,11 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import React, {useRef, useState} from 'react';
-import {LineChart} from 'react-native-chart-kit';
-import {deviceWidth} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
-import {Dataset} from 'react-native-chart-kit/dist/HelperTypes';
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useRef, useState, useMemo } from 'react';
+import { LineChart } from 'react-native-chart-kit';
+import { deviceWidth } from '../../../utils/Constants';
+import { useAnalytics, useTheme } from '../../../hooks';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store/store';
+import { Dataset } from 'react-native-chart-kit/dist/HelperTypes';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -20,8 +20,8 @@ type TodayBestSellerInfoGraphProps = {
 const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
   pressActions = () => {},
 }): React.JSX.Element => {
-  const {currentTheme} = useTheme();
-  const {todaysMostSoldProducts} = useAnalytics();
+  const { currentTheme } = useTheme();
+  const { todaysMostSoldProducts } = useAnalytics();
   const currency = useSelector((s: RootState) => s.appData.app.currency);
 
   const [tappedIndex, setTappedIndex] = useState<number | undefined>(undefined);
@@ -34,21 +34,37 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
     return totalSold * price;
   };
 
-  const prices = todaysMostSoldProducts.slice(0, 5).map(calculatePrice);
-  const labels = todaysMostSoldProducts
+  const aggregatedProducts = useMemo(() => {
+    const grouped: Record<string, any> = {};
+
+    todaysMostSoldProducts.forEach((item) => {
+      const productId = item.product._id;
+      if (grouped[productId]) {
+        grouped[productId].count += item.count;
+        grouped[productId].totalSold += item.product.totalSold;
+      } else {
+        grouped[productId] = { ...item, count: item.count, totalSold: item.product.totalSold };
+      }
+    });
+
+    return Object.values(grouped);
+  }, [todaysMostSoldProducts]);
+
+  const prices = aggregatedProducts.slice(0, 5).map(calculatePrice);
+  const labels = aggregatedProducts
     .slice(0, 5)
     .map(item => item.product.name);
 
   const data: Dataset = {
     data: [0, ...prices] as number[],
-    color: opacity => `rgba(0,0,0,${opacity})`,
+    color: (opacity) => `rgba(0,0,0,${opacity})`,
   };
 
   const dotValueOpacity = useSharedValue(1);
 
   const dotValueOpacityAnimationStyles = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(dotValueOpacity.value, {duration: 600}),
+      opacity: withTiming(dotValueOpacity.value, { duration: 600 }),
     };
   });
 
@@ -71,7 +87,8 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
         maxWidth: deviceWidth * 0.96,
         borderRadius: 10,
         marginTop: 10,
-      }}>
+      }}
+    >
       <LineChart
         data={{
           labels: ['', ...labels],
@@ -89,10 +106,10 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           barPercentage: 0.5,
         }}
-        style={{borderRadius: 10}}
+        style={{ borderRadius: 10 }}
         bezier
-        onDataPointClick={({index}) => handleDotTap(index)}
-        renderDotContent={({index, indexData, x, y}) =>
+        onDataPointClick={({ index }) => handleDotTap(index)}
+        renderDotContent={({ index, indexData, x, y }) =>
           index === tappedIndex && (
             <Animated.Text
               key={index}
@@ -111,7 +128,8 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
                   elevation: 2,
                 },
                 dotValueOpacityAnimationStyles,
-              ]}>
+              ]}
+            >
               {indexData === 0
                 ? 'N/A'
                 : `${currency} ${formatNumber(indexData)}`}
