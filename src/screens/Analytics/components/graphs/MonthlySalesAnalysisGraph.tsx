@@ -1,18 +1,18 @@
 import {ScrollView, StyleSheet} from 'react-native';
 import React, {useRef, useState} from 'react';
 import {LineChart} from 'react-native-chart-kit';
-import {deviceWidth} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
+import {deviceWidth} from '../../../../utils/Constants';
+import {useAnalytics, useTheme} from '../../../../hooks';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+import {RootState} from '../../../../../store/store';
 import {Dataset} from 'react-native-chart-kit/dist/HelperTypes';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import {formatNumber} from '../../../service/fn'; // Assuming you have a formatNumber
-import {SoldProduct} from '../../../../types';
+import {formatNumber} from '../../../../service/fn'; // Assuming you have a formatNumber
+import {SoldProduct} from '../../../../../types';
 
 type MonthlySalesInfoGraphProps = {
   pressActions?: () => void;
@@ -40,7 +40,7 @@ const MonthlySalesAnalysisGraph: React.FC<MonthlySalesInfoGraphProps> = ({
       return sum + totalSold * validPrice;
     }, 0);
   };
-  console.log(calculateTotal(soldThisMonth));
+
   const graphData: Dataset = {
     data: [
       0,
@@ -52,7 +52,7 @@ const MonthlySalesAnalysisGraph: React.FC<MonthlySalesInfoGraphProps> = ({
     color: opacity => `rgba(0,0,0,${opacity})`,
   };
 
-  const labels = ['', 'curr month', 'prev month', '1mo ago', '2mo ago'];
+  const labels = ['', 'this month', 'last month', '2mo ago', '3mo ago'];
 
   const [tappedIndex, setTappedIndex] = useState<number | undefined>(undefined);
   const dotValueOpacity = useSharedValue(1);

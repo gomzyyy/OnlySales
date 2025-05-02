@@ -18,7 +18,7 @@ const Employees = () => {
   const {currentTheme} = useTheme();
   const [openCreateEmployee, setOpenCreateEmployee] = useState(false);
   const {owner} = useAnalytics();
-  const employees = owner.employeeData;
+  const employees = [...owner.employeeData].reverse();
 
   const handleCloseCreateEmployee = () => setOpenCreateEmployee(false);
   const handleOpenCreateEmployee = () => {

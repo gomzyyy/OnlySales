@@ -8,17 +8,21 @@ import {
   Partner,
   Employee,
   Review,
+  App,
 } from '../../types';
 import {checkDate} from '../service/fn';
 import {AdminRole, PaymentState} from '../../enums';
+import {useMemo} from 'react';
 
-export interface useAnalyticsReturnType extends Owner {
+export interface useAnalyticsReturnType extends Owner, App {
   owner: Owner;
   bestSellers: Product[];
   todaysMostSoldProducts: SoldProduct[];
   todaySales: SoldProduct[];
   customers: Customer[];
   paidPayments: SoldProduct[];
+  unpaidAmount: number;
+  paidAmount: number;
   unpaidPayments: SoldProduct[];
   soldProducts: SoldProduct[];
   soldThisMonth: SoldProduct[];
@@ -36,12 +40,13 @@ export interface useAnalyticsReturnType extends Owner {
     fourDayAgo: SoldProduct[];
     fiveDayAgo: SoldProduct[];
   };
-  mergedweeklySales:SoldProduct[];
+  mergedweeklySales: SoldProduct[];
   newReviews: Review[];
 }
 
 const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   const user = useSelector((s: RootState) => s.appData.user)!;
+  const app = useSelector((s: RootState) => s.appData.app)!;
   let owner: Owner;
 
   if (user.role === AdminRole.OWNER) {
@@ -64,7 +69,11 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
       ) || [],
   );
   const unpaidPayments = customers.flatMap(
-    s => s.buyedProducts.filter(s => s.state === PaymentState.UNPAID) || [],
+    s =>
+      s.buyedProducts.filter(
+        s =>
+          s.state === PaymentState.UNPAID || s.state === PaymentState.PENDING,
+      ) || [],
   );
   const soldProducts = [...paidPayments, ...unpaidPayments].map(s => ({
     ...s,
@@ -141,13 +150,50 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     return acc;
   }, {});
   const todaysMostSoldProducts = Object.values(todaysMostSoldProductsObj);
-  const newReviews =(owner.reviews || []).filter(r =>
+  const newReviews =
+    (owner.reviews || []).filter(r =>
       checkDate({date: new Date(r.createdAt).getTime(), matchByDay: 1}),
     ) || [];
-const mergedweeklySales = [...weeklySales.today,...weeklySales.oneDayAgo,...weeklySales.twoDayAgo,...weeklySales.fiveDayAgo,...weeklySales.fourDayAgo,...weeklySales.threeDayAgo,...weeklySales.yesterday]
+  const mergedweeklySales = [
+    ...weeklySales.today,
+    ...weeklySales.oneDayAgo,
+    ...weeklySales.twoDayAgo,
+    ...weeklySales.fiveDayAgo,
+    ...weeklySales.fourDayAgo,
+    ...weeklySales.threeDayAgo,
+    ...weeklySales.yesterday,
+  ];
+
+  const paidAmount = useMemo(
+    () =>
+      paidPayments.reduce(
+        (acc, s) =>
+          acc +
+          ((s.product.discountedPrice
+            ? s.product.discountedPrice
+            : s.product.basePrice) * s.count || 0),
+        0,
+      ),
+    [soldThisMonth],
+  );
+  const unpaidAmount = useMemo(
+    () =>
+      unpaidPayments.reduce(
+        (acc, s) =>
+          acc +
+          ((s.product.discountedPrice
+            ? s.product.discountedPrice
+            : s.product.basePrice) * s.count || 0),
+        0,
+      ),
+    [soldThisMonth],
+  );
   return {
+    ...app,
     ...owner,
     owner,
+    unpaidAmount,
+    paidAmount,
     bestSellers,
     todaysMostSoldProducts,
     weeklySales,
@@ -163,7 +209,7 @@ const mergedweeklySales = [...weeklySales.today,...weeklySales.oneDayAgo,...week
     soldThreeMonthAgo,
     soldMoreThanFourMonthsAgo,
     newReviews,
-    mergedweeklySales
+    mergedweeklySales,
   };
 };
 

@@ -27,6 +27,7 @@ const Settings = () => {
           styles.settingsContainer,
           {backgroundColor: currentTheme.baseColor},
         ]}
+        showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}>
         <View style={styles.infoContainer}>
           <UserInfo user={user} secure={true} profileImageValue={user?.image} />

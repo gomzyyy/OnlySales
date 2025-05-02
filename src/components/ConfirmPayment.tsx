@@ -11,14 +11,16 @@ import {useTheme} from '../hooks';
 import {isFloat} from '../service/test';
 import {CurrencyType} from '../../enums';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SoldProduct } from '../../types';
 
 type ConfirmPaymentProps = {
   value: number;
   setState: React.Dispatch<SetStateAction<number>>;
   cancel: () => void;
   currency: CurrencyType;
-  callback: () => void;
+  callback: (soldProduct?:SoldProduct) => void;
   editable?: boolean;
+  soldProduct:SoldProduct
 };
 
 const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
@@ -28,6 +30,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
   currency,
   callback,
   editable = true,
+  soldProduct
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
@@ -46,7 +49,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
     if (!pa || !pn) {
       cancel();
     }
-    callback();
+    callback(soldProduct);
   };
   const cancelPay = () => cancel();
   return (
@@ -58,16 +61,16 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
           styles.inputContainer,
           {backgroundColor: currentTheme.bottomTabBg},
         ]}>
-        <Text
+        {/* <Text
           style={{
             fontSize: 38,
             color: '#000',
             marginBottom: 10,
           }}>
           {currency}
-        </Text>
+        </Text> */}
         <TextInput
-          value={value.toString()}
+          value={`${currency} ${value.toString()}`}
           onChangeText={handleSetAmount}
           style={[
             {
@@ -101,7 +104,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
 };
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight,
+    height: deviceHeight * 0.5,
     marginBottom: 10,
     borderRadius: 20,
     padding: 20,

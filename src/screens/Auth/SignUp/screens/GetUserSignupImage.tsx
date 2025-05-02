@@ -76,6 +76,7 @@ const GetUserSignupImage = () => {
   };
 
   const handleSkipIfImage = () => {
+    setImage(undefined);
     const params = {
       name,
       userId,
@@ -93,13 +94,13 @@ const GetUserSignupImage = () => {
   return (
     <KeyboardAvoidingView style={styles.parent}>
       {image && image.trim().length !== 0 && (
-        <Pressable
+        <TouchableOpacity
           style={{position: 'absolute', right: 20, top: 20}}
           onPress={handleSkipIfImage}>
-          <Text style={{fontSize: 20}}>Skip</Text>
-        </Pressable>
+          <Text style={{fontSize: 18}}>Skip</Text>
+        </TouchableOpacity>
       )}
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Let's set your Profile image.</Text>
         <Text style={styles.subTitle}>
           Click below to set or change profile image; you can skip this step.
@@ -148,7 +149,7 @@ const GetUserSignupImage = () => {
         opacity={0.2}
         open={openImagePicker}
         close={cancelImagePicker}
-        height={180}>
+        height={220}>
         <FilePicker
           value={image}
           setState={setImage}

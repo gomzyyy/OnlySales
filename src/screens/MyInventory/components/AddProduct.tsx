@@ -355,7 +355,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
           opacity={0.2}
           open={openImagePicker}
           close={closeImagePicker}
-          height={180}>
+          height={220}>
           <FilePicker
             value={image}
             setState={setImage}

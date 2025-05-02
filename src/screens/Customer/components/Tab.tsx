@@ -8,7 +8,12 @@ import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
 import {useTheme} from '../../../hooks/index';
 import {useTranslation} from 'react-i18next';
-import {colors} from '../../../utils/Constants';
+import {colors, deviceHeight} from '../../../utils/Constants';
+import SlideUpContainer from '../../../components/SlideUpContainer';
+import ConfirmPayment from '../../../components/ConfirmPayment';
+import ScanQRToPay from '../../../components/ScanQRToPay';
+import {updateSoldProductStateAPI} from '../../../api/api.soldproduct';
+import {PaymentState} from '../../../../enums';
 
 type TabProps = {
   i: SoldProduct;
@@ -18,7 +23,7 @@ type TabProps = {
   dummy?: boolean;
   onPay?: () => void;
   date: string;
-  closeParent:()=>void
+  closeParent: () => void;
 };
 
 type ToogleButtonProps = {
@@ -59,16 +64,55 @@ const Tab: React.FC<TabProps> = ({
   dummy = false,
   onPay,
   date,
-  closeParent
+  closeParent,
 }): React.JSX.Element => {
   const {t} = useTranslation('customer');
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
-
   const app = useSelector((s: RootState) => s.appData.app);
+  const {currency} = useSelector((s: RootState) => s.appData.app);
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const [payableAmount, setPayableAmount] = useState<number>(0);
+  const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
+  const [willingToPay, setWillingToPay] = useState<boolean>(false);
 
   const [longPressActionOpen, setLongPressActionOpen] =
     useState<boolean>(false);
+  const handleCloseConfirmPayment = () => {
+    setAskConfirmPayment(false);
+  };
+  const handleCloseQRCode = () => {
+    setWillingToPay(false);
+  };
+
+  const handlePayButton = async (soldProduct?: SoldProduct) => {
+    if (soldProduct) {
+      const res = await updateSoldProductStateAPI({
+        query: {
+          role: user.role,
+          soldProductId: soldProduct._id,
+          updatedState: PaymentState.PENDING,
+        },
+      });
+      console.log(res);
+    }
+    setAskConfirmPayment(false);
+    setWillingToPay(true);
+  };
+
+  const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', item?: SoldProduct) => {
+    if (payAs === 'WHOLE') {
+      setPayableAmount(
+        i.count * (i.product.discountedPrice ?? i.product.basePrice),
+      );
+    } else if (payAs === 'SINGLE' && item) {
+      setPayableAmount(
+        (item.product.discountedPrice && item.product.discountedPrice !== 0
+          ? item.product.discountedPrice
+          : item.product.basePrice) * item.count,
+      );
+    }
+    setAskConfirmPayment(true);
+  };
 
   const handleCloseTabOptions = () => setLongPressActionOpen(false);
   const longPressAction = () => setLongPressActionOpen(true);
@@ -168,7 +212,7 @@ const Tab: React.FC<TabProps> = ({
                 {backgroundColor: currentTheme.tab.btnBg},
               ]}
               activeOpacity={0.8}
-              onPress={() => onPay && onPay()}>
+              onPress={() => openConfirmPay('SINGLE', i)}>
               <Text
                 style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
                 {t('c_pay_btn')}
@@ -185,12 +229,42 @@ const Tab: React.FC<TabProps> = ({
             customer={customer}
             actionType={actionType}
             date={date}
-            close={() =>{
+            close={() => {
               closeParent();
-               setLongPressActionOpen(false);}}
+              setLongPressActionOpen(false);
+            }}
           />
         </PopupContainer>
       </View>
+      <SlideUpContainer
+        open={askConfirmPayment}
+        close={handleCloseConfirmPayment}
+        opacity={0.5}
+        height={deviceHeight * 0.5}>
+        <ConfirmPayment
+          value={payableAmount}
+          setState={setPayableAmount}
+          cancel={handleCloseConfirmPayment}
+          currency={currency}
+          callback={handlePayButton}
+          editable={false}
+          soldProduct={i}
+        />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={willingToPay}
+        close={handleCloseQRCode}
+        opacity={0.4}
+        height={deviceHeight * 0.5}>
+        <ScanQRToPay
+          payableAmount={payableAmount}
+          cancel={handleCloseQRCode}
+          currency={currency}
+          callback={handlePayButton}
+          pa="gomzydhingra0001@okhdfcbank"
+          pn="Khata App"
+        />
+      </SlideUpContainer>
     </LongPressEnabled>
   );
 };
@@ -240,7 +314,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   toogletext: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   contentToggleBtn: {

@@ -12,7 +12,7 @@ type ScanQRToPay = {
   payableAmount?: number;
   cancel: () => void;
   currency: CurrencyType;
-  callback: () => void;
+  callback: (soldProduct?:SoldProduct) => void;
   pa: string;
   pn: string;
   products?: SoldProduct[];

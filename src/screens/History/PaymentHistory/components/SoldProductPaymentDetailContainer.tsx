@@ -59,7 +59,6 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
   const deletedTextAnimatedStyle = useAnimatedStyle(() => ({
     opacity: deletedTextOpacity.value,
   }));
-
   return (
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
@@ -89,7 +88,7 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
         <View style={styles.detailSection}>
           <Text style={styles.textItem}>
             <Text style={styles.bold}>Product: </Text>
-            {details.info.name}
+            {details?.info?.name || 'N/A'}
           </Text>
           <Text style={styles.textItem}>
             <Text style={styles.bold}>Amount: </Text>
@@ -102,15 +101,6 @@ const SoldProductPaymentDetailContainer: React.FC<ConfirmPaymentProps> = ({
           <Text style={styles.textItem}>
             <Text style={styles.bold}>Date: </Text>
             {new Date(details.createdAt).toDateString()}
-          </Text>
-          <Text style={styles.textItem}>
-            <Text style={styles.bold}>Sold By: </Text>
-            {(details.reference.soldBy as Owner | Employee | Partner)?.name ||
-              'N/A'}
-          </Text>
-          <Text style={styles.textItem}>
-            <Text style={styles.bold}>Buyer: </Text>
-            {(details.reference.buyer as Customer).name || 'N/A'}
           </Text>
         </View>
       ) : (

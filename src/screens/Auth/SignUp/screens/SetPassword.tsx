@@ -102,7 +102,10 @@ const SetPassword = () => {
         email,
         password,
         role: AdminRole.OWNER,
-        uniqueReferralCode: referralCode && referralCode.trim().length !== 0 ? referralCode : undefined,
+        uniqueReferralCode:
+          referralCode && referralCode.trim().length !== 0
+            ? referralCode
+            : undefined,
       },
       media: {
         image,
@@ -128,7 +131,7 @@ const SetPassword = () => {
 
   return (
     <KeyboardAvoidingView style={styles.parent}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Finishing up.</Text>
         <Text style={styles.subTitle}>
           Make your account secure by setting up a login password.
@@ -159,7 +162,6 @@ const SetPassword = () => {
                   borderColor: passwordMatched
                     ? currentTheme.modal.inputBorder
                     : colors.danger,
-                  color: passwordMatched ? 'black' : colors.danger,
                 },
               ]}
               placeholder="confirm here."

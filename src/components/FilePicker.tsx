@@ -193,7 +193,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderRadius: 20,
     marginBottom: 10,
-    height: 180,
+    height: 220,
+    alignItems:'center'
   },
   imageContainer: {
     height: 100,
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   getImageBtnText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'semibold',
   },
 });

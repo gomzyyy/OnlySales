@@ -107,7 +107,6 @@ export const signupAPI = async (
       body: formData,
     });
     const res = await fetching.json();
-    console.log(res)
     return res as SignupAPIReturnType;
   } catch (error) {
     return {

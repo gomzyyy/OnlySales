@@ -47,7 +47,6 @@ const MyProfile = () => {
   const [businessDescription, setBusinessDescription] = useState<string>(
     owner?.businessDescription || '',
   );
-  console.log(user);
   const handleProfileEdit = async () => {
     if (
       name.trim().length === 0 ||

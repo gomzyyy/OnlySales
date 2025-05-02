@@ -7,17 +7,17 @@ import {
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import {LineChart} from 'react-native-chart-kit';
-import {deviceWidth} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
+import {deviceWidth} from '../../../../utils/Constants';
+import {useAnalytics, useTheme} from '../../../../hooks';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+import {RootState} from '../../../../../store/store';
 import {Dataset} from 'react-native-chart-kit/dist/HelperTypes';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import {formatNumber} from '../../../service/fn';
+import {formatNumber} from '../../../../service/fn';
 import {useTranslation} from 'react-i18next';
 
 type MonthlySalesInfoGraphProps = {

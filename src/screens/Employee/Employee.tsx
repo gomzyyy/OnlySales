@@ -263,104 +263,211 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Employee's name:
+              {`Employee's name: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {name}
+              </Text>
             </Text>
-            <TextInput
-              value={name}
-              onChangeText={val => setName(p => (p = modifyUserName(val)))}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter name"
-              placeholderTextColor={'grey'}
-              editable={editable}
-            />
+
+            {editable && (
+              <TextInput
+                value={name}
+                onChangeText={val => setName(p => (p = modifyUserName(val)))}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Enter name"
+                placeholderTextColor={'grey'}
+                editable={editable}
+              />
+            )}
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {`${name.split(' ')[0]}'s`} phone number
+              {`Contact number: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {`+91-${phoneNumber}`}
+              </Text>
             </Text>
-            <TextInput
-              value={phoneNumber}
-              onChangeText={setphoneNumber}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter phone number"
-              placeholderTextColor={'grey'}
-              editable={editable}
-            />
+
+            {editable && (
+              <TextInput
+                value={phoneNumber}
+                onChangeText={setphoneNumber}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Enter phone number"
+                placeholderTextColor={'grey'}
+                editable={editable}
+              />
+            )}
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {`${name.split(' ')[0]}'s`} address?
+              {`Address: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {address}
+              </Text>
             </Text>
-            <TextInput
-              value={address}
-              onChangeText={setAddress}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter address"
-              placeholderTextColor={'grey'}
-              editable={editable}
-            />
+
+            {editable && (
+              <TextInput
+                value={address}
+                onChangeText={setAddress}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Enter address"
+                placeholderTextColor={'grey'}
+                editable={editable}
+              />
+            )}
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {`${name.split(' ')[0]}'s`} annual salary in {`${currency}`}?
+              Annual salary in {`${currency}: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {salary}
+              </Text>
             </Text>
-            <TextInput
-              value={salary}
-              onChangeText={setSalary}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter salary"
-              placeholderTextColor={'grey'}
-              keyboardType="numeric"
-              editable={editable}
-            />
+            {editable && (
+              <TextInput
+                value={salary}
+                onChangeText={setSalary}
+                style={[
+                  styles.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder="Enter salary"
+                placeholderTextColor={'grey'}
+                keyboardType="numeric"
+                editable={editable}
+              />
+            )}
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Employment status?
+              {`Employment status: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {status}
+              </Text>
             </Text>
-            <EmployementStatusPicker
-              value={status}
-              setState={setStatus}
-              enabled={editable}
-            />
+
+            {editable && (
+              <EmployementStatusPicker
+                value={status}
+                setState={setStatus}
+                enabled={editable}
+              />
+            )}
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              What about Shift?
+              {`What about Shift: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {shift}
+              </Text>
             </Text>
-            <ShiftPicker value={shift} setState={setShift} enabled={editable} />
+            {editable && (
+              <ShiftPicker
+                value={shift}
+                setState={setShift}
+                enabled={editable}
+              />
+            )}
+          </View>
+          <Text
+            style={[
+              styles.inputLabel,
+              {
+                color: currentTheme.contrastColor,
+                backgroundColor: currentTheme.baseColor,
+                padding:6,
+                borderRadius:8
+              },
+            ]}>
+            Special Permissions:
+          </Text>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              {`Can add new customers: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {employee.permissions.customer.create ? 'YES' : 'NO'}
+              </Text>
+            </Text>
           </View>
 
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Permissions
+              {`Can update customers: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {employee.permissions.customer.update ? 'YES' : 'NO'}
+              </Text>
             </Text>
-            <View style={{}}></View>
+          </View>
+
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              {`Can remove customers: `}
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.title, fontWeight: '400'},
+                ]}>
+                {employee.permissions.customer.delete ? 'YES' : 'NO'}
+              </Text>
+            </Text>
           </View>
 
           <SlideUpContainer
             opacity={0.4}
             open={openImagePicker}
             close={handleCloseImagePicker}
-            height={180}>
+            height={220}>
             <FilePicker
               value={image}
               setState={setImage}
@@ -415,7 +522,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     paddingLeft: 8,
     fontSize: 18,
-    fontWeight: '400',
+    fontWeight: '600',
   },
   inputText: {
     borderWidth: 2,
@@ -432,6 +539,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  permissionsContainer: {},
 });
 
 const toogleBtnStyles = StyleSheet.create({

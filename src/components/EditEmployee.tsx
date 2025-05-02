@@ -73,7 +73,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
         Update {i.name}?
       </Text>
-      <ScrollView style={{flex: 1}} nestedScrollEnabled>
+      <ScrollView style={{flex: 1}} nestedScrollEnabled showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
             <Text
@@ -194,7 +194,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
             opacity={0.2}
             open={openImagePicker}
             close={closeImagePicker}
-            height={deviceHeight * 0.52}
+            height={220}
             >
             <FilePicker
               value={image}

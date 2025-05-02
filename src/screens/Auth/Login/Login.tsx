@@ -66,7 +66,7 @@ const Login = () => {
 
   return (
     <KeyboardAvoidingView style={styles.parent}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.headerTitle}>
           {`Welcome Back! Please Login by ${roleLabel('c')} ID to Get Started.`}
         </Text>

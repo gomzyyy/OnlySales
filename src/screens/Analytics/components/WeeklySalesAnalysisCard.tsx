@@ -1,14 +1,17 @@
 import {SoldProduct} from '../../../../types';
 import {View, Text, StyleSheet} from 'react-native';
-import WeeklySalesAnalyticsGraph from './WeeklySalesAnalyticsGraph';
+import WeeklySalesAnalyticsGraph from './graphs/WeeklySalesAnalyticsGraph';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
+import {useTheme} from '../../../hooks';
 
 type WeeklySalesCardProps = {
   weeklySales: SoldProduct[];
 };
 
 const WeeklySalesAnalysisCard = ({weeklySales}: WeeklySalesCardProps) => {
+  const {currentTheme} = useTheme();
+
   const totalProductsSold = weeklySales.reduce(
     (acc, soldProduct) => acc + soldProduct.count,
     0,
@@ -47,7 +50,13 @@ const WeeklySalesAnalysisCard = ({weeklySales}: WeeklySalesCardProps) => {
         <Text style={styles.label}>📊 Total Profit: </Text>
         {currency} {totalProfit.toFixed(2)}
       </Text>
-      <WeeklySalesAnalyticsGraph />
+
+      <View style={[styles.section, {backgroundColor: currentTheme.bgColor}]}>
+        <View style={styles.labelRow}>
+          <Text style={styles.sectionTitle}>Your weekly tour 🗓️</Text>
+        </View>
+        <WeeklySalesAnalyticsGraph />
+      </View>
     </View>
   );
 };
@@ -76,6 +85,23 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+  },
+  section: {
+    marginTop: 10,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingLeft: 10,
+    gap: 5,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
 

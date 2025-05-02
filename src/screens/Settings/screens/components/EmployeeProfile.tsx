@@ -24,7 +24,7 @@ const EmployeeProfile = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
           name="Employee Details"
           backButtom

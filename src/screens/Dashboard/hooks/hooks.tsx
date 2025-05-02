@@ -10,6 +10,21 @@ import SlideUpContainer from '../../../components/SlideUpContainer';
 import {deviceHeight} from '../../../utils/Constants';
 import UnPaidPayments from '../../Customer/components/UnPaidPayments';
 
+const months: any = {
+  jan: ['january', 1, 'jan'],
+  feb: ['february', 2, 'feb'],
+  mar: ['march', 3, 'mar'],
+  apr: ['april', 4, 'apr'],
+  may: ['may', 5, 'may'],
+  jun: ['june', 6, 'jun'],
+  jul: ['july', 7, 'jul'],
+  aug: ['august', 8, 'aug'],
+  sep: ['september', 9, 'sep'],
+  oct: ['october', 10, 'oct'],
+  nov: ['november', 11, 'nov'],
+  dec: ['december', 12, 'dec'],
+};
+
 export type useQueryReturnType = {
   customersByQuery: Customer[];
   soldProductsByQueryDate: {date: string; products: SoldProduct[]}[];
@@ -100,6 +115,7 @@ const useQuery = ({query}: useQueryProps): useQueryReturnType => {
           const y = dateArr[3];
           const d = dateArr[2];
           const m = dateArr[1];
+
           const qy = queryDateArr[0];
           const qd = queryDateArr[2];
           const qm = queryDateArr[1];

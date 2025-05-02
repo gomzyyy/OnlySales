@@ -1,4 +1,10 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {deviceWidth} from '../utils/Constants';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,32 +28,40 @@ const bottomTabs = [
     id: 0,
     name: 'Dashboard',
     navigateTo: 'Dashboard',
-    icon: (color: string = '#000') => (
-      <Icon color={color} name="data-saver-off" size={20} />
+    icon: (color: string = '#000', size: number = 20) => (
+      <Icon color={color} name="data-saver-off" size={size} />
     ),
   },
   {
     id: 2,
     name: 'Customers',
     navigateTo: 'Customers',
-    icon: (color: string = '#000') => (
-      <Icon2 color={color} name="people" size={20} />
+    icon: (color: string = '#000', size: number = 20) => (
+      <Icon2 color={color} name="people" size={size} />
     ),
   },
   {
     id: 3,
     name: 'Analytics',
     navigateTo: 'Analytics',
-    icon: (color: string = '#000') => (
-      <Icon color={color} name="analytics" size={20} />
+    icon: (color: string = '#000', size: number = 20) => (
+      <Icon color={color} name="analytics" size={size} />
     ),
   },
   {
     id: 4,
+    name: 'Employees',
+    navigateTo: 'Employees',
+    icon: (color: string = '#000', size: number = 20) => (
+      <Icon color={color} name="work" size={size} />
+    ),
+  },
+  {
+    id: 5,
     name: 'Settings',
     navigateTo: 'Settings',
-    icon: (color: string = '#000') => (
-      <Icon2 color={color} name="settings-sharp" size={20} />
+    icon: (color: string = '#000', size: number = 20) => (
+      <Icon2 color={color} name="settings-sharp" size={size} />
     ),
   },
 ];
@@ -82,7 +96,7 @@ const BottomTabs = () => {
         if (isDrawerOpen !== undefined && isDrawerOpen === true) {
           bottomTabsY.value = withTiming(100, {duration: 400});
         } else if (validRoutes.includes(current)) {
-          bottomTabsY.value = withTiming(-10, {duration: 500});
+          bottomTabsY.value = withTiming(-5, {duration: 500});
         } else {
           bottomTabsY.value = withTiming(100, {duration: 200});
         }
@@ -102,51 +116,63 @@ const BottomTabs = () => {
   return (
     <Animated.View
       style={[
-        styles.container,
         {
-          backgroundColor: currentTheme.contrastColor,
+          position: 'absolute',
+          bottom: 0,
+          alignSelf: 'center',
+          backgroundColor: 'rgba(0,0,0,0.02)',
+          padding: 2,
+          borderRadius: 16,
         },
         bottomTabsAnimations,
       ]}>
-      {bottomTabs.map(s => (
-        <TouchableOpacity
-          style={[
-            styles.icon,
-            {
-              backgroundColor:
-                route === s.navigateTo
-                  ? currentTheme.baseColor
-                  : currentTheme.contrastColor,
-            },
-          ]}
-          key={s.id}
-          onPress={() => handleNavigation(s.navigateTo)}>
-          <View>
-            {s.icon(
-              route === s.navigateTo ? currentTheme.contrastColor : '#000',
-            )}
-          </View>
-          <Text
-            style={{
-              color:
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: currentTheme.contrastColor,
+          },
+        ]}>
+        {bottomTabs.map(s => (
+          <Pressable
+            style={[
+              styles.icon,
+              {
+                backgroundColor:
+                  route === s.navigateTo
+                    ? currentTheme.baseColor
+                    : currentTheme.contrastColor,
+                borderRadius: 12,
+              },
+            ]}
+            key={s.id}
+            onPress={() => handleNavigation(s.navigateTo)}>
+            <View>
+              {s.icon(
                 route === s.navigateTo ? currentTheme.contrastColor : '#000',
-            }}>
-            {s.name}
-          </Text>
-        </TouchableOpacity>
-      ))}
+              )}
+            </View>
+            <Text
+              style={{
+                color:
+                  route === s.navigateTo ? currentTheme.contrastColor : '#000',
+                fontSize: 10,
+              }}>
+              {s.name}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    bottom: 0, // This allows the translateY to handle position
     height: 60,
-    width: deviceWidth * 0.95,
+    width: deviceWidth * 0.96,
+    maxWidth: 460,
     flexDirection: 'row',
-    alignSelf: 'center',
     borderRadius: 14,
     padding: 4,
     elevation: 10,
@@ -156,8 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
-    padding: 2,
+    paddingHorizontal: 2,
   },
 });
 

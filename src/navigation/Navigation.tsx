@@ -188,14 +188,6 @@ const Navigation = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <drawer.Navigator
-        drawerContent={props => <MenuContent {...props} />}
-        screenOptions={{
-          headerShown: false,
-          swipeEnabled: false,
-        }}>
-        <drawer.Screen name="Home" component={StackNav} />
-      </drawer.Navigator>
       <Animated.View
         style={[
           {
@@ -214,6 +206,14 @@ const Navigation = () => {
           {isConnected ? 'connected' : 'No connection'}
         </Text>
       </Animated.View>
+      <drawer.Navigator
+        drawerContent={props => <MenuContent {...props} />}
+        screenOptions={{
+          headerShown: false,
+          swipeEnabled: false,
+        }}>
+        <drawer.Screen name="Home" component={StackNav} />
+      </drawer.Navigator>
     </NavigationContainer>
   );
 };

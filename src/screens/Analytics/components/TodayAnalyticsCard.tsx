@@ -12,19 +12,15 @@ import Icon from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {TouchableNativeFeedback} from 'react-native';
-import TodayBestSellerAnalyticsGraph from './TodayBestSellerAnalyticsGraph';
+import TodayBestSellerAnalyticsGraph from './graphs/TodayBestSellerAnalyticsGraph';
 
 const NoProductImage = require('../../../assets/images/no_product_image.jpg');
 const NoUserImage = require('../../../assets/image/no-profile.jpg');
 
 const TodayAnalyticsCard = () => {
   const {currentTheme} = useTheme();
-  const {
-    todaysMostSoldProducts,
-    todaySales,
-    newReviews,
-    customers,
-  } = useAnalytics();
+  const {todaysMostSoldProducts, todaySales, newReviews, customers} =
+    useAnalytics();
   const {currency} = useSelector((s: RootState) => s.appData.app);
 
   const todayCustomerGain = customers.filter(c => {
@@ -68,10 +64,7 @@ const TodayAnalyticsCard = () => {
                     ? {uri: todaysMostSoldProducts[0]?.product?.image}
                     : NoProductImage
                 }
-                style={[
-                  styles.productImage,
-                  {borderColor: '#ffcc00'},
-                ]}
+                style={[styles.productImage, {borderColor: '#ffcc00'}]}
               />
               <Text style={styles.productName}>
                 {todaysMostSoldProducts[0]?.product?.name || 'N/A'}
@@ -129,7 +122,16 @@ const TodayAnalyticsCard = () => {
               : 'No new customers today.'}
           </Text>
         </View>
-        <TodayBestSellerAnalyticsGraph />
+
+        <View style={[styles.section, {backgroundColor: currentTheme.bgColor}]}>
+          <View style={styles.labelRow}>
+            <Text style={styles.sectionTitle}>
+              Here are your top 5 products of today
+            </Text>
+            <Icon name="star" size={18} color={'#ffcc00'} />
+          </View>
+          <TodayBestSellerAnalyticsGraph />
+        </View>
       </ScrollView>
     </View>
   );
@@ -148,6 +150,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 10,
   },
   section: {
     marginTop: 10,
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
   },
   productContainer: {

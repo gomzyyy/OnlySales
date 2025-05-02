@@ -3,6 +3,7 @@ import {
   BusinessType,
   MeasurementType,
   PaymentHistoryReferenceType,
+  PaymentState,
   ProductType,
 } from '../../enums';
 import {
@@ -177,7 +178,7 @@ export interface SellProductAPIReturnType extends APIReturnType {
   };
 }
 
-export interface DeleteProductData {
+export interface DeleteSoldProductData {
   query: {
     soldProductId: string;
     role: AdminRole;
@@ -233,7 +234,7 @@ export interface GetSinglePaymentHistoryAPIReturnType extends APIReturnType {
 export interface CreateEmployeeAPIData {
   query: {
     creatorId: string;
-    createdBy: string;
+    createdBy: AdminRole;
     role: AdminRole;
   };
   body: {
@@ -293,3 +294,8 @@ export interface GetUserByIdAPIReturnType extends APIReturnType {
     userType: AdminRole | undefined;
   };
 }
+
+export interface UpdateSoldProductStateData {
+  query: {role: AdminRole; soldProductId: string; updatedState: PaymentState};
+}
+export interface UpdateSoldProductStateReturnType extends APIReturnType {}

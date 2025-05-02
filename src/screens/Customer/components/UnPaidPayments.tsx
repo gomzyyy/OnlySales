@@ -15,52 +15,28 @@ import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ScanQRToPay from '../../../components/ScanQRToPay';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import {updateSoldProductStateAPI} from '../../../api/api.soldproduct';
+import {PaymentState} from '../../../../enums';
 
 type UnpaidPaymentsProps = {
   customer: Customer;
   date: string;
   products: SoldProduct[];
-  close:()=>void
+  close: () => void;
 };
 
 const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   customer,
   products,
   date,
-  close
+  close,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const {t} = useTranslation('customer')
+  const {t} = useTranslation('customer');
   const [amount, setAmount] = useState<number>(0);
-  const [payableAmount, setPayableAmount] = useState<number>(0);
-  const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
-  const [willingToPay, setWillingToPay] = useState<boolean>(false);
   const {currency} = useSelector((s: RootState) => s.appData.app);
-
-  const handleCloseConfirmPayment = () => {
-    setAskConfirmPayment(false);
-  };
-  const handleCloseQRCode = () => {
-    setWillingToPay(false);
-  };
-  const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', item?: SoldProduct) => {
-    if (payAs === 'WHOLE') {
-      setPayableAmount(amount);
-    } else if (payAs === 'SINGLE' && item) {
-      setPayableAmount(
-        (item.product.discountedPrice && item.product.discountedPrice !== 0
-          ? item.product.discountedPrice
-          : item.product.basePrice) * item.count,
-      );
-    }
-    setAskConfirmPayment(true);
-  };
-
-  const handlePayButton = () => {
-    setAskConfirmPayment(false);
-    setWillingToPay(true);
-  };
+  const user = useSelector((s: RootState) => s.appData.user)!;
 
   useEffect(() => {
     const amt = products.reduce(
@@ -93,7 +69,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
                   actionType="UNPAID"
                   i={item}
                   customer={customer}
-                  onPay={() => openConfirmPay('SINGLE', item)}
+                  // onPay={() => openConfirmPay('SINGLE', item)}
                   date={date}
                   closeParent={close}
                 />
@@ -126,43 +102,13 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
           )}
         </View>
       </View>
-      {products.length !== 0 && (
+      {/* {products.length !== 0 && (
         <PayButton
           label={`${t('c_pay_btn')} ${currency} ${amount}`}
           pressAction={() => openConfirmPay('WHOLE')}
         />
-      )}
-      <SlideUpContainer
-        open={askConfirmPayment}
-        close={handleCloseConfirmPayment}
-        opacity={0.5}
-        height={deviceHeight * 0.5}
-        >
-        <ConfirmPayment
-          value={payableAmount}
-          setState={setPayableAmount}
-          cancel={handleCloseConfirmPayment}
-          currency={currency}
-          callback={handlePayButton}
-          editable={false}
-        />
-      </SlideUpContainer>
-      <SlideUpContainer
-        open={willingToPay}
-        close={handleCloseQRCode}
-        opacity={0.4}
-        height={deviceHeight * 0.5}
-        >
-        <ScanQRToPay
-          payableAmount={payableAmount}
-          cancel={handleCloseQRCode}
-          currency={currency}
-          callback={handlePayButton}
-          // products={}
-          pa="gomzydhingra0001@okhdfcbank"
-          pn="Khata App"
-        />
-      </SlideUpContainer>
+      )} */}
+     
     </View>
   );
 };

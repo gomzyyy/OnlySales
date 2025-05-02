@@ -2,15 +2,12 @@ import {Text, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import LongPressEnabled from '../../../../customComponents/LongPressEnabled';
 import {useTheme} from '../../../../hooks';
-import {navigate} from '../../../../utils/nagivationUtils';
 import {
   PaymentHistory,
   SoldProductPaymentHistory,
   UnknownPaymentHistory,
 } from '../../../../../types';
 import SlideUpContainer from '../../../../components/SlideUpContainer';
-import PopupContainer from '../../../../components/PopUp';
-// import {Customer, Employee} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {colors, deviceHeight} from '../../../../utils/Constants';
 import {
@@ -21,6 +18,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../../../store/store';
 import {getSinglePaymentHistory} from '../../../../api/api.history';
 import SoldProductPaymentDetailContainer from './SoldProductPaymentDetailContainer';
+import {useCache} from '../../../../hooks';
 
 type TabProps = {
   i: PaymentHistory;
@@ -31,10 +29,10 @@ type TabProps = {
 
 const Tab: React.FC<TabProps> = ({
   i,
-  lastIndex=false,
+  lastIndex = false,
   dummy = false,
 }): React.JSX.Element => {
-  console.log(lastIndex)
+  const cache = useCache();
   const {currentTheme} = useTheme();
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const user = useSelector((s: RootState) => s.appData.user)!;
@@ -53,13 +51,22 @@ const Tab: React.FC<TabProps> = ({
   >();
 
   const getPaymentHistory = async () => {
+    console.log(cache.getAll());
+    if (cache.get(i.payment)) {
+      setSoldProductPaymentDetails(cache.get(i.payment));
+      setopenSoldProductHistoryDetails(true);
+      return;
+    }
+
     setUnknownPaymentHistoryDetails(undefined);
     setSoldProductPaymentDetails(undefined);
+
     if (i.paymentType === PaymentHistoryReferenceType.SOLD_PRODUCT) {
       setopenSoldProductHistoryDetails(true);
     } else if (i.paymentType === PaymentHistoryReferenceType.UNKNOWN) {
       setopenUnknownPaymentHistoryDetails(true);
     }
+
     const data = {
       query: {
         role: user.role,
@@ -68,10 +75,12 @@ const Tab: React.FC<TabProps> = ({
         paymentId: i.payment,
         paymentType: i.paymentType,
       },
-    }
+    };
+
     const res = await getSinglePaymentHistory(data, setLoading);
-    if (res.success && res.data && res.data.paymentDetails) {
+    if (res.success && res.data?.paymentDetails) {
       if (i.paymentType === PaymentHistoryReferenceType.SOLD_PRODUCT) {
+        cache.set(i.payment, res.data.paymentDetails);
         setSoldProductPaymentDetails(
           res.data.paymentDetails as SoldProductPaymentHistory,
         );

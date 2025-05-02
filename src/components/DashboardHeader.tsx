@@ -5,27 +5,26 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {RootState} from '../../store/store';
 import {useSelector} from 'react-redux';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
-import {navigate} from '../utils/nagivationUtils';
 import {useTheme, useAnalytics} from '../hooks/index';
 import {useFocusEffect} from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 type DashboardHeaderProps = {
   searchBar?: boolean;
   flex?: boolean;
-  searchBarPressAction?:()=>void
+  searchBarPressAction?: () => void;
 };
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   searchBar = true,
   flex = true,
-  searchBarPressAction
+  searchBarPressAction,
 }): React.JSX.Element => {
-  const {t} = useTranslation('dashboard')
+  const {t} = useTranslation('dashboard');
   const {currentTheme} = useTheme();
   const {soldThisMonth = [], todaySales = []} = useAnalytics();
   const app = useSelector((s: RootState) => s.appData.app);
@@ -124,7 +123,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     styles.searchQueryInputText,
                     {color: currentTheme.baseColor},
                   ]}>
-                 {t('d_header_dummy_searchplaceholder')}
+                  {t('d_header_dummy_searchplaceholder')}
                 </Text>
               </View>
             </Pressable>

@@ -1,9 +1,10 @@
 import {View, Text} from 'react-native';
 import {SoldProduct, Employee} from '../../../../types';
-import MonthlySalesAnalysisGraph from './MonthlySalesAnalysisGraph';
+import MonthlySalesAnalysisGraph from './graphs/MonthlySalesAnalysisGraph';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
-import {useAnalytics} from '../../../hooks';
+import {useAnalytics, useTheme} from '../../../hooks';
+import {StyleSheet} from 'react-native';
 
 type MonthlySalesCardProps = {
   monthlySales: SoldProduct[];
@@ -12,21 +13,17 @@ type MonthlySalesCardProps = {
 const MonthlySalesAnalysisCard = ({monthlySales}: MonthlySalesCardProps) => {
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const {owner} = useAnalytics();
+  const {currentTheme} = useTheme();
   const employees = owner.employeeData;
-  // ---- Helper function: Calculate total revenue and total gross profit ----
   const {totalRevenue, totalGrossProfit} =
     calculateRevenueAndProfit(monthlySales);
 
-  // ---- Helper function: Calculate total monthly salaries ----
   const totalMonthlySalaries = calculateTotalMonthlySalaries(employees);
 
-  // ---- Calculate net profit ----
   const netProfit = totalGrossProfit - totalMonthlySalaries;
 
-  // ---- Helper function: Calculate total products sold ----
   const totalProductsSold = calculateTotalProductsSold(monthlySales);
 
-  // ---- Optional: Calculate profitability percentage ----
   const profitabilityPercentage =
     totalRevenue !== 0 ? (netProfit / totalRevenue) * 100 : 0;
 
@@ -41,7 +38,6 @@ const MonthlySalesAnalysisCard = ({monthlySales}: MonthlySalesCardProps) => {
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 5,
-        marginVertical: 10,
       }}>
       <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 12}}>
         Monthly Sales 📆
@@ -83,12 +79,39 @@ const MonthlySalesAnalysisCard = ({monthlySales}: MonthlySalesCardProps) => {
         </Text>
       </View>
 
-      <MonthlySalesAnalysisGraph />
+      <View style={[styles.section, {backgroundColor: currentTheme.bgColor}]}>
+        <View style={styles.labelRow}>
+          <Text style={styles.sectionTitle}>
+            Compare your sales with prev mo. 📈
+          </Text>
+        </View>
+        <MonthlySalesAnalysisGraph />
+      </View>
     </View>
   );
 };
 
 export default MonthlySalesAnalysisCard;
+
+const styles = StyleSheet.create({
+  section: {
+    marginTop: 10,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingLeft: 10,
+    gap: 5,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+});
 
 //////////////////////////////////////////////////////
 // ----------------- Helper Functions ----------------

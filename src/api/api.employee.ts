@@ -11,23 +11,23 @@ export const createEmployeeAPI = async (
     try {
       const { createdBy, creatorId, role } = data.query;
       const {
-        name,
-        userId,
-        phoneNumber,
-        password,
-        position,
+        name,//
+        userId,//
+        phoneNumber,//
+        password,//
+        position,//
         positionDescription,
-        email,
-        address,
-        gender,
-        department,
-        departmentDescription,
-        salary,
-        status,
-        statusDescription,
-        skills,
-        shift,
-        shiftDescription,
+        email,//
+        address,//
+        gender,//
+        department,//
+        departmentDescription,//
+        salary,//
+        status,//
+        statusDescription,//
+        skills,//
+        shift,//
+        shiftDescription,//
         reportsToModel,
         businessOwnerId,
         hrUid,
@@ -35,7 +35,6 @@ export const createEmployeeAPI = async (
   
       const formData = new FormData();
   
-      // Required Fields
       formData.append('name', name);
       formData.append('userId', userId);
       formData.append('password', password);
@@ -46,9 +45,7 @@ export const createEmployeeAPI = async (
       formData.append('salary', salary.toString());
       formData.append('status', status);
       formData.append('shift', shift);
-      formData.append('businessOwnerId', businessOwnerId);
-  
-      // Optional Fields
+      formData.append('businessOwnerId', businessOwnerId);  
       if (phoneNumber) formData.append('phoneNumber', phoneNumber);
       if (address) formData.append('address', address);
       if (positionDescription) formData.append('positionDescription', positionDescription);
@@ -62,9 +59,7 @@ export const createEmployeeAPI = async (
           formData.append(`skills[${index}]`, skill);
         });
       }
-  
-      // Media (image)
-      if (data.media?.image) {
+        if (data.media?.image) {
         const imageFile = {
           uri: data.media.image,
           type: 'image/jpeg',

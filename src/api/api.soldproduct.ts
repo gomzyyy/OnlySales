@@ -1,10 +1,12 @@
 import {SetStateAction} from 'react';
 import {FetchAPI, handleBooleanState} from './helper/fn';
 import {
-  DeleteProductData,
   DeleteSoldProductAPIReturnType,
+  DeleteSoldProductData,
   SellProductAPIReturnType,
   SellProductData,
+  UpdateSoldProductStateData,
+  UpdateSoldProductStateReturnType,
 } from './types.api';
 
 export const sellProductAPI = async (
@@ -39,7 +41,7 @@ export const sellProductAPI = async (
 };
 
 export const deleteSoldProductAPI = async (
-  data: DeleteProductData,
+  data: DeleteSoldProductData,
   setState?: React.Dispatch<SetStateAction<boolean>>,
 ) => {
   handleBooleanState(setState, true);
@@ -62,6 +64,35 @@ export const deleteSoldProductAPI = async (
       },
       success: false,
     } as DeleteSoldProductAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+
+export const updateSoldProductStateAPI = async (
+  data: UpdateSoldProductStateData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const {soldProductId, role,updatedState} = data.query;
+    const fetching = await FetchAPI({
+      route: `/update/sold-product/state?soldProductId=${soldProductId}&role=${role}&updatedState=${updatedState}`,
+      reqType: 'cud',
+      method: 'POST',
+    });
+    return (await fetching.json()) as UpdateSoldProductStateReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        soldProduct: undefined,
+      },
+      success: false,
+    } as UpdateSoldProductStateReturnType;
   } finally {
     handleBooleanState(setState, false);
   }

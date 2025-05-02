@@ -110,7 +110,7 @@ const SetPasscode = () => {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView style={{flex: 1, paddingHorizontal: 20}}>
+        <ScrollView style={{flex: 1, paddingHorizontal: 20}} showsVerticalScrollIndicator={false}>
           <View style={styles.innerContainer}>
             {locked && (
               <View style={styles.inputContainer}>

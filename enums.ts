@@ -108,9 +108,9 @@ export enum LibilityStatus {
 }
 
 export enum Department {
+  SALES = 'Sales',
   IT = 'IT',
   HR = 'HR',
-  SALES = 'Sales',
   FINANCE = 'Finance',
   OPERATIONS = 'Operations',
   ADMIN = 'Admin',
@@ -133,6 +133,7 @@ export enum Department {
 }
 
 export enum Position {
+  SALES_EXECUTIVE = 'Sales Executive',
   CEO = 'CEO',
   CTO = 'CTO',
   CFO = 'CFO',
@@ -142,7 +143,6 @@ export enum Position {
   SOFTWARE_ENGINEER = 'Software Engineer',
   DATA_ANALYST = 'Data Analyst',
   PRODUCT_MANAGER = 'Product Manager',
-  SALES_EXECUTIVE = 'Sales Executive',
   MARKETING_EXECUTIVE = 'Marketing Executive',
   CUSTOMER_SUPPORT_SPECIALIST = 'Customer Support Specialist',
   ADMINISTRATIVE_ASSISTANT = 'Administrative Assistant',

@@ -1,17 +1,17 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React, {useMemo, useRef, useState} from 'react';
 import {LineChart} from 'react-native-chart-kit';
-import {deviceWidth} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
+import {deviceWidth} from '../../../../utils/Constants';
+import {useAnalytics, useTheme} from '../../../../hooks';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../../store/store';
+import {RootState} from '../../../../../store/store';
 import {Dataset} from 'react-native-chart-kit/dist/HelperTypes';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import { formatNumber } from '../../../service/fn';
+import { formatNumber } from '../../../../service/fn';
 
 type TodayBestSellerInfoGraphProps = {
   pressActions?: () => void;
@@ -99,8 +99,8 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
         yAxisLabel={currency}
         yAxisSuffix=""
         chartConfig={{
-          backgroundGradientFrom: '#fff',
-          backgroundGradientTo: '#fff',
+          backgroundGradientFrom: currentTheme.bgColor,
+          backgroundGradientTo: currentTheme.bgColor,
           fillShadowGradient: currentTheme.baseColor,
           fillShadowGradientOpacity: 1,
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,

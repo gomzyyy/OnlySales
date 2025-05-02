@@ -9,7 +9,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
-import {navigate, prepareNavigation} from '../../utils/nagivationUtils';
+import {navigate} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,18 +20,17 @@ import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import {colors, deviceHeight} from '../../utils/Constants';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
 import {useTranslation} from 'react-i18next';
 import SlideUpContainer from '../../components/SlideUpContainer';
-import useQuery from './hooks/hooks';
+import QueryContainer from './components/QueryContainer';
+import NotVerifiedAlert from './components/animated/NotVerifiedAlert';
+import OpenMenuButton from './components/animated/OpenMenuButton';
+import {useSocket} from '../../hooks/index';
 
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
+
+ const {socket} = useSocket()
 
   const DashboardOptions = [
     {
@@ -72,52 +71,25 @@ const Dashboard = () => {
   const {currentTheme} = useTheme();
   const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
   const [openQuery, setOpenQuery] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>('');
+  const [overScrolled, setOverScrolled] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user)!;
-
   const [payableAmount, setPayableAmount] = useState<number>(0);
-
-  const unverifiedAlertHeight = useSharedValue(0);
-
-  const unverifiedAlertAnimatedStyles = useAnimatedStyle(() => {
-    return {
-      height: withTiming(unverifiedAlertHeight.value, {duration: 200}),
-    };
-  });
-  const closeUnverifiedAlert = () => (unverifiedAlertHeight.value = 0);
-
-  useEffect(() => {
-    prepareNavigation();
-    let unverifiedAlertAnimatedStylesToogleTimeoutId: NodeJS.Timeout | null;
-    if (user.email && !user.email.verified) {
-      unverifiedAlertAnimatedStylesToogleTimeoutId = setTimeout(
-        () => (unverifiedAlertHeight.value = 30),
-        1500,
-      );
-    }
-    return () => {
-      setPayableAmount(0);
-      setOpenRequestPayment(false);
-      unverifiedAlertAnimatedStylesToogleTimeoutId &&
-        clearTimeout(unverifiedAlertAnimatedStylesToogleTimeoutId);
-    };
-  }, []);
-
-  const {
-    customersByQuery,
-    CustomerTab,
-    soldProductsByQueryDate,
-    DateWithSoldProductTab,
-  } = useQuery({query});
 
   const closeQuery = () => {
     setOpenQuery(false);
-    setQuery('');
   };
+
+  useEffect(()=>{
+    socket?.on('getOnlineUsers',(d)=>console.log(d))
+  },[])
 
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+      <OpenMenuButton open={overScrolled} />
+      <ScrollView
+        style={{flex: 1}}
+        showsVerticalScrollIndicator={false}
+        onScroll={e => setOverScrolled(e.nativeEvent.contentOffset.y > 70)}>
         <Header
           name={t('header_title')}
           menuButton
@@ -128,51 +100,7 @@ const Dashboard = () => {
           }
           customAction={() => setOpenQuery(true)}
         />
-        {!user.email?.verified && (
-          <Animated.View
-            style={[
-              {
-                backgroundColor: currentTheme.contrastColor,
-                borderBottomRightRadius: 14,
-                borderBottomLeftRadius: 14,
-                marginBottom: 10,
-                alignItems: 'center',
-                flexDirection: 'row',
-                paddingHorizontal: 10,
-                justifyContent: 'space-between',
-                position: 'static',
-                top: 0,
-                elevation: 10,
-              },
-              unverifiedAlertAnimatedStyles,
-            ]}>
-            <Text style={{fontSize: 16, color: colors.danger}}>
-              {t('d_email_not_verified')}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Pressable
-                onPress={() => {
-                  unverifiedAlertHeight.value = 0;
-                  navigate('RequestOTPEmail');
-                }}>
-                <Text style={{fontSize: 16, color: currentTheme.baseColor}}>
-                  {t('d_email_not_verified_clicktoverify')}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={{alignItems: 'center'}}
-                onPress={closeUnverifiedAlert}>
-                <Icon name="close" size={14} />
-              </Pressable>
-            </View>
-          </Animated.View>
-        )}
+        {!user.email?.verified && <NotVerifiedAlert />}
         <View style={styles.contentContainer}>
           <DashboardHeader
             flex={false}
@@ -212,59 +140,8 @@ const Dashboard = () => {
             </Text>
             <WeeklySalesInfoGraph />
           </View>
-          <SlideUpContainer
-            open={openQuery}
-            close={closeQuery}
-            >
-            <View
-              style={{
-                minHeight: deviceHeight * 0.36,
-                height: 'auto',
-                backgroundColor: currentTheme.contrastColor,
-                marginBottom: 10,
-                borderRadius: 20,
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-              }}>
-              <ScrollView style={{flex: 1}}>
-                <Text
-                  style={{fontSize: 20, fontWeight: 600, textAlign: 'center'}}>
-                  Run a Query
-                </Text>
-                <TextInput
-                  value={query}
-                  onChangeText={setQuery}
-                  style={[
-                    styles.inputText,
-                    {borderColor: currentTheme.modal.inputBorder},
-                  ]}
-                  placeholder="enter your query"
-                  placeholderTextColor={'grey'}
-                />
-                {customersByQuery.length > 0 && (
-                  <View style={{marginTop: 10}}>
-                    <Text
-                      style={{fontSize: 16, fontWeight: 600, paddingLeft: 20}}>
-                      Found customers:
-                    </Text>
-                    {customersByQuery.map(s => (
-                      <CustomerTab key={s._id} customer={s} />
-                    ))}
-                  </View>
-                )}
-                {soldProductsByQueryDate.length !== 0 && (
-                  <View style={{marginTop: 10}}>
-                    <Text
-                      style={{fontSize: 16, fontWeight: 600, paddingLeft: 20}}>
-                      Found records:
-                    </Text>
-                    {soldProductsByQueryDate.map(s => (
-                      <DateWithSoldProductTab key={s.date} data={s} />
-                    ))}
-                  </View>
-                )}
-              </ScrollView>
-            </View>
+          <SlideUpContainer open={openQuery} close={closeQuery}>
+            <QueryContainer />
           </SlideUpContainer>
         </View>
       </ScrollView>

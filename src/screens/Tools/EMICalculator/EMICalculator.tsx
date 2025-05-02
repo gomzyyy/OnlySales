@@ -51,7 +51,7 @@ const EMICalculator: React.FC = (): React.JSX.Element => {
     <KeyboardAvoidingView
       style={styles.parent}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
           name="EMI Calculator"
           headerBgColor={currentTheme.baseColor}

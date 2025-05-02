@@ -101,6 +101,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
         style={{flex: 1}}
         contentContainerStyle={{height: '80%'}}
         nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
         {...props}>
         <ScrollView
           style={{borderRadius: 20}}

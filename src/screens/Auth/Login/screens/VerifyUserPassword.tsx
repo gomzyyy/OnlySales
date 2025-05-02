@@ -64,7 +64,7 @@ const VerifyPassword = () => {
 
   return (
     <KeyboardAvoidingView style={styles.parent}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.headerTitle}>
           {`Welcome Back ${name}! Your account was tightly secured by us.`}
         </Text>
@@ -78,7 +78,7 @@ const VerifyPassword = () => {
                 styles.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder={`${roleLabel('s')} Id`}
+              placeholder={`password`}
               placeholderTextColor={currentTheme.baseColor}
             />
           </View>

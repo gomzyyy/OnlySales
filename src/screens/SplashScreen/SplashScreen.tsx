@@ -48,7 +48,6 @@ const SplashScreen = () => {
                 console.error('Geolocation error:', error);
                 resetAndNavigate('Dashboard');
               },
-              // {enableHighAccuracy: true, timeout: 30000, maximumAge: 10000},
             );
             resetAndNavigate('Dashboard');
           } else {

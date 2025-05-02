@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   Button,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
-import {showToast} from '../service/fn';
+import {modifyUserName, showToast} from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {useAnalytics, useHaptics, useTheme} from '../hooks/index';
@@ -118,116 +119,124 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
         Create Customer
       </Text>
-      <View style={styles.formContainer}>
-        <View style={styles.inputTitleContainer}>
-          <Text style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-            Customer name
-          </Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            style={[
-              styles.inputText,
-              {borderColor: currentTheme.modal.inputBorder},
-            ]}
-            placeholder="Enter name"
-            placeholderTextColor={'grey'}
-          />
-        </View>
-        <View style={styles.inputTitleContainer}>
-          <Text style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-            Customer phone number
-          </Text>
-          <TextInput
-            value={phoneNumber}
-            onChangeText={setphoneNumber}
-            style={[
-              styles.inputText,
-              {borderColor: currentTheme.modal.inputBorder},
-            ]}
-            placeholder="Enter phone number"
-            placeholderTextColor={'grey'}
-          />
-        </View>
-        <View style={styles.inputTitleContainer}>
-          <Text style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-            Customer address
-          </Text>
-          <TextInput
-            value={address}
-            onChangeText={setAddress}
-            style={[
-              styles.inputText,
-              {borderColor: currentTheme.modal.inputBorder},
-            ]}
-            placeholder="Enter address"
-            placeholderTextColor={'grey'}
-          />
-        </View>
-        {image && image.trim().length !== 0 ? (
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
-            <Button title="Remove" onPress={() => setImage(undefined)} />
-          </View>
-        ) : (
-          <View
-            style={{
-              paddingHorizontal: 40,
-              alignItems: 'center',
-            }}>
-            <Button
-              title="Choose Image"
-              onPress={() => setOpenImagePicker(true)}
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+        <View style={styles.formContainer}>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Customer name
+            </Text>
+            <TextInput
+              value={name}
+              onChangeText={v => setName(modifyUserName(v))}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter name"
+              placeholderTextColor={'grey'}
             />
           </View>
-        )}
-        <TouchableOpacity
-          style={[
-            styles.saveButton,
-            {backgroundColor: currentTheme.modal.saveBtnbg},
-          ]}
-          activeOpacity={0.8}
-          onPress={handleSaveBtn}>
-          {loading ? (
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Customer phone number
+            </Text>
+            <TextInput
+              value={phoneNumber}
+              onChangeText={setphoneNumber}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter phone number"
+              placeholderTextColor={'grey'}
+            />
+          </View>
+          <View style={styles.inputTitleContainer}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Customer address
+            </Text>
+            <TextInput
+              value={address}
+              onChangeText={setAddress}
+              style={[
+                styles.inputText,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="Enter address"
+              placeholderTextColor={'grey'}
+            />
+          </View>
+          {image && image.trim().length !== 0 ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
+              <Button title="Remove" onPress={() => setImage(undefined)} />
+            </View>
+          ) : (
             <View
               style={{
-                flexDirection: 'row',
-                gap: 6,
+                paddingHorizontal: 40,
                 alignItems: 'center',
-                justifyContent: 'center',
               }}>
+              <Button
+                title="Choose Image"
+                onPress={() => setOpenImagePicker(true)}
+              />
+            </View>
+          )}
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              {backgroundColor: currentTheme.modal.saveBtnbg},
+            ]}
+            activeOpacity={0.8}
+            onPress={handleSaveBtn}>
+            {loading ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 6,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.saveButtonText,
+                    {color: currentTheme.modal.saveBtnText},
+                  ]}>
+                  Please wait
+                </Text>
+                <ActivityIndicator
+                  size={18}
+                  color={currentTheme.contrastColor}
+                />
+              </View>
+            ) : (
               <Text
                 style={[
                   styles.saveButtonText,
                   {color: currentTheme.modal.saveBtnText},
                 ]}>
-                Please wait
+                Save
               </Text>
-              <ActivityIndicator size={18} color={currentTheme.contrastColor} />
-            </View>
-          ) : (
-            <Text
-              style={[
-                styles.saveButtonText,
-                {color: currentTheme.modal.saveBtnText},
-              ]}>
-              Save
-            </Text>
-          )}
-        </TouchableOpacity>
-        <SlideUpContainer
-          opacity={0.2}
-          open={openImagePicker}
-          close={cancelImagePicker}
-          height={180}>
-          <FilePicker
-            value={image}
-            setState={setImage}
-            callback={closeImagePicker}
-            type="image"
-          />
-        </SlideUpContainer>
-      </View>
+            )}
+          </TouchableOpacity>
+          <SlideUpContainer
+            opacity={0.2}
+            open={openImagePicker}
+            close={cancelImagePicker}
+            height={220}>
+            <FilePicker
+              value={image}
+              setState={setImage}
+              callback={closeImagePicker}
+              type="image"
+            />
+          </SlideUpContainer>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

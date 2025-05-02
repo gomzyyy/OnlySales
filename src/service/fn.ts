@@ -23,7 +23,7 @@ export const showToast = ({
     text2,
     text1Style: {fontSize: 16},
     text2Style: {fontSize: 12},
-    position:'top',
+    position: 'top',
     onPress: pressAction,
   });
 };
@@ -82,15 +82,15 @@ export const checkDate = ({
   const now = new Date();
 
   const nowUTC = new Date(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
   );
 
   const parsedDateUTC = new Date(
-    parsedDate.getUTCFullYear(),
-    parsedDate.getUTCMonth(),
-    parsedDate.getUTCDate(),
+    Date.UTC(
+      parsedDate.getUTCFullYear(),
+      parsedDate.getUTCMonth(),
+      parsedDate.getUTCDate(),
+    ),
   );
 
   const timeDifference = nowUTC.getTime() - parsedDateUTC.getTime();

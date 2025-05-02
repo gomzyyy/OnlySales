@@ -20,7 +20,6 @@ import EmptyListMessage from '../../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {sellProductAPI} from '../../../api/api.soldproduct';
-import {SellProductAPIReturnType} from '../../../api/types.api';
 import {setUser} from '../../../../store/slices/business';
 import {showToast} from '../../../service/fn';
 import {useTranslation} from 'react-i18next';
@@ -125,8 +124,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             },
             body: {productId: p.product._id!, count: p.count},
           };
-          console.log(data);
-          const res: SellProductAPIReturnType = await sellProductAPI(
+          close?.();
+          const res = await sellProductAPI(
             data,
             setLoading,
           );
@@ -139,7 +138,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
               type: 'success',
               text1: t('c_addproduct_success'),
             });
-            close?.();
+
             return;
           } else {
             showToast({
@@ -148,7 +147,6 @@ const AddUdhar: React.FC<AddUdharProps> = ({
                 errorMessage: res.message,
               }),
             });
-            close?.();
             return;
           }
         } else {
@@ -156,7 +154,6 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             type: 'error',
             text1: t('c_addproduct_error_item', {productName: p.product?.name}),
           });
-          close?.();
           return;
         }
       }
@@ -211,6 +208,13 @@ const AddUdhar: React.FC<AddUdharProps> = ({
               gap: 10,
               flexDirection: 'row',
               flexWrap: 'wrap',
+            }}
+            showsVerticalScrollIndicator={false}
+            style={{
+              flex: 1,
+              backgroundColor: currentTheme.bgColor,
+              padding: 8,
+              borderRadius: 8,
             }}>
             {inventoryItems.map(
               (f, i) =>
@@ -229,7 +233,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             <EmptyListMessage title={t('c_noproducts')} />
           </View>
         )}
-        <View style={{flexDirection: 'row', gap: 6}}>
+        <View style={{flexDirection: 'row', gap: 6, marginTop: 10}}>
           <TouchableOpacity
             style={[
               styles.doneAdding,
@@ -284,9 +288,10 @@ const AddUdhar: React.FC<AddUdharProps> = ({
 
 const styles = StyleSheet.create({
   addUdharContainer: {
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
     paddingHorizontal: 10,
-    height: deviceHeight * 0.55,
+    height: deviceHeight * 0.6,
     borderRadius: 20,
     marginBottom: 10,
   },
@@ -332,7 +337,7 @@ const styles = StyleSheet.create({
   doneAdding: {
     paddingVertical: 16,
     borderRadius: 8,
-    marginBottom: 10,
+    // marginBottom: 10,
     flex: 2,
     flexDirection: 'row',
     gap: 6,
@@ -347,7 +352,7 @@ const styles = StyleSheet.create({
   addProductBtn: {
     paddingVertical: 16,
     borderRadius: 8,
-    marginBottom: 10,
+    // marginBottom: 10,
     flexDirection: 'row',
     gap: 6,
     flex: 1,

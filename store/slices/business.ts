@@ -1,25 +1,8 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {
-  Owner,
-  App,
-  Customer,
-  // Product,
-  // SoldProduct,
-  AppTheme,
-  Employee,
-  // User,
-  Partner,
-} from '../../types';
-import {
-  // AdminRole,
-  // BusinessType,
-  CurrencyType,
-  // EmploymentStatus,
-  // Shift,
-} from '../../enums';
+import {Owner, App, Customer, AppTheme, Employee, Partner} from '../../types';
+import {CurrencyType} from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
-// import {checkDate, randomId, showToast} from '../../src/service/fn';
 
 type appstate = {
   user: Owner | Partner | Employee | undefined;
@@ -39,6 +22,14 @@ const initialState: appstate = {
     previousOwners: [],
     deviceId: undefined,
     appLocked: false,
+    fonts: {
+      bottomTab: {
+        title: {
+          large: 12,
+          small: 10,
+        },
+      },
+    },
   },
 };
 

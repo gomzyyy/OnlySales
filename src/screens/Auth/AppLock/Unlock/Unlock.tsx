@@ -95,7 +95,7 @@ const Unlock = () => {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Header name="App Locked!" backButtom />
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>
           {localCheck ? `Is this really you?` : `Welcome back ${user.name}!`}
         </Text>

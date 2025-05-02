@@ -142,7 +142,7 @@ const AskAboutUserInfo = () => {
 
   return (
     <KeyboardAvoidingView style={styles.parent}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Let's Talk about your business.</Text>
         <Text style={styles.subTitle}>
           Please let us know about your business.

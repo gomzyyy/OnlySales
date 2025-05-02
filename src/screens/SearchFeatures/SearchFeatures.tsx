@@ -150,36 +150,42 @@ const SearchFeatures = () => {
   const handleAdvanceQuerySearch = async () => {
     let reqFor: AdminRole | undefined = undefined;
     let userId: string = '';
-    if (query.startsWith('@', 0) && query.trim().length > 5) {
-      reqFor = AdminRole.OWNER;
-      userId = query.slice(1);
-    }
-    if (reqFor && userId.trim().length >= 4) {
-      const data = {
-        query: {
-          userId,
-          reqFor,
-          role: user.role,
-        },
-      };
-      const res = await getUserByIdAPI(data, setLoading);
-      if (res.success && res.data && res.data.user && res.data.userType) {
-        if (res.data.userType === AdminRole.OWNER) {
-          setOwnerResult(res.data.user as Owner);
-        } else if (res.data.userType === AdminRole.EMPLOYEE) {
-          setEmployeeResult(res.data.user as Employee);
-        } else if (res.data.userType === AdminRole.PARTNER) {
-          setPartnerResult(res.data.user as Partner);
+    if (query.trim().length > 5) {
+      if (query.startsWith('@', 0) && query.trim().length > 5) {
+        reqFor = AdminRole.OWNER;
+        userId = query.slice(1);
+      }
+      if (reqFor && userId.trim().length >= 4) {
+        const data = {
+          query: {
+            userId,
+            reqFor,
+            role: user.role,
+          },
+        };
+        const res = await getUserByIdAPI(data, setLoading);
+        if (res.success && res.data && res.data.user && res.data.userType) {
+          if (res.data.userType === AdminRole.OWNER) {
+            setOwnerResult(res.data.user as Owner);
+          } else if (res.data.userType === AdminRole.EMPLOYEE) {
+            setEmployeeResult(res.data.user as Employee);
+          } else if (res.data.userType === AdminRole.PARTNER) {
+            setPartnerResult(res.data.user as Partner);
+          } else {
+            setOwnerResult(undefined);
+            setEmployeeResult(undefined);
+            setPartnerResult(undefined);
+          }
         } else {
           setOwnerResult(undefined);
           setEmployeeResult(undefined);
           setPartnerResult(undefined);
         }
-      } else {
-        setOwnerResult(undefined);
-        setEmployeeResult(undefined);
-        setPartnerResult(undefined);
       }
+    } else {
+      setOwnerResult(undefined);
+      setEmployeeResult(undefined);
+      setPartnerResult(undefined);
     }
   };
 

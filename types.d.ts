@@ -75,6 +75,19 @@ export interface TabTheme {
   icon: string;
   text: string;
 }
+
+export interface AppFontSize {
+  bottomTab: {
+    title: {
+      large: number;
+      small: number;
+    };
+  };
+  // dasboard:{
+
+  // }
+}
+
 export interface App {
   searchResults: {
     customerResults: Customer[];
@@ -86,6 +99,7 @@ export interface App {
   previousOwners: Owner[] | Partner[] | Employee[];
   deviceId?: string | undefined;
   appLocked: boolean;
+  fonts: AppFontSize;
 }
 
 export interface CommonProps {

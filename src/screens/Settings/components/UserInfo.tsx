@@ -82,7 +82,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
         open={openImagePicker}
         close={handleCloseImagePicker}
         opacity={0.2}
-        height={180}
+        height={220}
       >
         <FilePicker
           value={profileImageValue}

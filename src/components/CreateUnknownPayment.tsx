@@ -136,7 +136,7 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
         Unknown Payment
       </Text>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Payment Description */}
         <View style={styles.inputTitleContainer}>
           <Text style={[styles.inputLabel, {color: currentTheme.modal.title}]}>

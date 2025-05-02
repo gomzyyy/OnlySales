@@ -19,18 +19,27 @@ const UITest = () => {
         name="Map"
         backButtom={true}
       />
-      <View style={{paddingHorizontal: 20,paddingTop:20}}>
-        <MapView
-          style={{height: 400}}
-          initialRegion={{
-            ...location,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          provider={PROVIDER_GOOGLE}
-          showsUserLocation={true}>
-          <Marker coordinate={location} title={user.name} />
-        </MapView>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: 20
+        }}>
+        <View style={{
+          borderRadius: 20,
+          overflow: 'hidden',
+        }}>
+          <MapView
+            style={{height: 400}}
+            initialRegion={{
+              ...location,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            provider={PROVIDER_GOOGLE}
+            showsUserLocation={true}>
+            <Marker coordinate={location} title={user.name} />
+          </MapView>
+        </View>
       </View>
     </View>
   );
