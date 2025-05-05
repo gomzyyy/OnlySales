@@ -1,12 +1,16 @@
 import {View, Text, ScrollView, TextInput, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {useTheme} from '../../../hooks';
 import useQuery from '../hooks/hooks';
 
-type QueryContainerProps = {};
+type QueryContainerProps = {
+  close?: any;
+};
 
-const QueryContainer: React.FC<QueryContainerProps> = (): React.JSX.Element => {
+const QueryContainer: React.FC<QueryContainerProps> = ({
+  close,
+}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const [query, setQuery] = useState<string>('');
   const {
@@ -14,7 +18,10 @@ const QueryContainer: React.FC<QueryContainerProps> = (): React.JSX.Element => {
     CustomerTab,
     soldProductsByQueryDate,
     DateWithSoldProductTab,
-  } = useQuery({query});
+    message,
+    foundInventory,
+    InventoryProductTab,
+  } = useQuery({query, close});
 
   return (
     <View
@@ -31,16 +38,22 @@ const QueryContainer: React.FC<QueryContainerProps> = (): React.JSX.Element => {
         <Text style={{fontSize: 20, fontWeight: 600, textAlign: 'center'}}>
           Run a Query
         </Text>
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          style={[
-            styles.inputText,
-            {borderColor: currentTheme.modal.inputBorder},
-          ]}
-          placeholder="enter your query"
-          placeholderTextColor={'grey'}
-        />
+        <View style={{justifyContent: 'center'}}>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            style={[
+              styles.inputText,
+              {borderColor: currentTheme.modal.inputBorder},
+            ]}
+            placeholder="enter your query"
+            placeholderTextColor={'grey'}
+          />
+          <Text style={{fontSize: 12, fontWeight: '600', paddingLeft: 14}}>
+            {message || 'test message'}
+          </Text>
+        </View>
+
         {customersByQuery.length > 0 && (
           <View style={{marginTop: 10}}>
             <Text style={{fontSize: 16, fontWeight: 600, paddingLeft: 20}}>
@@ -61,6 +74,16 @@ const QueryContainer: React.FC<QueryContainerProps> = (): React.JSX.Element => {
             ))}
           </View>
         )}
+        {foundInventory.length > 0 && (
+          <View style={{marginTop: 10}}>
+            <Text style={{fontSize: 16, fontWeight: 600, paddingLeft: 20}}>
+              Found records:
+            </Text>
+            {foundInventory.map(s => (
+              <InventoryProductTab product={s} theme={currentTheme} />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -72,7 +95,8 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 18,
     paddingHorizontal: 12,
-    marginTop: 30,
+    marginTop: 24,
+    width: '100%',
   },
 });
 export default QueryContainer;

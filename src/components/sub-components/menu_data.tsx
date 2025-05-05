@@ -39,7 +39,7 @@ export const ManagementData: menuNavContent[] = [
     name: 'Employees',
     navigateTo: 'Employees',
     icon: (color: string) => (
-      <Icon3 name="network-wired" color={color} size={26} />
+      <Icon3 name="network-wired" color={color} size={22} />
     ),
     disabled: false,
   },
@@ -56,14 +56,14 @@ export const ToolsData: menuNavContent[] = [
     name: 'Payments History',
     navigateTo: 'PaymentHistory',
     icon: (color: string) => (
-      <Icon3 name="book" color={color} size={26} />
+      <Icon3 name="book" color={color} size={22} />
     ),
     disabled: false,
   },
   {
     name: 'Tools',
     navigateTo: 'BusinessTools',
-    icon: (color: string) => <Icon4 name="tools" color={color} size={26} />,
+    icon: (color: string) => <Icon4 name="tools" color={color} size={24} />,
     disabled: true,
   },
 ];
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tabText: {
-    fontSize: 20,
+    fontSize: 18,
   },
 });
 

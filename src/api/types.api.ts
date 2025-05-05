@@ -266,6 +266,15 @@ export interface CreateEmployeeAPIData {
 
 export interface CreateEmployeeReturnType extends APIReturnType {}
 
+export interface DeleteEmployeeAPIData {
+  query: {
+    employeeId: string;
+    role: AdminRole;
+  };
+}
+
+export interface DeleteEmployeeReturnType extends APIReturnType {}
+
 export interface UpdateUserLocationAPIData {
   query: {
     role: AdminRole;
@@ -296,6 +305,9 @@ export interface GetUserByIdAPIReturnType extends APIReturnType {
 }
 
 export interface UpdateSoldProductStateData {
-  query: {role: AdminRole; soldProductId: string; updatedState: PaymentState};
+  query: {role: AdminRole; updatedState: PaymentState};
+  body: {
+    soldProducts: SoldProduct[];
+  };
 }
 export interface UpdateSoldProductStateReturnType extends APIReturnType {}

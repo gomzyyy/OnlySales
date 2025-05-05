@@ -61,7 +61,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
               backgroundColor: currentTheme.contrastColor,
               position: 'absolute',
               paddingHorizontal: 4,
-              paddingVertical: 2,
+              paddingVertical: 1,
               borderRadius: 6,
               right: 10,
               top: 10,
@@ -73,7 +73,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
                 color: currentTheme.baseColor,
                 textAlign: 'center',
                 fontStyle: 'italic',
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: '600',
               }}>
               {user?.role?.toLowerCase() || 'guest'}
@@ -99,7 +99,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
       </View>
       <DrawerContentScrollView
         style={{flex: 1}}
-        contentContainerStyle={{height: '80%'}}
+        contentContainerStyle={{height: '85%'}}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
         {...props}>
@@ -171,9 +171,11 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
         style={{
           position: 'absolute',
           bottom: 10,
-          width: '100%',
+          width: '90%',
           paddingHorizontal: 10,
-          backgroundColor: currentTheme.contrastColor
+          backgroundColor: currentTheme.contrastColor,
+          alignItems:'center',
+          alignSelf:'center'
         }}>
         <LogoutButton theme="red" />
       </View>
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 30,
-    paddingRight: 10,
+    paddingRight: 28,
   },
   innterContainer: {
     paddingHorizontal: 16,
@@ -211,7 +213,7 @@ const styles = StyleSheet.create({
   },
   profileNameContainer: {},
   profileName: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   navigtionTabContainer: {

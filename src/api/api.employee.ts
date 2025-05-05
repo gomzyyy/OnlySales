@@ -1,6 +1,6 @@
-import { SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { FetchAPI, handleBooleanState } from "./helper/fn";
-import { CreateEmployeeAPIData, CreateEmployeeReturnType } from "./types.api";
+import { CreateEmployeeAPIData, CreateEmployeeReturnType, DeleteEmployeeAPIData, DeleteEmployeeReturnType } from "./types.api";
 
 export const createEmployeeAPI = async (
     data: CreateEmployeeAPIData,
@@ -89,4 +89,27 @@ export const createEmployeeAPI = async (
       handleBooleanState(setState, false);
     }
   };
+
+  export const deleteEmployeeAPI=async(data:DeleteEmployeeAPIData,setState?:Dispatch<SetStateAction<boolean>>)=>{
+    handleBooleanState(setState, true);
+    try {
+      const {role,employeeId} = data.query
+      const fetching = await FetchAPI({
+        reqType: 'cud',
+        route: `/delete/employee?role=${role}&employeeId=${employeeId}`,
+        method: 'POST',
+      });
+      return (await fetching.json()) as DeleteEmployeeReturnType;
+    } catch (error) {
+      return {
+        message: 'Internal server Error occurred while fetching',
+        data: {
+          customer: undefined,
+        },
+        success: false,
+      } as DeleteEmployeeReturnType;
+    }finally{
+      handleBooleanState(setState, false);
+    }
+  }
   

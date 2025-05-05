@@ -1,5 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {Dispatch, SetStateAction} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Customer, SoldProduct} from '../../../../types';
@@ -27,6 +33,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   const {currentTheme} = useTheme();
   const user = useSelector((s: RootState) => s.appData.user)!;
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState<boolean>(false);
   const handleDeleteProduct = async () => {
     const data = {
       query: {soldProductId: soldProduct._id, role: user.role},
@@ -36,20 +43,15 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
       'Are you sure you want to delete this sold product? This action cannot be undone.',
     );
     if (yes) {
-      const res = await deleteSoldProductAPI(data);
+      const res = await deleteSoldProductAPI(data, setLoading);
       if (res.success) {
         const userRes = await validateTokenAPI({role: user.role});
         if (userRes.success && userRes.data && userRes.data.user) {
           dispatch(setUser(userRes.data.user));
         }
-        showToast({type: 'success', text1: res.message});
-        close();
-        return;
-      } else {
-        showToast({type: 'error', text1: res.message});
-        close();
-        return;
       }
+      showToast({type: res.success ? 'success' : 'error', text1: res.message});
+      close();
     } else {
       showToast({type: 'info', text1: 'action denied.'});
       close();
@@ -62,11 +64,17 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
       <Text style={styles.label}>{soldProduct?.product?.name || ''}</Text>
       <View style={styles.optionsContainer}>
         <TouchableOpacity
-          style={styles.buttonDanger}
+          style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
           activeOpacity={0.8}
           onPress={handleDeleteProduct}>
-          <Text style={styles.buttonDangerText}>{'Delete'}</Text>
-          <Icon name="delete" size={18} color={colors.danger} />
+          <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
+            {loading ? 'Deleteing' : 'Delete'}
+          </Text>
+          {loading ? (
+            <ActivityIndicator size={18} color={colors.danger} />
+          ) : (
+            <Icon name="delete" size={18} color={colors.danger} />
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -75,10 +83,10 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    paddingTop: 20,
-    height: deviceHeight * 0.18,
+    paddingVertical: 14,
+    height: 'auto',
     borderRadius: 20,
-    marginTop: 60,
+    marginBottom: 10,
     elevation: 30,
   },
   label: {
@@ -87,15 +95,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   optionsContainer: {
-    flex: 1,
     paddingHorizontal: 20,
     marginTop: 26,
     gap: 10,
   },
   buttonDanger: {
-    backgroundColor: colors.dangerFade,
-    paddingVertical: 14,
     borderRadius: 12,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -106,7 +112,20 @@ const styles = StyleSheet.create({
   },
   buttonDangerText: {
     textAlign: 'center',
-    color: colors.danger,
+    fontSize: 20,
+  },
+  buttonEdit: {
+    height: 50,
+    borderRadius: 12,
+    borderWidth: 0.8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  buttonEditText: {
+    textAlign: 'center',
+
     fontSize: 20,
   },
 });

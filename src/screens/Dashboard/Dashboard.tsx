@@ -30,7 +30,7 @@ import {useSocket} from '../../hooks/index';
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
 
- const {socket} = useSocket()
+  const {socket} = useSocket();
 
   const DashboardOptions = [
     {
@@ -79,9 +79,9 @@ const Dashboard = () => {
     setOpenQuery(false);
   };
 
-  useEffect(()=>{
-    socket?.on('getOnlineUsers',(d)=>console.log(d))
-  },[])
+  useEffect(() => {
+    socket?.on('getOnlineUsers', d => console.log(d));
+  }, []);
 
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
@@ -100,6 +100,25 @@ const Dashboard = () => {
           }
           customAction={() => setOpenQuery(true)}
         />
+        <Pressable
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 10,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+            alignSelf: 'center',
+            marginVertical: 10,
+          }}
+          onPress={() => navigate('Test')}>
+          <Text
+            style={{
+              color: currentTheme.baseColor,
+              fontSize: 16,
+              fontWeight: '600',
+            }}>
+            Test UI
+          </Text>
+        </Pressable>
         {!user.email?.verified && <NotVerifiedAlert />}
         <View style={styles.contentContainer}>
           <DashboardHeader
@@ -141,7 +160,7 @@ const Dashboard = () => {
             <WeeklySalesInfoGraph />
           </View>
           <SlideUpContainer open={openQuery} close={closeQuery}>
-            <QueryContainer />
+            <QueryContainer close={closeQuery} />
           </SlideUpContainer>
         </View>
       </ScrollView>

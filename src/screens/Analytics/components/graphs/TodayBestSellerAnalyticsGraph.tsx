@@ -11,23 +11,24 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import { formatNumber } from '../../../../service/fn';
+import {formatNumber} from '../../../../service/fn';
+import {SoldProduct} from '../../../../../types';
 
 type TodayBestSellerInfoGraphProps = {
   pressActions?: () => void;
 };
 
-const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
-  pressActions = () => {},
-}): React.JSX.Element => {
-  const { currentTheme } = useTheme();
-  const { todaysMostSoldProducts } = useAnalytics();
+const TodayBestSellerAnalyticsGraph: React.FC<
+  TodayBestSellerInfoGraphProps
+> = ({pressActions = () => {}}): React.JSX.Element => {
+  const {currentTheme} = useTheme();
+  const {todaysMostSoldProducts} = useAnalytics();
   const currency = useSelector((s: RootState) => s.appData.app.currency);
 
   const [tappedIndex, setTappedIndex] = useState<number | undefined>(undefined);
 
-  const calculatePrice = (item: any) => {
-    const totalSold = Number(item.product.totalSold ?? 0);
+  const calculatePrice = (item: SoldProduct) => {
+    const totalSold = item.count;
     const price = Number(
       item.product.discountedPrice ?? item.product.basePrice ?? 0,
     );
@@ -37,13 +38,17 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
   const aggregatedProducts = useMemo(() => {
     const grouped: Record<string, any> = {};
 
-    todaysMostSoldProducts.forEach((item) => {
+    todaysMostSoldProducts.forEach(item => {
       const productId = item.product._id;
       if (grouped[productId]) {
         grouped[productId].count += item.count;
         grouped[productId].totalSold += item.product.totalSold;
       } else {
-        grouped[productId] = { ...item, count: item.count, totalSold: item.product.totalSold };
+        grouped[productId] = {
+          ...item,
+          count: item.count,
+          totalSold: item.product.totalSold,
+        };
       }
     });
 
@@ -51,20 +56,18 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
   }, [todaysMostSoldProducts]);
 
   const prices = aggregatedProducts.slice(0, 5).map(calculatePrice);
-  const labels = aggregatedProducts
-    .slice(0, 5)
-    .map(item => item.product.name);
+  const labels = aggregatedProducts.slice(0, 5).map(item => item.product.name);
 
   const data: Dataset = {
     data: [0, ...prices] as number[],
-    color: (opacity) => `rgba(0,0,0,${opacity})`,
+    color: opacity => `rgba(0,0,0,${opacity})`,
   };
 
   const dotValueOpacity = useSharedValue(1);
 
   const dotValueOpacityAnimationStyles = useAnimatedStyle(() => {
     return {
-      opacity: withTiming(dotValueOpacity.value, { duration: 600 }),
+      opacity: withTiming(dotValueOpacity.value, {duration: 600}),
     };
   });
 
@@ -78,7 +81,6 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
     }
     tapTimeoutRef.current = setTimeout(() => (dotValueOpacity.value = 0), 4000);
   };
-
   return (
     <ScrollView
       horizontal={true}
@@ -87,8 +89,7 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
         maxWidth: deviceWidth * 0.96,
         borderRadius: 10,
         marginTop: 10,
-      }}
-    >
+      }}>
       <LineChart
         data={{
           labels: ['', ...labels],
@@ -106,10 +107,10 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           barPercentage: 0.5,
         }}
-        style={{ borderRadius: 10 }}
+        style={{borderRadius: 10}}
         bezier
-        onDataPointClick={({ index }) => handleDotTap(index)}
-        renderDotContent={({ index, indexData, x, y }) =>
+        onDataPointClick={({index}) => handleDotTap(index)}
+        renderDotContent={({index, indexData, x, y}) =>
           index === tappedIndex && (
             <Animated.Text
               key={index}
@@ -128,8 +129,7 @@ const TodayBestSellerAnalyticsGraph: React.FC<TodayBestSellerInfoGraphProps> = (
                   elevation: 2,
                 },
                 dotValueOpacityAnimationStyles,
-              ]}
-            >
+              ]}>
               {indexData === 0
                 ? 'N/A'
                 : `${currency} ${formatNumber(indexData)}`}

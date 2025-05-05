@@ -33,12 +33,16 @@ const Employees = () => {
         backButtom
         titleColor={currentTheme.header.textColor}
         customComponent
-        renderItem={<Icon name="plus" size={22} color={currentTheme.header.textColor} />}
+        renderItem={
+          <Icon name="plus" size={22} color={currentTheme.header.textColor} />
+        }
         customAction={handleOpenCreateEmployee}
       />
 
       <View style={styles.contentWrapper}>
-        {!openCreateEmployee && <CreateButton open={handleOpenCreateEmployee} />}
+        {!openCreateEmployee && (
+          <CreateButton open={handleOpenCreateEmployee} />
+        )}
 
         <View style={styles.innerContent}>
           <View style={styles.searchBarWrapper}>
@@ -101,8 +105,7 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 100,
   },
 });
 

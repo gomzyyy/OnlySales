@@ -91,7 +91,6 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       return;
     }
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       showToast({
         type: 'error',

@@ -3,11 +3,14 @@ import React from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
 import {Employee} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
 // import {removeEmployee} from '../../../../store/slices/business';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks/index';
+import {deleteEmployeeAPI} from '../../../api/api.employee';
+import {validateTokenAPI} from '../../../api/api.auth';
+import {setUser} from '../../../../store/slices/business';
 
 type TabLongPressOptionsProps = {
   i: Employee;
@@ -20,20 +23,36 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   close,
   triggerEdit,
 }): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((s: RootState) => s.appData.user)!;
   const {currentTheme} = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleDeleteEmployee = async (): Promise<void> => {
     const res = await Confirm(
       'Are you sure you want to remove this Employee?',
       'Once Employee removed, cannot be reversed! be careful of miss-touching removal button.',
     );
+    close();
     if (res) {
-      // dispatch(removeEmployee(i));
-      // showToast({type: 'success', text1: 'Employee removed successfully.'});
-      close();
-      return;
+      const data = {
+        query: {
+          role: user.role,
+          employeeId: i._id,
+        },
+      };
+      const deleteRes = await deleteEmployeeAPI(data);
+      if (deleteRes.success) {
+        const userRes = await validateTokenAPI({role: user.role});
+        if (userRes.success && userRes.data && userRes.data.user) {
+          dispatch(setUser(userRes.data.user));
+        }
+      }
+      showToast({
+        type: deleteRes.success ? 'success' : 'info',
+        text1: deleteRes.message,
+      });
     }
+    return;
   };
 
   return (
@@ -57,10 +76,10 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    paddingTop: 20,
-    height: deviceHeight * 0.18,
+    paddingVertical: 14,
+    height: 'auto',
     borderRadius: 20,
-    marginTop: 60,
+    marginBottom: 10,
     elevation: 30,
   },
   label: {
@@ -69,14 +88,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   optionsContainer: {
-    flex: 1,
     paddingHorizontal: 20,
     marginTop: 26,
     gap: 10,
   },
   buttonDanger: {
-    paddingVertical: 14,
     borderRadius: 12,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -90,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   buttonEdit: {
-    paddingVertical: 14,
+    height: 50,
     borderRadius: 12,
     borderWidth: 0.8,
     flexDirection: 'row',

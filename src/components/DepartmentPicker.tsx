@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import React, {Dispatch, SetStateAction} from 'react';
 import {Picker} from '@react-native-picker/picker';
-import {Department} from '../../enums'; // Import the Department enum
+import {Department} from '../../enums';
 import {useTheme} from '../hooks/index';
 
 type DepartmentPickerProps = {
@@ -44,9 +44,7 @@ const DepartmentPicker: React.FC<DepartmentPickerProps> = ({
 };
 
 const styles = StyleSheet.create({
-  dropdown: {
-    // Customize your dropdown style if needed
-  },
+  dropdown: {},
 });
 
 export default DepartmentPicker;

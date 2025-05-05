@@ -74,7 +74,7 @@ export const Theme: AppTheme[] = [
       inputText: '#000',
       pickerbg: 'rgba(7, 94, 84,0.2)',
       pickerText: '#075e54',
-      saveBtnbg: '#9ec378',
+      saveBtnbg: '#075e54',
       saveBtnText: '#fff',
     },
     toggleBtn: {

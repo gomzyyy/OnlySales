@@ -9,19 +9,18 @@ import {I18nextProvider} from 'react-i18next';
 import i18n from './i18n';
 
 const Index = () => {
-
   return (
     <I18nextProvider i18n={i18n}>
       <ReduxProvider>
-        <View style={{flex: 1}}>
-          <SafeAreaView style={{flex: 1}}>
-            <StatusBar />
-            {/* <Test /> */}
-            <Navigation />
-          </SafeAreaView>
-        </View>
-        <Toast position="bottom" visibilityTime={6000} />
-        <BottomTabs />
+          <View style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1}}>
+              <StatusBar />
+              {/* <Test /> */}
+              <Navigation />
+            </SafeAreaView>
+          </View>
+          <Toast position="bottom" visibilityTime={6000} />
+          <BottomTabs />
       </ReduxProvider>
     </I18nextProvider>
   );

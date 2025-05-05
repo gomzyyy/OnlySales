@@ -198,27 +198,25 @@ const SearchFeatures = () => {
     <View style={styles.parent}>
       <Header backButtom setQuery={setQuery} query={query} />
       <View style={[styles.contentContainer]}>
-        {ownerResult ? (
-          <OwnerCard owner={ownerResult} />
-        ) : searchResults.length === 0 ? (
+        {searchResults.length === 0 ? (
           <View
             style={{
               height: 'auto',
-              backgroundColor: currentTheme.baseColor,
+              backgroundColor: currentTheme.fadeColor,
               borderRadius: 20,
               padding: 15,
               gap: 10,
-              elevation: 5,
+              marginTop:20
             }}>
             <Text
               style={{
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: 'bold',
-                color: currentTheme.header.textColor,
+                color: currentTheme.baseColor,
               }}>
-              Try searching any tool or
+              Try searching any tool or feature...
             </Text>
-            <View
+            {/* <View
               style={{
                 height: 'auto',
                 backgroundColor: currentTheme.contrastColor,
@@ -249,8 +247,8 @@ const SearchFeatures = () => {
                   }}>
                   Learn more.
                 </Text>
-              </Pressable>
-            </View>
+              </Pressable> 
+            </View>*/}
           </View>
         ) : (
           <View
@@ -288,7 +286,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingHorizontal: 4,
+    paddingHorizontal: 10,
     paddingTop: 4,
   },
 });

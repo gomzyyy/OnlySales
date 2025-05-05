@@ -1,5 +1,5 @@
 import {View, StyleSheet, Pressable, Text} from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
 import {Customer as CustomerType, SoldProduct} from '../../../types';
@@ -16,12 +16,14 @@ import UnPaidPayments from './components/UnPaidPayments';
 import PaidPayments from './components/PaidPayments';
 import {PaymentState} from '../../../enums';
 import {deviceHeight} from '../../utils/Constants';
-import SuccessScreen from '../../components/SuccessScreen';
-import PopupContainer from '../../components/PopUp';
 import {useTranslation} from 'react-i18next';
+import ConfirmPayment from '../../components/ConfirmPayment';
+import ScanQRToPay from '../../components/ScanQRToPay';
+import InvoicePDFViewer from '../PDFViewer/InvoicePDFViewer';
 
 type RouteParams = {
   customer: CustomerType;
+  openAddProduct: boolean | undefined;
 };
 
 const Customer = () => {
@@ -29,16 +31,22 @@ const Customer = () => {
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
   const params = useRoute().params;
-  const {customer} = params as RouteParams;
+  const {customer, openAddProduct} = params as RouteParams;
   const {owner, currency} = useAnalytics();
   const customers: CustomerType[] = owner.customers;
-
+  const [payableAmount, setPayableAmount] = useState<number>(0);
+  const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
+  const [willingToPay, setWillingToPay] = useState<boolean>(false);
+  const [openSINGLESoldProductPDFView, setOpenSINGLESoldProductPDFView] =
+    useState<boolean>(false);
   const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
   const [paidPayments, setPaidPayments] = useState<SoldProduct[]>([]);
   const [unpaidPayments, setUnpaidPayments] = useState<SoldProduct[]>([]);
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [unpaidAmount, setUnpaidAmount] = useState<number>(0);
-  const [addUdharVisible, setAddUdharVisible] = useState(false);
+  const [addUdharVisible, setAddUdharVisible] = useState(
+    openAddProduct || false,
+  );
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
   const [openUnpaidSheet, setOpenUnpaidSheet] = useState(false);
   const [openPaidSheet, setOpenPaidSheet] = useState(false);
@@ -53,14 +61,16 @@ const Customer = () => {
     date: string;
   }>({products: [], customer, date: ''});
   const handleUnpaidAmount = () => {
-    setUnpaidAmount(
-      unpaidPayments.reduce<number>(
+    setUnpaidAmount(() => {
+      let upa = unpaidPayments.reduce<number>(
         (total, curr) =>
           total +
           curr.count * (curr.product.discountedPrice ?? curr.product.basePrice),
         0,
-      ),
-    );
+      );
+      setPayableAmount(upa);
+      return upa;
+    });
   };
   const handlePaidAmount = () => {
     setPaidAmount(
@@ -71,6 +81,29 @@ const Customer = () => {
         0,
       ),
     );
+  };
+
+  const handleCloseConfirmPayment = () => {
+    setAskConfirmPayment(false);
+  };
+  const handleCloseQRCode = () => {
+    setWillingToPay(false);
+  };
+  const handleCloseSINGLESoldProductViewer = () => {
+    setOpenSINGLESoldProductPDFView(false);
+  };
+
+  const handlePayButton = async () => {
+    setAskConfirmPayment(false);
+    setWillingToPay(true);
+  };
+  const handleInvoiceButton = () => {
+    setWillingToPay(false);
+    setOpenSINGLESoldProductPDFView(true);
+  };
+
+  const openConfirmPay = () => {
+    setAskConfirmPayment(true);
   };
 
   useEffect(() => {
@@ -112,14 +145,41 @@ const Customer = () => {
     }
   };
 
-  const AddUdharIcon = () => (
-    <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
-      <Icon name="plus" color={currentTheme.header.textColor} size={20} />
-      <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
-        {t('c_header_add')}
-      </Text>
-    </View>
-  );
+  const HeaderIcon = ({
+    children,
+    label,
+    show = true,
+  }: {
+    children: ReactNode;
+    label?: string;
+    show?: boolean;
+  }) => {
+    if (show) {
+      return (
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: currentTheme.contrastColor,
+            paddingVertical: 3,
+            paddingHorizontal: 5,
+            borderRadius: 10,
+            justifyContent: 'center',
+          }}>
+          {children}
+          <Text
+            style={{
+              fontSize: 8,
+              fontWeight: '900',
+              color: currentTheme.baseColor,
+            }}>
+            {label}
+          </Text>
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
 
   return (
     <View style={styles.parent}>
@@ -127,8 +187,18 @@ const Customer = () => {
         name={currCustomer.name}
         backButtom
         customComponent={content === 'UNPAID'}
-        renderItem={<AddUdharIcon />}
-        customAction={toogleState(setAddUdharVisible).true}
+        renderItem={
+          <HeaderIcon label="Request" show={unpaidAmount !== 0}>
+            <Icon name="qrcode" color={currentTheme.baseColor} size={20} />
+          </HeaderIcon>
+        }
+        customAction={openConfirmPay}
+        renderItem1={
+          <HeaderIcon label="Add">
+            <Icon name="plus" color={currentTheme.baseColor} size={20} />
+          </HeaderIcon>
+        }
+        customAction1={toogleState(setAddUdharVisible).true}
         headerBgColor={currentTheme.baseColor}
         titleColor={currentTheme.header.textColor}
       />
@@ -249,7 +319,7 @@ const Customer = () => {
         open={openUnpaidSheet}
         close={() => setOpenUnpaidSheet(false)}
         opacity={0.7}
-        height={deviceHeight * 0.75}>
+        height={deviceHeight * 0.8}>
         <UnPaidPayments
           date={unpaidProps.date}
           customer={unpaidProps.customer}
@@ -262,12 +332,51 @@ const Customer = () => {
         open={openPaidSheet}
         close={() => setOpenPaidSheet(false)}
         opacity={0.7}
-        height={deviceHeight * 0.75}>
+        height={deviceHeight * 0.8}>
         <PaidPayments
           date={paidProps.date}
           customer={paidProps.customer}
           products={paidProps.products}
           close={() => setOpenPaidSheet(false)}
+        />
+      </SlideUpContainer>
+
+      <SlideUpContainer
+        open={askConfirmPayment}
+        close={handleCloseConfirmPayment}
+        opacity={0.5}
+        height={deviceHeight * 0.5}>
+        <ConfirmPayment
+          value={payableAmount}
+          setState={setPayableAmount}
+          cancel={handleCloseConfirmPayment}
+          currency={currency}
+          callback={handlePayButton}
+          editable={false}
+          soldProducts={customer.buyedProducts}
+        />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={willingToPay}
+        close={handleCloseQRCode}
+        opacity={0.4}
+        height={deviceHeight * 0.5}>
+        <ScanQRToPay
+          payableAmount={payableAmount}
+          cancel={handleCloseQRCode}
+          currency={currency}
+          callback={handleInvoiceButton}
+          pa="gomzydhingra0001@okhdfcbank"
+          pn="Khata App"
+        />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={openSINGLESoldProductPDFView}
+        close={handleCloseSINGLESoldProductViewer}
+        height={deviceHeight * 0.5}>
+        <InvoicePDFViewer
+          soldProducts={customer.buyedProducts}
+          customer={customer}
         />
       </SlideUpContainer>
     </View>

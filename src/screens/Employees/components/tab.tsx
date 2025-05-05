@@ -8,8 +8,8 @@ import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
-import { deviceHeight } from '../../../utils/Constants';
-import { Image } from 'react-native';
+import {deviceHeight} from '../../../utils/Constants';
+import {Image} from 'react-native';
 const EditEmployee = React.lazy(
   () => import('../../../components/EditEmployee'),
 );
@@ -45,48 +45,46 @@ const Tab: React.FC<TabProps> = ({
 
   return (
     <LongPressEnabled
-    longPressCanceledAction={handleLongPressCancelAction}
-    longPressAction={handleOpenLongPressOptions}
-    dummy={dummy}>
-    <View
-      style={[
-        styles.container,
-        {
-          marginBottom: lastIndex ? 70 : 6,
-          backgroundColor: currentTheme.tab.bg,
-        },
-      ]}>
-      <View style={{height: 50, width: 50, overflow: 'hidden'}}>
-        <Image
-          source={
-            i.image && i.image.trim().length !== 0 ? {uri: i.image} : NoPhoto
-          }
-          style={[styles.profileImage,{borderColor:currentTheme.baseColor}]}
-        />
-      </View>
-      <View style={styles.innerContainer}>
-        <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
-          {i.name}
-        </Text>
+      longPressCanceledAction={handleLongPressCancelAction}
+      longPressAction={handleOpenLongPressOptions}
+      dummy={dummy}>
+      <View
+        style={[
+          styles.container,
+          {
+            marginBottom: lastIndex ? 70 : 6,
+            backgroundColor: currentTheme.tab.bg,
+          },
+        ]}>
+        <View style={{height: 50, width: 50, overflow: 'hidden'}}>
+          <Image
+            source={
+              i.image && i.image.trim().length !== 0 ? {uri: i.image} : NoPhoto
+            }
+            style={[styles.profileImage, {borderColor: currentTheme.baseColor}]}
+          />
+        </View>
+        <View style={styles.innerContainer}>
+          <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
+            {i.name}
+          </Text>
 
-        <Icon name="right" color={currentTheme.tab.icon} size={22} />
-        {openTabOptions && i && (
-          <PopupContainer
-            open={openTabOptions}
-            close={handleCloseLongPressOptions}
-            padding
-            opacity={0.9}
-            >
-            <TabLongPressOptions
-              triggerEdit={handleOpenEditCustomer}
-              i={i}
+          <Icon name="right" color={currentTheme.tab.icon} size={22} />
+          {openTabOptions && i && (
+            <PopupContainer
+              open={openTabOptions}
               close={handleCloseLongPressOptions}
-            />
-          </PopupContainer>
-        )}
+              padding={true}>
+              <TabLongPressOptions
+                triggerEdit={handleOpenEditCustomer}
+                i={i}
+                close={handleCloseLongPressOptions}
+              />
+            </PopupContainer>
+          )}
+        </View>
       </View>
-    </View>
-  </LongPressEnabled>
+    </LongPressEnabled>
   );
 };
 const styles = StyleSheet.create({
@@ -96,7 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 8,
     alignItems: 'center',
-    gap:12
+    gap: 12,
   },
   profileImage: {
     height: 50,
@@ -104,10 +102,10 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 16,
   },
-  innerContainer:{
+  innerContainer: {
     flexDirection: 'row',
-    justifyContent:'space-between',
-    flex:1
+    justifyContent: 'space-between',
+    flex: 1,
   },
   absolute: {
     position: 'absolute',

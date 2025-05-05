@@ -103,6 +103,18 @@ const WeeklySalesAnalyticsGraph: React.FC<MonthlySalesInfoGraphProps> = ({
     tapTimeoutRef.current = setTimeout(() => (dotValueOpacity.value = 0), 4000);
   };
 
+  const getWeekdayLabels = () => {
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = new Date();
+    const labels: string[] = [''];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      labels.push(weekdays[date.getDay()]);
+    }
+    return labels;
+  };
+
   return (
     <ScrollView
       horizontal={true}
@@ -114,16 +126,7 @@ const WeeklySalesAnalyticsGraph: React.FC<MonthlySalesInfoGraphProps> = ({
       }}>
       <LineChart
         data={{
-          labels: [
-            '',
-            t('d_weeklysalesinfograph_today'),
-            t('d_weeklysalesinfograph_yesterday'),
-            t('d_weeklysalesinfograph_3dago'),
-            t('d_weeklysalesinfograph_4dago'),
-            t('d_weeklysalesinfograph_5dago'),
-            t('d_weeklysalesinfograph_6dago'),
-            t('d_weeklysalesinfograph_7dago'),
-          ],
+          labels: getWeekdayLabels(),
           datasets: [data],
         }}
         width={Math.max(deviceWidth, data.data.length * 90)}
@@ -131,8 +134,8 @@ const WeeklySalesAnalyticsGraph: React.FC<MonthlySalesInfoGraphProps> = ({
         yAxisLabel={currency}
         yAxisSuffix=""
         chartConfig={{
-          backgroundGradientFrom:currentTheme.bgColor,
-          backgroundGradientTo:currentTheme.bgColor,
+          backgroundGradientFrom: currentTheme.bgColor,
+          backgroundGradientTo: currentTheme.bgColor,
           fillShadowGradient: currentTheme.baseColor,
           fillShadowGradientOpacity: 1,
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
@@ -182,3 +185,14 @@ const styles = StyleSheet.create({
 });
 
 export default WeeklySalesAnalyticsGraph;
+
+// [
+//   '',
+//   t('d_weeklysalesinfograph_today'),
+//   t('d_weeklysalesinfograph_yesterday'),
+//   t('d_weeklysalesinfograph_3dago'),
+//   t('d_weeklysalesinfograph_4dago'),
+//   t('d_weeklysalesinfograph_5dago'),
+//   t('d_weeklysalesinfograph_6dago'),
+//   t('d_weeklysalesinfograph_7dago'),
+// ]

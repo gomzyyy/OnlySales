@@ -75,12 +75,15 @@ export const updateSoldProductStateAPI = async (
 ) => {
   handleBooleanState(setState, true);
   try {
-    const {soldProductId, role,updatedState} = data.query;
+    const {role, updatedState} = data.query;
+    const body = JSON.stringify(data.body);
     const fetching = await FetchAPI({
-      route: `/update/sold-product/state?soldProductId=${soldProductId}&role=${role}&updatedState=${updatedState}`,
+      route: `/update/sold-product/state?role=${role}&updatedState=${updatedState}`,
       reqType: 'cud',
       method: 'POST',
+      body,
     });
+    console.log(await fetching.json());
     return (await fetching.json()) as UpdateSoldProductStateReturnType;
   } catch (error) {
     return {

@@ -11,7 +11,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import {formatNumber} from '../../../../service/fn'; // Assuming you have a formatNumber
+import {formatNumber} from '../../../../service/fn';
 import {SoldProduct} from '../../../../../types';
 
 type MonthlySalesInfoGraphProps = {
@@ -32,15 +32,9 @@ const MonthlySalesAnalysisGraph: React.FC<MonthlySalesInfoGraphProps> = ({
       const price = item.product.discountedPrice ?? item.product.basePrice;
 
       const validPrice = price ? Number(price) : 0;
-      console.log(
-        `Total Sold: ${totalSold}, Price: ${validPrice}, Total: ${
-          totalSold * validPrice
-        }`,
-      );
-      return sum + totalSold * validPrice;
+      return totalSold * validPrice;
     }, 0);
   };
-
   const graphData: Dataset = {
     data: [
       0,
@@ -51,8 +45,16 @@ const MonthlySalesAnalysisGraph: React.FC<MonthlySalesInfoGraphProps> = ({
     ],
     color: opacity => `rgba(0,0,0,${opacity})`,
   };
+  const getLastMonthsLabels = (count: number): string[] => {
+    const formatter = new Intl.DateTimeFormat('en', {month: 'short'});
+    const now = new Date();
+    return Array.from({length: count}, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      return formatter.format(d);
+    });
+  };
 
-  const labels = ['', 'this month', 'last month', '2mo ago', '3mo ago'];
+  const labels = ['', ...getLastMonthsLabels(4)];
 
   const [tappedIndex, setTappedIndex] = useState<number | undefined>(undefined);
   const dotValueOpacity = useSharedValue(1);

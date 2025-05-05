@@ -21,7 +21,11 @@ type HeaderProps = {
   menuButton?: boolean;
   customComponent?: boolean;
   renderItem?: ReactNode;
+  renderItem1?: ReactNode;
+  renderItem2?: ReactNode;
   customAction?: () => void;
+  customAction1?: () => void;
+  customAction2?: () => void;
   customComponentActiveOpacity?:
     | 0
     | 0.1
@@ -46,16 +50,18 @@ const Header: React.FC<HeaderProps> = ({
   backButtom = false,
   menuButton = false,
   customComponent = false,
-  renderItem = <></>,
+  renderItem,
   customAction = () => {},
   customComponentActiveOpacity = 0.5,
   curved = false,
   customTitle,
+  renderItem1,
+  renderItem2,
+  customAction1,
+  customAction2,
 }): React.JSX.Element => {
-  const {currentTheme} = useTheme();
   const navigation = useNavigation();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
-  const {owner} = useAnalytics();
 
   return (
     <View
@@ -95,14 +101,36 @@ const Header: React.FC<HeaderProps> = ({
           )}
         </View>
       )}
+      <View style={[styles.rightCustomBtn, {right: 20}]}>
       {customComponent && (
         <TouchableOpacity
           activeOpacity={customComponentActiveOpacity}
           onPress={customAction}
-          style={styles.rightCustomBtn}>
+          // style={[styles.rightCustomBtn, {right: 20}]}
+          >
           {renderItem}
         </TouchableOpacity>
       )}
+      {customComponent && renderItem1 && (
+        <TouchableOpacity
+          activeOpacity={customComponentActiveOpacity}
+          onPress={customAction1}
+          // style={[styles.rightCustomBtn, {right: 60}]}
+          >
+          {renderItem1}
+        </TouchableOpacity>
+      )}
+      {customComponent && renderItem2 && (
+        <TouchableOpacity
+          activeOpacity={customComponentActiveOpacity}
+          onPress={customAction2}
+          // style={[styles.rightCustomBtn, {right: 100}]}
+          >
+          {renderItem2}
+        </TouchableOpacity>
+      )}
+      </View>
+      
     </View>
   );
 };
@@ -114,7 +142,8 @@ const styles = StyleSheet.create({
   },
   rightCustomBtn: {
     position: 'absolute',
-    right: 20,
+    flexDirection:'row',
+    gap:8
   },
 });
 

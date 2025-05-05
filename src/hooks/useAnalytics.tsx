@@ -80,70 +80,68 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
     totalSold: s.count,
   }));
   const soldThisMonth = soldProducts.filter(
-    g => checkDate({date: new Date(g.createdAt).getTime()}).thisMonth,
+    g => checkDate({date: new Date(g.updatedAt).getTime()}).thisMonth,
   );
   const todaySales = soldThisMonth.filter(
-    s => checkDate({date: new Date(s.createdAt).getTime()}).sameDay,
+    s => checkDate({date: new Date(s.updatedAt).getTime()}).sameDay,
   );
   const soldLastMonth = soldProducts.filter(
-    g => checkDate({date: new Date(g.createdAt).getTime()}).lastMonth,
+    g => checkDate({date: new Date(g.updatedAt).getTime()}).lastMonth,
   );
   const soldMoreThanFourMonthsAgo = soldProducts.filter(
-    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.updatedAt).getTime()}).olderThanFourMonths,
   );
   const soldOneMonthAgo = soldProducts.filter(
-    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.updatedAt).getTime()}).olderThanFourMonths,
   );
   const soldTwoMonthAgo = soldProducts.filter(
-    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.updatedAt).getTime()}).olderThanFourMonths,
   );
   const soldThreeMonthAgo = soldProducts.filter(
-    g => checkDate({date: new Date(g.createdAt).getTime()}).olderThanFourMonths,
+    g => checkDate({date: new Date(g.updatedAt).getTime()}).olderThanFourMonths,
   );
   const weeklySales = {
     today: todaySales,
     yesterday: soldProducts.filter(
       s =>
-        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 2})
+        checkDate({date: new Date(s.updatedAt).getTime(), matchByDay: 2})
           .isExactMatch,
     ),
     oneDayAgo: soldProducts.filter(
       s =>
-        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 3})
+        checkDate({date: new Date(s.updatedAt).getTime(), matchByDay: 3})
           .isExactMatch,
     ),
     twoDayAgo: soldProducts.filter(
       s =>
-        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 4})
+        checkDate({date: new Date(s.updatedAt).getTime(), matchByDay: 4})
           .isExactMatch,
     ),
     threeDayAgo: soldProducts.filter(
       s =>
-        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 5})
+        checkDate({date: new Date(s.updatedAt).getTime(), matchByDay: 5})
           .isExactMatch,
     ),
     fourDayAgo: soldProducts.filter(
       s =>
-        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 6})
+        checkDate({date: new Date(s.updatedAt).getTime(), matchByDay: 6})
           .isExactMatch,
     ),
     fiveDayAgo: soldProducts.filter(
       s =>
-        checkDate({date: new Date(s.createdAt).getTime(), matchByDay: 7})
+        checkDate({date: new Date(s.updatedAt).getTime(), matchByDay: 7})
           .isExactMatch,
     ),
   };
 
   const todaysMostSoldProductsRaw = todaySales
-    .filter(s => checkDate({date: new Date(s.createdAt).getTime()}).sameDay)
     .sort((a, b) => b.totalSold - a.totalSold)
     .slice(0, 5);
-
   const todaysMostSoldProductsObj = todaysMostSoldProductsRaw.reduce<
     Record<string, SoldProduct>
   >((acc, product) => {
     if (acc[product._id]) {
-      (acc[product._id].product as Product).totalSold += product.totalSold;
+      acc[product._id].product.totalSold += product.totalSold;
     } else {
       acc[product._id] = {...product};
     }
@@ -151,8 +149,8 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   }, {});
   const todaysMostSoldProducts = Object.values(todaysMostSoldProductsObj);
   const newReviews =
-    (owner.reviews || []).filter(r =>
-      checkDate({date: new Date(r.createdAt).getTime(), matchByDay: 1}),
+    (owner.reviews || []).filter(
+      r => checkDate({date: new Date(r.updatedAt).getTime()}).sameDay,
     ) || [];
   const mergedweeklySales = [
     ...weeklySales.today,

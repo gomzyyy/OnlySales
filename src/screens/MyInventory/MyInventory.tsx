@@ -1,8 +1,8 @@
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import Header from '../../components/Header';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {deviceHeight, deviceWidth} from '../../utils/Constants';
+import Icon from 'react-native-vector-icons/Octicons';
+import {deviceHeight} from '../../utils/Constants';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
@@ -25,10 +25,10 @@ const MyInventory = () => {
   const AddInventoryItemIcon = (): React.JSX.Element => {
     return (
       <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
-        <Icon name="plus" color={currentTheme.header.textColor} size={20} />
-        <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
+        <Icon name="plus-circle" color={currentTheme.header.textColor} size={24} />
+        {/* <Text style={{fontSize: 16, color: currentTheme.header.textColor}}>
           {t('i_add_item')}
-        </Text>
+        </Text> */}
       </View>
     );
   };
@@ -50,21 +50,23 @@ const MyInventory = () => {
         {inventoryItems.length > 0 && (
           <ScrollView
             contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            nestedScrollEnabled={true}>
+            nestedScrollEnabled={true}
+            style={{flex: 1}}>
             {inventoryItems.map((s, i) => (
               <Tab i={s} key={i} />
             ))}
           </ScrollView>
         )}
       </View>
-      <View style={styles.assistTextContainer}>
-        <Text style={[styles.assistText, {color: currentTheme.baseColor}]}>
+      {/* <View style={[styles.assistTextContainer, {backgroundColor: currentTheme.fadeColor}]}>
+        <Text style={[styles.assistText, {color: currentTheme.contrastColor}]}>
           {inventoryItems.length === 0
             ? t('i_inventory_empty')
             : t('i_inventory_edit_hint')}
         </Text>
-      </View>
+      </View> */}
       {openAddProduct && (
         <SlideUpContainer
           open={openAddProduct}
@@ -83,7 +85,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 10,
-    marginTop: 20,
+    marginTop: 10,
+    flex: 1,
   },
   listContainer: {
     // justifyContent: 'space-evenly',
@@ -91,10 +94,11 @@ const styles = StyleSheet.create({
   },
   assistTextContainer: {
     position: 'absolute',
-    bottom: 6,
-    width: deviceWidth,
-    paddingVertical: 20,
+    bottom: 12,
+    paddingVertical: 4,
+    paddingHorizontal:8,
     borderRadius: 10,
+    alignSelf:'center'
   },
   assistText: {
     textAlign: 'center',

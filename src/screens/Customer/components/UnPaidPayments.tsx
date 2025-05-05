@@ -35,8 +35,6 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
   const [amount, setAmount] = useState<number>(0);
-  const {currency} = useSelector((s: RootState) => s.appData.app);
-  const user = useSelector((s: RootState) => s.appData.user)!;
 
   useEffect(() => {
     const amt = products.reduce(
@@ -69,7 +67,6 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
                   actionType="UNPAID"
                   i={item}
                   customer={customer}
-                  // onPay={() => openConfirmPay('SINGLE', item)}
                   date={date}
                   closeParent={close}
                 />
@@ -115,7 +112,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight * 0.75,
+    height: deviceHeight * 0.8,
     backgroundColor: 'white',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,

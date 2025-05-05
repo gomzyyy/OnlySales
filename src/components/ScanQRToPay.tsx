@@ -12,7 +12,7 @@ type ScanQRToPay = {
   payableAmount?: number;
   cancel: () => void;
   currency: CurrencyType;
-  callback: (soldProduct?:SoldProduct) => void;
+  callback: () => void;
   pa: string;
   pn: string;
   products?: SoldProduct[];
@@ -50,7 +50,9 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
           <Text style={[styles.buttonText, {color: colors.danger}]}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, {backgroundColor: '#e6ffe6'}]}>
+          style={[styles.button, {backgroundColor: '#e6ffe6'}]}
+          onPress={callback}
+          >
           <Text style={[styles.buttonText, {color: '#9ec378'}]}>
             Invoice
           </Text>

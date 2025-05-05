@@ -37,20 +37,22 @@
   <string>remote-notification</string>
 </array>
 
-<key>NSUserNotificationUsageDescription</key>
-<string>We need your permission to send you notifications.</string>
-
-<key>NSContactsUsageDescription</key>
-<string>We need access to your contacts to enhance your experience.</string>
-<key>NSSpeechRecognitionUsageDescription</key>
-<string>We need your permission to use speech recognition</string>
-<key>NSMicrophoneUsageDescription</key>
-<string>We need your permission to use the microphone</string>
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>We need your location to provide personalized content.</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>We need your location to provide personalized content.</string>
-
+    <key>NSUserNotificationUsageDescription</key>
+    <string>We need your permission to send you notifications.</string>
+    <key>NSContactsUsageDescription</key>
+    <string>We need access to your contacts to enhance your experience.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>We need your permission to use speech recognition</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need your permission to use the microphone</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to provide personalized content.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We need your location to provide personalized content.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>We need your permission to recognize speech</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to the microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photos to upload images.</string>
     <key>NSCameraUsageDescription</key>

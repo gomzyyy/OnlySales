@@ -130,7 +130,7 @@ const {t} = useTranslation('customer')
           pressAction={() => openConfirmPay('WHOLE')}
         />
       )}
-      <SlideUpContainer
+      {/* <SlideUpContainer
         open={askConfirmPayment}
         close={handleCloseConfirmPayment}
         opacity={0.4}
@@ -142,8 +142,9 @@ const {t} = useTranslation('customer')
           cancel={handleCloseConfirmPayment}
           currency={currency}
           callback={handleCloseConfirmPayment}
+          soldProduct={products}
         />
-      </SlideUpContainer>
+      </SlideUpContainer> */}
       {/* <SlideUpContainer
         open={askConfirmPayment}
         close={handleCloseConfirmPayment}
@@ -161,7 +162,7 @@ const {t} = useTranslation('customer')
 
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight * 0.75,
+    height: deviceHeight * 0.8,
     backgroundColor: 'white',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,

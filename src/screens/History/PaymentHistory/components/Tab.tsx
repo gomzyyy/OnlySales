@@ -105,7 +105,7 @@ const Tab: React.FC<TabProps> = ({
         style={[
           styles.container,
           {
-            marginBottom: lastIndex ? 80 : 8,
+            marginBottom:8,
             backgroundColor: currentTheme.tab.bg,
           },
         ]}>

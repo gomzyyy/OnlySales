@@ -15,7 +15,6 @@ import {Employee} from '../../types';
 import {AppDispatch, RootState} from '../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {showToast} from '../service/fn';
-// import {updateEmployee} from '../../store/slices/business';
 import {useTheme} from '../hooks/index';
 import EmployementStatusPicker from './EmployementStatusPicker';
 import ShiftPicker from './ShiftPicker';

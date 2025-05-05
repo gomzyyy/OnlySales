@@ -38,8 +38,8 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 
   const handleDeleteEmployee = async (): Promise<void> => {
     const res = await Confirm(
-      'Are you sure you want to remove this Employee?',
-      'Once Employee removed, cannot be reversed! be careful of miss-touching removal button.',
+      'Are you sure?',
+      `Do you really want to delete ${i.name}.`,
     );
     if (res) {
       const data = {
@@ -104,10 +104,10 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    paddingTop: 20,
-    height: deviceHeight * 0.26,
+    paddingVertical: 14,
+    height: 'auto',
     borderRadius: 20,
-    marginTop: 60,
+    marginBottom: 10,
     elevation: 30,
   },
   label: {
@@ -116,14 +116,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   optionsContainer: {
-    flex: 1,
     paddingHorizontal: 20,
     marginTop: 26,
     gap: 10,
   },
   buttonDanger: {
-    paddingVertical: 14,
     borderRadius: 12,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   buttonEdit: {
-    paddingVertical: 14,
+    height: 50,
     borderRadius: 12,
     borderWidth: 0.8,
     flexDirection: 'row',

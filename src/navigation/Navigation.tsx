@@ -48,6 +48,7 @@ import PaymentHistory from '../screens/History/PaymentHistory/PaymentHistory';
 import SearchFeatures from '../screens/SearchFeatures/SearchFeatures';
 import GetUserSignupImage from '../screens/Auth/SignUp/screens/GetUserSignupImage';
 import UITest from '../screens/Test/UITest';
+import Test from '../screens/Test/Test';
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
@@ -82,6 +83,7 @@ const StackNav = () => {
         statusBarBackgroundColor: currentTheme.baseColor,
       }}>
       <stack.Screen name="SplashScreen" component={SplashScreen} />
+      <stack.Screen name="Test" component={Test} />
       <stack.Screen name="UITest" component={UITest} />
       <stack.Screen name="Dashboard" component={Dashboard} />
       <stack.Screen name="Settings" component={Settings} />

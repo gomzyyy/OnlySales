@@ -1,11 +1,17 @@
-import {Modal, StyleSheet, Pressable} from 'react-native';
+import {Modal, StyleSheet, Pressable, View} from 'react-native';
 import React, {PropsWithChildren, useEffect} from 'react';
 import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
+  runOnJS,
 } from 'react-native-reanimated';
 import {deviceHeight} from '../utils/Constants';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 type SlideUpContainerProps = PropsWithChildren<{
   open: boolean;
@@ -24,60 +30,102 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   height = deviceHeight,
 }): React.JSX.Element => {
   const childHeight = useSharedValue(0);
+  const translateY = useSharedValue(0);
+
+  const closeSlideUpContainer = () => {
+    childHeight.value = withTiming(0, {duration: 200});
+    setTimeout(() => {
+      close();
+      translateY.value = 0;
+    }, 200);
+  };
+
   const childAnimatedStyles = useAnimatedStyle(() => {
     return {
-      height: withTiming(childHeight.value, {
-        duration: 200,
-      }),
+      height: childHeight.value,
+      transform: [{translateY: translateY.value}],
       justifyContent: 'flex-end',
-      overflow:'hidden'
+      overflow: 'hidden',
     };
   });
 
-  const closeSlideUpContainer = () => {
-    childHeight.value = 0;
-    setTimeout(() => {
-      close();
-    }, 160);
-  };
+  const dragTabGesture = Gesture.Pan()
+    .onUpdate(e => {
+      if (e.translationY > 0) {
+        translateY.value = e.translationY;
+      }
+    })
+    .onEnd(e => {
+      if (e.translationY > 100) {
+        runOnJS(closeSlideUpContainer)();
+      } else {
+        translateY.value = withTiming(0, {duration: 150});
+      }
+    });
 
   useEffect(() => {
-    if(open){
+    if (open) {
       childHeight.value = 0;
-      setTimeout(() => (childHeight.value = height+30), 40);
+      translateY.value = 0;
+      setTimeout(() => {
+        childHeight.value = withTiming(height + 30, {duration: 200});
+      }, 40);
     }
-  }, [open,height]);
+  }, [open, height]);
 
   return (
     <Modal
       animationType="fade"
-      transparent={true}
-      statusBarTranslucent={true}
+      transparent
+      statusBarTranslucent
       visible={open}
       onRequestClose={closeSlideUpContainer}
-      hardwareAccelerated={true}
-      >
-      <Pressable
-        style={[
-          styles.childContainer,
-          {
-            backgroundColor: `rgba(0,0,0,${'0.5'})`,
-            paddingHorizontal: padding ? 14 : 10,
-          },
-        ]}
-        onPress={closeSlideUpContainer}>
-        <Pressable onPress={e => e.stopPropagation()}>
-          <Animated.View style={childAnimatedStyles}>{children}</Animated.View>
+      hardwareAccelerated>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Pressable
+          style={[
+            styles.childContainer,
+            {
+              backgroundColor: `rgba(0,0,0,${opacity})`,
+              paddingHorizontal: padding ? 14 : 10,
+            },
+          ]}
+          onPress={closeSlideUpContainer}>
+          <Pressable onPress={e => e.stopPropagation()}>
+            <Animated.View style={childAnimatedStyles}>
+              <GestureDetector gesture={dragTabGesture}>
+                <View style={styles.dragTabContainer}>
+                  <View style={styles.dragTab} />
+                </View>
+              </GestureDetector>
+
+              {/* Actual Children */}
+              {children}
+            </Animated.View>
+          </Pressable>
         </Pressable>
-      </Pressable>
+      </GestureHandlerRootView>
     </Modal>
   );
 };
+
 const styles = StyleSheet.create({
   childContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     paddingHorizontal: 10,
+  },
+  dragTabContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 10,
+    backgroundColor: '#ccc0',
+  },
+  dragTab: {
+    width: 40,
+    height: 5,
+    borderRadius: 10,
+    backgroundColor: '#ccc',
   },
 });
 

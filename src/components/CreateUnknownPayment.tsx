@@ -117,7 +117,6 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
 
     setLoading(true);
     try {
-      // API call here
       // await createUnknownPaymentAPI(unknownPayment);
       showToast({type: 'success', text1: 'Payment saved successfully'});
       callback();

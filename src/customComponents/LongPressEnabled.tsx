@@ -10,6 +10,7 @@ type LongPressEnabledProps = {
   longPressAction: () => void;
   hapticsEnabled?: boolean;
   vibrationDuration?: number;
+  opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
 };
 
 const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
@@ -19,6 +20,7 @@ const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
   longPressCanceledAction = () => {},
   longPressAction,
   hapticsEnabled = true,
+  opacity=0.8
 }): React.JSX.Element => {
   const {longPress} = useHaptics();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -47,10 +49,11 @@ const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
   };
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={opacity}
       onPress={() => !longPressed && !dummy && longPressCanceledAction()}
       onPressIn={triggerLongPress}
-      onPressOut={cancelLongPress}>
+      onPressOut={cancelLongPress}
+      >
       {children}
     </TouchableOpacity>
   );

@@ -1,8 +1,5 @@
 import {
-  View,
-  Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import React, {useRef, useState} from 'react';
@@ -103,6 +100,18 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
     tapTimeoutRef.current = setTimeout(() => (dotValueOpacity.value = 0), 4000);
   };
 
+  const getWeekdayLabels = () => {
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = new Date();
+    const labels: string[] = [''];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      labels.push(weekdays[date.getDay()]);
+    }
+    return labels;
+  };
+
   return (
     <ScrollView
       horizontal={true}
@@ -114,16 +123,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
       }}>
       <LineChart
         data={{
-          labels: [
-            '',
-            t('d_weeklysalesinfograph_today'),
-            t('d_weeklysalesinfograph_yesterday'),
-            t('d_weeklysalesinfograph_3dago'),
-            t('d_weeklysalesinfograph_4dago'),
-            t('d_weeklysalesinfograph_5dago'),
-            t('d_weeklysalesinfograph_6dago'),
-            t('d_weeklysalesinfograph_7dago'),
-          ],
+          labels: getWeekdayLabels(),
           datasets: [data],
         }}
         width={Math.max(deviceWidth, data.data.length * 90)}

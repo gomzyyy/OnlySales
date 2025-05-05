@@ -282,11 +282,11 @@ export interface Product extends CommonProps {
 
 export interface SoldProduct extends CommonProps {
   product: Product;
-  buyer: Customer | string;
+  buyer: Customer;
   state: PaymentState;
   disabled: boolean;
   count: number;
-  soldBy: Owner | Employee | Partner | string;
+  soldBy: Owner | Employee | Partner;
   soldByModel: AdminRole;
 }
 

@@ -12,7 +12,7 @@ import {
   DimensionValue,
   FlexAlignType,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {Employee as EmployeeType, Partner} from '../../../types';
 import Header from '../../components/Header';
@@ -176,12 +176,54 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
             },
             knobStyle,
           ]}>
-          <ActivityIndicator size={12} color={'white'} />
+          {/* <ActivityIndicator size={12} color={'white'} /> */}
         </Animated.View>
       </View>
     );
   };
-
+  console.log(employee);
+  const PermissionTab = ({
+    label,
+    allowed,
+  }: {
+    label: string;
+    allowed: boolean;
+  }) => {
+    return (
+      <View style={[styles.inputTitleContainer, {flexDirection: 'row'}]}>
+        <Text
+          style={[
+            {
+              fontWeight: '600',
+              fontStyle: 'normal',
+              fontSize: 14,
+              backgroundColor: currentTheme.bgColor,
+              paddingHorizontal: 3,
+              paddingVertical: 1,
+              borderRadius: 6,
+            },
+            {color: currentTheme.baseColor},
+          ]}>
+          {label}
+        </Text>
+        <Text
+          style={{
+            color: allowed ? colors.oliveGreen : colors.danger,
+            fontWeight: '600',
+            fontStyle: 'italic',
+            fontSize: 12,
+            backgroundColor: allowed
+              ? colors.oliveGreenFade
+              : colors.dangerFade,
+            paddingHorizontal: 4,
+            paddingVertical: 1,
+            borderRadius: 6,
+          }}>
+          {allowed ? 'YES' : 'NO'}
+        </Text>
+      </View>
+    );
+  };
   const toogleEditState = () => {
     if (
       (user.role === AdminRole.PARTNER &&
@@ -415,53 +457,105 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
               {
                 color: currentTheme.contrastColor,
                 backgroundColor: currentTheme.baseColor,
-                padding:6,
-                borderRadius:8
+                padding: 6,
+                borderRadius: 8,
               },
             ]}>
             Special Permissions:
           </Text>
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {`Can add new customers: `}
-              <Text
-                style={[
-                  styles.inputLabel,
-                  {color: currentTheme.modal.title, fontWeight: '400'},
-                ]}>
-                {employee.permissions.customer.create ? 'YES' : 'NO'}
-              </Text>
-            </Text>
-          </View>
 
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {`Can update customers: `}
-              <Text
-                style={[
-                  styles.inputLabel,
-                  {color: currentTheme.modal.title, fontWeight: '400'},
-                ]}>
-                {employee.permissions.customer.update ? 'YES' : 'NO'}
-              </Text>
-            </Text>
-          </View>
+          {/* Sold Product Section */}
+          <Text style={[styles.sectionLabel, {color: '#000'}]}>
+            Sold Products related permissions
+          </Text>
+          <PermissionTab
+            label="Can add sold products: "
+            allowed={employee.permissions.soldProduct.create}
+          />
+          <PermissionTab
+            label="Can update sold products: "
+            allowed={employee.permissions.soldProduct.update}
+          />
+          <PermissionTab
+            label="Can delete sold products: "
+            allowed={employee.permissions.soldProduct.delete}
+          />
 
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {`Can remove customers: `}
-              <Text
-                style={[
-                  styles.inputLabel,
-                  {color: currentTheme.modal.title, fontWeight: '400'},
-                ]}>
-                {employee.permissions.customer.delete ? 'YES' : 'NO'}
-              </Text>
-            </Text>
-          </View>
+          {/* Customer Section */}
+          <Text style={[styles.sectionLabel, {color: '#000'}]}>
+            Customers related permissions
+          </Text>
+          <PermissionTab
+            label="Can add new customers: "
+            allowed={employee.permissions.customer.create}
+          />
+          <PermissionTab
+            label="Can update customers: "
+            allowed={employee.permissions.customer.update}
+          />
+          <PermissionTab
+            label="Can remove customers: "
+            allowed={employee.permissions.customer.delete}
+          />
+
+          {/* Product Section */}
+          <Text style={[styles.sectionLabel, {color: '#000'}]}>
+            Products related permissions
+          </Text>
+          <PermissionTab
+            label="Can add new products: "
+            allowed={employee.permissions.product.create}
+          />
+          <PermissionTab
+            label="Can update products: "
+            allowed={employee.permissions.product.update}
+          />
+          <PermissionTab
+            label="Can remove products: "
+            allowed={employee.permissions.product.delete}
+          />
+
+          {/* Docs Section */}
+          <Text style={[styles.sectionLabel, {color: '#000'}]}>
+            Documents Access
+          </Text>
+          <PermissionTab
+            label="Can create docs: "
+            allowed={employee.permissions.docs.create}
+          />
+          <PermissionTab
+            label="Can update docs: "
+            allowed={employee.permissions.docs.update}
+          />
+          <PermissionTab
+            label="Can delete docs: "
+            allowed={employee.permissions.docs.delete}
+          />
+
+          {/* Employee Section */}
+          <Text style={[styles.sectionLabel, {color: '#000'}]}>
+            Employees related permissions
+          </Text>
+          <PermissionTab
+            label="Can add employees: "
+            allowed={employee.permissions.employee.create}
+          />
+          <PermissionTab
+            label="Can update employees: "
+            allowed={employee.permissions.employee.update}
+          />
+          <PermissionTab
+            label="Can remove employees: "
+            allowed={employee.permissions.employee.delete}
+          />
+          {/* Analytics Section */}
+          <Text style={[styles.sectionLabel, {color: '#000'}]}>
+            Analytics related permissions
+          </Text>
+          <PermissionTab
+            label="Can access analytics: "
+            allowed={employee.permissions.analytics.accessable}
+          />
 
           <SlideUpContainer
             opacity={0.4}
@@ -496,67 +590,97 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
   );
 };
 const styles = StyleSheet.create({
-  parent: {flex: 1},
+  parent: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
   formContainer: {
-    paddingHorizontal: 10,
-    marginVertical: 20,
-    gap: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    gap: 20,
   },
   profileImageContainer: {
-    height: 90,
-    borderRadius: 45,
-    // elevation: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 16,
   },
-  editIcon: {position: 'absolute', zIndex: 20, right: 0, bottom: 0},
   profileImage: {
-    height: 90,
-    width: 90,
-    resizeMode: 'cover',
-    borderRadius: 45,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: '#ddd',
   },
   inputTitleContainer: {
-    gap: 4,
+    gap: 6,
   },
   inputLabel: {
-    paddingLeft: 8,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '600',
   },
   inputText: {
-    borderWidth: 2,
-    borderRadius: 8,
-    height: 50,
-    fontSize: 18,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    paddingVertical: 10,
     paddingHorizontal: 12,
+    fontSize: 15,
+    backgroundColor: '#fff',
+  },
+  buttonStyle: {
+    marginTop: 10,
+    backgroundColor: colors.oliveGreen,
+    padding: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   saveButton: {
-    paddingVertical: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginTop: 10,
+    marginBottom: 10,
+    marginHorizontal: 20,
   },
+
   saveButtonText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
-  permissionsContainer: {},
+  sectionLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 12,
+    marginBottom: 4,
+  },
 });
 
 const toogleBtnStyles = StyleSheet.create({
   toggleContainer: {
-    height: 20,
-    width: 40,
-    borderRadius: 16,
+    width: 50,
+    height: 25,
+    borderRadius: 20,
     borderWidth: 1,
+    padding: 3,
     justifyContent: 'center',
-    padding: 1,
   },
   knob: {
-    width: 16,
-    height: 16,
-    borderRadius: 16,
-    alignItems: 'center',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 export default Employee;

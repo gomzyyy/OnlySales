@@ -1,35 +1,44 @@
-import {View, Text, Pressable, StyleSheet} from 'react-native';
-import React from 'react';
+import {View, Text, Pressable, StyleSheet, TextInput} from 'react-native';
+import React, {Dispatch, SetStateAction} from 'react';
 import {navigate} from '../../../../utils/nagivationUtils';
 import {useTheme} from '../../../../hooks';
 
 type SearchBarProps = {
   textColor?: string;
   enable?: boolean;
+  value: string;
+  setState: Dispatch<SetStateAction<string>>;
 };
 
 const SearchBar: React.FC<SearchBarProps> = ({
   textColor = '#000',
   enable = false,
+  value,
+  setState
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   return (
     <Pressable
       style={styles.searchQueryContainer}
       onPress={() => enable && navigate('SearchEmployee')}>
-      <View
+      <TextInput
         style={[
           styles.searchQueryInput,
           {backgroundColor: currentTheme.contrastColor},
-        ]}>
-        <Text
+        ]}
+        value={value}
+        onChangeText={setState}
+        placeholder={enable ? 'Search History' : 'No History yet.'}
+        placeholderTextColor={currentTheme.baseColor}
+        />
+        {/* <Text
           style={[
             styles.searchQueryInputText,
             {color: currentTheme.baseColor},
           ]}>
           {enable ? 'Search History' : 'No History yet.'}
         </Text>
-      </View>
+      </View> */}
     </Pressable>
   );
 };

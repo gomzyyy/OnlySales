@@ -18,9 +18,9 @@ type ConfirmPaymentProps = {
   setState: React.Dispatch<SetStateAction<number>>;
   cancel: () => void;
   currency: CurrencyType;
-  callback: (soldProduct?:SoldProduct) => void;
+  callback: (soldProduct?:SoldProduct[]) => void;
   editable?: boolean;
-  soldProduct:SoldProduct
+  soldProducts:SoldProduct[]
 };
 
 const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
@@ -30,7 +30,7 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
   currency,
   callback,
   editable = true,
-  soldProduct
+  soldProducts
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
@@ -49,9 +49,10 @@ const ConfirmPayment: React.FC<ConfirmPaymentProps> = ({
     if (!pa || !pn) {
       cancel();
     }
-    callback(soldProduct);
+    callback(soldProducts);
   };
   const cancelPay = () => cancel();
+
   return (
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>

@@ -1,21 +1,45 @@
-import {View, StyleSheet, FlatList, Text, Pressable} from 'react-native';
-import React, {useState} from 'react';
+import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
-import {useAnalytics, useHaptics, useTheme} from '../../../hooks';
+import {useAnalytics, useTheme} from '../../../hooks';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import Tab from './components/Tab';
 import SearchBar from './components/SearchBar';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {PaymentHistory as PaymentHistoryType} from '../../../../types';
 
 const PaymentHistory = () => {
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
-  const [paymentsOnScreen, setPaymentsOnScreen] = useState<number>(20);
+  const [limit, setLimit] = useState<number>(15);
+  const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>('');
+  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
+    [],
+  );
 
-  const handlePaymentsOnScreenIncrement = () => {};
+  useEffect(() => {
+    setPaymentHistory(
+      [...owner.history.payments]
+        .reverse()
+        .slice((page - 1) * limit, page * limit),
+    );
+  }, [owner, page, limit]);
 
-  const paymentHistory = [...owner.history.payments]
-    .reverse()
-    .slice(0, paymentsOnScreen);
+  useEffect(() => {
+    setPaymentHistory(() => {
+      if (query.length === 0) {
+        return [...owner.history.payments]
+          .slice((page - 1) * limit, page * limit)
+          .reverse()
+      }
+      let result: PaymentHistoryType[];
+      result = owner.history.payments.filter(s =>
+        s.title.toLowerCase().split(' ').includes(query.trim().toLowerCase()),
+      );
+      return result;
+    });
+  }, [query]);
 
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
@@ -30,6 +54,8 @@ const PaymentHistory = () => {
             <SearchBar
               textColor={currentTheme.header.textColor}
               enable={paymentHistory.length !== 0}
+              value={query}
+              setState={setQuery}
             />
           </View>
           {paymentHistory.length !== 0 ? (
@@ -38,9 +64,9 @@ const PaymentHistory = () => {
               keyExtractor={s => s._id}
               nestedScrollEnabled
               renderItem={({item, index}) => (
-                <Tab i={item} lastIndex={index === paymentHistory.length-1} />
+                <Tab i={item} lastIndex={index === paymentHistory.length - 1} />
               )}
-              style={{flex: 1}}
+              style={{flex: 1, marginBottom: 10, borderRadius: 10}}
               showsVerticalScrollIndicator={false}
             />
           ) : (
@@ -51,6 +77,61 @@ const PaymentHistory = () => {
               />
             </View>
           )}
+          <View
+            style={{
+              paddingVertical: 10,
+              paddingHorizontal: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+            }}>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() =>
+                setPage(page => {
+                  if (page === 1) {
+                    return 1;
+                  } else {
+                    return page - 1;
+                  }
+                })
+              }>
+              <Icon
+                name="arrow-back-ios"
+                size={16}
+                color={currentTheme.contrastColor}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '600',
+                color: currentTheme.contrastColor,
+              }}>
+              {limit * page > owner.history.payments.length
+                ? owner.history.payments.length
+                : limit * page}{' '}
+              of {owner.history.payments.length}
+            </Text>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => setPage(page + 1)}>
+              <Icon
+                name="arrow-forward-ios"
+                size={16}
+                color={currentTheme.contrastColor}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>

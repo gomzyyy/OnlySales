@@ -44,9 +44,7 @@ const PositionPicker: React.FC<PositionPickerProps> = ({
 };
 
 const styles = StyleSheet.create({
-  dropdown: {
-    // Customize your dropdown style if needed
-  },
+  dropdown: {},
 });
 
 export default PositionPicker;

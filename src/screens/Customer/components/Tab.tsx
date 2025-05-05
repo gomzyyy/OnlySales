@@ -14,6 +14,8 @@ import ConfirmPayment from '../../../components/ConfirmPayment';
 import ScanQRToPay from '../../../components/ScanQRToPay';
 import {updateSoldProductStateAPI} from '../../../api/api.soldproduct';
 import {PaymentState} from '../../../../enums';
+import PDFPreViewer from '../../PDFViewer/components/PDFPreViewer';
+import InvoicePDFViewer from '../../PDFViewer/InvoicePDFViewer';
 
 type TabProps = {
   i: SoldProduct;
@@ -74,6 +76,8 @@ const Tab: React.FC<TabProps> = ({
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
+  const [openSINGLESoldProductPDFView, setOpenSINGLESoldProductPDFView] =
+    useState<boolean>(false);
 
   const [longPressActionOpen, setLongPressActionOpen] =
     useState<boolean>(false);
@@ -83,20 +87,26 @@ const Tab: React.FC<TabProps> = ({
   const handleCloseQRCode = () => {
     setWillingToPay(false);
   };
+  const handleCloseSINGLESoldProductViewer = () => {
+    setOpenSINGLESoldProductPDFView(false);
+  };
 
-  const handlePayButton = async (soldProduct?: SoldProduct) => {
-    if (soldProduct) {
-      const res = await updateSoldProductStateAPI({
-        query: {
-          role: user.role,
-          soldProductId: soldProduct._id,
-          updatedState: PaymentState.PENDING,
-        },
-      });
-      console.log(res);
-    }
+  const handlePayButton = async () => {
     setAskConfirmPayment(false);
     setWillingToPay(true);
+      await updateSoldProductStateAPI({
+        query: {
+          role: user.role,
+          updatedState: PaymentState.PENDING,
+        },
+        body: {
+          soldProducts: [i],
+        },
+      });
+  };
+  const handleInvoiceButton = () => {
+    setWillingToPay(false);
+    setOpenSINGLESoldProductPDFView(true);
   };
 
   const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', item?: SoldProduct) => {
@@ -248,7 +258,7 @@ const Tab: React.FC<TabProps> = ({
           currency={currency}
           callback={handlePayButton}
           editable={false}
-          soldProduct={i}
+          soldProducts={[i]}
         />
       </SlideUpContainer>
       <SlideUpContainer
@@ -260,10 +270,16 @@ const Tab: React.FC<TabProps> = ({
           payableAmount={payableAmount}
           cancel={handleCloseQRCode}
           currency={currency}
-          callback={handlePayButton}
+          callback={handleInvoiceButton}
           pa="gomzydhingra0001@okhdfcbank"
           pn="Khata App"
         />
+      </SlideUpContainer>
+      <SlideUpContainer
+        open={openSINGLESoldProductPDFView}
+        close={handleCloseSINGLESoldProductViewer}
+        height={deviceHeight * 0.5}>
+        <InvoicePDFViewer soldProducts={[i]} customer={i.buyer} />
       </SlideUpContainer>
     </LongPressEnabled>
   );

@@ -52,14 +52,15 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingHorizontal: 14,
-    paddingVertical: 18,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
     borderRadius: 8,
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap:8
+    gap:8,
+    width:'100%'
   },
   buttonText: {
     fontSize: 22,

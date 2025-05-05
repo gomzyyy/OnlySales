@@ -53,11 +53,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   );
 };
 const styles = StyleSheet.create({
-  searchQueryContainer: {},
+  searchQueryContainer: {
+    justifyContent:'center'
+  },
   searchQueryInput: {
     borderRadius: 8,
     height: 45,
-    fontSize: 20,
+    fontSize: 16,
     paddingHorizontal: 12,
     width: 'auto',
   },
