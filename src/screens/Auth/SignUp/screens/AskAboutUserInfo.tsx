@@ -17,11 +17,7 @@ import {navigate} from '../../../../utils/nagivationUtils';
 import BusinessTypePicker from '../../../../components/BusinessTypePicker';
 import {BusinessType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../../store/store';
 import {isValidEmail, showToast} from '../../../../service/fn';
-import CurrencyPicker from '../../../../components/CurrencyPicker';
-import {signupAPI} from '../../../../api/api.auth';
 import {ValidateReferralCodeOtpAPI} from '../../../../api/api.validate';
 
 type AskAboutUserInfoParams = {

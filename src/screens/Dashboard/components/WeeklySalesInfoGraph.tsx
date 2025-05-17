@@ -1,7 +1,4 @@
-import {
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, ScrollView, Text, View} from 'react-native';
 import React, {useRef, useState} from 'react';
 import {LineChart} from 'react-native-chart-kit';
 import {deviceWidth} from '../../../utils/Constants';
@@ -16,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {formatNumber} from '../../../service/fn';
 import {useTranslation} from 'react-i18next';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type MonthlySalesInfoGraphProps = {
   pressActions?: () => void;
@@ -111,7 +109,6 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
     }
     return labels;
   };
-
   return (
     <ScrollView
       horizontal={true}
@@ -121,53 +118,75 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
         borderRadius: 10,
         marginTop: 10,
       }}>
-      <LineChart
-        data={{
-          labels: getWeekdayLabels(),
-          datasets: [data],
-        }}
-        width={Math.max(deviceWidth, data.data.length * 90)}
-        height={220}
-        yAxisLabel={currency}
-        yAxisSuffix=""
-        chartConfig={{
-          backgroundGradientFrom: '#fff',
-          backgroundGradientTo: '#fff',
-          fillShadowGradient: currentTheme.baseColor,
-          fillShadowGradientOpacity: 1,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          barPercentage: 0.5,
-        }}
-        style={{borderRadius: 10}}
-        bezier
-        onDataPointClick={({index}) => handleDotTap(index)}
-        renderDotContent={({index, indexData, x, y}) =>
-          index === tappedIndex && (
-            <Animated.Text
-              key={index}
-              style={[
-                {
-                  position: 'absolute',
-                  left: x,
-                  top: y - 15,
-                  backgroundColor: '#fff',
-                  paddingHorizontal: 6,
-                  paddingVertical: 2,
-                  borderRadius: 6,
-                  fontSize: 12,
-                  fontWeight: '600',
-                  color: '#000',
-                  elevation: 2,
-                },
-                dotValueOpacityAnimationStyles,
-              ]}>
-              {indexData === 0
-                ? 'N/A'
-                : `${currency} ${formatNumber(indexData)}`}
-            </Animated.Text>
-          )
-        }
-      />
+      {!data.data.every(s => s === 0) ? (
+        <LineChart
+          data={{
+            labels: getWeekdayLabels(),
+            datasets: [data],
+          }}
+          width={Math.max(deviceWidth, data.data.length * 90)}
+          height={220}
+          yAxisLabel={currency}
+          yAxisSuffix=""
+          chartConfig={{
+            backgroundGradientFrom: '#fff',
+            backgroundGradientTo: '#fff',
+            fillShadowGradient: currentTheme.baseColor,
+            fillShadowGradientOpacity: 1,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            barPercentage: 0.5,
+          }}
+          style={{borderRadius: 10}}
+          bezier
+          onDataPointClick={({index}) => handleDotTap(index)}
+          renderDotContent={({index, indexData, x, y}) =>
+            index === tappedIndex && (
+              <Animated.Text
+                key={index}
+                style={[
+                  {
+                    position: 'absolute',
+                    left: x,
+                    top: y - 15,
+                    backgroundColor: '#fff',
+                    paddingHorizontal: 6,
+                    paddingVertical: 2,
+                    borderRadius: 6,
+                    fontSize: 12,
+                    fontWeight: '600',
+                    color: '#000',
+                    elevation: 2,
+                  },
+                  dotValueOpacityAnimationStyles,
+                ]}>
+                {indexData === 0
+                  ? 'N/A'
+                  : `${currency} ${formatNumber(indexData)}`}
+              </Animated.Text>
+            )
+          }
+        />
+      ) : (
+        <View
+          style={{
+            height: 220,
+            backgroundColor: currentTheme.contrastColor,
+            width: deviceWidth * 0.96,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Icon name="error" size={80} color={'#ababab'} />
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: '600',
+              fontStyle: 'italic',
+              color: '#ababab',
+            }}>
+           Are you on vacations this week?.
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };

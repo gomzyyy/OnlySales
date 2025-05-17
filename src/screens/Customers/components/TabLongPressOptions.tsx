@@ -76,7 +76,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           activeOpacity={0.8}
           onPress={handleDeleteEmployee}>
           <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            {loading ? t('cs_delete') : t('cs_deleting')}
+            {loading ? t('cs_deleting') : t('cs_delete')}
           </Text>
           {loading ? (
             <ActivityIndicator size={18} color={colors.danger} />

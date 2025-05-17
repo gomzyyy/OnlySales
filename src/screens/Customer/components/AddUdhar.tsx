@@ -52,7 +52,9 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   >([]);
   const [udharAmount, setUdharAmount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-
+  useEffect(() => {
+    console.log(selectedProducts);
+  }, [selectedProducts]);
   const handleNewUdhars = ({
     product,
     count,
@@ -113,6 +115,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     }
   };
   const handleAddUdharBtn = async () => {
+    let atLeastOneSuccess = false;
+    setLoading(true);
     try {
       for (const p of selectedProducts) {
         if (p.product && p.count > 0) {
@@ -124,22 +128,10 @@ const AddUdhar: React.FC<AddUdharProps> = ({
             },
             body: {productId: p.product._id!, count: p.count},
           };
-          close?.();
-          const res = await sellProductAPI(
-            data,
-            setLoading,
-          );
-          if (res.success) {
-            const userRes = await validateTokenAPI({role: user.role});
-            if (userRes.success && userRes.data && userRes.data.user) {
-              dispatch(setUser(userRes.data.user));
-            }
-            showToast({
-              type: 'success',
-              text1: t('c_addproduct_success'),
-            });
 
-            return;
+          const res = await sellProductAPI(data);
+          if (res.success) {
+            atLeastOneSuccess = true;
           } else {
             showToast({
               type: 'error',
@@ -147,25 +139,38 @@ const AddUdhar: React.FC<AddUdharProps> = ({
                 errorMessage: res.message,
               }),
             });
-            return;
           }
         } else {
           showToast({
             type: 'error',
             text1: t('c_addproduct_error_item', {productName: p.product?.name}),
           });
-          return;
         }
       }
-      showToast({
-        type: 'info',
-        text1: t('c_addproduct_error_generic'),
-      });
+      if (atLeastOneSuccess) {
+        // Refresh user info (optional: move this outside loop if only needed once)
+        const userRes = await validateTokenAPI({role: user.role});
+        if (userRes.success && userRes.data?.user) {
+          dispatch(setUser(userRes.data.user));
+        }
+        close?.();
+        showToast({
+          type: 'success',
+          text1: t('c_addproduct_success'),
+        });
+      } else {
+        showToast({
+          type: 'info',
+          text1: t('c_addproduct_error_generic'),
+        });
+      }
     } catch (err) {
       showToast({
         type: 'error',
         text1: t('c_addproduct_error_generic'),
       });
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {

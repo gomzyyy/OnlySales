@@ -31,7 +31,7 @@ const Customers = () => {
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <Header
         name={t('header_title')}
-        backButtom={true}
+        backButton={true}
         titleColor={currentTheme.header.textColor}
         customComponent={true}
         renderItem={
@@ -74,6 +74,7 @@ const Customers = () => {
           open={openCreateCustomer}
           close={handleCloseCreateCustomer}
           height={deviceHeight * 0.58}
+          // height= {deviceHeight * 0.82}
           >
             {/* <CreateUnknownPayment callback={handleCloseCreateCustomer} /> */}
           <CreateCustomer callback={handleCloseCreateCustomer} />

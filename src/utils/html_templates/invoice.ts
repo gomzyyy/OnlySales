@@ -99,7 +99,7 @@ const generateInvoiceHTML = ({
           <p><strong>Invoice ID:</strong> ${invoiceId}</p>
           <p><strong>Date:</strong> ${date}</p>
           <p><strong>Customer:</strong> ${customer.name}</p>
-          <p><strong>Phone:</strong> ${customer.phoneNumber?.value || 'N/A'}</p>
+          <p><strong>Phone:</strong> +91 ${customer.phoneNumber?.slice(0,5)+'*****' || 'N/A'}</p>
           <p><strong>Address:</strong> ${customer.address || 'N/A'}</p>
         </div>
 

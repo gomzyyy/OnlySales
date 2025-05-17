@@ -30,7 +30,7 @@ const Employees = () => {
     <View style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
       <Header
         name="Employees"
-        backButtom
+        backButton
         titleColor={currentTheme.header.textColor}
         customComponent
         renderItem={

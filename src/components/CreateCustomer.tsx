@@ -24,6 +24,7 @@ import {Employee, Partner} from '../../types';
 import {getOwnerAPI} from '../api/api.owner';
 import {setUser} from '../../store/slices/business';
 import {getUserAPI} from '../api/api.user';
+import {useStorage} from '../hooks';
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -35,6 +36,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const {warning} = useHaptics();
   const {currentTheme} = useTheme();
+ const {customer} = useStorage()
   const {role, _id} = useSelector((s: RootState) => s.appData.user)!;
   const [name, setName] = useState<string>('');
   const [phoneNumber, setphoneNumber] = useState<string>('');
@@ -67,7 +69,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
             .businessOwner._id) ||
         '',
     };
-    const res = await createCustomerAPI(
+    const res = await customer.create(
       {
         query: {role, createdBy: role, creatorId: _id},
         body: customerData,

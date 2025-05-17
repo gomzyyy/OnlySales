@@ -56,7 +56,7 @@ const EMICalculator: React.FC = (): React.JSX.Element => {
           name="EMI Calculator"
           headerBgColor={currentTheme.baseColor}
           titleColor={currentTheme.header.textColor}
-          backButtom
+          backButton
           customComponentActiveOpacity={1}
         />
 

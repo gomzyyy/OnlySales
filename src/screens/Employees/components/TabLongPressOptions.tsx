@@ -1,5 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import React, {useState} from 'react';
 import {colors, deviceHeight} from '../../../utils/Constants';
 import {Employee} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
@@ -26,6 +32,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   const user = useSelector((s: RootState) => s.appData.user)!;
   const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleDeleteEmployee = async (): Promise<void> => {
     const res = await Confirm(
@@ -65,9 +72,13 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           activeOpacity={0.8}
           onPress={handleDeleteEmployee}>
           <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            Delete
+            {loading ? 'deleting' : 'delete'}
           </Text>
-          <Icon name="delete" size={18} color={colors.danger} />
+          {loading ? (
+            <ActivityIndicator size={18} color={colors.danger} />
+          ) : (
+            <Icon name="delete" size={18} color={colors.danger} />
+          )}
         </TouchableOpacity>
       </View>
     </View>

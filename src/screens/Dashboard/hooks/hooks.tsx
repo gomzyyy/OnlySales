@@ -58,6 +58,7 @@ export type useQueryReturnType = {
   InventoryProductTab: FunctionComponent<InventoryProductTabProps>;
   message: string | undefined;
   foundInventory: Product[];
+  loading:boolean
 };
 type useQueryProps = {
   query: string;
@@ -90,7 +91,7 @@ const useQuery = ({query, close}: useQueryProps): useQueryReturnType => {
   const [selectedCustomer, setSelectedCustomer] = useState<
     Customer | undefined
   >(undefined);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [soldProductByDateQueryResult, setSoldProductByDateQueryResult] =
     useState<{date: string; products: SoldProduct[]}[]>([]);
 
@@ -157,7 +158,7 @@ const useQuery = ({query, close}: useQueryProps): useQueryReturnType => {
             },
             image: {},
           };
-          const res = await createCustomerByNameWithQuery(data);
+          const res = await createCustomerByNameWithQuery(data, setLoading);
           if (res.success) {
             const userRes = await validateTokenAPI({role: user.role});
             if (userRes.success && userRes.data && userRes.data.user) {
@@ -254,6 +255,7 @@ const useQuery = ({query, close}: useQueryProps): useQueryReturnType => {
     message,
     foundInventory,
     InventoryProductTab,
+    loading
   };
 };
 

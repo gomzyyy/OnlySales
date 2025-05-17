@@ -15,14 +15,14 @@ import {
 
 type HeaderProps = {
   searchBar?: boolean;
-  backButtom?: boolean;
+  backButton?: boolean;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
 };
 
 const Header: React.FC<HeaderProps> = ({
   searchBar = true,
-  backButtom = false,
+  backButton = false,
   setQuery,
   query
 }): React.JSX.Element => {
@@ -67,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({
         borderBottomRightRadius: 10,
         elevation: 10,
       }}>
-      {backButtom && (
+      {backButton && (
         <Pressable style={styles.leftActionBtn} onPress={() => back()}>
           <Icon1 name="left" size={24} color={currentTheme.header.textColor} />
         </Pressable>

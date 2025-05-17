@@ -76,7 +76,7 @@ const Tab: React.FC<TabProps> = ({
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
-  const [openSINGLESoldProductPDFView, setOpenSINGLESoldProductPDFView] =
+  const [openSoldProductPDFView, setOpenSoldProductPDFView] =
     useState<boolean>(false);
 
   const [longPressActionOpen, setLongPressActionOpen] =
@@ -87,8 +87,8 @@ const Tab: React.FC<TabProps> = ({
   const handleCloseQRCode = () => {
     setWillingToPay(false);
   };
-  const handleCloseSINGLESoldProductViewer = () => {
-    setOpenSINGLESoldProductPDFView(false);
+  const handleCloseSoldProductInvoiceViewer = () => {
+    setOpenSoldProductPDFView(false);
   };
 
   const handlePayButton = async () => {
@@ -106,7 +106,7 @@ const Tab: React.FC<TabProps> = ({
   };
   const handleInvoiceButton = () => {
     setWillingToPay(false);
-    setOpenSINGLESoldProductPDFView(true);
+    setOpenSoldProductPDFView(true);
   };
 
   const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', item?: SoldProduct) => {
@@ -276,10 +276,10 @@ const Tab: React.FC<TabProps> = ({
         />
       </SlideUpContainer>
       <SlideUpContainer
-        open={openSINGLESoldProductPDFView}
-        close={handleCloseSINGLESoldProductViewer}
+        open={openSoldProductPDFView}
+        close={handleCloseSoldProductInvoiceViewer}
         height={deviceHeight * 0.5}>
-        <InvoicePDFViewer soldProducts={[i]} customer={i.buyer} />
+        <InvoicePDFViewer soldProducts={[i]} customer={i.buyer} closeViewer={handleCloseSoldProductInvoiceViewer} />
       </SlideUpContainer>
     </LongPressEnabled>
   );

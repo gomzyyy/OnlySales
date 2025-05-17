@@ -23,14 +23,14 @@ type FilePickerProps = {
   setState: Dispatch<SetStateAction<string | undefined>>;
   callback?: () => void;
   enabled?: boolean;
-  type: 'image' | 'video' | 'mixed';
+  type?: 'image' | 'video' | 'mixed';
 };
 const FilePicker: React.FC<FilePickerProps> = ({
   value,
   setState,
   callback,
   enabled = true,
-  type,
+  type='image',
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const getImageFromImageLiberary = async () => {

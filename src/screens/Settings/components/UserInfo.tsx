@@ -1,8 +1,8 @@
-import { View, StyleSheet, Image, Text, Pressable } from 'react-native';
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Employee, Owner, Partner } from '../../../../types';
+import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
+import React, {Dispatch, SetStateAction, useState} from 'react';
+import {Employee, Owner, Partner} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
-import { useTheme } from '../../../hooks/index';
+import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/SimpleLineIcons';
 import FilePicker from '../../../components/FilePicker';
@@ -21,7 +21,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
   profileImageValue,
   setProfileImageValue = () => {},
 }): React.JSX.Element => {
-  const { currentTheme } = useTheme();
+  const {currentTheme} = useTheme();
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
   const handleCloseImagePicker = () => setOpenImagePicker(false);
   const handleOpenImagePicker = () => {
@@ -33,46 +33,56 @@ const UserInfo: React.FC<UserInfoProps> = ({
     <View
       style={[
         styles.userInfoParentContainer,
-        { backgroundColor: currentTheme.contrastColor },
-      ]}
-    >
+        {backgroundColor: currentTheme.contrastColor},
+      ]}>
       <Pressable
         style={styles.profileImageContainer}
-        onPress={handleOpenImagePicker}
-      >
+        onPress={handleOpenImagePicker}>
         <Image
           source={
             profileImageValue && profileImageValue.trim().length !== 0
-              ? { uri: profileImageValue }
+              ? {uri: profileImageValue}
               : NoProfile
           }
-          style={styles.profileImage}
+          style={[styles.profileImage, {borderColor: currentTheme.baseColor}]}
         />
       </Pressable>
       <View style={styles.userInfoContainer}>
-        <Text style={[styles.name, { color: currentTheme.baseColor }]}>
+        <Text style={[styles.name, {color: currentTheme.baseColor}]}>
           {user.name}
         </Text>
         {user.phoneNumber?.value && (
           <View style={styles.phoneNumberContainer}>
             <Icon name="mobile1" color={currentTheme.baseColor} size={12} />
-            <Text style={[styles.phoneNumber, { color: currentTheme.baseColor }]}>
-              : {secure ? `+91-${user.phoneNumber.value.slice(0, 5)}*****` : `+91-${user.phoneNumber.value}`}
+            <Text style={[styles.phoneNumber, {color: currentTheme.baseColor}]}>
+              :{' '}
+              {secure
+                ? `+91-${user.phoneNumber.value.slice(0, 5)}*****`
+                : `+91-${user.phoneNumber.value}`}
             </Text>
           </View>
         )}
         {user.email?.value && (
           <View style={styles.emailContainer}>
             <Icon name="mail" color={currentTheme.baseColor} size={12} />
-            <Text style={[styles.email, { color: currentTheme.baseColor }]}>
-              : {user.email.value}
+            <Text
+              ellipsizeMode="tail"
+              style={[styles.email, {color: currentTheme.baseColor}]}>
+              :{' '}
+              {secure
+                ? `${user.email.value.slice(0, 3)}***@***.com`
+                : user.email.value}
             </Text>
           </View>
         )}
         {user.address && (
           <View style={styles.addressContainer}>
-            <Icon1 name="location-pin" color={currentTheme.baseColor} size={12} />
-            <Text style={[styles.address, { color: currentTheme.baseColor }]}>
+            <Icon1
+              name="location-pin"
+              color={currentTheme.baseColor}
+              size={12}
+            />
+            <Text style={[styles.address, {color: currentTheme.baseColor}]}>
               : {user.address}
             </Text>
           </View>
@@ -82,8 +92,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
         open={openImagePicker}
         close={handleCloseImagePicker}
         opacity={0.2}
-        height={220}
-      >
+        height={220}>
         <FilePicker
           value={profileImageValue}
           setState={setProfileImageValue}
@@ -102,18 +111,16 @@ const UserInfo: React.FC<UserInfoProps> = ({
           top: 10,
           alignItems: 'center',
           justifyContent: 'center',
-        }}
-      >
+        }}>
         <Text
           style={{
             color: currentTheme.contrastColor,
             textAlign: 'center',
             fontSize: 14,
             fontWeight: '600',
-            paddingVertical:1,
-            paddingHorizontal:3
-          }}
-        >
+            paddingVertical: 1,
+            paddingHorizontal: 3,
+          }}>
           {user.role}
         </Text>
       </View>
@@ -140,6 +147,7 @@ const styles = StyleSheet.create({
     width: 'auto',
     resizeMode: 'cover',
     borderRadius: 45,
+    borderWidth: 2,
   },
   userInfoContainer: {
     justifyContent: 'center',
@@ -160,9 +168,10 @@ const styles = StyleSheet.create({
   emailContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingRight: 30,
   },
   email: {
-    fontSize: 16,
+    fontSize: 14,
     textAlignVertical: 'center',
   },
   addressContainer: {

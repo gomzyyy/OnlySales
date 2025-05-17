@@ -17,7 +17,7 @@ const UITest = () => {
         headerBgColor={currentTheme.baseColor}
         curved={true}
         name="Map"
-        backButtom={true}
+        backButton={true}
       />
       <View
         style={{

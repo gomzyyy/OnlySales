@@ -130,42 +130,16 @@ const {t} = useTranslation('customer')
           pressAction={() => openConfirmPay('WHOLE')}
         />
       )}
-      {/* <SlideUpContainer
-        open={askConfirmPayment}
-        close={handleCloseConfirmPayment}
-        opacity={0.4}
-        height={deviceHeight * 0.5}
-        >
-        <ConfirmPayment
-          value={payableAmount}
-          setState={setPayableAmount}
-          cancel={handleCloseConfirmPayment}
-          currency={currency}
-          callback={handleCloseConfirmPayment}
-          soldProduct={products}
-        />
-      </SlideUpContainer> */}
-      {/* <SlideUpContainer
-        open={askConfirmPayment}
-        close={handleCloseConfirmPayment}
-        opacity={0.4}>
-        <ConfirmPayment
-          payableAmount={payableAmount}
-          cancel={handleCloseConfirmPayment}
-          currency={currency}
-          callback={handleCloseConfirmPayment}
-        />
-      </SlideUpContainer> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight * 0.8,
+    height: deviceHeight * 0.9,
     backgroundColor: 'white',
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    marginBottom: 10,
+    borderRadius: 20,
     paddingVertical: 20,
   },
   label: {

@@ -7,13 +7,16 @@ import {
   Platform,
   TouchableOpacity,
   ActivityIndicator,
-  ScrollView, // Ensure this is imported for scrolling
+  ScrollView,
+  Pressable, // Ensure this is imported for scrolling
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {showToast} from '../service/fn';
 import {useTheme, useHaptics} from '../hooks';
 import {UnknownPaymentType, PaymentState} from '../../enums';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
 
 type PartyInfo = {
   name: string;
@@ -54,12 +57,21 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
 }) => {
   const {currentTheme} = useTheme();
   const {warning} = useHaptics();
+  const user = useSelector((s: RootState) => s.appData.user)!;
 
   const [type, setType] = useState<UnknownPaymentType>(
     UnknownPaymentType.CREDIT,
   );
   const [state, setState] = useState<PaymentState>(PaymentState.UNPAID);
   const [paymentDescription, setPaymentDescription] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [selectedRole, setSelectedRole] = useState<'payee' | 'paying' | null>(
+    null,
+  );
+  const [isPaying, setIsPaying] = useState<boolean | null>(null);
+  const [addDescription, setAddDescription] = useState<boolean>(false);
+
   const [to, setTo] = useState<PartyInfo>({
     name: '',
     phoneNumber: '',
@@ -75,7 +87,6 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
   const [items, setItems] = useState<Item[]>([
     {name: '', price: '', quantity: ''},
   ]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleAddItem = () => {
     setItems(prev => [...prev, {name: '', price: '', quantity: ''}]);
@@ -127,6 +138,144 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
     }
   };
 
+  const RadioButton = ({
+    label,
+    value,
+    setValue,
+  }: {
+    label: string;
+    value: boolean;
+    setValue: Dispatch<SetStateAction<boolean>>;
+  }) => {
+    return (
+      <Pressable
+        style={{
+          marginBottom: 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+        }}
+        onPress={() => setValue(!value)}>
+        <Text
+          style={[
+            styles.inputLabel,
+            {
+              color: currentTheme.modal.title,
+              fontStyle: 'italic',
+              fontWeight: '600',
+              fontSize: 16,
+            },
+          ]}>
+          {label}
+        </Text>
+        <View
+          style={{
+            height: 14,
+            width: 14,
+            borderRadius: 7,
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          {value && (
+            <View
+              style={{
+                backgroundColor: currentTheme.baseColor,
+                height: '70%',
+                width: '70%',
+                borderRadius: 50,
+              }}
+            />
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  const RadioButtonTooglePayee = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: 'payee' | 'paying';
+  }) => {
+    const selected = selectedRole === value;
+    return (
+      <Pressable
+        style={{
+          marginBottom: 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+        }}
+        onPress={() => setSelectedRole(value)}>
+        <Text
+          style={[
+            styles.inputLabel,
+            {
+              color: currentTheme.modal.title,
+              fontStyle: 'italic',
+              fontWeight: '600',
+              fontSize: 16,
+            },
+          ]}>
+          {label}
+        </Text>
+        <View
+          style={{
+            height: 14,
+            width: 14,
+            borderRadius: 7,
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          {selected && (
+            <View
+              style={{
+                backgroundColor: currentTheme.baseColor,
+                height: '70%',
+                width: '70%',
+                borderRadius: 50,
+              }}
+            />
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  useEffect(() => {
+    if (selectedRole === null) return;
+    if (selectedRole === 'payee') {
+      setTo({
+        phoneNumber: user.phoneNumber?.value || '',
+        address: user.address || '',
+        email: user.email?.value || '',
+        name: user.name,
+      });
+      setFrom({
+        phoneNumber: '',
+        address: '',
+        email: '',
+        name: '',
+      });
+    } else if (selectedRole === 'paying') {
+      setFrom({
+        phoneNumber: user.phoneNumber?.value || '',
+        address: user.address || '',
+        email: user.email?.value || '',
+        name: user.name,
+      });
+      setTo({
+        phoneNumber: '',
+        address: '',
+        email: '',
+        name: '',
+      });
+    }
+  }, [selectedRole]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -134,74 +283,73 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
       <Text style={[styles.title, {color: currentTheme.modal.title}]}>
         Unknown Payment
       </Text>
-
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Payment Description */}
-        <View style={styles.inputTitleContainer}>
-          <Text style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-            Payment Description
-          </Text>
-          <TextInput
-            style={[
-              styles.input,
-              {borderColor: currentTheme.modal.inputBorder},
-            ]}
-            placeholder="Enter payment description"
-            value={paymentDescription}
-            onChangeText={setPaymentDescription}
-          />
-        </View>
-
+      <View style={{flexDirection: 'row', gap: 12}}>
+        <RadioButtonTooglePayee label="I am the payee.." value="payee" />
+        <RadioButtonTooglePayee label="no, I am paying.." value="paying" />
+      </View>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}>
         {/* To */}
         <Text style={[styles.sectionTitle, {color: currentTheme.modal.title}]}>
-          To
+          To:
         </Text>
-        {Object.keys(to).map(field => (
-          <View style={styles.inputTitleContainer} key={field}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              To {field}
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder={`Enter ${field}`}
-              value={to[field as keyof PartyInfo]}
-              onChangeText={val => setTo(prev => ({...prev, [field]: val}))}
-            />
-          </View>
-        ))}
+        {Object.keys(to)
+          .reverse()
+          .map(field => (
+            <View style={styles.inputTitleContainer} key={field}>
+              <Text
+                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+                {field}:
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder={`enter ${field}`}
+                placeholderTextColor={'#999'}
+                value={to[field as keyof PartyInfo]}
+                onChangeText={val => setTo(prev => ({...prev, [field]: val}))}
+              />
+            </View>
+          ))}
 
         {/* From */}
         <Text style={[styles.sectionTitle, {color: currentTheme.modal.title}]}>
-          From
+          From:
         </Text>
-        {Object.keys(from).map(field => (
-          <View style={styles.inputTitleContainer} key={field}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              From {field}
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder={`Enter ${field}`}
-              value={from[field as keyof PartyInfo]}
-              onChangeText={val => setFrom(prev => ({...prev, [field]: val}))}
-            />
-          </View>
-        ))}
+        {Object.keys(from)
+          .reverse()
+          .map(field => (
+            <View style={styles.inputTitleContainer} key={field}>
+              <Text
+                style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+                {field}:
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder={`enter ${field}`}
+                placeholderTextColor={'#999'}
+                value={from[field as keyof PartyInfo]}
+                onChangeText={val => setFrom(prev => ({...prev, [field]: val}))}
+              />
+            </View>
+          ))}
 
         {/* Items */}
         <Text style={[styles.sectionTitle, {color: currentTheme.modal.title}]}>
-          Items
+          Items:
         </Text>
         {items.map((item, idx) => (
           <View key={idx}>
+            <Text
+              style={[styles.sectionTitle, {color: currentTheme.modal.title}]}>
+              Item {idx + 1}:
+            </Text>
             {(['name', 'price', 'quantity'] as (keyof Item)[]).map(field => (
               <View style={styles.inputTitleContainer} key={field}>
                 <Text
@@ -214,7 +362,8 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
                     styles.input,
                     {borderColor: currentTheme.modal.inputBorder},
                   ]}
-                  placeholder={`Enter ${field}`}
+                  placeholder={`enter ${field}`}
+                  placeholderTextColor={'#999'}
                   value={item[field]}
                   keyboardType={field === 'name' ? 'default' : 'numeric'}
                   onChangeText={val => handleChangeItem(idx, field, val)}
@@ -223,11 +372,54 @@ const CreateUnknownPayment: React.FC<CreateUnknownPaymentProps> = ({
             ))}
           </View>
         ))}
-        <TouchableOpacity onPress={handleAddItem}>
-          <Text style={[styles.addItemBtn, {color: currentTheme.modal.title}]}>
-            + Add Item
-          </Text>
-        </TouchableOpacity>
+        <View
+          style={{
+            alignItems: 'flex-end',
+          }}>
+          <TouchableOpacity onPress={handleAddItem}>
+            <Text
+              style={[
+                styles.addItemBtn,
+                {
+                  color: currentTheme.baseColor,
+                  backgroundColor: currentTheme.fadeColor,
+                  paddingHorizontal: 4,
+                  paddingVertical: 2,
+                  borderRadius: 8,
+                },
+              ]}>
+              + Add Item
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Payment Description */}
+        <RadioButton
+          label="Add description"
+          value={addDescription}
+          setValue={setAddDescription}
+        />
+        {addDescription && (
+          <View style={[styles.inputTitleContainer]}>
+            <Text
+              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+              Payment Description
+            </Text>
+            <TextInput
+              style={[
+                styles.descriptionInput,
+                {borderColor: currentTheme.modal.inputBorder},
+              ]}
+              placeholder="describe here."
+              placeholderTextColor={'#999'}
+              textAlignVertical="top"
+              textAlign="left"
+              value={paymentDescription}
+              onChangeText={setPaymentDescription}
+              maxLength={100}
+            />
+          </View>
+        )}
 
         {/* Save Button */}
         <TouchableOpacity
@@ -276,6 +468,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontWeight: '600',
     fontSize: 18,
+    fontStyle: 'italic',
   },
   inputTitleContainer: {
     marginBottom: 12,
@@ -290,6 +483,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     height: 50,
+    fontSize: 18,
+    paddingHorizontal: 12,
+  },
+  descriptionInput: {
+    borderWidth: 2,
+    borderRadius: 8,
+    height: 160,
     fontSize: 18,
     paddingHorizontal: 12,
   },

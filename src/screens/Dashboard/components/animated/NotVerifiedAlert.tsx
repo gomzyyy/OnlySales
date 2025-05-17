@@ -29,7 +29,7 @@ const NotVerifiedAlert = () => {
     let unverifiedAlertAnimatedStylesToogleTimeoutId: NodeJS.Timeout | null;
     if (user.email && !user.email.verified) {
       unverifiedAlertAnimatedStylesToogleTimeoutId = setTimeout(
-        () => (unverifiedAlertHeight.value = 30),
+        () => (unverifiedAlertHeight.value = 24),
         1500,
       );
     }
@@ -57,7 +57,7 @@ const NotVerifiedAlert = () => {
         },
         unverifiedAlertAnimatedStyles,
       ]}>
-      <Text style={{fontSize: 16, color: colors.danger}}>
+      <Text style={{fontSize: 14, color: colors.danger}}>
         {t('d_email_not_verified')}
       </Text>
       <View
@@ -72,7 +72,7 @@ const NotVerifiedAlert = () => {
             unverifiedAlertHeight.value = 0;
             navigate('RequestOTPEmail');
           }}>
-          <Text style={{fontSize: 16, color: currentTheme.baseColor}}>
+          <Text style={{fontSize: 14, color: currentTheme.baseColor}}>
             {t('d_email_not_verified_clicktoverify')}
           </Text>
         </Pressable>

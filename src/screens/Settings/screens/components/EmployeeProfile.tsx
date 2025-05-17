@@ -27,7 +27,7 @@ const EmployeeProfile = () => {
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
           name="Employee Details"
-          backButtom
+          backButton
           headerBgColor={currentTheme.baseColor}
           titleColor={currentTheme.header.textColor}
           curved={true}

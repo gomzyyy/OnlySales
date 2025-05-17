@@ -8,7 +8,7 @@ const ChangeTheme = () => {
   const {currentTheme} = useTheme();
   return (
     <View style={styles.parent}>
-      <Header backButtom showTitle={false} />
+      <Header backButton showTitle={false} />
       <View style={styles.container}>
         <Text style={styles.headerTitle}>
           Please Choose a theme as per your preference.

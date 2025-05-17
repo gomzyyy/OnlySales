@@ -106,7 +106,7 @@ const SetPasscode = () => {
   }, [currPasscode]);
   return (
     <>
-      <Header name="Set a new Passcode" backButtom={true} />
+      <Header name="Set a new Passcode" backButton={true} />
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     width: 150,
     justifyContent: 'center',
   },
-  pressableText: {fontSize: 22, fontWeight: 'bold'},
+  pressableText: {fontSize: 18, fontWeight: 'bold'},
 });
 
 export default PressableContainer;

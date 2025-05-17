@@ -17,7 +17,7 @@ type HeaderProps = {
   showTitle?: boolean;
   titleColor?: string;
   headerBgColor?: string;
-  backButtom?: boolean;
+  backButton?: boolean;
   menuButton?: boolean;
   customComponent?: boolean;
   renderItem?: ReactNode;
@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({
   showTitle = true,
   titleColor = '#000',
   headerBgColor,
-  backButtom = false,
+  backButton = false,
   menuButton = false,
   customComponent = false,
   renderItem,
@@ -75,12 +75,12 @@ const Header: React.FC<HeaderProps> = ({
         borderBottomRightRadius: curved ? 10 : 0,
         borderBottomLeftRadius: curved ? 10 : 0,
       }}>
-      {!backButtom && menuButton && (
+      {!backButton && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>
           <Icon2 name="menu" size={24} color={titleColor} />
         </Pressable>
       )}
-      {backButtom && !menuButton && (
+      {backButton && !menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={() => back()}>
           <Icon1 name="left" size={24} color={titleColor} />
         </Pressable>
@@ -96,41 +96,40 @@ const Header: React.FC<HeaderProps> = ({
                 fontWeight: 'bold',
                 color: titleColor,
               }}>
-              {name}
+              {name.slice(0,12)}
             </Text>
           )}
         </View>
       )}
       <View style={[styles.rightCustomBtn, {right: 20}]}>
-      {customComponent && (
-        <TouchableOpacity
-          activeOpacity={customComponentActiveOpacity}
-          onPress={customAction}
-          // style={[styles.rightCustomBtn, {right: 20}]}
+        {customComponent && (
+          <TouchableOpacity
+            activeOpacity={customComponentActiveOpacity}
+            onPress={customAction}
+            // style={[styles.rightCustomBtn, {right: 20}]}
           >
-          {renderItem}
-        </TouchableOpacity>
-      )}
-      {customComponent && renderItem1 && (
-        <TouchableOpacity
-          activeOpacity={customComponentActiveOpacity}
-          onPress={customAction1}
-          // style={[styles.rightCustomBtn, {right: 60}]}
+            {renderItem}
+          </TouchableOpacity>
+        )}
+        {customComponent && renderItem1 && (
+          <TouchableOpacity
+            activeOpacity={customComponentActiveOpacity}
+            onPress={customAction1}
+            // style={[styles.rightCustomBtn, {right: 60}]}
           >
-          {renderItem1}
-        </TouchableOpacity>
-      )}
-      {customComponent && renderItem2 && (
-        <TouchableOpacity
-          activeOpacity={customComponentActiveOpacity}
-          onPress={customAction2}
-          // style={[styles.rightCustomBtn, {right: 100}]}
+            {renderItem1}
+          </TouchableOpacity>
+        )}
+        {customComponent && renderItem2 && (
+          <TouchableOpacity
+            activeOpacity={customComponentActiveOpacity}
+            onPress={customAction2}
+            // style={[styles.rightCustomBtn, {right: 100}]}
           >
-          {renderItem2}
-        </TouchableOpacity>
-      )}
+            {renderItem2}
+          </TouchableOpacity>
+        )}
       </View>
-      
     </View>
   );
 };
@@ -142,8 +141,8 @@ const styles = StyleSheet.create({
   },
   rightCustomBtn: {
     position: 'absolute',
-    flexDirection:'row',
-    gap:8
+    flexDirection: 'row',
+    gap: 8,
   },
 });
 

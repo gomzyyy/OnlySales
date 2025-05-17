@@ -248,7 +248,7 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
         name={employee.name}
         headerBgColor={currentTheme.baseColor}
         titleColor={currentTheme.header.textColor}
-        backButtom
+        backButton
         customComponent={true}
         renderItem={<ToggleEditMode />}
         customAction={toogleEditState}

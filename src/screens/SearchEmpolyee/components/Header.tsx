@@ -12,12 +12,12 @@ import { resetSearchResults, setSearchResult } from '../../../../store/slices/bu
 
 type HeaderProps = {
   searchBar?: boolean;
-  backButtom?: boolean;
+  backButton?: boolean;
 };
 
 const Header: React.FC<HeaderProps> = ({
   searchBar = true,
-  backButtom = false,
+  backButton = false,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
         borderBottomRightRadius: 10,
         elevation: 10,
       }}>
-      {backButtom && (
+      {backButton && (
         <Pressable style={styles.leftActionBtn} onPress={() => back()}>
           <Icon1 name="left" size={24} color={currentTheme.header.textColor} />
         </Pressable>

@@ -196,7 +196,7 @@ const SearchFeatures = () => {
 
   return (
     <View style={styles.parent}>
-      <Header backButtom setQuery={setQuery} query={query} />
+      <Header backButton setQuery={setQuery} query={query} />
       <View style={[styles.contentContainer]}>
         {searchResults.length === 0 ? (
           <View

@@ -6,6 +6,7 @@ import React from 'react';
 import {PersistGate} from 'redux-persist/integration/react';
 import UserSliceFunction from './slices/business';
 import DeviceInfoSliceFunction from './slices/device';
+import CacheSliceFunction from './slices/cache';
 
 const persistConfig = {
   key: 'eregadsdnfswuea9ddartbwfetr',
@@ -16,6 +17,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   appData: UserSliceFunction,
   deviceInfo: DeviceInfoSliceFunction,
+  cache: CacheSliceFunction,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -25,6 +27,7 @@ const store = configureStore({
   middleware: GetDefaultMiddleware =>
     GetDefaultMiddleware({
       serializableCheck: false,
+      immutableCheck: false,
     }),
 });
 

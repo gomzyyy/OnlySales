@@ -1,7 +1,9 @@
-import {Alert} from 'react-native';
+import {Alert, Platform, ToastAndroid} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {v4 as uuidv4} from 'uuid';
 import {User} from '../../types';
+import Clipboard from '@react-native-clipboard/clipboard';
+
 type ShowToastFunction = {
   type: 'success' | 'error' | 'info';
   text1: string;
@@ -143,5 +145,15 @@ export const formatNumber = (num: number): string => {
     return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
   } else {
     return num.toString();
+  }
+};
+
+export const copyTextToClipboard = (text: string, notifyOnCopy = true) => {
+  Clipboard.setString(text);
+  if (!notifyOnCopy) return;
+  if (Platform.OS === 'android') {
+    ToastAndroid.show('Referral code copied!', ToastAndroid.SHORT);
+  } else {
+    Alert.alert('Copied', 'Referral code copied to clipboard!');
   }
 };

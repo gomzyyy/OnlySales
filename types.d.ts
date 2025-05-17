@@ -151,7 +151,17 @@ export interface Location extends CommonProps {
   };
 }
 
-export interface Customer extends User {
+export interface Customer extends CommonProps {
+  name: string;
+  phoneNumber?: string;
+  image?: string | undefined;
+  email?: {
+    value: string;
+    verified: boolean;
+  };
+  address?: string;
+  userId: string;
+  location: Location;
   businessOwner: Owner;
   buyedProducts: SoldProduct[];
   createdBy: Owner | Partner | Employee;
@@ -178,7 +188,7 @@ export interface OwnerProperties {
 
 export interface Owner extends User {
   referralCode: string;
-  credits: Number;
+  credits: number;
   reviews: Review[];
   recommendations: Customer[];
   password: string;

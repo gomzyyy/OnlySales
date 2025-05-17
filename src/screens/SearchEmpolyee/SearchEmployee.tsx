@@ -15,7 +15,7 @@ const SearchEmployee = () => {
   );
   return (
     <View style={styles.parent}>
-      <Header backButtom />
+      <Header backButton />
       <View style={[styles.contentContainer]}>
         {employeeResults.length === 0 ? (
           <EmptyListMessage title="Try searching by name." />

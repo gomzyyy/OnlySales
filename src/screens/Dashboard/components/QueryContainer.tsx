@@ -1,8 +1,17 @@
-import {View, Text, ScrollView, TextInput, StyleSheet} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
+import React, {useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
 import {useTheme} from '../../../hooks';
 import useQuery from '../hooks/hooks';
+import Icon from 'react-native-vector-icons/Octicons';
+import {navigate} from '../../../utils/nagivationUtils';
 
 type QueryContainerProps = {
   close?: any;
@@ -21,6 +30,7 @@ const QueryContainer: React.FC<QueryContainerProps> = ({
     message,
     foundInventory,
     InventoryProductTab,
+    loading,
   } = useQuery({query, close});
 
   return (
@@ -33,24 +43,38 @@ const QueryContainer: React.FC<QueryContainerProps> = ({
         borderRadius: 20,
         paddingHorizontal: 20,
         paddingVertical: 10,
+        position: 'relative',
       }}>
+      <Pressable
+        style={{position: 'absolute', top: 14, right: 10}}
+        onPress={() => {
+          close && close();
+          setTimeout(()=>navigate('ReservedKeywords'),200)
+        }}>
+        <Icon name="info" size={16} />
+      </Pressable>
+      <Text style={{fontSize: 20, fontWeight: 600, textAlign: 'center'}}>
+        Run a Query
+      </Text>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <Text style={{fontSize: 20, fontWeight: 600, textAlign: 'center'}}>
-          Run a Query
-        </Text>
         <View style={{justifyContent: 'center'}}>
           <TextInput
             value={query}
             onChangeText={setQuery}
             style={[
               styles.inputText,
-              {borderColor: currentTheme.modal.inputBorder},
+              {
+                borderColor: loading
+                  ? currentTheme.bgColor
+                  : currentTheme.modal.inputBorder,
+              },
             ]}
             placeholder="enter your query"
             placeholderTextColor={'grey'}
+            readOnly={loading}
           />
           <Text style={{fontSize: 12, fontWeight: '600', paddingLeft: 14}}>
-            {message || 'test message'}
+            {message}
           </Text>
         </View>
 

@@ -8,7 +8,6 @@ import LogoutButton from './components/LogoutButton';
 import AppSettings from './components/AppSettings';
 import {useTheme} from '../../hooks';
 import UserInfo from './components/UserInfo';
-import BottomTabs from '../../components/BottomTabs';
 
 const Settings = () => {
   const {currentTheme} = useTheme();
@@ -18,7 +17,7 @@ const Settings = () => {
     <View style={styles.parent}>
       <Header
         name="Settings"
-        backButtom
+        backButton
         headerBgColor={currentTheme.baseColor}
         titleColor={currentTheme.header.textColor}
       />

@@ -155,12 +155,12 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   textLabel: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   textInfo: {
-    fontSize: 22,
+    fontSize: 20,
     textAlign: 'center',
   },
   searchQueryContainer: {

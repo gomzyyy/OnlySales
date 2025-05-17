@@ -8,17 +8,20 @@ import {
   ScrollView,
   Platform,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {Customer} from '../../types';
-import {AppDispatch} from '../../store/store';
-import {useDispatch} from 'react-redux';
-import Tab from '../screens/Customer/components/Tab';
+import {AppDispatch, RootState} from '../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
 import {showToast} from '../service/fn';
-import {useTheme} from '../hooks/index';
+import {useAnalytics, useStorage, useTheme} from '../hooks';
 import SlideUpContainer from './SlideUpContainer';
 import FilePicker from './FilePicker';
+import {updateCustomerAPI} from '../api/api.customer';
+import {validateTokenAPI} from '../api/api.auth';
+import {setUser} from '../../store/slices/business';
 
 type EditCustomerProps = {
   i: Customer;
@@ -30,20 +33,49 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
   close,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
+  const {owner} = useAnalytics();
+   const {customer} = useStorage()
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((s: RootState) => s.appData.user)!;
   const [name, setName] = useState<string>(i.name);
-  const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber?.value || '');
+  const [phoneNumber, setphoneNumber] = useState<string>(i.phoneNumber || '');
   const [image, setImage] = useState<string | undefined>(undefined);
   const [address, setAddress] = useState<string>(i.address || '');
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const SaveUpdatedCustomer = () => {
+  const SaveUpdatedCustomer = async () => {
     if (name.trim().length === 0) {
       showToast({type: 'info', text1: "Name can't be empty"});
       close();
       return;
     }
-    // dispatch(updateCustomer({...i, name,image,phoneNumber,address}));
+    if (phoneNumber.length > 0 && phoneNumber.length !== 10) {
+      showToast({type: 'info', text1: 'Enter a valid phone number'});
+      close();
+      return;
+    }
+    const data = {
+      query: {
+        customerId: i._id,
+        ownerId: owner._id,
+        role: user.role,
+      },
+      body: {
+        name,
+        phoneNumber,
+        address,
+      },
+      media: {image},
+    };
+    const res = await customer.update(data, setLoading);
+    if (res.success) {
+      const userRes = await validateTokenAPI({role: user.role});
+      if (userRes.success && userRes.data && userRes.data.user) {
+        dispatch(setUser(userRes.data.user));
+      }
+    }
+    showToast({type: res.success ? 'success' : 'error', text1: res.message});
     close();
   };
   const closeImagePicker = () => setOpenImagePicker(false);
@@ -55,9 +87,12 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-        Edit Customer: {i.name}
+        Edit {i.name}
       </Text>
-      <ScrollView style={{flex: 1}} nestedScrollEnabled showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{flex: 1}}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
             <Text
@@ -131,26 +166,47 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
             ]}
             activeOpacity={0.8}
             onPress={SaveUpdatedCustomer}>
-            <Text
-              style={[
-                styles.saveButtonText,
-                {color: currentTheme.modal.saveBtnText},
-              ]}>
-              Save
-            </Text>
+            {loading ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 6,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.saveButtonText,
+                    {color: currentTheme.modal.saveBtnText},
+                  ]}>
+                  Please wait
+                </Text>
+                <ActivityIndicator
+                  size={18}
+                  color={currentTheme.contrastColor}
+                />
+              </View>
+            ) : (
+              <Text
+                style={[
+                  styles.saveButtonText,
+                  {color: currentTheme.modal.saveBtnText},
+                ]}>
+                Save
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
         <SlideUpContainer
           opacity={0.2}
           open={openImagePicker}
           close={closeImagePicker}
-          height={220}
-          >
+          height={220}>
           <FilePicker
             value={image}
             setState={setImage}
             callback={closeImagePicker}
-            type='image'
+            type="image"
           />
         </SlideUpContainer>
       </ScrollView>

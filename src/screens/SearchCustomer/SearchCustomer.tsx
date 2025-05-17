@@ -15,7 +15,7 @@ const SearchCustomer = () => {
   ).customerResults;
   return (
     <View style={styles.parent}>
-      <Header backButtom />
+      <Header backButton />
       <View style={[styles.contentContainer]}>
         {searchResults.length === 0 ? (
           <EmptyListMessage title="Try searching by name." />

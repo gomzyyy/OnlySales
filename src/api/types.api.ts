@@ -104,6 +104,25 @@ export interface DeleteCustomerData {
 
 export interface DeleteCustomerAPIReturnType extends APIReturnType {}
 
+export interface UpdateCustomerData {
+  query: {
+    customerId: string;
+    role: AdminRole;
+    ownerId: string;
+  };
+  body: {
+    name?: string;
+    address?: string;
+    phoneNumber?: string;
+    email?: string;
+  };
+  media: {
+    image?: string;
+  };
+}
+
+export interface UpdateCustomerAPIReturnType extends APIReturnType {}
+
 export interface GetOwnerAPIReturnType extends APIReturnType {
   data: {
     owner: Owner | undefined;
@@ -311,3 +330,18 @@ export interface UpdateSoldProductStateData {
   };
 }
 export interface UpdateSoldProductStateReturnType extends APIReturnType {}
+
+export interface UploadPdfToCloudAPIData {
+  query: {
+    role:AdminRole,
+  };
+  media: {
+    pdf:string
+  };
+}
+
+export interface UploadPdfToCloudReturnType extends APIReturnType {
+  data: {
+    url?: string;
+  };
+}

@@ -1,7 +1,7 @@
 import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
-import {useAnalytics, useTheme} from '../../../hooks';
+import {useAnalytics, useCache, useTheme} from '../../../hooks';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import Tab from './components/Tab';
 import SearchBar from './components/SearchBar';
@@ -17,6 +17,7 @@ const PaymentHistory = () => {
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
     [],
   );
+  const {size,length,getRaw} = useCache();
 
   useEffect(() => {
     setPaymentHistory(
@@ -24,6 +25,7 @@ const PaymentHistory = () => {
         .reverse()
         .slice((page - 1) * limit, page * limit),
     );
+    console.log(size(),length,getRaw);
   }, [owner, page, limit]);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const PaymentHistory = () => {
       if (query.length === 0) {
         return [...owner.history.payments]
           .slice((page - 1) * limit, page * limit)
-          .reverse()
+          .reverse();
       }
       let result: PaymentHistoryType[];
       result = owner.history.payments.filter(s =>
@@ -45,7 +47,7 @@ const PaymentHistory = () => {
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
       <Header
         name="Payments History"
-        backButtom={true}
+        backButton={true}
         titleColor={currentTheme.header.textColor}
       />
       <View style={styles.contentContainer}>

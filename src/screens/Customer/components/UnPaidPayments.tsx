@@ -105,17 +105,16 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
           pressAction={() => openConfirmPay('WHOLE')}
         />
       )} */}
-     
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   parent: {
-    height: deviceHeight * 0.8,
+    height: deviceHeight * 0.9,
     backgroundColor: 'white',
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    marginBottom: 10,
+    borderRadius: 20,
     paddingVertical: 20,
   },
   label: {

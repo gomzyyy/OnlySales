@@ -35,14 +35,6 @@ const VerifyPassword = () => {
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const roleLabel = (s: 'c' | 's') => {
-    return (
-      (role === AdminRole.OWNER && (s === 'c' ? 'Owner' : 'owner')) ||
-      (role === AdminRole.PARTNER && (s === 'c' ? 'Partner' : 'partner')) ||
-      (role === AdminRole.EMPLOYEE && (s === 'c' ? 'Employee' : 'employee')) ||
-      'user'
-    );
-  };
   const login = async () => {
     const res = await loginAPI({role, userId, password}, setLoading);
     if (res.success) {

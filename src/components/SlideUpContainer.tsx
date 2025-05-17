@@ -86,7 +86,8 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
           style={[
             styles.childContainer,
             {
-              backgroundColor: `rgba(0,0,0,${opacity})`,
+              // backgroundColor: `rgba(0,0,0,${opacity})`,
+              backgroundColor: `rgba(0,0,0,0.6)`,
               paddingHorizontal: padding ? 14 : 10,
             },
           ]}

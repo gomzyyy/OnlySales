@@ -13,6 +13,7 @@ import {RequestUXPermission} from '../../service/permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateUserLocationAPI} from '../../api/api.ucontrol';
 import Geolocation from '@react-native-community/geolocation';
+import UserFound from '../Auth/Login/screens/UserFound';
 
 const SplashScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,26 +30,27 @@ const SplashScreen = () => {
           const {fine_location_permissions} = await RequestUXPermission();
           if (res.success && res.data.user) {
             dispatch(setUser(res.data.user));
-            Geolocation.getCurrentPosition(
-              async curr => {
-                const latitude = curr.coords.latitude;
-                const longitude = curr.coords.longitude;
-                if (res.data.user) {
-                  const locationData = {
-                    query: {role: res.data.user.role},
-                    body: {
-                      periodicLatitude: latitude,
-                      periodicLongitude: longitude,
-                    },
-                  };
-                  await updateUserLocationAPI(locationData, setLoading);
-                }
-              },
-              error => {
-                console.error('Geolocation error:', error);
-                resetAndNavigate('Dashboard');
-              },
-            );
+            fine_location_permissions &&
+              Geolocation.getCurrentPosition(
+                async curr => {
+                  const latitude = curr.coords.latitude;
+                  const longitude = curr.coords.longitude;
+                  if (res.data.user) {
+                    const locationData = {
+                      query: {role: res.data.user.role},
+                      body: {
+                        periodicLatitude: latitude,
+                        periodicLongitude: longitude,
+                      },
+                    };
+                    await updateUserLocationAPI(locationData, setLoading);
+                  }
+                },
+                error => {
+                  console.error('Geolocation error:', error);
+                  resetAndNavigate('Dashboard');
+                },
+              );
             resetAndNavigate('Dashboard');
           } else {
             resetAndNavigate('GetStarted');

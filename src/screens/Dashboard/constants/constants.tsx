@@ -1,11 +1,12 @@
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
-import Icon3 from 'react-native-vector-icons/AntDesign';
+import Icon3 from 'react-native-vector-icons/MaterialIcons';
+import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {PropsWithChildren, ReactNode} from 'react';
 import {useHaptics, useTheme} from '../../../hooks';
 import {navigate} from '../../../utils/nagivationUtils';
-
+import {DropDownOptionsType} from '../components/animated/DropDownMenu';
 
 export const ToolsIconContainer = ({
   children,
@@ -106,5 +107,26 @@ export const pressAction = [
     navigateTo: 'EMICalculator',
     icon: (color: string) => <Icon2 name="sell" color={color} size={22} />,
     keyWords: ['emi', 'calculator', 'interest', 'loan'],
+  },
+];
+
+export const dropDownOptions: DropDownOptionsType[] = [
+  {
+    id: 0,
+    name: 'Run A Query',
+    navigateTo: undefined,
+    icon: (color: string = '#000', size: number = 16) => (
+      <Icon5 color={color} name="code" size={size} />
+    ),
+    onPress: (cb?: () => void) => cb && cb(),
+  },
+  {
+    id: 1,
+    name: 'Help',
+    navigateTo: 'Settings',
+    icon: (color: string = '#000', size: number = 16) => (
+      <Icon3 color={color} name="help" size={size} />
+    ),
+    onPress: (cb?: () => void) => cb && cb(),
   },
 ];

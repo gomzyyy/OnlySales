@@ -4,6 +4,8 @@ import WeeklySalesAnalyticsGraph from './graphs/WeeklySalesAnalyticsGraph';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {useTheme} from '../../../hooks';
+import { useFocusEffect } from '@react-navigation/native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 type WeeklySalesCardProps = {
   weeklySales: SoldProduct[];
@@ -33,7 +35,7 @@ const WeeklySalesAnalysisCard = ({weeklySales}: WeeklySalesCardProps) => {
   }, 0);
 
   return (
-    <View style={styles.card}>
+    <Animated.View style={[styles.card]}>
       <Text style={styles.title}>Weekly Sales 📈</Text>
 
       <Text style={styles.text}>
@@ -57,7 +59,7 @@ const WeeklySalesAnalysisCard = ({weeklySales}: WeeklySalesCardProps) => {
         </View>
         <WeeklySalesAnalyticsGraph />
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

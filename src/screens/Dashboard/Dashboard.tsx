@@ -13,9 +13,11 @@ import {navigate} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/AntDesign';
-import Icon4 from 'react-native-vector-icons/Entypo';
+import Icon5 from 'react-native-vector-icons/MaterialIcons';
+import Icon6 from 'react-native-vector-icons/Entypo';
 import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 import {useSelector} from 'react-redux';
@@ -26,6 +28,9 @@ import QueryContainer from './components/QueryContainer';
 import NotVerifiedAlert from './components/animated/NotVerifiedAlert';
 import OpenMenuButton from './components/animated/OpenMenuButton';
 import {useSocket} from '../../hooks/index';
+import DropDownMenu, {
+  DropDownOptionsType,
+} from './components/animated/DropDownMenu';
 
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
@@ -74,6 +79,9 @@ const Dashboard = () => {
   const [overScrolled, setOverScrolled] = useState<boolean>(false);
   const user = useSelector((s: RootState) => s.appData.user)!;
   const [payableAmount, setPayableAmount] = useState<number>(0);
+  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
+
+  const closeDropDown = () => setOpenDropDown(false);
 
   const closeQuery = () => {
     setOpenQuery(false);
@@ -81,7 +89,31 @@ const Dashboard = () => {
 
   useEffect(() => {
     socket?.on('getOnlineUsers', d => console.log(d));
-  }, []);
+  }, [socket]);
+
+  const dropDownOptions: DropDownOptionsType[] = [
+    {
+      id: 0,
+      name: 'Run A Query',
+      navigateTo: undefined,
+      icon: (color: string = '#000', size: number = 16) => (
+        <Icon6 color={color} name="code" size={size} />
+      ),
+      onPress: (cb?: () => void) => cb && cb(),
+      callback: () => setOpenQuery(true),
+    },
+    {
+      id: 1,
+      name: 'Help',
+      navigateTo: 'Settings',
+      icon: (color: string = '#000', size: number = 16) => (
+        <Icon1 color={color} name="help-circle" size={size} />
+      ),
+      onPress: cb => {
+        cb && cb();
+      },
+    },
+  ];
 
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
@@ -89,17 +121,33 @@ const Dashboard = () => {
       <ScrollView
         style={{flex: 1}}
         showsVerticalScrollIndicator={false}
-        onScroll={e => setOverScrolled(e.nativeEvent.contentOffset.y > 70)}>
+        onScroll={e => {
+          setOverScrolled(e.nativeEvent.contentOffset.y > 70);
+          openDropDown && setOpenDropDown(false);
+        }}>
         <Header
           name={t('header_title')}
           menuButton
           titleColor={currentTheme.header.textColor}
           customComponent={true}
           renderItem={
-            <Icon4 name="code" size={26} color={currentTheme.contrastColor} />
+            <Icon5
+              name="more-vert"
+              size={26}
+              color={currentTheme.contrastColor}
+            />
           }
-          customAction={() => setOpenQuery(true)}
+          customAction={() => setOpenDropDown(!openDropDown)}
         />
+        {openDropDown && (
+          <DropDownMenu
+            visible={openDropDown}
+            close={closeDropDown}
+            dropDownOptions={dropDownOptions}
+            top={60}
+            right={10}
+          />
+        )}
         <Pressable
           style={{
             backgroundColor: 'white',
@@ -107,7 +155,7 @@ const Dashboard = () => {
             paddingHorizontal: 6,
             paddingVertical: 2,
             alignSelf: 'center',
-            marginVertical: 10,
+            marginBottom: 6,
           }}
           onPress={() => navigate('Test')}>
           <Text

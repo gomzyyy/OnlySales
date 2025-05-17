@@ -1,14 +1,13 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Customer, SoldProduct} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {navigate} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
 import {useMemo} from 'react';
 
 type ProductsByDateProps = {
   ArrWithDate: SoldProduct[];
   customer: Customer;
-  // onTabPressNavigate: string;
+  tabColor?: 'contrast' | 'colorful';
   onTabPress: ({
     products,
     customer,
@@ -23,11 +22,13 @@ type TabProps = {
   i: SoldProduct[];
   lastIndex?: boolean;
   date: string;
+  placeHolder: string | undefined;
 };
 export const ProductsByDate: React.FC<ProductsByDateProps> = ({
   ArrWithDate,
   customer,
   onTabPress,
+  tabColor = 'contrast',
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const groupedObject = ArrWithDate.reduce<Record<string, SoldProduct[]>>(
@@ -57,15 +58,18 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
   const groupedArr = useMemo(() => {
     return Object.keys(groupedObject)
       .map(m => ({
-        date: m.split(' ').join(', '),
+        date: m.split(' ').slice(1).join(', '),
         products: groupedObject[m],
+        placeHolder: undefined,
       }))
       .reverse();
   }, [ArrWithDate]);
+  console.log(groupedArr);
   const Tab: React.FC<TabProps> = ({
     lastIndex = false,
     i,
     date,
+    placeHolder,
   }): React.JSX.Element => {
     return (
       <TouchableOpacity
@@ -74,14 +78,34 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.tab.bg,
+            backgroundColor:
+              tabColor === 'contrast'
+                ? currentTheme.tab.bg
+                : currentTheme.baseColor,
           },
         ]}
         onPress={() => onTabPress({products: i, date, customer})}>
-        <Text style={[styles.date, {color: currentTheme.tab.label || '#000'}]}>
-          {date}
+        <Text
+          style={[
+            styles.date,
+            {
+              color:
+                tabColor === 'contrast'
+                  ? currentTheme.tab.label
+                  : currentTheme.contrastColor,
+            },
+          ]}>
+          {placeHolder || date}
         </Text>
-        <Icon name="right" color={currentTheme.tab.icon} size={22} />
+        <Icon
+          name="right"
+          color={
+            tabColor === 'contrast'
+              ? currentTheme.tab.label
+              : currentTheme.contrastColor
+          }
+          size={22}
+        />
       </TouchableOpacity>
     );
   };
@@ -89,8 +113,18 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
     <FlatList
       data={groupedArr}
       keyExtractor={s => s.date}
-      renderItem={({item}) => <Tab date={item.date} i={item.products} />}
+      renderItem={({item, index}) => (
+        <Tab
+          date={item.date}
+          i={item.products}
+          lastIndex={groupedArr.length - 1 === index}
+          placeHolder={item.placeHolder}
+        />
+      )}
       nestedScrollEnabled
+      style={{flex: 1, borderRadius: 10}}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
     />
   );
 };
@@ -98,10 +132,11 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 14,
-    paddingVertical: 22,
+    paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 8,
+    alignItems: 'center',
   },
   date: {
     fontSize: 20,

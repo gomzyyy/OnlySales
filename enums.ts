@@ -1,3 +1,8 @@
+export enum PLATFORM_SPECIFIED_CALLS{
+MOBILE = 'mobileapp',
+WEB_APP = 'webapp',
+WEBSITE = 'website'
+}
 export enum BusinessType {
   RETAIL = 'Retail',
   WHOLESALE = 'Wholesale',

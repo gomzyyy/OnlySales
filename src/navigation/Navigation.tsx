@@ -49,6 +49,7 @@ import SearchFeatures from '../screens/SearchFeatures/SearchFeatures';
 import GetUserSignupImage from '../screens/Auth/SignUp/screens/GetUserSignupImage';
 import UITest from '../screens/Test/UITest';
 import Test from '../screens/Test/Test';
+import ReservedKeywords from '../screens/Help/ReservedKeywords';
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
 
@@ -155,6 +156,11 @@ const StackNav = () => {
         name="EMICalculator"
         options={{gestureEnabled: false}}
         component={EMICalculator}
+      />
+      <stack.Screen
+        name="ReservedKeywords"
+        options={{gestureEnabled: false}}
+        component={ReservedKeywords}
       />
     </stack.Navigator>
   );

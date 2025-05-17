@@ -51,13 +51,12 @@ const Tab: React.FC<TabProps> = ({
   >();
 
   const getPaymentHistory = async () => {
-    console.log(cache.getAll());
-    if (cache.get(i.payment)) {
-      setSoldProductPaymentDetails(cache.get(i.payment));
+    const cached = cache.get(i.payment);
+    if (cached) {
+      setSoldProductPaymentDetails(cached);
       setopenSoldProductHistoryDetails(true);
       return;
     }
-
     setUnknownPaymentHistoryDetails(undefined);
     setSoldProductPaymentDetails(undefined);
 
@@ -66,7 +65,6 @@ const Tab: React.FC<TabProps> = ({
     } else if (i.paymentType === PaymentHistoryReferenceType.UNKNOWN) {
       setopenUnknownPaymentHistoryDetails(true);
     }
-
     const data = {
       query: {
         role: user.role,
@@ -76,7 +74,6 @@ const Tab: React.FC<TabProps> = ({
         paymentType: i.paymentType,
       },
     };
-
     const res = await getSinglePaymentHistory(data, setLoading);
     if (res.success && res.data?.paymentDetails) {
       if (i.paymentType === PaymentHistoryReferenceType.SOLD_PRODUCT) {
@@ -105,7 +102,7 @@ const Tab: React.FC<TabProps> = ({
         style={[
           styles.container,
           {
-            marginBottom:8,
+            marginBottom: 8,
             backgroundColor: currentTheme.tab.bg,
           },
         ]}>
@@ -148,9 +145,9 @@ const Tab: React.FC<TabProps> = ({
                     : colors.danger,
               },
             ]}>
-            {`${i.type === UnknownPaymentType.CREDIT ? '+' : '-'}${
-              i.amount
-            }${currency}`}
+            {`${
+              i.type === UnknownPaymentType.CREDIT ? '+' : '-'
+            }${i.amount.toFixed(2)}`}
           </Text>
         </View>
         <View style={styles.iconContainer}>

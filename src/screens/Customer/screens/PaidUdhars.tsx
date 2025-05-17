@@ -31,7 +31,7 @@ const PaidUdhars = () => {
     <View style={styles.parent}>
       <Header
         name={date}
-        backButtom={true}
+        backButton={true}
         titleColor={currentTheme.header.textColor}
         headerBgColor={currentTheme.baseColor}
       />

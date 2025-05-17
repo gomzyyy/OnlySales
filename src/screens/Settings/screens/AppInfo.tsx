@@ -112,7 +112,7 @@ const AppInfo = () => {
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Header
           name="App info"
-          backButtom
+          backButton
           customComponent={edited}
           renderItem={
             <Text style={{fontSize: 20, color: currentTheme.header.textColor}}>

@@ -16,7 +16,6 @@ export const customerHeaderTabs = [
 ];
 
 export const Theme: AppTheme[] = [
- 
   {
     name: AppThemeName.RED,
     baseColor: '#d60000',
@@ -27,7 +26,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#ffe6e6',
     textAlt: '#000',
-    bottomTabBg:'rgba(214, 0, 0,0.4)',
+    bottomTabBg: 'rgba(214, 0, 0,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -55,7 +54,7 @@ export const Theme: AppTheme[] = [
     },
     header: {textColor: '#fff'},
   },
- 
+
   {
     name: AppThemeName.GREEN,
     baseColor: '#075e54',
@@ -66,7 +65,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#e6ffe6',
     textAlt: '#000',
-    bottomTabBg:'rgba(7, 94, 84,0.4)',
+    bottomTabBg: 'rgba(7, 94, 84,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -87,9 +86,9 @@ export const Theme: AppTheme[] = [
       label: '#075e54',
       bg: '#fff',
       value: '#9ec378',
-      btnBg: '#9ec378',
+      btnBg: '#075e54',
       btnText: '#fff',
-      icon: '#9ec378',
+      icon: '#075e54',
       text: '#fff',
     },
     header: {textColor: '#fff'},
@@ -104,7 +103,7 @@ export const Theme: AppTheme[] = [
     contrastColor: '#fff',
     bgColor: '#e6f2ff',
     textAlt: '#000',
-    bottomTabBg:'rgba(0, 123, 255,0.4)',
+    bottomTabBg: 'rgba(0, 123, 255,0.4)',
     modal: {
       title: '#000',
       inputbg: '#fff',
@@ -132,13 +131,76 @@ export const Theme: AppTheme[] = [
     },
     header: {textColor: '#fff'},
   },
-
 ];
 export const colors = {
   danger: 'rgb(255,0,0)',
   dangerFade: 'rgba(255,0,0,0.2)',
-  oliveGreen:'rgb(158, 195, 120)',
-  oliveGreenFade:'rgba(158, 195, 120,0.2)',
+  oliveGreen: 'rgb(158, 195, 120)',
+  oliveGreenFade: 'rgba(158, 195, 120,0.2)',
   iconBlack: 'rgb(0,0,0)',
   link: '#007bff',
 };
+
+const KEYWORDS = {
+  create: {
+    methods: {
+      customer: {
+        description:
+          "'create customer [name] ex'",
+      },
+      // employee: {
+      //   description: 'fastest method to create customers on the go!',
+      // },
+      // product: {
+      //   description: 'fastest method to create customers on the go!',
+      // },
+    },
+    description: 'fastest and reliable way to create data.',
+  },
+  update: {
+    methods: {
+      customer: {
+        description: 'fastest way to update existing customers on the go!',
+      },
+      employee: {
+        description: 'fastest way to update existing employees on the go!',
+      },
+      product: {
+        description: 'fastest way to update existing products on the go!',
+      },
+    },
+    description: 'fastest and reliable way to create data.',
+  },
+  delete: {
+    methods: {
+      customer: {
+        description: 'fastest way to delete existing customer on the go!',
+      },
+      employee: {
+        description: 'fastest way to delete existing employee on the go!',
+      },
+      product: {
+        description: 'fastest way to delete existing product on the go!',
+      },
+    },
+    description: 'fastest and reliable way to create data.',
+  },
+  find: {
+    methods: {
+      customer: {
+        description: 'fastest way to find your customers on the go!',
+      },
+      employee: {
+        description: 'fastest way to find your employees on the go!',
+      },
+      product: {
+        description: 'fastest way to find your products on the go!',
+      },
+    },
+    description: 'fastest and reliable way to create data.',
+  },
+};
+
+const RESERVED_KEYWORDS: string[] = ['create', 'update', 'delete', 'find'];
+
+export {KEYWORDS, RESERVED_KEYWORDS};

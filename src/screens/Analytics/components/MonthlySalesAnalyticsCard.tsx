@@ -5,6 +5,8 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../../store/store';
 import {useAnalytics, useTheme} from '../../../hooks';
 import {StyleSheet} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import Animated,{ useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 type MonthlySalesCardProps = {
   monthlySales: SoldProduct[];
@@ -26,10 +28,9 @@ const MonthlySalesAnalysisCard = ({monthlySales}: MonthlySalesCardProps) => {
 
   const profitabilityPercentage =
     totalRevenue !== 0 ? (netProfit / totalRevenue) * 100 : 0;
-
   return (
-    <View
-      style={{
+    <Animated.View
+      style={[{
         padding: 16,
         borderRadius: 12,
         backgroundColor: '#f5f5f5',
@@ -38,7 +39,7 @@ const MonthlySalesAnalysisCard = ({monthlySales}: MonthlySalesCardProps) => {
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 5,
-      }}>
+      }]}>
       <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 12}}>
         Monthly Sales 📆
       </Text>
@@ -87,7 +88,7 @@ const MonthlySalesAnalysisCard = ({monthlySales}: MonthlySalesCardProps) => {
         </View>
         <MonthlySalesAnalysisGraph />
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

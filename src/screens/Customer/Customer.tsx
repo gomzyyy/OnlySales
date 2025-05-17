@@ -1,9 +1,22 @@
-import {View, StyleSheet, Pressable, Text} from 'react-native';
-import React, {ReactNode, useEffect, useMemo, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import React, {
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
 import {Customer as CustomerType, SoldProduct} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
+import Icon1 from 'react-native-vector-icons/FontAwesome';
 import {ToogleButton} from './components/Tab';
 import {ProductsByDate} from '../../components/shared/ProductByDate';
 import CustomerInfo from './components/CustomerInfo';
@@ -20,6 +33,7 @@ import {useTranslation} from 'react-i18next';
 import ConfirmPayment from '../../components/ConfirmPayment';
 import ScanQRToPay from '../../components/ScanQRToPay';
 import InvoicePDFViewer from '../PDFViewer/InvoicePDFViewer';
+import SearchContainer from './components/SlideContainers/SearchContainer';
 
 type RouteParams = {
   customer: CustomerType;
@@ -34,10 +48,12 @@ const Customer = () => {
   const {customer, openAddProduct} = params as RouteParams;
   const {owner, currency} = useAnalytics();
   const customers: CustomerType[] = owner.customers;
+  const [openSearchContainer, setOpenSearchContainer] =
+    useState<boolean>(false);
   const [payableAmount, setPayableAmount] = useState<number>(0);
   const [askConfirmPayment, setAskConfirmPayment] = useState<boolean>(false);
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
-  const [openSINGLESoldProductPDFView, setOpenSINGLESoldProductPDFView] =
+  const [openSoldProductPDFView, setOpenSoldProductPDFView] =
     useState<boolean>(false);
   const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
   const [paidPayments, setPaidPayments] = useState<SoldProduct[]>([]);
@@ -48,8 +64,8 @@ const Customer = () => {
     openAddProduct || false,
   );
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
-  const [openUnpaidSheet, setOpenUnpaidSheet] = useState(false);
-  const [openPaidSheet, setOpenPaidSheet] = useState(false);
+  const [openUnpaidSheet, setOpenUnpaidSheet] = useState<boolean>(false);
+  const [openPaidSheet, setOpenPaidSheet] = useState<boolean>(false);
   const [unpaidProps, setUnpaidProps] = useState<{
     products: SoldProduct[];
     customer: CustomerType;
@@ -90,7 +106,7 @@ const Customer = () => {
     setWillingToPay(false);
   };
   const handleCloseSINGLESoldProductViewer = () => {
-    setOpenSINGLESoldProductPDFView(false);
+    setOpenSoldProductPDFView(false);
   };
 
   const handlePayButton = async () => {
@@ -99,14 +115,14 @@ const Customer = () => {
   };
   const handleInvoiceButton = () => {
     setWillingToPay(false);
-    setOpenSINGLESoldProductPDFView(true);
+    setOpenSoldProductPDFView(true);
   };
 
   const openConfirmPay = () => {
     setAskConfirmPayment(true);
   };
 
-  useEffect(() => {
+  const findAndSetPayments = () => {
     const foundCustomer = customers.find(c => c._id === customer._id);
     if (foundCustomer) {
       setCurrCustomer(foundCustomer);
@@ -120,6 +136,13 @@ const Customer = () => {
         ),
       );
     }
+  };
+
+  const handleOpenSearchContainer = () => setOpenSearchContainer(true);
+  const handleCloseSearchContainer = () => setOpenSearchContainer(false);
+
+  useEffect(() => {
+    findAndSetPayments();
   }, [customer, customers]);
 
   useEffect(() => {
@@ -136,6 +159,7 @@ const Customer = () => {
     customer: CustomerType;
     date: string;
   }) => {
+    openSearchContainer && handleCloseSearchContainer();
     if (content === 'PAID') {
       setPaidProps({products, customer, date});
       setOpenPaidSheet(true);
@@ -158,12 +182,12 @@ const Customer = () => {
       return (
         <View
           style={{
-            alignItems: 'center',
             backgroundColor: currentTheme.contrastColor,
             paddingVertical: 3,
             paddingHorizontal: 5,
             borderRadius: 10,
             justifyContent: 'center',
+            alignItems: 'center',
           }}>
           {children}
           <Text
@@ -180,12 +204,13 @@ const Customer = () => {
       return null;
     }
   };
-
   return (
-    <View style={styles.parent}>
+    <KeyboardAvoidingView
+      style={styles.parent}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Header
         name={currCustomer.name}
-        backButtom
+        backButton
         customComponent={content === 'UNPAID'}
         renderItem={
           <HeaderIcon label="Request" show={unpaidAmount !== 0}>
@@ -212,40 +237,65 @@ const Customer = () => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            paddingHorizontal: 18,
             marginTop: 20,
-            paddingVertical: 10,
-            backgroundColor: currentTheme.contrastColor,
             borderRadius: 10,
+            gap: 6,
           }}>
-          <Text
+          <View
             style={{
-              fontWeight: 600,
-              fontStyle: 'italic',
-              color: currentTheme.baseColor,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 18,
+              paddingVertical: 10,
+              backgroundColor: currentTheme.contrastColor,
+              borderRadius: 10,
+              flex: 1,
             }}>
-            {`Pendings:`}
             <Text
               style={{
-                fontWeight: 400,
-                fontStyle: 'normal',
-                color: '#000',
-              }}>{` ${currency} ${unpaidAmount}`}</Text>
-          </Text>
-          <Text
-            style={{
-              fontWeight: 600,
-              fontStyle: 'italic',
-              color: currentTheme.baseColor,
-            }}>
-            {`Paid:`}
+                fontWeight: 600,
+                fontStyle: 'italic',
+                color: currentTheme.baseColor,
+              }}>
+              {`Pendings:`}
+              <Text
+                style={{
+                  fontWeight: 400,
+                  fontStyle: 'normal',
+                  color: '#000',
+                }}>{` ${currency} ${unpaidAmount}`}</Text>
+            </Text>
             <Text
               style={{
-                fontWeight: 400,
-                fontStyle: 'normal',
-                color: '#000',
-              }}>{` ${currency} ${paidAmount}`}</Text>
-          </Text>
+                fontWeight: 600,
+                fontStyle: 'italic',
+                color: currentTheme.baseColor,
+              }}>
+              {`Paid:`}
+              <Text
+                style={{
+                  fontWeight: 400,
+                  fontStyle: 'normal',
+                  color: '#000',
+                }}>{` ${currency} ${paidAmount}`}</Text>
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: currentTheme.contrastColor,
+              borderRadius: 10,
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            activeOpacity={0.5}
+            onPress={handleOpenSearchContainer}>
+            <Icon1 name="search" size={18} color={currentTheme.baseColor} />
+            <Text style={{fontSize: 10, color: currentTheme.baseColor}}>
+              Search
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.contentToggleContainer}>
           <Pressable
@@ -319,7 +369,7 @@ const Customer = () => {
         open={openUnpaidSheet}
         close={() => setOpenUnpaidSheet(false)}
         opacity={0.7}
-        height={deviceHeight * 0.8}>
+        height={deviceHeight * 0.9}>
         <UnPaidPayments
           date={unpaidProps.date}
           customer={unpaidProps.customer}
@@ -332,7 +382,7 @@ const Customer = () => {
         open={openPaidSheet}
         close={() => setOpenPaidSheet(false)}
         opacity={0.7}
-        height={deviceHeight * 0.8}>
+        height={deviceHeight * 0.9}>
         <PaidPayments
           date={paidProps.date}
           customer={paidProps.customer}
@@ -371,15 +421,26 @@ const Customer = () => {
         />
       </SlideUpContainer>
       <SlideUpContainer
-        open={openSINGLESoldProductPDFView}
+        open={openSoldProductPDFView}
         close={handleCloseSINGLESoldProductViewer}
         height={deviceHeight * 0.5}>
         <InvoicePDFViewer
           soldProducts={customer.buyedProducts}
           customer={customer}
+          closeViewer={() => setOpenSoldProductPDFView(false)}
         />
       </SlideUpContainer>
-    </View>
+      <SlideUpContainer
+        open={openSearchContainer}
+        close={handleCloseSearchContainer}
+        height={deviceHeight * 0.6}>
+        <SearchContainer
+          customer={customer}
+          onTabPress={handleTabPress}
+          close={handleCloseSearchContainer}
+        />
+      </SlideUpContainer>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -400,6 +461,7 @@ const styles = StyleSheet.create({
   },
   dataContainer: {
     marginTop: 20,
+    flex: 1,
   },
 });
 

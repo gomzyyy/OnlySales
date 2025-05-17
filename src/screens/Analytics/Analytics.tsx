@@ -25,7 +25,7 @@ const Analytics = () => {
         titleColor={currentTheme.header.textColor}
         name="Analytics"
         headerBgColor={currentTheme.baseColor}
-        backButtom={true}
+        backButton={true}
       />
       <View style={{flex: 1, paddingHorizontal: 10}}>
         <ScrollView

@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
-import React from 'react';
+import {View, Text, StyleSheet, Image, Pressable, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
 import {Customer} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
 import LinearGradient from 'react-native-linear-gradient';
@@ -7,6 +7,10 @@ import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/Entypo';
 import {useTranslation} from 'react-i18next';
+import SlideUpContainer from '../../../components/SlideUpContainer';
+import FilePicker from '../../../components/FilePicker';
+import EditCustomer from '../../../components/EditCustomer';
+import {deviceHeight} from '../../../utils/Constants';
 
 type CustomerInfoProps = {
   customer: Customer;
@@ -17,22 +21,36 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
+  const [profileImage, setProfileImage] = useState<string | undefined>(
+    customer.image,
+  );
+  const [triggerEdit, setTriggerEdit] = useState<boolean>(false);
+
+  const handleOpenTriggerEdit = () => setTriggerEdit(true);
+  const handleCloseTriggerEdit = () => setTriggerEdit(false);
 
   return (
     <LinearGradient
       colors={[currentTheme.contrastColor, currentTheme.contrastColor]}
       style={[styles.customerInfoParent]}>
-      <View style={styles.profileImageContainer}>
+      <Pressable
+        style={[
+          styles.profileImageContainer,
+          {borderColor: currentTheme.baseColor},
+        ]}>
         <Image
           source={
-            customer.image && customer.image.trim().length !== 0
-              ? {uri: customer.image}
+            profileImage && profileImage.trim().length !== 0
+              ? {uri: profileImage}
               : NoProfile
           }
           style={styles.profileImage}
         />
-      </View>
-      <View style={styles.customerInfoContainer}>
+      </Pressable>
+      <TouchableOpacity
+      activeOpacity={0.4}
+        style={styles.customerInfoContainer}
+        onPress={handleOpenTriggerEdit}>
         <Text style={[styles.name, {color: currentTheme.baseColor}]}>
           {customer.name}
         </Text>
@@ -52,7 +70,13 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
               : t('c_customerinfo_nolocation')}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
+      <SlideUpContainer
+        height={deviceHeight * 0.52}
+        open={triggerEdit}
+        close={handleCloseTriggerEdit}>
+        <EditCustomer i={customer} close={handleCloseTriggerEdit} />
+      </SlideUpContainer>
     </LinearGradient>
   );
 };
@@ -76,15 +100,16 @@ const styles = StyleSheet.create({
     height: 90,
     width: 90,
     overflow: 'hidden',
-    borderRadius: '50%',
-    backgroundColor: 'red',
+    borderRadius: '40%',
+    borderWidth: 2,
   },
   customerInfoContainer: {
     justifyContent: 'center',
     gap: 6,
   },
   name: {
-    fontSize: 30,
+    fontSize: 28,
+    fontWeight: '600',
   },
   phoneNumberContainer: {
     flexDirection: 'row',
