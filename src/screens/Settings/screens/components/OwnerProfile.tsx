@@ -8,8 +8,9 @@ import {
   Image,
   TouchableOpacity,
   Pressable,
+  Linking,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import Header from '../../../../components/Header';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../../store/store';
@@ -19,6 +20,7 @@ import {copyTextToClipboard} from '../../../../service/fn';
 import {colors, deviceHeight, deviceWidth} from '../../../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/Entypo';
+import Icon2 from 'react-native-vector-icons/Feather';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -26,6 +28,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import SlideUpContainer from '../../../../components/SlideUpContainer';
 import FeatureInfoContainer from '../../../../components/FeatureInfoContainer';
+import {OWNER_PROPERTIES, OwnerPropertyObjType} from '../../../../utils/data';
+import { navigate } from '../../../../utils/nagivationUtils';
 
 const OwnerProfile = () => {
   const {currentTheme} = useTheme();
@@ -114,16 +118,8 @@ const OwnerProfile = () => {
     );
   };
 
-  const HeaderCustomComponent = () => {
-    return (
-      <View>
-        <Icon1
-          name="info-with-circle"
-          size={20}
-          color={currentTheme.header.textColor}
-        />
-      </View>
-    );
+  const HeaderCustomComponent = ({render}: {render: ReactNode}) => {
+    return <View>{render}</View>;
   };
 
   useEffect(() => {
@@ -144,14 +140,36 @@ const OwnerProfile = () => {
       ]}>
       {showNotice && <NoticeBoard />}
       <Header
-        name="Owner Profile"
+        name="Profile"
         backButton
         headerBgColor={currentTheme.baseColor}
         titleColor={currentTheme.header.textColor}
         curved
         customComponent={true}
-        renderItem={<HeaderCustomComponent />}
-        customAction={openNotice}
+        renderItem={
+          <HeaderCustomComponent
+            render={
+              <Icon2
+                name="edit"
+                size={20}
+                color={currentTheme.header.textColor}
+              />
+            }
+          />
+        }
+        customAction={() =>navigate('WebViewScreen',{uri:'http://192.168.1.71:3000/home?redirect=update_owner'})}
+        customAction1={openNotice}
+        renderItem1={
+          <HeaderCustomComponent
+            render={
+              <Icon1
+                name="info-with-circle"
+                size={20}
+                color={currentTheme.header.textColor}
+              />
+            }
+          />
+        }
       />
 
       <View style={styles.profileContainer}>
@@ -247,6 +265,40 @@ const OwnerProfile = () => {
               value={`${owner.equity.toFixed(2)}%`}
             />
           </View>
+          <View style={styles.card}>
+            <Text style={styles.permissionsCardLabel}>Properties</Text>
+            <PermissionTab
+              label={'Private account:'}
+              allowed={owner.properties.isPrivate}
+              permissionDetails={OWNER_PROPERTIES['privateAccount']}
+            />
+            <PermissionTab
+              label={'Account disabled:'}
+              allowed={owner.properties.isDisabled}
+              permissionDetails={OWNER_PROPERTIES['accountDisabled']}
+            />
+            <PermissionTab
+              label={'Business info access:'}
+              allowed={owner.properties.accessBusinessInfo}
+              permissionDetails={OWNER_PROPERTIES['accessBusinessInfo']}
+            />
+            <PermissionTab
+              label={'Business searchable:'}
+              allowed={owner.properties.searchable}
+              permissionDetails={OWNER_PROPERTIES['businessSearchable']}
+            />
+            <PermissionTab
+              label={'Employees searchable:'}
+              allowed={owner.properties.employeeSearchable}
+              permissionDetails={OWNER_PROPERTIES['employeeSearchable']}
+            />
+
+            <PermissionTab
+              label={'Partner searchable:'}
+              allowed={owner.properties.partnerSearchable}
+              permissionDetails={OWNER_PROPERTIES['partnerSearchable']}
+            />
+          </View>
         </View>
       </ScrollView>
       <SlideUpContainer
@@ -265,6 +317,55 @@ const DataDisplay = ({label, value}: {label: string; value?: string}) => (
     <Text style={styles.dataValue}>{value || 'N/A'}</Text>
   </View>
 );
+const PermissionTab = ({
+  label,
+  allowed,
+  iconColor = '#7f8c8d',
+  permissionDetails,
+}: {
+  label: string;
+  allowed?: boolean;
+  iconColor?: string;
+  permissionDetails: OwnerPropertyObjType;
+}) => {
+  const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [info, setInfo] = useState<{
+    label: string;
+    text1?: string;
+    text2?: string;
+    text3?: string;
+  }>({label: ''});
+  const handleShowInfo = () => {
+    setInfo({
+      label: permissionDetails.title,
+      text1: permissionDetails.description,
+    });
+    setShowInfo(true);
+  };
+  return (
+    <View style={styles.dataItem}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Text style={styles.dataLabel}>{label}</Text>
+        <Pressable onPress={handleShowInfo}>
+          <Icon1 name="info-with-circle" size={12} color={iconColor} />
+        </Pressable>
+      </View>
+      <Text
+        style={[
+          styles.dataValue,
+          {color: allowed ? colors.oliveGreen : colors.danger},
+        ]}>
+        {allowed ? 'Yes' : 'No'}
+      </Text>
+      <SlideUpContainer
+        open={showInfo}
+        close={() => setShowInfo(false)}
+        height={deviceHeight * 0.35}>
+        <FeatureInfoContainer info={info} />
+      </SlideUpContainer>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   parent: {
@@ -344,6 +445,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2d3436',
     fontWeight: '500',
+  },
+  permissionsCardLabel: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    marginBottom: 8,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    textDecorationLine: 'underline',
   },
 });
 

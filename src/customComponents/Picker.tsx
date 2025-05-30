@@ -1,24 +1,25 @@
 import {StyleSheet} from 'react-native';
 import React, {Dispatch, SetStateAction} from 'react';
-import {Picker} from '@react-native-picker/picker';
-import {Department} from '../../enums';
+import {Picker as P} from '@react-native-picker/picker';
 import {useTheme} from '../hooks/index';
 
-type DepartmentPickerProps = {
+type PickerProps = {
   enabled?: boolean;
-  setState: Dispatch<SetStateAction<Department>>;
-  value: Department;
+  setState: Dispatch<SetStateAction<any>>;
+  value: any;
+  data: {[key: string | number]: string | number};
 };
 
-const DepartmentPicker: React.FC<DepartmentPickerProps> = ({
+const Picker: React.FC<PickerProps> = ({
   enabled = false,
   setState,
   value,
+  data,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
   return (
-    <Picker
+    <P
       style={[
         styles.dropdown,
         {
@@ -28,18 +29,18 @@ const DepartmentPicker: React.FC<DepartmentPickerProps> = ({
       ]}
       enabled={enabled}
       selectedValue={value}
-      onValueChange={(value: Department) => setState(value)}
+      onValueChange={(value: any) => setState(value)}
       dropdownIconColor={currentTheme?.modal.pickerText}>
-      {Object.keys(Department).map(key => (
-        <Picker.Item
+      {Object.keys(data).map(key => (
+        <P.Item
           key={key}
-          label={`${Department[key as keyof typeof Department]} ${
+          label={`${data[key as keyof typeof data]} ${
             enabled === false ? '(disabled)' : ''
           }`}
-          value={Department[key as keyof typeof Department]}
+          value={data[key as keyof typeof data]}
         />
       ))}
-    </Picker>
+    </P>
   );
 };
 
@@ -47,4 +48,4 @@ const styles = StyleSheet.create({
   dropdown: {},
 });
 
-export default DepartmentPicker;
+export default Picker;

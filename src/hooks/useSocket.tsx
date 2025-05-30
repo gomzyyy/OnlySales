@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import { io, Socket } from 'socket.io-client';
-import { RootState } from '../../store/store';
+import {useEffect, useRef} from 'react';
+import {useSelector} from 'react-redux';
+import {io, Socket} from 'socket.io-client';
+import {RootState} from '../../store/store';
+import d from 'react-native-device-info';
+import {PLATFORM_SPECIFIED_CALLS} from '../../enums';
 
 type UseSocketReturnType = {
   socket: Socket | null;
@@ -15,21 +17,31 @@ const useSocket = (): UseSocketReturnType => {
 
   useEffect(() => {
     if (!user?._id) return;
-    if (!socketRef.current) {
-      socketRef.current = io(SOCKET_URL, {
-        transports: ['websocket'],
-        query: { uid: user._id },
-      });
+    if (socketRef.current?.connected) return;
 
-      socketRef.current.on('connect', () => {
-        console.log('Socket connected:', socketRef.current?.id);
-      });
+    socketRef.current = io(SOCKET_URL, {
+      transports: ['websocket'],
+      query: {
+        uid: String(user._id),
+        deviceName: String(d.getDeviceNameSync()),
+        platform: String(PLATFORM_SPECIFIED_CALLS.MOBILE),
+        role: user.role,
+        deviceId:String(d.getDeviceId())
+      },
+    });
 
-      socketRef.current.on('disconnect', () => {
-        console.log('Socket disconnected');
-      });
-    }
-    console.log('Socket connected:', socketRef.current?.id);
+    socketRef.current.on('connect', () => {
+      console.log('Socket connected:', socketRef.current?.id);
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Socket disconnected');
+    });
+    socketRef.current.on('new_event', s => console.log(s));
+    socketRef.current.on('connect_error', err => {
+      console.log('Socket connection error:', err.message);
+    });
+
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();

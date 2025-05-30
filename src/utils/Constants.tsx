@@ -131,6 +131,46 @@ export const Theme: AppTheme[] = [
     },
     header: {textColor: '#fff'},
   },
+  // {
+  //   name: AppThemeName.CORAL,
+  //   baseColor: '#ffffff', // white base
+  //   fadeColor: 'rgba(255, 127, 80, 0.1)', // soft coral fade
+  //   tabColor: '#efefef', // gentle grey for tabs or contrast background
+  //   borderColor: '#efefef', // light grey border
+  //   textColor: '#ff7f50', // coral for primary text/icons
+  //   contrastColor: '#ffffff', // white for inverted text/areas
+  //   bgColor: '#ffffff', // white background
+  //   textAlt: '#ff7f50', // same coral for alternative text
+  //   bottomTabBg: '#efefef', // subtle grey for bottom tabs
+  //   modal: {
+  //     title: '#ff7f50',
+  //     inputbg: '#ffffff',
+  //     inputBorder: '#ff7f50',
+  //     inputText: '#ff7f50',
+  //     pickerbg: '#efefef',
+  //     pickerText: '#ff7f50',
+  //     saveBtnbg: '#ff7f50',
+  //     saveBtnText: '#ffffff',
+  //   },
+  //   toggleBtn: {
+  //     bgActive: '#ff7f50',
+  //     bgInactive: '#efefef',
+  //     textActive: '#ffffff',
+  //     textInactive: '#ff7f50',
+  //   },
+  //   tab: {
+  //     label: '#ff7f50',
+  //     bg: '#efefef',
+  //     value: '#ff7f50',
+  //     btnBg: '#efefef',
+  //     btnText: '#ff7f50',
+  //     icon: '#ff7f50',
+  //     text: '#ff7f50',
+  //   },
+  //   header: {
+  //     textColor: '#ff7f50',
+  //   },
+  // },
 ];
 export const colors = {
   danger: 'rgb(255,0,0)',
@@ -145,8 +185,7 @@ const KEYWORDS = {
   create: {
     methods: {
       customer: {
-        description:
-          "'create customer [name] ex'",
+        description: "'create customer [name] ex'",
       },
       // employee: {
       //   description: 'fastest method to create customers on the go!',

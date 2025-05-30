@@ -16,12 +16,12 @@ import {AppDispatch, RootState} from '../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {showToast} from '../service/fn';
 import {useTheme} from '../hooks/index';
-import EmployementStatusPicker from './EmployementStatusPicker';
-import ShiftPicker from './ShiftPicker';
 import {EmploymentStatus, Shift} from '../../enums';
 import SlideUpContainer from './SlideUpContainer';
 import FilePicker from './FilePicker';
 import {isNumber} from '../service/test';
+import Picker from '../customComponents/Picker';
+import { global } from '../styles/global';
 
 type EditCustomerProps = {
   i: Employee;
@@ -83,7 +83,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={name}
               onChangeText={setName}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter name"
@@ -99,7 +99,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={phoneNumber}
               onChangeText={setphoneNumber}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter phone number"
@@ -115,7 +115,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={address}
               onChangeText={setAddress}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter address"
@@ -131,7 +131,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={salary}
               onChangeText={setSalary}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter salary"
@@ -144,18 +144,14 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Employment status?
             </Text>
-            <EmployementStatusPicker
-              value={status}
-              setState={setStatus}
-              enabled
-            />
+            <Picker value={status} setState={setStatus} enabled data={EmploymentStatus} />
           </View>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               What about Shift?
             </Text>
-            <ShiftPicker value={shift} setState={setShift} enabled />
+            <Picker value={shift} setState={setShift} enabled data={Shift} />
           </View>
           {image && image.trim().length !== 0 ? (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>

@@ -28,18 +28,11 @@ import {
 } from '../../enums';
 import {isNumber} from '../service/test';
 import {deviceHeight} from '../utils/Constants';
-import EmployementStatusPicker from './EmployementStatusPicker';
-import ShiftPicker from './ShiftPicker';
-import GenderPicker from './GenderPicker';
-import {Employee, Owner, Partner, UserPermissions} from '../../types';
-import PositionPicker from './PositionPicker';
-import DepartmentPicker from './DepartmentPicker';
+import {Employee, Owner} from '../../types';
 import {createEmployeeAPI} from '../api/api.employee';
-import RolePicker from './RolePicker';
-import {validateTokenAPI} from '../api/api.auth';
-import {setUser} from '../../store/slices/business';
 import {ActivityIndicator} from 'react-native';
-
+import Picker from '../customComponents/Picker';
+import { global } from '../styles/global';
 type CreateEmployeeProps = {
   callback: () => void;
 };
@@ -176,12 +169,6 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       },
     };
     const res = await createEmployeeAPI(employeeData, setLoading);
-    if (res.success) {
-      const userRes = await validateTokenAPI({role: user.role});
-      if (userRes.success && userRes.data && userRes.data.user) {
-        dispatch(setUser(userRes.data.user));
-      }
-    }
     showToast({
       type: res.success ? 'success' : 'error',
       text1: res.message,
@@ -216,7 +203,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={name}
               onChangeText={val => setName(modifyUserName(val))}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter name"
@@ -234,7 +221,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={phoneNumber}
               onChangeText={setphoneNumber}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter phone number"
@@ -251,7 +238,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={employeeId}
               onChangeText={setEmployeeId}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter email"
@@ -268,7 +255,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={email}
               onChangeText={setEmail}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter email"
@@ -286,7 +273,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={address}
               onChangeText={setAddress}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter address"
@@ -304,7 +291,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={salary}
               onChangeText={setSalary}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter salary"
@@ -323,7 +310,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={password}
               onChangeText={setPassword}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder, color: '#000'},
               ]}
               placeholder="Enter password"
@@ -342,7 +329,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder, color: '#000'},
               ]}
               placeholder="Confirm password"
@@ -351,60 +338,46 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
             />
           </View>
 
-          {/* Gender Picker */}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Choose Gender:
             </Text>
-            <GenderPicker value={gender} setState={setGender} enabled />
+             <Picker value={gender} setState={setGender} enabled={true} data={Gender} />
           </View>
 
-          {/* Shift Picker */}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               What about Shift?
             </Text>
-            <ShiftPicker value={shift} setState={setShift} enabled />
+             <Picker value={shift} setState={setShift} enabled={true} data={Shift} />
           </View>
 
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              {'(Active by default)'}
+              {'status? (Active by default)'}
             </Text>
-            <EmployementStatusPicker
-              value={status}
-              setState={setStatus}
-              enabled
-            />
+           
+             <Picker value={status} setState={setStatus} enabled={true} data={EmploymentStatus} />
           </View>
 
-          {/* Position Picker */}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               What about Position?
             </Text>
-            <PositionPicker
-              value={position}
-              setState={setPosition}
-              enabled={true}
-            />
+          <Picker value={position} setState={setPosition} enabled={true} data={Position} />
           </View>
 
-          {/* Department Picker */}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Department
             </Text>
-            <DepartmentPicker
-              value={department}
-              setState={setDepartment}
-              enabled={true}
-            />
+            
+            <Picker value={department} setState={setDepartment} enabled={true} data={Department} />
           </View>
           <View style={[styles.inputTitleContainer, {alignItems: 'center'}]}>
             <Text
@@ -428,7 +401,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               />
             )}
           </View>
-          {/* Save Button */}
+
           <TouchableOpacity
             style={[
               styles.saveButton,
@@ -448,7 +421,6 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
             )}
           </TouchableOpacity>
 
-          {/* Image Picker */}
           <SlideUpContainer
             opacity={0.4}
             open={openImagePicker}
@@ -491,8 +463,8 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     paddingLeft: 8,
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '600',
   },
   inputText: {
     borderWidth: 2,
@@ -518,27 +490,3 @@ const styles = StyleSheet.create({
 });
 
 export default CreateEmployee;
-
-// name,
-// salary: Number(salary),
-// phoneNumber,
-// gender,
-// address,
-// image,
-// status,
-// shift,
-// businessOwner,
-// department,
-// departmentDescription:
-//   department === Department.OTHER ? departmentDescription : undefined,
-// position,
-// positionDescription:
-//   position === Position.OTHER ? positionDescription : undefined,
-// skills,
-// role,
-// reportsTo,
-// password,
-// userId:'',
-// email:'',
-// reportsToModel:reportsTo,
-// businessOwnerId:owner._id,

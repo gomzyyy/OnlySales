@@ -100,6 +100,14 @@ export interface App {
   deviceId?: string | undefined;
   appLocked: boolean;
   fonts: AppFontSize;
+  lc_meta_data:{
+upi_id:{
+        valid:boolean,
+        id:string
+      };
+visible_name?:string;
+visible_message?:string;
+  }
 }
 
 export interface CommonProps {

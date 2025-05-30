@@ -17,6 +17,7 @@ import {useTheme, useHaptics} from '../hooks';
 import {UnknownPaymentType, PaymentState} from '../../enums';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store/store';
+import { global } from '../styles/global';
 
 type PartyInfo = {
   name: string;

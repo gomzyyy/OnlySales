@@ -19,6 +19,7 @@ import {BusinessType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
 import {isValidEmail, showToast} from '../../../../service/fn';
 import {ValidateReferralCodeOtpAPI} from '../../../../api/api.validate';
+import { global } from '../../../../styles/global';
 
 type AskAboutUserInfoParams = {
   name: string;

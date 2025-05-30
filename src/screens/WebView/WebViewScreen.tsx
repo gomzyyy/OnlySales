@@ -1,28 +1,40 @@
-import {View, Text} from 'react-native';
-import React, {useEffect} from 'react';
-import WebView, {WebViewNavigation} from 'react-native-webview';
+import {View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import WebView, {WebViewMessageEvent} from 'react-native-webview';
 import {useRoute} from '@react-navigation/native';
+import ExpandButton from './components/ExpandButton';
 import {back} from '../../utils/nagivationUtils';
-import Header from '../../components/Header';
+import {NATIVE_WEBVIEW_MESSAGE_TYPE} from '../../../enums';
+import {useStorage} from '../../hooks';
 
 type WebViewScreenProps = {};
 type WebViewScreenParams = {
-  url?: string;
+  uri?: string;
 };
 
 const WebViewScreen: React.FC<WebViewScreenProps> = () => {
-  // const {params} = useRoute();
-  // const {url} = params as WebViewScreenParams;
-  // useEffect(() => {
-  //   if (!url) {
-  //     back();
-  //   }
-  // }, [url, params]);
+  const {params} = useRoute();
+  const {local} = useStorage();
+  const paramUrl = (params as WebViewScreenParams)?.uri || 'www.google.com';
+  const [url, setUrl] = useState<string>(paramUrl);
+  const [inputActivated, setInputActivated] = useState<boolean>(false);
+
+  const WebViewEventHandler = (event: WebViewMessageEvent) => {
+    if (
+      event.nativeEvent.data ===
+      NATIVE_WEBVIEW_MESSAGE_TYPE.OWNER_PROFILE_UPDATE_SUCCESS
+    ) {
+      local.updateUser().then(e => back()).catch(()=>{})
+    }
+  };
   return (
-    <View style={{flex: 1}}>
-      <Header backButton />
+    <View style={{flex: 1, position: 'relative'}}>
+      <ExpandButton
+        onBackBtnPress={() => back()}
+        onSearchBtnPress={() => setInputActivated(!inputActivated)}
+      />
       <WebView
-        source={{uri: 'http://192.168.1.71:3000/'}}
+        source={{uri: url}}
         style={{flex: 1}}
         javaScriptEnabled={true}
         domStorageEnabled={true}
@@ -31,8 +43,9 @@ const WebViewScreen: React.FC<WebViewScreenProps> = () => {
         allowsBackForwardNavigationGestures={true}
         onShouldStartLoadWithRequest={event => {
           console.log('Navigating to: ', event.url);
-          return true; // allow all navigations inside WebView
+          return true;
         }}
+        onMessage={e => WebViewEventHandler(e)}
       />
     </View>
   );

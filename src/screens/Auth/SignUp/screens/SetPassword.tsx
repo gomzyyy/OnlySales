@@ -22,6 +22,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
 import {setUser} from '../../../../../store/slices/business';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { global } from '../../../../styles/global';
 
 type SetPasswordParams = {
   name: string;

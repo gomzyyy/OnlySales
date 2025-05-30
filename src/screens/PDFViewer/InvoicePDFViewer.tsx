@@ -71,8 +71,8 @@ const InvoicePDFViewer = ({
       const htmlContent = generateInvoiceHTML(singleSoldProductInvoiceOptions);
       const options: Options = {
         html: htmlContent,
-        fileName: 'invoice',
-        directory: 'Documents',
+        fileName: `${customer.name}_${Date.now()}`,
+        directory: 'Customer_Invoices',
       };
       const file = await RNHTMLtoPDF.convert(options);
       if (file.filePath) {
@@ -133,7 +133,6 @@ const InvoicePDFViewer = ({
           const encodedMsg = encodeURIComponent(msg);
           const wpNo = `91${customer.phoneNumber}`;
           const whatsappLink = `https://wa.me/${wpNo}?text=${encodedMsg}`;
-          console.log(whatsappLink)
           Linking.canOpenURL(whatsappLink)
             .then(supported => {
               if (supported) {
@@ -203,7 +202,10 @@ const InvoicePDFViewer = ({
               <ActivityIndicator size={20} color={'white'} />
             )}
           </TouchableOpacity>
-          <SlideUpContainer open={openShare} close={handleCloseShareButton} height={deviceHeight * 0.2}>
+          <SlideUpContainer
+            open={openShare}
+            close={handleCloseShareButton}
+            height={deviceHeight * 0.2}>
             <View
               style={[
                 styles.shareBtnContainer,
@@ -260,94 +262,3 @@ const styles = StyleSheet.create({
 });
 
 export default InvoicePDFViewer;
-
-//  const GetCustomerPhoneNumber = () => {
-//     const handleSend = () => {
-//       if (alternateNumber.length !== 10) {
-//         showToast({type: 'error', text1: 'please enter a valid number!'});
-//         return;
-//       }
-//       if (pdfUrl) {
-//         const msg = WHATSAPP_MESSAGE.replace('$$PDF_URL$$', pdfUrl).replace(
-//           '$$BUSINESS_NAME$$',
-//           owner.businessName,
-//         );
-//         const encodedMsg = encodeURIComponent(msg);
-//         const whatsappLink = `https://wa.me/${alternateNumber}?text=${encodedMsg}`;
-//         Linking.canOpenURL(whatsappLink)
-//           .then(supported => {
-//             if (supported) {
-//               Linking.openURL(whatsappLink);
-//             } else {
-//               showToast({
-//                 type: 'info',
-//                 text1: 'WhatsApp is not installed or cannot be opened.',
-//               });
-//               return;
-//             }
-//           })
-//           .catch(err => console.error('An error occurred', err));
-//       } else {
-//         setOpenAlternateNumberInput(false);
-//         showToast({
-//           type: 'error',
-//           text1: 'Please try generating invoice again.',
-//         });
-//         return;
-//       }
-//     };
-//     return (
-//       <View
-//         style={[
-//           styles.altNumberGetterContainer,
-//           {backgroundColor: currentTheme.contrastColor},
-//         ]}>
-//         <Text
-//           style={{
-//             textAlign: 'center',
-//             fontSize: 16,
-//             fontWeight: '900',
-//             paddingHorizontal: 20,
-//           }}>
-//           Customer's number not available.
-//         </Text>
-//         <View style={{gap: 8}}>
-//           <Text style={{fontSize: 14, fontWeight: '600', textAlign: 'center'}}>
-//             Enter alternate number.
-//           </Text>
-//           <TextInput
-//             style={styles.inputText}
-//             value={alternateNumber}
-//             onChangeText={setAlternateNumber}
-//             placeholderTextColor={'grey'}
-//             textAlign="center"
-//             keyboardType="numeric"
-//           />
-//         </View>
-
-//         <View style={{flexDirection: 'row', gap: 8}}>
-//           <TouchableOpacity
-//             style={[
-//               styles.button,
-//               {marginTop: 0, flex: 1, alignItems: 'center'},
-//             ]}
-//             onPress={()=>setOpenAlternateNumberInput(false)}
-//           >
-//             <Icon1 name="circle-with-cross" size={18} color={'white'} />
-//             <Text style={styles.buttonText}>cancel</Text>
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             style={[
-//               styles.button,
-//               {marginTop: 0, flex: 1, alignItems: 'center'},
-//             ]}
-//             onPress={handleSend}
-//           >
-//             <Text style={styles.buttonText}>Send</Text>
-//             <Icon2 name="send" size={18} color={'white'} />
-//           </TouchableOpacity>
-//         </View>
-//       </View>
-//     );
-//   };
-

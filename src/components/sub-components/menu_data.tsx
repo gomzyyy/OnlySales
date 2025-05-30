@@ -1,8 +1,8 @@
+import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/FontAwesome5';
 import Icon4 from 'react-native-vector-icons/Entypo';
-import Icon5 from 'react-native-vector-icons/FontAwesome6';
 
 import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
@@ -58,6 +58,12 @@ export const ToolsData: menuNavContent[] = [
     icon: (color: string) => (
       <Icon3 name="book" color={color} size={22} />
     ),
+    disabled: false,
+  },
+   {
+    name: 'Invoices',
+    navigateTo: 'Invoices',
+    icon: (color: string) => <Icon name="file-invoice" color={color} size={24} />,
     disabled: false,
   },
   {

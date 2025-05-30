@@ -64,7 +64,6 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
       }))
       .reverse();
   }, [ArrWithDate]);
-  console.log(groupedArr);
   const Tab: React.FC<TabProps> = ({
     lastIndex = false,
     i,

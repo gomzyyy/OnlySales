@@ -13,7 +13,7 @@ import {useAnalytics, useTheme} from '../../hooks';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useHaptics} from '../../hooks';
 import { deviceHeight } from '../../utils/Constants';
-import CreateUnknownPayment from '../../components/CreateUnknownPayment';
+// import CreateUnknownPayment from '../../components/CreateUnknownPayment';
 import { useTranslation } from 'react-i18next';
 
 const Customers = () => {

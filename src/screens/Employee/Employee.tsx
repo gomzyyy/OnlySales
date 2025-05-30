@@ -24,7 +24,6 @@ import {isNumber} from '../../service/test';
 import {AdminRole, EmploymentStatus, Shift} from '../../../enums';
 import {AppDispatch, RootState} from '../../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
-import ShiftPicker from '../../components/ShiftPicker';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import FilePicker from '../../components/FilePicker';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
@@ -36,6 +35,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import Picker from '../../customComponents/Picker';
 
 type EmployeeParams = {
   employeeId: EmployeeType['_id'];
@@ -181,7 +181,6 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
       </View>
     );
   };
-  console.log(employee);
   const PermissionTab = ({
     label,
     allowed,
@@ -424,10 +423,11 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
             </Text>
 
             {editable && (
-              <EmployementStatusPicker
+               <Picker
                 value={status}
                 setState={setStatus}
                 enabled={editable}
+                data={EmploymentStatus}
               />
             )}
           </View>
@@ -444,10 +444,11 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
               </Text>
             </Text>
             {editable && (
-              <ShiftPicker
+              <Picker
                 value={shift}
                 setState={setShift}
                 enabled={editable}
+                data={Shift}
               />
             )}
           </View>

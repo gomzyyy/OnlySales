@@ -34,6 +34,8 @@ import ConfirmPayment from '../../components/ConfirmPayment';
 import ScanQRToPay from '../../components/ScanQRToPay';
 import InvoicePDFViewer from '../PDFViewer/InvoicePDFViewer';
 import SearchContainer from './components/SlideContainers/SearchContainer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 type RouteParams = {
   customer: CustomerType;
@@ -47,6 +49,7 @@ const Customer = () => {
   const params = useRoute().params;
   const {customer, openAddProduct} = params as RouteParams;
   const {owner, currency} = useAnalytics();
+  const {lc_meta_data} = useSelector((s:RootState)=>s.appData.app)
   const customers: CustomerType[] = owner.customers;
   const [openSearchContainer, setOpenSearchContainer] =
     useState<boolean>(false);
@@ -410,14 +413,12 @@ const Customer = () => {
         open={willingToPay}
         close={handleCloseQRCode}
         opacity={0.4}
-        height={deviceHeight * 0.5}>
+        height={deviceHeight * 0.6}>
         <ScanQRToPay
           payableAmount={payableAmount}
           cancel={handleCloseQRCode}
           currency={currency}
           callback={handleInvoiceButton}
-          pa="gomzydhingra0001@okhdfcbank"
-          pn="Khata App"
         />
       </SlideUpContainer>
       <SlideUpContainer

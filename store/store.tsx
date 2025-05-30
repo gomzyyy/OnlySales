@@ -9,7 +9,7 @@ import DeviceInfoSliceFunction from './slices/device';
 import CacheSliceFunction from './slices/cache';
 
 const persistConfig = {
-  key: 'eregadsdnfswuea9ddartbwfetr',
+  key: 'eregadsdnfswuejka9ddartbwfetr',
   storage: mmkv,
   blacklist: ['deviceInfo'],
 };

@@ -1,4 +1,4 @@
-import {View, Text, ActivityIndicator} from 'react-native';
+import {View, Text, ActivityIndicator, Image} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {AppDispatch, RootState} from '../../../store/store';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,14 +13,13 @@ import {RequestUXPermission} from '../../service/permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateUserLocationAPI} from '../../api/api.ucontrol';
 import Geolocation from '@react-native-community/geolocation';
-import UserFound from '../Auth/Login/screens/UserFound';
+const COHERE_LOGO = require('../../assets/images/Cohere-Logo.png');
 
 const SplashScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user);
   const {currentTheme} = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
-
   useFocusEffect(
     useCallback(() => {
       const initNavigation = async () => {
@@ -96,6 +95,19 @@ const SplashScreen = () => {
             <ActivityIndicator size={40} color={currentTheme.baseColor} />
           )}
         </View>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 4,
+          justifyContent: 'center',
+          marginBottom: 4,
+        }}>
+        <Text style={{fontSize: 12, fontWeight: '900', fontStyle: 'italic'}}>
+          Powered by
+        </Text>
+        <Image source={COHERE_LOGO} style={{height: 30, width: 60}} />
       </View>
     </View>
   );

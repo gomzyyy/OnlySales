@@ -20,6 +20,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {isNumber} from '../../../service/test';
 import {Owner} from '../../../../types';
 import {AdminRole} from '../../../../enums';
+import { global } from '../../../styles/global';
+
 
 const SignUp = () => {
   const {currentTheme} = useTheme();

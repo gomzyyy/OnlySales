@@ -265,14 +265,12 @@ const Tab: React.FC<TabProps> = ({
         open={willingToPay}
         close={handleCloseQRCode}
         opacity={0.4}
-        height={deviceHeight * 0.5}>
+        height={deviceHeight * 0.6}>
         <ScanQRToPay
           payableAmount={payableAmount}
           cancel={handleCloseQRCode}
           currency={currency}
           callback={handleInvoiceButton}
-          pa="gomzydhingra0001@okhdfcbank"
-          pn="Khata App"
         />
       </SlideUpContainer>
       <SlideUpContainer

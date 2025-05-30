@@ -13,12 +13,18 @@ import Icon from 'react-native-vector-icons/Entypo';
 import TodayAnalyticsCard from './components/TodayAnalyticsCard';
 import WeeklySalesAnalysisCard from './components/WeeklySalesAnalysisCard';
 import MonthlySalesAnalysisCard from './components/MonthlySalesAnalyticsCard';
-const NoProductImage = require('../../assets/images/no_product_image.jpg');
-const NoUserImage = require('../../assets/image/no-profile.jpg');
+const COHERE_LOGO_WHITE = require('../../assets/images/Cohere-Logo-White.png');
 
 const Analytics = () => {
   const {currentTheme} = useTheme();
-  const {mergedweeklySales,soldThisMonth} = useAnalytics();
+  const {mergedweeklySales, soldThisMonth} = useAnalytics();
+
+  const AIbtn = () => (
+    <View>
+      <Image source={COHERE_LOGO_WHITE} style={{height: 20, width: 20}} />
+    </View>
+  );
+
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Header
@@ -26,6 +32,8 @@ const Analytics = () => {
         name="Analytics"
         headerBgColor={currentTheme.baseColor}
         backButton={true}
+        renderItem={<AIbtn/>}
+        customComponent={true}
       />
       <View style={{flex: 1, paddingHorizontal: 10}}>
         <ScrollView

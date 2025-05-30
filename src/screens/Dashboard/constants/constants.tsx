@@ -1,11 +1,9 @@
-import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {PropsWithChildren, ReactNode} from 'react';
 import {useHaptics, useTheme} from '../../../hooks';
-import {navigate} from '../../../utils/nagivationUtils';
 import {DropDownOptionsType} from '../components/animated/DropDownMenu';
 
 export const ToolsIconContainer = ({

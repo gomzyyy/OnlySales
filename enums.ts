@@ -48,9 +48,7 @@ export enum LocationRef {
 }
 
 export enum AppThemeName {
-  // PURPLE = 'Midnight Orchid',
   RED = 'Blood Moon',
-  // YELLOW = 'Molten Gold',
   GREEN = 'Cyber Lime',
   BLUE = 'Deep Ocean',
   // CORAL = 'Salmon Mist',
@@ -202,4 +200,15 @@ export enum UserRefType {
 }
 export enum ReviewerType {
   CUSTOMER = 'Customer',
+}
+export enum NATIVE_WEBVIEW_MESSAGE_TYPE {
+  OWNER_PROFILE_UPDATE_SUCCESS = 'OWNER_PROFILE_UPDATE_SUCCESS',
+  OWNER_PROFILE_UPDATE_FAILED = 'OWNER_PROFILE_UPDATE_FAILED'
+}
+export enum AIResponseLengthType {
+  vsm = "vsm",
+  sm = "sm",
+  md = "md",
+  lg = "lg",
+  xlg = "xlg",
 }

@@ -1,5 +1,6 @@
 import {
   AdminRole,
+  AIResponseLengthType,
   BusinessType,
   MeasurementType,
   PaymentHistoryReferenceType,
@@ -15,6 +16,7 @@ import {
   SoldProduct,
   SoldProductPaymentHistory,
   UnknownPaymentHistory,
+  User,
 } from '../../types';
 
 export interface APIReturnType {
@@ -333,10 +335,10 @@ export interface UpdateSoldProductStateReturnType extends APIReturnType {}
 
 export interface UploadPdfToCloudAPIData {
   query: {
-    role:AdminRole,
+    role: AdminRole;
   };
   media: {
-    pdf:string
+    pdf: string;
   };
 }
 
@@ -345,3 +347,30 @@ export interface UploadPdfToCloudReturnType extends APIReturnType {
     url?: string;
   };
 }
+
+export interface AnalyseSingleProductAIAPIData {
+  query: {
+    role: AdminRole;
+    oid:User['_id'];
+    productId:Product['_id'];
+    rl:AIResponseLengthType
+  };
+}
+export interface AnalyseSingleProductAIReturnType extends APIReturnType {
+  data: {
+    response?: string;
+  };
+}
+export interface AnalyseBusinessAIAPIData {
+  query: {
+    role: AdminRole;
+    oid:User['_id'];
+    rl:AIResponseLengthType
+  };
+}
+export interface AnalyseBusinessAIReturnType extends APIReturnType {
+  data: {
+    response?: string;
+  };
+}
+

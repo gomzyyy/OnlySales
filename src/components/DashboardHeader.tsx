@@ -76,12 +76,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       style={{flex: flex ? 1 : 0}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.parent}>
-        <ScrollView
-          horizontal={true}
-          style={styles.container}
-          contentContainerStyle={{gap: 20, paddingHorizontal: 10}}
-          nestedScrollEnabled
-          showsVerticalScrollIndicator={false}>
+        <View
+          style={[
+            styles.container,
+            {gap: 20, paddingHorizontal: 10, justifyContent: 'center'},
+          ]}>
           {dashboardHeaderTabs.map(t => (
             <View
               key={t.name}
@@ -104,7 +103,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               </View>
             </View>
           ))}
-        </ScrollView>
+        </View>
         {searchBar && (
           <View style={{paddingHorizontal: 10}}>
             <Pressable

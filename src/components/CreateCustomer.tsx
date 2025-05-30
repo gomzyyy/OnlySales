@@ -15,16 +15,13 @@ import {deviceHeight} from '../utils/Constants';
 import {modifyUserName, showToast} from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {useAnalytics, useHaptics, useTheme} from '../hooks/index';
+import {useHaptics, useTheme} from '../hooks/index';
 import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
-import {createCustomerAPI} from '../api/api.customer';
 import {AdminRole} from '../../enums';
 import {Employee, Partner} from '../../types';
-import {getOwnerAPI} from '../api/api.owner';
-import {setUser} from '../../store/slices/business';
-import {getUserAPI} from '../api/api.user';
 import {useStorage} from '../hooks';
+import { global } from '../styles/global';
 
 type CreateCustomerProps = {
   callback: () => void;
@@ -80,11 +77,6 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       setLoading,
     );
     if (res.success && res.data.customer) {
-      const userRes = await getUserAPI({
-        role,
-      });
-      if (userRes.success && userRes.data.user) {
-        dispatch(setUser(userRes.data.user));
         showToast({
           type: 'success',
           text1: res.message,
@@ -92,7 +84,6 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
         });
         callback();
         return;
-      }
     }
     showToast({
       type: 'error',
@@ -132,7 +123,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               value={name}
               onChangeText={v => setName(modifyUserName(v))}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter name"
@@ -148,7 +139,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               value={phoneNumber}
               onChangeText={setphoneNumber}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter phone number"
@@ -164,7 +155,7 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               value={address}
               onChangeText={setAddress}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter address"

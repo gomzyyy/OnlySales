@@ -89,6 +89,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     socket?.on('getOnlineUsers', d => console.log(d));
+    socket?.on('getOnlineUsers_meta_data', d => console.log(d));
   }, [socket]);
 
   const dropDownOptions: DropDownOptionsType[] = [
@@ -148,7 +149,7 @@ const Dashboard = () => {
             right={10}
           />
         )}
-        <Pressable
+        {/* <Pressable
           style={{
             backgroundColor: 'white',
             borderRadius: 10,
@@ -166,7 +167,7 @@ const Dashboard = () => {
             }}>
             Test UI
           </Text>
-        </Pressable>
+        </Pressable> */}
         {!user.email?.verified && <NotVerifiedAlert />}
         <View style={styles.contentContainer}>
           <DashboardHeader

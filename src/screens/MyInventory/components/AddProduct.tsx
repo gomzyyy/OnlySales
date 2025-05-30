@@ -18,14 +18,13 @@ import {MeasurementType, ProductType} from '../../../../enums';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
-import {useAnalytics, useTheme} from '../../../hooks/index';
+import {useAnalytics, useStorage, useTheme} from '../../../hooks/index';
 import {isFloat, isNumber} from '../../../service/test';
 import {createProductAPI} from '../../../api/api.product';
 import ProductTypePicker from '../../../components/ProductTypePicker';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import FilePicker from '../../../components/FilePicker';
-import {getUserAPI} from '../../../api/api.user';
-import {setUser} from '../../../../store/slices/business';
+import { global } from '../../../styles/global';
 import {useTranslation} from 'react-i18next';
 
 type EditProductProps = {
@@ -34,6 +33,7 @@ type EditProductProps = {
 
 const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
+ const {product} = useStorage()
   const {t} = useTranslation('inventory');
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
@@ -117,24 +117,8 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
         image,
       },
     };
-    const res = await createProductAPI(newProductData, setLoading);
+    const res = await product.create(newProductData, setLoading);
     if (res.success && res.data.product) {
-      const userRes = await getUserAPI(
-        {
-          role: user.role,
-        },
-        setLoading,
-      );
-      if (userRes.success && userRes.data.user) {
-        dispatch(setUser(userRes.data.user));
-        showToast({
-          type: 'success',
-          text1: res.message,
-          text2: 'Pleas add products to create Udhars.',
-        });
-        close();
-        return;
-      }
       showToast({
         type: 'success',
         text1: `Product ${res.data.product.name} Created successfully`,
@@ -172,7 +156,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               value={name}
               onChangeText={setName}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_itemname')}
@@ -201,7 +185,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               value={price}
               onChangeText={value => setPrice(value)}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_price')}
@@ -221,7 +205,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               value={discountedPrice}
               onChangeText={value => setDiscountedPrice(value)}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_discountedprice')}
@@ -241,7 +225,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               value={quantity}
               onChangeText={value => setQuantity(value)}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_quantity')}
@@ -261,7 +245,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               value={stock}
               onChangeText={value => setStock(value)}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder=  {t('i_addinventoryitem_placeholder_stock')}
@@ -282,7 +266,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 value={productCost}
                 onChangeText={value => setProductCost(value)}
                 style={[
-                  styles.inputText,
+                  global.inputText,
                   {borderColor: currentTheme.modal.inputBorder},
                 ]}
                 placeholder= {t('i_addinventoryitem_placeholder_makingcost')}

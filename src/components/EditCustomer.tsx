@@ -19,9 +19,7 @@ import {showToast} from '../service/fn';
 import {useAnalytics, useStorage, useTheme} from '../hooks';
 import SlideUpContainer from './SlideUpContainer';
 import FilePicker from './FilePicker';
-import {updateCustomerAPI} from '../api/api.customer';
-import {validateTokenAPI} from '../api/api.auth';
-import {setUser} from '../../store/slices/business';
+import { global } from '../styles/global';
 
 type EditCustomerProps = {
   i: Customer;
@@ -69,12 +67,6 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
       media: {image},
     };
     const res = await customer.update(data, setLoading);
-    if (res.success) {
-      const userRes = await validateTokenAPI({role: user.role});
-      if (userRes.success && userRes.data && userRes.data.user) {
-        dispatch(setUser(userRes.data.user));
-      }
-    }
     showToast({type: res.success ? 'success' : 'error', text1: res.message});
     close();
   };
@@ -103,7 +95,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={name}
               onChangeText={setName}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter name"
@@ -119,7 +111,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={phoneNumber}
               onChangeText={setphoneNumber}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter phone number"
@@ -135,7 +127,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={address}
               onChangeText={setAddress}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter address"

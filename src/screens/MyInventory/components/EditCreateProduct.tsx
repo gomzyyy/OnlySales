@@ -18,6 +18,7 @@ import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import {useTheme} from '../../../hooks/index';
 import { useTranslation } from 'react-i18next';
+import { global } from '../../../styles/global';
 
 type EditProductProps = {
   product: Product;
@@ -91,7 +92,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
             <TextInput
               value={name}
               onChangeText={setName}
-              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              style={[global.inputText, {borderColor: currentTheme.modal.inputBorder}]}
               placeholder={t('i_input_name_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
             />
@@ -104,7 +105,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
             <TextInput
               value={price.toString()}
               onChangeText={s => setPrice(Number(s) || 0)}
-              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              style={[global.inputText, {borderColor: currentTheme.modal.inputBorder}]}
               placeholder={t('i_input_price_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
@@ -118,7 +119,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
             <TextInput
               value={discountedPrice.toString()}
               onChangeText={s => setDiscountedPrice(Number(s) || 0)}
-              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              style={[global.inputText, {borderColor: currentTheme.modal.inputBorder}]}
               placeholder={t('i_input_discount_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"
@@ -132,7 +133,7 @@ const EditCreateProduct: React.FC<EditProductProps> = ({
             <TextInput
               value={quantity.toString()}
               onChangeText={value => setQuantity(Number(value))}
-              style={[styles.inputText, {borderColor: currentTheme.modal.inputBorder}]}
+              style={[global.inputText, {borderColor: currentTheme.modal.inputBorder}]}
               placeholder={t('i_input_quantity_placeholder')}
               placeholderTextColor={currentTheme.baseColor}
               keyboardType="numeric"

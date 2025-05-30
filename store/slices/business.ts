@@ -22,6 +22,14 @@ const initialState: appstate = {
     previousOwners: [],
     deviceId: undefined,
     appLocked: false,
+    lc_meta_data: {
+      upi_id: {
+        valid: false,
+        id: '',
+      },
+      visible_name: 'onlySales',
+      visible_message: 'Thanks for purchase.',
+    },
     fonts: {
       bottomTab: {
         title: {
@@ -68,6 +76,18 @@ const UserSlice = createSlice({
       state.app.searchResults.customerResults = [];
       state.app.searchResults.employeeResults = [];
     },
+    setPymtId: (state, action: PayloadAction<string>) => {
+      if (action.payload.length > 0) {
+        state.app.lc_meta_data.upi_id.valid = true;
+        state.app.lc_meta_data.upi_id.id = action.payload;
+      }
+    },
+    setVisibleName: (state, action: PayloadAction<string>) => {
+      state.app.lc_meta_data.visible_name = action.payload;
+    },
+    setVisibleMessage: (state, action: PayloadAction<string>) => {
+      state.app.lc_meta_data.visible_message = action.payload;
+    },
   },
 });
 export const {
@@ -76,5 +96,8 @@ export const {
   setTheme,
   setSearchResult,
   resetSearchResults,
+  setPymtId,
+  setVisibleMessage,
+  setVisibleName,
 } = UserSlice.actions;
 export default UserSlice.reducer;

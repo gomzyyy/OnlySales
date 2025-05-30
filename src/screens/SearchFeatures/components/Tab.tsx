@@ -1,13 +1,9 @@
-import {Text, StyleSheet, View, Image} from 'react-native';
-import React, {useState} from 'react';
+import {Text, StyleSheet, View} from 'react-native';
+import React from 'react';
 import {Customer, Employee} from '../../../../types';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks/index';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
-import SlideUpContainer from '../../../components/SlideUpContainer';
-import PopupContainer from '../../../components/PopUp';
-import {deviceHeight} from '../../../utils/Constants';
 const NoPhoto = require('../../../assets/images/no-profile.jpg');
 import {ToolsData} from '../../SearchFeatures/SearchFeatures';
 
@@ -28,25 +24,13 @@ const Tab: React.FC<TabProps> = ({
   dummy = false,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const [openTabOptions, setOpenTabOptions] = useState<boolean>(false);
-  const [openEditCustomer, setOpenEditCustomer] = useState<boolean>(false);
 
-  const handleOpenLongPressOptions = () => {
-    setOpenTabOptions(true);
-  };
-  const handleCloseLongPressOptions = () => setOpenTabOptions(false);
-  const handleOpenEditCustomer = () => {
-    setOpenTabOptions(false);
-    setOpenEditCustomer(true);
-  };
-  const handleCloseEditCustomer = () => setOpenEditCustomer(false);
-  const handleLongPressCancelAction = (route: string) =>
-    navigate(route, {customer: i});
+  const handleLongPressCancelAction = (route: string) => navigate(route);
 
   return (
     <LongPressEnabled
       longPressCanceledAction={() => handleLongPressCancelAction(i.navigateTo)}
-      longPressAction={handleOpenLongPressOptions}
+      longPressAction={() => {}}
       dummy={i.disabled}>
       <View
         style={[

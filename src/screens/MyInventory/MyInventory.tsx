@@ -37,7 +37,7 @@ const MyInventory = () => {
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Header
-        name={`${user.name}`}
+        name={'Inventory'}
         backButton
         customComponent={true}
         renderItem={<AddInventoryItemIcon />}

@@ -12,6 +12,7 @@ import {useTheme} from '../../../hooks';
 import useQuery from '../hooks/hooks';
 import Icon from 'react-native-vector-icons/Octicons';
 import {navigate} from '../../../utils/nagivationUtils';
+import { global } from '../../../styles/global';
 
 type QueryContainerProps = {
   close?: any;
@@ -62,7 +63,7 @@ const QueryContainer: React.FC<QueryContainerProps> = ({
             value={query}
             onChangeText={setQuery}
             style={[
-              styles.inputText,
+              global.inputText,
               {
                 borderColor: loading
                   ? currentTheme.bgColor

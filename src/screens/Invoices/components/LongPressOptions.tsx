@@ -6,69 +6,47 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
-import {colors, deviceHeight} from '../../../utils/Constants';
-import {Product} from '../../../../types';
-import {Confirm, showToast} from '../../../service/fn';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
+import {colors} from '../../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useStorage, useTheme} from '../../../hooks/index';
-import {deleteProductAPI} from '../../../api/api.product';
-import {validateTokenAPI} from '../../../api/api.auth';
-import {setUser} from '../../../../store/slices/business';
-import {useTranslation} from 'react-i18next';
+import {useTheme} from '../../../hooks/index';
+import FS from 'react-native-fs';
 
 type TabLongPressOptionsProps = {
-  i: Product;
+  file: FS.ReadDirItem;
   close: () => void;
 };
 
 const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
-  i,
+  file,
   close,
 }): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
-  const {product} = useStorage();
   const {currentTheme} = useTheme();
-  const {t} = useTranslation('inventory');
-  const user = useSelector((s: RootState) => s.appData.user)!;
-
   const [loading, setLoading] = useState<boolean>(false);
-
-  const handleDeleteCustomer = async (): Promise<void> => {
-    const res = await Confirm(
-      'Are you sure you want to remove this product?',
-      'this action cannot be reversed, records will remain in history only.',
-    );
-
-    if (res) {
-      const deleteProductData = {
-        query: {
-          uid: user._id,
-          role: user.role,
-          productId: i._id,
-        },
-      };
-      const res = await product.delete(deleteProductData, setLoading);
-      showToast({type: res.success ? 'success' : 'error', text1: res.message});
-      return;
+  const handleDeleteFile = async () => {
+    setLoading(true);
+    try {
+      await FS.unlink(file.path);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      close();
     }
   };
-
   return (
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
-      <Text style={styles.label}>{i.name}</Text>
+      <Text style={styles.label}>{file.name}</Text>
       <View style={styles.optionsContainer}>
         <TouchableOpacity
           style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
           activeOpacity={0.8}
-          onPress={handleDeleteCustomer}>
+          onPress={handleDeleteFile}>
           <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            {t('i_tab_options_delete')}
+            {loading ? 'Deleteing' : 'Delete'}
           </Text>
           {loading ? (
-            <ActivityIndicator color={colors.danger} size={16} />
+            <ActivityIndicator size={18} color={colors.danger} />
           ) : (
             <Icon name="delete" size={18} color={colors.danger} />
           )}
@@ -80,10 +58,10 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 
 const styles = StyleSheet.create({
   parent: {
-    paddingTop: 20,
-    height: deviceHeight * 0.18,
+    paddingVertical: 14,
+    height: 'auto',
     borderRadius: 20,
-    marginTop: 60,
+    marginBottom: 10,
     elevation: 30,
   },
   label: {
@@ -92,14 +70,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   optionsContainer: {
-    flex: 1,
     paddingHorizontal: 20,
     marginTop: 26,
     gap: 10,
   },
   buttonDanger: {
-    paddingVertical: 14,
     borderRadius: 12,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -113,7 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   buttonEdit: {
-    paddingVertical: 14,
+    height: 50,
     borderRadius: 12,
     borderWidth: 0.8,
     flexDirection: 'row',

@@ -8,6 +8,7 @@ type InfoContextType = {
   text1?: string;
   text2?: string;
   text3?: string;
+  points?: string[];
 };
 
 type FeatureInfoContainerProps = {
@@ -38,26 +39,48 @@ const FeatureInfoContainer: React.FC<FeatureInfoContainerProps> = ({
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}>
             <View style={styles.detailSection}>
-              {info.text1 && (
-                <Text
-                  style={[styles.textItem, {color: currentTheme.textColor}]}>
-                  {`\u2022 `}
-                  <Text style={styles.textContent}>{info.text1}</Text>
-                </Text>
-              )}
-              {info.text2 && (
-                <Text
-                  style={[styles.textItem, {color: currentTheme.textColor}]}>
-                  {`\u2022 `}
-                  <Text style={styles.textContent}>{info.text2}</Text>
-                </Text>
-              )}
-              {info.text3 && (
-                <Text
-                  style={[styles.textItem, {color: currentTheme.textColor}]}>
-                  {`\u2022 `}
-                  <Text style={styles.textContent}>{info.text3}</Text>
-                </Text>
+              {info.points && info.points.length > 0 ? (
+                info.points.map((s, i) => (
+                  <Text
+                    style={[styles.textItem, {color: currentTheme.textColor}]}
+                    key={i}>
+                    {`\u2022 `}
+                    <Text style={styles.textContent}>{s}</Text>
+                  </Text>
+                ))
+              ) : (
+                <>
+                  {info.text1 && (
+                    <Text
+                      style={[
+                        styles.textItem,
+                        {color: currentTheme.textColor},
+                      ]}>
+                      {`\u2022 `}
+                      <Text style={styles.textContent}>{info.text1}</Text>
+                    </Text>
+                  )}
+                  {info.text2 && (
+                    <Text
+                      style={[
+                        styles.textItem,
+                        {color: currentTheme.textColor},
+                      ]}>
+                      {`\u2022 `}
+                      <Text style={styles.textContent}>{info.text2}</Text>
+                    </Text>
+                  )}
+                  {info.text3 && (
+                    <Text
+                      style={[
+                        styles.textItem,
+                        {color: currentTheme.textColor},
+                      ]}>
+                      {`\u2022 `}
+                      <Text style={styles.textContent}>{info.text3}</Text>
+                    </Text>
+                  )}
+                </>
               )}
             </View>
           </ScrollView>

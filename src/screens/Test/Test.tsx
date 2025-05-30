@@ -1,59 +1,45 @@
-import {
-  View,
-  Text,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Image,
-  Button,
-  TextInput,
-  Pressable,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import QRCode from 'react-native-qrcode-svg';
-import RecivePaymentByQRCode from '../../components/RecivePaymentByQRCode';
-import {CurrencyType} from '../../../enums';
-import SlideUpContainer from '../../components/SlideUpContainer';
+import {View, StyleSheet, Button} from 'react-native';
+import React, {useState} from 'react';
+import {AIResponseLengthType} from '../../../enums';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import {deviceHeight, deviceWidth} from '../../utils/Constants';
-import GeoLocation from '@react-native-community/geolocation';
-import Pdf from 'react-native-pdf';
-import Header from '../../components/Header';
-import ReactNaviveHTMLToPdf, {Options} from 'react-native-html-to-pdf';
-import WebView from 'react-native-webview';
-import {KEYWORDS, RESERVED_KEYWORDS} from '../../utils/Constants';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useTheme} from '../../hooks';
-import {colors} from '../../utils/Constants';
-import Icon1 from 'react-native-vector-icons/AntDesign';
-import {back} from '../../utils/nagivationUtils';
-import WebViewScreen from '../WebView/WebViewScreen';
-// const value = `upi://pay?pa=gomzydhingra0001@okhdfcbank&pn=GomzyDev&mc=1234&tid=Txn7367289298&tr=Order1236&tn=Payment%20for%20Udhar%20%26%20Pending%20Bills&am=50&cu=INR`;
+import {useAnalytics, useTheme} from '../../hooks';
+import d from 'react-native-device-info';
+
+import {analyseBusinessAIAPI} from '../../api/api.ai';
 
 const Test = () => {
-  const [image, setImage] = useState<string | undefined>(undefined);
-  const [open, setOpen] = useState<boolean>(false);
-  // const user = useSelector((s: RootState) => s.appData.user);
   const {currentTheme} = useTheme();
-  // GeoLocation.getCurrentPosition(success => console.log(success));
-
-  const generatePdf = async () => {
-    const options: Options = {
-      html: `<h1>Hello, I hope youre fine.</h1>`,
-      fileName: `Hello`,
-      directory: `invoices`,
-    };
-    // const res = await ReactNaviveHTMLToPdf.convert(options);
-    // console.log(res);
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const {owner} = useAnalytics();
+  const getDeviceInfo = async () => {
+    console.log(d.getDeviceNameSync());
   };
-  const path =
-    '/storage/emulated/0/Android/data/com.khata/files/invoices/Hello.pdf';
+  //     const req = async()=>{
+  //       const data={
+  //         query:{
+  // oid:owner._id,
+  // role:user.role,
+  // rl:AIResponseLengthType.sm
+  //         }
+  //       }
+  //       const res = await analyseBusinessAIAPI(data);
+  //       console.log(res)
+  //     }
 
   return (
     <SafeAreaView
       style={[styles.screen, {backgroundColor: currentTheme.contrastColor}]}>
-      <WebViewScreen />
+      {/* <WebViewScreen /> */}
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Button title="REQ" onPress={getDeviceInfo} />
+      </View>
     </SafeAreaView>
   );
 };
