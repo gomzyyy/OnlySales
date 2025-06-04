@@ -1,12 +1,12 @@
 import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {Customer} from '../../../../types';
+import {Employee} from '../../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks/index';
 
 type TabProps = {
-  i: Customer;
+  i: Employee;
   lastIndex?: boolean;
 };
 

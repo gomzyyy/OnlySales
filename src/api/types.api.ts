@@ -17,6 +17,8 @@ import {
   SoldProductPaymentHistory,
   UnknownPaymentHistory,
   User,
+  TermsAndConditions,
+  PrivacyPolicy,
 } from '../../types';
 
 export interface APIReturnType {
@@ -351,9 +353,9 @@ export interface UploadPdfToCloudReturnType extends APIReturnType {
 export interface AnalyseSingleProductAIAPIData {
   query: {
     role: AdminRole;
-    oid:User['_id'];
-    productId:Product['_id'];
-    rl:AIResponseLengthType
+    oid: User['_id'];
+    productId: Product['_id'];
+    rl: AIResponseLengthType;
   };
 }
 export interface AnalyseSingleProductAIReturnType extends APIReturnType {
@@ -364,13 +366,28 @@ export interface AnalyseSingleProductAIReturnType extends APIReturnType {
 export interface AnalyseBusinessAIAPIData {
   query: {
     role: AdminRole;
-    oid:User['_id'];
-    rl:AIResponseLengthType
+    oid: User['_id'];
+    rl: AIResponseLengthType;
   };
 }
-export interface AnalyseBusinessAIReturnType extends APIReturnType {
+export interface AnalyseBusinessAPIReturnType extends APIReturnType {
   data: {
     response?: string;
+  };
+}
+export interface GetTermsAndPolicyAPIData {
+   query: {
+    r:'tnc' | 'pp'
+  }
+}
+export interface GetTermsAndConditionsAPIReturnType extends APIReturnType {
+  data: {
+    tnc?:TermsAndConditions;
+  };
+}
+export interface GetPrivacyPolicyAPIReturnType extends APIReturnType {
+  data: {
+    pp?:PrivacyPolicy;
   };
 }
 

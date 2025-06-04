@@ -4,7 +4,6 @@ import {
   ScrollView,
   Text,
   Pressable,
-  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
@@ -149,7 +148,7 @@ const Dashboard = () => {
             right={10}
           />
         )}
-        {/* <Pressable
+        <Pressable
           style={{
             backgroundColor: 'white',
             borderRadius: 10,
@@ -158,7 +157,7 @@ const Dashboard = () => {
             alignSelf: 'center',
             marginBottom: 6,
           }}
-          onPress={() => navigate('Test')}>
+          onPress={() => navigate('TermsAndConditions')}>
           <Text
             style={{
               color: currentTheme.baseColor,
@@ -167,7 +166,7 @@ const Dashboard = () => {
             }}>
             Test UI
           </Text>
-        </Pressable> */}
+        </Pressable>
         {!user.email?.verified && <NotVerifiedAlert />}
         <View style={styles.contentContainer}>
           <DashboardHeader
@@ -226,9 +225,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 5,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: 10,
+    paddingHorizontal:10
   },
   inputText: {
     borderWidth: 2,

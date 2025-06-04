@@ -1,42 +1,41 @@
 import {View, Text, StyleSheet, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {Customer, SoldProduct} from '../../../../types';
 import {deviceHeight} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
-import {RootState} from '../../../../store/store';
-import {useSelector} from 'react-redux';
-import PayButton from '../../../components/PayButton';
-import SlideUpContainer from '../../../components/SlideUpContainer';
-import ConfirmPayment from '../../../components/ConfirmPayment';
+import {useTheme} from '../../../hooks';
 import {TouchableOpacity} from 'react-native';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import {back} from '../../../utils/nagivationUtils';
-import CustomerInfo from './CustomerInfo';
-import Tab from './Tab';
+import CustomerInfo from '../components/CustomerInfo';
+import Tab from '../components/Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {PaymentState} from '../../../../enums';
 import {useTranslation} from 'react-i18next';
 
-type PaidPaymentsProps = {
+type UnpaidPaymentsProps = {
   customer: Customer;
   date: string;
   products: SoldProduct[];
   close: () => void;
 };
+type UnpaidPaymentsParams = {
+  customer: Customer;
+  date: string;
+  products: SoldProduct[];
+};
 
-const PaidPayments: React.FC<PaidPaymentsProps> = ({
+const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   customer,
   products,
   date,
   close,
 }): React.JSX.Element => {
-  console.log(products);
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
+    const [upp,setUpp]=useState<SoldProduct[]>([]);
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
-        {t('c_paidpayments')}
+        {t('c_pendingpayments')}
       </Text>
       <View
         style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
@@ -48,10 +47,10 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
               keyExtractor={i => i.createdAt}
               renderItem={({item}) => (
                 <Tab
-                  actionType="PAID"
+                  actionType="UNPAID"
                   i={item}
                   customer={customer}
-                  date={item.createdAt}
+                  date={date}
                   closeParent={close}
                 />
               )}
@@ -60,7 +59,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
           ) : (
             <View style={styles.emptyListContainer}>
               <EmptyListMessage
-                title={t('p_paidpayments_nodata_title')}
+                title={t('c_empty_unpaid_alert')}
                 textColor={currentTheme.contrastColor}
               />
               <TouchableOpacity
@@ -68,7 +67,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
                   styles.backBtnContainer,
                   {backgroundColor: currentTheme.contrastColor},
                 ]}
-                onPress={() => close()}>
+                onPress={() => back()}>
                 <Icon
                   name="arrowleft"
                   size={20}
@@ -83,6 +82,12 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
           )}
         </View>
       </View>
+      {/* {products.length !== 0 && (
+        <PayButton
+          label={`${t('c_pay_btn')} ${currency} ${amount}`}
+          pressAction={() => openConfirmPay('WHOLE')}
+        />
+      )} */}
     </View>
   );
 };
@@ -124,4 +129,4 @@ const styles = StyleSheet.create({
   backBtnText: {fontSize: 20, fontWeight: 'bold'},
 });
 
-export default PaidPayments;
+export default UnPaidPayments;

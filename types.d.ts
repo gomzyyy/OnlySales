@@ -7,8 +7,8 @@ import {
   Shift,
   CurrencyType,
   AssetType,
-  LibilityType,
-  LibilityStatus,
+  LiabilityType,
+  LiabilityStatus,
   AssetStatus,
   Department,
   Position,
@@ -22,6 +22,12 @@ import {
   ReviewRefType,
   UserRefType,
   ReviewerType,
+  EventHistoryReference,
+  EventReference,
+  EventStatus,
+  SUPPORT_THREAD_PRIORITY,
+  SUPPORT_THREAD_STATUS,
+  SUPPORT_THREAD_CATEGORY,
 } from './enums';
 
 declare global {
@@ -100,14 +106,14 @@ export interface App {
   deviceId?: string | undefined;
   appLocked: boolean;
   fonts: AppFontSize;
-  lc_meta_data:{
-upi_id:{
-        valid:boolean,
-        id:string
-      };
-visible_name?:string;
-visible_message?:string;
-  }
+  lc_meta_data: {
+    upi_id: {
+      valid: boolean;
+      id: string;
+    };
+    visible_name?: string;
+    visible_message?: string;
+  };
 }
 
 export interface CommonProps {
@@ -141,6 +147,8 @@ export interface User extends CommonProps {
   };
   address?: string;
   userId: string;
+  accessPasscode: [string, string, string, string] | undefined;
+  isLocked: boolean;
   location: Location;
 }
 
@@ -192,7 +200,48 @@ export interface OwnerProperties {
   isPrivate: boolean;
   partnerSearchable: boolean;
   employeeSearchable: boolean;
+  notificationSettings:{
+    email:boolean;
+    sms:boolean;
+    inApp:boolean;
+  };
+  isDeleted:{
+    ok:boolean;
+    deletedAt:Date;
+  };
+  loginInfo:{
+    lastLogin:Date;
+    loginAttempts:number
+  }
 }
+
+export interface Document{
+  name:string;
+  url:string;
+  uploadedAt:Date;
+  verified:boolean
+}
+
+export interface ISupportTicket extends CommonProps {
+  owner: Owner['_id'];
+  subject: string;
+  message: string;
+  status: SUPPORT_THREAD_STATUS;
+  priority: SUPPORT_THREAD_PRIORITY;
+  category: SUPPORT_THREAD_CATEGORY;
+  attachments: {
+    filename: string;
+    url: string;
+    uploadedAt: Date;
+  }[];
+  adminResponses: {
+    message: string;
+    respondedBy: CommonProps['_id'];
+    respondedAt?: Date;
+  }[];
+  resolvedAt?: Date;
+}
+
 
 export interface Owner extends User {
   referralCode: string;
@@ -221,7 +270,20 @@ export interface Owner extends User {
   role: AdminRole;
   assets: Asset[];
   liabilities: Liability[];
-  accessPasscode: [string, string, string, string] | undefined;
+  documentAcceptance:{
+    terms:{
+      accepted:boolean;
+      acceptedAt:Date;
+      version:string
+    };
+     privacyPolicy:{
+      accepted:boolean;
+      acceptedAt:Date;
+      version:string
+    };
+  };
+documents:Document[];
+supportThreads:ISupportTicket[];
 }
 
 export interface OTP {
@@ -331,7 +393,7 @@ export interface Asset extends CommonProps {
 
 export interface Liability extends CommonProps {
   name: string; // Name of the liability
-  type: LibilityType; // Type of liability
+  type: LiabilityType; // Type of liability
   category: string; // Category of liability
   categoryDescription?: string; // Description of the category
   amount: number; // Original amount of the liability
@@ -341,7 +403,7 @@ export interface Liability extends CommonProps {
   dueDate: string; // Maturity or due date for payment
   installmentAmount?: number; // Fixed installment amount (if applicable)
   remainingBalance?: number; // Outstanding amount to be paid
-  status?: LibilityStatus; // Status of the liability
+  status?: LiabilityStatus; // Status of the liability
   ownerId?: string; // Reference to the business owner
 }
 export interface SoldProductPaymentHistory extends CommonProps {
@@ -389,6 +451,57 @@ export interface PaymentHistory extends CommonProps {
   shortNote: string;
   type: UnknownPaymentType;
 }
+export interface Event extends CommonProps {
+  title: string;
+  description: string;
+  refType: EventHistoryReference;
+  reference: Owner | Partner | Employee | Customer | CommonProps['_id'];
+  refDescription?: string;
+  eventRef?:
+    | Owner
+    | Partner
+    | Employee
+    | Customer
+    | SoldProduct
+    | Product
+    | Asset
+    | Liability
+    | Review
+    | CommonProps['_id'];
+  eventRefType?: EventReference;
+  files: string[];
+  thumbnail?: string;
+  metaData: CommonProps['_id'];
+  status: EventStatus;
+  locatedAt: string | Location;
+}
 export interface History {
   payments: PaymentHistory[];
+  events: Event[];
+}
+
+interface LegalDocument {
+  version: string | number;
+  documentType: string;
+  title: string;
+  dateIssued: string;
+  effectiveDate: string;
+  requiresUserAcceptance: boolean;
+  summary?: string;
+  url?: string;
+}
+interface TermPrivacySection {
+  title: string;
+  content: TermPrivacyPoint[];
+}
+
+interface TermPrivacyPoint {
+  point?: string;
+  description: string;
+}
+interface TermsAndConditions extends LegalDocument {
+  tnc: TermPrivacySection[];
+}
+interface PrivacyPolicy extends LegalDocument {
+  pp: TermPrivacySection[];
 }

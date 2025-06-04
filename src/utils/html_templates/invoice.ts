@@ -17,6 +17,14 @@ const generateInvoiceHTML = ({
 }: SoldProductInvoiceHTMLProps) => {
   let totalAmount = 0;
 
+  const isPaid = soldProducts[0]?.state === 'PAID';
+  const title = isPaid ? 'Bill' : 'Invoice';
+
+  const formatter = new Intl.DateTimeFormat('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+
   const productRows = soldProducts
     .map((item, index) => {
       const unitPrice = item.product.discountedPrice ?? item.product.basePrice;
@@ -26,12 +34,17 @@ const generateInvoiceHTML = ({
       const subtotal = unitPrice * item.count;
       totalAmount += subtotal;
 
+      const formattedDate = formatter.format(new Date(item.createdAt));
+
       return `
         <tr>
           <td>${index + 1}</td>
           <td>
             <strong>${item.product.name}</strong><br/>
-            <small>${quantityLabel} × ₹${unitPrice.toFixed(2)}</small>
+            <span class="details">${quantityLabel} × ₹${unitPrice.toFixed(
+        2,
+      )}</span><br/>
+            <span class="timestamp">Sold on: ${formattedDate}</span>
           </td>
           <td>${quantityLabel}</td>
           <td>₹${unitPrice.toFixed(2)}</td>
@@ -46,61 +59,86 @@ const generateInvoiceHTML = ({
       <head>
         <style>
           body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
             font-size: 14px;
-            background-color: #fdfdfd;
             color: #333;
+            background-color: #fff;
+            line-height: 1.6;
           }
           h1 {
             text-align: center;
+            font-size: 28px;
             margin-bottom: 10px;
-            font-size: 24px;
+            letter-spacing: 1px;
             color: #222;
           }
           .info-section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
           }
           .info-section p {
-            margin: 2px 0;
+            margin: 5px 0;
           }
           table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
           }
           th, td {
-            border: 1px solid #000;
-            padding: 8px;
+            border: 2px solid #ccc;
+            padding: 10px 8px;
             text-align: center;
           }
           th {
-            background-color: #f0f0f0;
+            background-color: #f9f9f9;
+            font-size: 14px;
+          }
+          .details {
+            font-size: 12px;
+            color: #666;
+          }
+          .timestamp {
+            font-size: 11px;
+            color: #999;
+            font-style: italic;
           }
           .total {
             font-weight: bold;
             font-size: 16px;
-            margin-top: 20px;
             text-align: right;
+            margin-top: 25px;
           }
           .owner-section {
             margin-top: 40px;
             font-size: 13px;
             color: #555;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid #eee;
             padding-top: 15px;
+          }
+          .footer-note {
+            margin-top: 30px;
+            text-align: center;
+            font-style: italic;
+            font-size: 13px;
+            color: #444;
           }
         </style>
       </head>
       <body>
-        <h1>Invoice</h1>
+        <h1>${title}</h1>
 
         <div class="info-section">
-          <p><strong>Invoice ID:</strong> ${invoiceId}</p>
-          <p><strong>Date:</strong> ${date}</p>
+          <p><strong>${title} ID:</strong> ${invoiceId}</p>
+          <p><strong>Date Generated:</strong> ${date}</p>
           <p><strong>Customer:</strong> ${customer.name}</p>
-          <p><strong>Phone:</strong> +91 ${customer.phoneNumber?.slice(0,5)+'*****' || 'N/A'}</p>
-          <p><strong>Address:</strong> ${customer.address || 'N/A'}</p>
+          <p><strong>Phone:</strong> ${
+            customer.phoneNumber
+              ? '+91 ' + customer.phoneNumber.slice(0, 5) + '*****'
+              : '--'
+          }</p>
+          <p><strong>Address:</strong> ${customer.address || '--'}</p>
         </div>
 
         <table>
@@ -124,14 +162,15 @@ const generateInvoiceHTML = ({
           <p><strong>Sold By (Owner):</strong> ${owner.name}</p>
           <p><strong>Business Name:</strong> ${owner.businessName}</p>
           <p><strong>Phone:</strong> +91-${
-            owner.businessPhoneNumber?.value || 'N/A'
+            owner.businessPhoneNumber?.value || '--'
           }</p>
-          <p><strong>Address:</strong> ${owner.businessAddress || 'N/A'}</p>
+          <p><strong>Address:</strong> ${owner.businessAddress || '--'}</p>
         </div>
-        <div style="margin-top: 30px; text-align: center; font-style: italic; font-size: 13px; color: #444;">
-                Thank you for your purchase! Hope to see you again soon. 😊<br />
-               — Your friendly neighborhood shopkeeper
-                </div>
+
+        <div class="footer-note">
+          Thank you for your purchase! We hope to serve you again soon. 😊<br />
+          — Your friendly neighborhood shopkeeper
+        </div>
       </body>
     </html>
   `;

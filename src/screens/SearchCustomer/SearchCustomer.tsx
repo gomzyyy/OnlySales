@@ -18,7 +18,24 @@ const SearchCustomer = () => {
       <Header backButton />
       <View style={[styles.contentContainer]}>
         {searchResults.length === 0 ? (
-          <EmptyListMessage title="Try searching by name." />
+          <View
+            style={{
+              height: 'auto',
+              backgroundColor: currentTheme.fadeColor,
+              borderRadius: 20,
+              padding: 15,
+              gap: 10,
+              marginTop: 20,
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: currentTheme.baseColor,
+              }}>
+              Search by name, phone number or email...
+            </Text>
+          </View>
         ) : (
           <View
             style={{
@@ -27,7 +44,7 @@ const SearchCustomer = () => {
               borderRadius: 20,
               padding: 15,
               gap: 10,
-              elevation:5
+              elevation: 5,
             }}>
             <Text
               style={{

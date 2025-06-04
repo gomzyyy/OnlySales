@@ -19,6 +19,8 @@ type SlideUpContainerProps = PropsWithChildren<{
   opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
   padding?: boolean;
   height?: number;
+  heightLimit?: number;
+  bottom?:boolean
 }>;
 
 const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
@@ -28,6 +30,8 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   opacity = 0.1,
   padding = false,
   height = deviceHeight,
+  heightLimit,
+  bottom = true
 }): React.JSX.Element => {
   const childHeight = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -68,7 +72,10 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
       childHeight.value = 0;
       translateY.value = 0;
       setTimeout(() => {
-        childHeight.value = withTiming(height + 30, {duration: 200});
+        childHeight.value = withTiming(
+          ((typeof heightLimit === 'number' && height > heightLimit) ? heightLimit : height) + 30,
+          {duration: 200},
+        );
       }, 40);
     }
   }, [open, height]);
@@ -86,7 +93,6 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
           style={[
             styles.childContainer,
             {
-              // backgroundColor: `rgba(0,0,0,${opacity})`,
               backgroundColor: `rgba(0,0,0,0.6)`,
               paddingHorizontal: padding ? 14 : 10,
             },
@@ -99,8 +105,6 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
                   <View style={styles.dragTab} />
                 </View>
               </GestureDetector>
-
-              {/* Actual Children */}
               {children}
             </Animated.View>
           </Pressable>

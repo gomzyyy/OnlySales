@@ -52,9 +52,6 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   >([]);
   const [udharAmount, setUdharAmount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  useEffect(() => {
-    console.log(selectedProducts);
-  }, [selectedProducts]);
   const handleNewUdhars = ({
     product,
     count,
@@ -126,9 +123,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
               sellerId: user._id,
               role: user.role,
             },
-            body: {productId: p.product._id!, count: p.count},
+            body: {productId: p.product._id, count: p.count},
           };
-
           const res = await sellProductAPI(data);
           if (res.success) {
             atLeastOneSuccess = true;
@@ -148,7 +144,6 @@ const AddUdhar: React.FC<AddUdharProps> = ({
         }
       }
       if (atLeastOneSuccess) {
-        // Refresh user info (optional: move this outside loop if only needed once)
         const userRes = await validateTokenAPI({role: user.role});
         if (userRes.success && userRes.data?.user) {
           dispatch(setUser(userRes.data.user));

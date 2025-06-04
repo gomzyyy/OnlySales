@@ -54,7 +54,13 @@ const FetchAPI = async ({
     const headers = await APIheaders(secure, reqType);
     const baseUrl = 'http://192.168.1.71:6900/api/app';
     const res = fetch(
-      baseUrl + `${route}&platform=${platformObj[Platform.OS]}`,
+      baseUrl +
+        `${route}` +
+        `${
+          route.includes('?')
+            ? `&platform=${platformObj[Platform.OS]}`
+            : `?platform=${platformObj[Platform.OS]}`
+        }`,
       {
         method,
         headers,

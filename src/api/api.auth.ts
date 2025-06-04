@@ -83,7 +83,6 @@ export const signupAPI = async (
 ) => {
   handleBooleanState(setState, true);
   try {
-    // console.log(data);
     const formData = new FormData();
     if (data.media.image) {
       const imageFile = {
@@ -98,7 +97,6 @@ export const signupAPI = async (
         formData.append(key, value.toString());
       }
     });
-    // console.log(formData);
     const fetching = await FetchAPI({
       reqType: 'media',
       route: '/signup',
@@ -106,11 +104,13 @@ export const signupAPI = async (
       method: 'POST',
       body: formData,
     });
-    const res = await fetching.json();
-    return res as SignupAPIReturnType;
+    return await fetching.json() as SignupAPIReturnType;
   } catch (error) {
     return {
-      message: 'Internal server Error occured while fetching',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
       data: undefined,
       success: false,
     };

@@ -98,7 +98,7 @@ export const Theme: AppTheme[] = [
     baseColor: '#007bff',
     fadeColor: 'rgba(0, 123, 255,0.1)',
     tabColor: '#66b2ff',
-    borderColor: '#fff',
+    borderColor: 'rgba(0, 123, 255,0.2)',
     textColor: '#000',
     contrastColor: '#fff',
     bgColor: '#e6f2ff',

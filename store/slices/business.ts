@@ -42,7 +42,7 @@ const initialState: appstate = {
 };
 
 const UserSlice = createSlice({
-  name: 'User',
+  name: 'user',
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<Owner | Partner | Employee>) => {

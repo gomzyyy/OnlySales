@@ -1,23 +1,15 @@
 import {View, Text, StyleSheet, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Customer, SoldProduct} from '../../../../types';
 import {deviceHeight} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
-import {RootState} from '../../../../store/store';
-import {useSelector} from 'react-redux';
-import PayButton from '../../../components/PayButton';
-import SlideUpContainer from '../../../components/SlideUpContainer';
-import ConfirmPayment from '../../../components/ConfirmPayment';
+import {useTheme} from '../../../hooks';
 import {TouchableOpacity} from 'react-native';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import {back} from '../../../utils/nagivationUtils';
 import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
-import ScanQRToPay from '../../../components/ScanQRToPay';
 import {useTranslation} from 'react-i18next';
-import {updateSoldProductStateAPI} from '../../../api/api.soldproduct';
-import {PaymentState} from '../../../../enums';
 
 type UnpaidPaymentsProps = {
   customer: Customer;
@@ -32,23 +24,9 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   date,
   close,
 }): React.JSX.Element => {
+  console.log(products);
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
-  const [amount, setAmount] = useState<number>(0);
-
-  useEffect(() => {
-    const amt = products.reduce(
-      (acc, f) =>
-        acc +
-        (f.product.discountedPrice
-          ? f.product.discountedPrice
-          : f.product.basePrice) *
-          f.count,
-      0,
-    );
-    setAmount(amt);
-  }, [products, amount]);
-
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
@@ -61,7 +39,8 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
           {products.length !== 0 ? (
             <FlatList
               data={products}
-              keyExtractor={i => i.createdAt}
+              keyExtractor={i => i._id}
+              initialNumToRender={10}
               renderItem={({item}) => (
                 <Tab
                   actionType="UNPAID"
@@ -84,7 +63,7 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
                   styles.backBtnContainer,
                   {backgroundColor: currentTheme.contrastColor},
                 ]}
-                onPress={() => back()}>
+                onPress={() => close()}>
                 <Icon
                   name="arrowleft"
                   size={20}
@@ -99,12 +78,6 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
           )}
         </View>
       </View>
-      {/* {products.length !== 0 && (
-        <PayButton
-          label={`${t('c_pay_btn')} ${currency} ${amount}`}
-          pressAction={() => openConfirmPay('WHOLE')}
-        />
-      )} */}
     </View>
   );
 };

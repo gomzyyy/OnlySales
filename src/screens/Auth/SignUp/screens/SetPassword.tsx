@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTheme} from '../../../../hooks/index';
@@ -22,7 +23,8 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
 import {setUser} from '../../../../../store/slices/business';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { global } from '../../../../styles/global';
+import {global} from '../../../../styles/global';
+import PopupContainer from '../../../../components/PopUp';
 
 type SetPasswordParams = {
   name: string;
@@ -60,6 +62,10 @@ const SetPassword = () => {
   const [passwordHidden, setPasswordHidden] = useState<boolean>(true);
   const [confirmPasswordHidden, setConfirmPasswordHidden] =
     useState<boolean>(true);
+  const [acceptTnc, setAcceptTnc] = useState<boolean>(false);
+  const [acceptPp, setAcceptPp] = useState<boolean>(false);
+  const [openTpPrompt, setOpenTpPrompt] = useState<boolean>(false);
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const confirmPasswordInputRef = useRef<TextInput>(null);
@@ -78,18 +84,6 @@ const SetPassword = () => {
     }
   };
   const handleNextButton = async () => {
-    if (confirmPassword.trim() !== password.trim() && validPassword) {
-      setPasswordMatched(false);
-      return;
-    }
-    if (password.trim().length < 6 || password.trim().length > 16) {
-      confirmPasswordInputRef.current && confirmPasswordInputRef.current.blur();
-      showToast({
-        type: 'error',
-        text1: 'Password should between 6-16 characters.',
-      });
-      return;
-    }
     const signupData = {
       query: {},
       body: {
@@ -118,10 +112,26 @@ const SetPassword = () => {
       dispatch(setUser(res.data.user));
       showToast({type: 'success', text1: 'Signup success.'});
       navigate('Dashboard');
+      setOpenTpPrompt(false);
       return;
     } else {
       showToast({type: 'error', text1: res.message});
     }
+  };
+  const handleProceedBtn = () => {
+    if (confirmPassword.trim() !== password.trim() && validPassword) {
+      setPasswordMatched(false);
+      return;
+    }
+    if (password.trim().length < 6 || password.trim().length > 16) {
+      confirmPasswordInputRef.current && confirmPasswordInputRef.current.blur();
+      showToast({
+        type: 'error',
+        text1: 'Password should between 6-16 characters.',
+      });
+      return;
+    }
+    setOpenTpPrompt(true);
   };
 
   useEffect(() => {
@@ -129,6 +139,33 @@ const SetPassword = () => {
       matchPassword();
     }
   }, [confirmPassword]);
+
+  const Checkbox = ({checked}: {checked: boolean}) => (
+    <View
+      style={{
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: currentTheme.baseColor,
+        marginRight: 10,
+        padding: 2,
+      }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: checked ? currentTheme.baseColor : 'transparent',
+          borderRadius: 20,
+        }}
+      />
+    </View>
+  );
+
+  const handleClosePrompt = () => {
+    acceptPp && setAcceptPp(false);
+    acceptTnc && setAcceptTnc(false);
+    setOpenTpPrompt(false);
+  };
 
   return (
     <KeyboardAvoidingView style={styles.parent}>
@@ -181,7 +218,7 @@ const SetPassword = () => {
               styles.proceedButton,
               {backgroundColor: currentTheme.baseColor},
             ]}
-            onPress={handleNextButton}>
+            onPress={handleProceedBtn}>
             <Text
               style={[
                 styles.proceedButtonText,
@@ -201,6 +238,124 @@ const SetPassword = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <PopupContainer open={openTpPrompt} close={handleClosePrompt}>
+        <View
+          style={{
+            height: 360,
+            backgroundColor: currentTheme.contrastColor,
+            padding: 24,
+            justifyContent: 'center',
+            borderRadius: 20,
+          }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: currentTheme.textColor,
+              textAlign: 'center',
+              marginBottom: 16,
+            }}>
+            Accept Our Terms & Privacy Policy
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 14,
+              color: currentTheme.textAlt,
+              textAlign: 'center',
+              marginBottom: 24,
+            }}>
+            To continue, you must accept our Terms & Conditions and Privacy
+            Policy.
+          </Text>
+
+          {/* T&C Row */}
+          <Pressable
+            onPress={() => setAcceptTnc(!acceptTnc)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 16,
+            }}>
+            <Checkbox checked={acceptTnc} />
+            <Text style={{color: currentTheme.textColor}}>
+              I agree to the{' '}
+              <Text
+                style={{
+                  color: currentTheme.baseColor,
+                  textDecorationLine: 'underline',
+                }}
+                onPress={() => navigate('TermsAndConditions')}>
+                Terms & Conditions
+              </Text>
+            </Text>
+          </Pressable>
+
+          {/* Privacy Policy Row */}
+          <Pressable
+            onPress={() => setAcceptPp(!acceptPp)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 24,
+            }}>
+            <Checkbox checked={acceptPp} />
+            <Text style={{color: currentTheme.textColor}}>
+              I agree to the{' '}
+              <Text
+                style={{
+                  color: currentTheme.baseColor,
+                  textDecorationLine: 'underline',
+                }}
+                onPress={() => navigate('TermsAndConditions')}>
+                Privacy Policy
+              </Text>
+            </Text>
+          </Pressable>
+
+          <TouchableOpacity
+            onPress={handleNextButton}
+            disabled={!acceptPp || !acceptTnc}
+            style={{
+              backgroundColor:
+                acceptPp && acceptTnc ? currentTheme.baseColor : '#ababab',
+              paddingVertical: 12,
+              borderRadius: 10,
+              alignItems: 'center',
+            }}
+            activeOpacity={0.8}>
+            {loading ? (
+              <View style={{flexDirection: 'row', gap: 6}}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    color: currentTheme.contrastColor,
+                    fontSize: 16,
+                  }}>
+                  Finishing up
+                </Text>
+                <ActivityIndicator
+                  size={16}
+                  color={currentTheme.contrastColor}
+                />
+              </View>
+            ) : (
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  color: currentTheme.contrastColor,
+                  fontSize: 16,
+                }}>
+                {acceptPp && acceptTnc
+                  ? "Let's Finish"
+                  : 'Accept terms to proceed.'}
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </PopupContainer>
     </KeyboardAvoidingView>
   );
 };

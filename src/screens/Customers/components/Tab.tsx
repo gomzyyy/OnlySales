@@ -40,7 +40,8 @@ const Tab: React.FC<TabProps> = ({
     setOpenEditCustomer(true);
   };
   const handleCloseEditCustomer = () => setOpenEditCustomer(false);
-  const handleLongPressCancelAction = () => navigate('Customer', {customer: i});
+  const handleLongPressCancelAction = () =>
+    navigate('Customer', {customerId: i._id});
 
   return (
     <LongPressEnabled
@@ -60,7 +61,7 @@ const Tab: React.FC<TabProps> = ({
             source={
               i.image && i.image.trim().length !== 0 ? {uri: i.image} : NoPhoto
             }
-            style={[styles.profileImage,{borderColor:currentTheme.baseColor}]}
+            style={[styles.profileImage, {borderColor: currentTheme.baseColor}]}
           />
         </View>
         <View style={styles.innerContainer}>
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 8,
     alignItems: 'center',
-    gap:12
+    gap: 12,
   },
   profileImage: {
     height: 50,
@@ -111,10 +112,10 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 16,
   },
-  innerContainer:{
+  innerContainer: {
     flexDirection: 'row',
-    justifyContent:'space-between',
-    flex:1
+    justifyContent: 'space-between',
+    flex: 1,
   },
   absolute: {
     position: 'absolute',

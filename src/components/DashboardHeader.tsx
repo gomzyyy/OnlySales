@@ -4,14 +4,20 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
 } from 'react-native';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {RootState} from '../../store/store';
 import {useSelector} from 'react-redux';
-import {Pressable, ScrollView} from 'react-native-gesture-handler';
 import {useTheme, useAnalytics} from '../hooks/index';
 import {useFocusEffect} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
 
 type DashboardHeaderProps = {
   searchBar?: boolean;
@@ -25,33 +31,33 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   searchBarPressAction,
 }): React.JSX.Element => {
   const {t} = useTranslation('dashboard');
+
   const {currentTheme} = useTheme();
   const {soldThisMonth = [], todaySales = []} = useAnalytics();
   const app = useSelector((s: RootState) => s.appData.app);
-  const totalMonthlySales = useMemo(
-    () =>
-      soldThisMonth.reduce(
-        (acc, s) =>
-          acc +
-          ((s.product.discountedPrice
-            ? s.product.discountedPrice
-            : s.product.basePrice) * s.count || 0),
-        0,
-      ),
-    [soldThisMonth],
-  );
-  const onGoingDaySales = useMemo(
-    () =>
-      todaySales.reduce(
-        (acc, s) =>
-          acc +
-          ((s.product.discountedPrice
-            ? s.product.discountedPrice
-            : s.product.basePrice) * s.count || 0),
-        0,
-      ),
-    [todaySales],
-  );
+  const totalMonthlySales = useMemo(() => {
+    if (!soldThisMonth.length) return 0;
+    return soldThisMonth.reduce(
+      (acc, s) =>
+        acc +
+        ((s.product.discountedPrice
+          ? s.product.discountedPrice
+          : s.product.basePrice) * s.count || 0),
+      0,
+    );
+  }, [soldThisMonth]);
+  const onGoingDaySales = useMemo(() => {
+    if (todaySales.length === 0) return 0;
+    return todaySales.reduce(
+      (acc, s) =>
+        acc +
+        ((s.product.discountedPrice
+          ? s.product.discountedPrice
+          : s.product.basePrice) * s.count || 0),
+      0,
+    );
+  }, [todaySales]);
+
   const [monthlySales, setMonthlySales] = useState<number>(totalMonthlySales);
   const [todaySalesNum, setTodaySalesNum] = useState<number>(onGoingDaySales);
 
@@ -67,8 +73,14 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   );
 
   const dashboardHeaderTabs = [
-    {name: t('d_header_thismonth'), data: {amount: '18273'}},
-    {name: t('d_header_today'), data: {amount: '1297'}},
+    {
+      name: t('d_header_thismonth'),
+      data: {value: monthlySales},
+    },
+    {
+      name: t('d_header_today'),
+      data: {value: todaySalesNum},
+    },
   ];
 
   return (
@@ -79,7 +91,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <View
           style={[
             styles.container,
-            {gap: 20, paddingHorizontal: 10, justifyContent: 'center'},
+            {gap: 20, paddingHorizontal: 10, justifyContent: 'space-between'},
           ]}>
           {dashboardHeaderTabs.map(t => (
             <View
@@ -97,9 +109,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   style={[
                     styles.textInfo,
                     {color: currentTheme.baseColor},
-                  ]}>{`${app.currency} ${
-                  t.name === 'This Month' ? monthlySales : todaySalesNum
-                }`}</Text>
+                  ]}>{`${app.currency} ${t.data.value.toLocaleString()}`}</Text>
               </View>
             </View>
           ))}
@@ -115,15 +125,17 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <View
                 style={[
                   styles.searchQueryInput,
-                  {borderColor: currentTheme.baseColor},
+                  {
+                    backgroundColor: currentTheme.fadeColor,
+                  },
                 ]}>
-                <Text
+                <Animated.Text
                   style={[
                     styles.searchQueryInputText,
                     {color: currentTheme.baseColor},
                   ]}>
-                  {t('d_header_dummy_searchplaceholder')}
-                </Text>
+                  {t('d_header_dummy_searchplaceholder0')}
+                </Animated.Text>
               </View>
             </Pressable>
           </View>
@@ -146,6 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
+    flex: 1,
   },
   infoContainer: {
     flex: 1,
@@ -171,7 +184,6 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   searchQueryInput: {
-    borderWidth: 2,
     borderRadius: 14,
     height: 50,
     fontSize: 18,

@@ -68,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({
           <Icon1 name="left" size={24} color={currentTheme.header.textColor} />
         </Pressable>
       )}
-      {searchBar && <SearchBar query={query} setQuery={setQuery} width={0.7} />}
+      {searchBar && <SearchBar placeholderText='ex: rahul' query={query} setQuery={setQuery} width={0.7} />}
       {query.trim().length !== 0 && (
         <Pressable onPress={clearSearchText} style={styles.rightCustomBtn}>
           <Icon2 name="clear" size={28} color={currentTheme.header.textColor} />

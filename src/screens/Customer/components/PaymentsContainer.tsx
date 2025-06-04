@@ -1,42 +1,39 @@
 import {View, Text, StyleSheet, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Customer, SoldProduct} from '../../../../types';
 import {deviceHeight} from '../../../utils/Constants';
-import {useAnalytics, useTheme} from '../../../hooks';
-import {RootState} from '../../../../store/store';
-import {useSelector} from 'react-redux';
-import PayButton from '../../../components/PayButton';
-import SlideUpContainer from '../../../components/SlideUpContainer';
-import ConfirmPayment from '../../../components/ConfirmPayment';
+import {useTheme} from '../../../hooks';
 import {TouchableOpacity} from 'react-native';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import {back} from '../../../utils/nagivationUtils';
 import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {PaymentState} from '../../../../enums';
 import {useTranslation} from 'react-i18next';
 
 type PaidPaymentsProps = {
   customer: Customer;
-  date: string;
-  products: SoldProduct[];
   close: () => void;
+  date: string;
 };
 
-const PaidPayments: React.FC<PaidPaymentsProps> = ({
+const PaymentsContainer: React.FC<PaidPaymentsProps> = ({
   customer,
-  products,
-  date,
   close,
+  date,
 }): React.JSX.Element => {
-  console.log(products);
+  const allProducts = customer.buyedProducts;
+  const products = allProducts.filter(
+    s =>
+      new Date(s.createdAt).setHours(0, 0, 0, 0) ===
+      new Date(date).setHours(0, 0, 0, 0),
+  );
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
   return (
     <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
       <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
-        {t('c_paidpayments')}
+        Payments
       </Text>
       <View
         style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
@@ -68,7 +65,7 @@ const PaidPayments: React.FC<PaidPaymentsProps> = ({
                   styles.backBtnContainer,
                   {backgroundColor: currentTheme.contrastColor},
                 ]}
-                onPress={() => close()}>
+                onPress={() => back()}>
                 <Icon
                   name="arrowleft"
                   size={20}
@@ -124,4 +121,4 @@ const styles = StyleSheet.create({
   backBtnText: {fontSize: 20, fontWeight: 'bold'},
 });
 
-export default PaidPayments;
+export default PaymentsContainer;

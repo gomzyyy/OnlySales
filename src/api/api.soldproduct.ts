@@ -83,7 +83,6 @@ export const updateSoldProductStateAPI = async (
       method: 'POST',
       body,
     });
-    console.log(await fetching.json());
     return (await fetching.json()) as UpdateSoldProductStateReturnType;
   } catch (error) {
     return {

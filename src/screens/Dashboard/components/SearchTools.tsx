@@ -1,8 +1,7 @@
-import {View, Text, Pressable, StyleSheet, TextInput} from 'react-native';
+import {View, StyleSheet, TextInput} from 'react-native';
 import React, {SetStateAction} from 'react';
 import {useTheme} from '../../../hooks';
-import {navigate} from '../../../utils/nagivationUtils';
-import {Dispatch} from '@reduxjs/toolkit';
+
 
 type SearchToolsProps = {
   value: string;

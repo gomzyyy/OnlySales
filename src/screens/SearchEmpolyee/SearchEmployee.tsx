@@ -4,7 +4,7 @@ import Header from './components/Header';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import Tab from '../Customers/components/Tab';
+import Tab from './components/Tab';
 import {useTheme} from '../../hooks';
 import {Text} from 'react-native';
 
@@ -18,7 +18,24 @@ const SearchEmployee = () => {
       <Header backButton />
       <View style={[styles.contentContainer]}>
         {employeeResults.length === 0 ? (
-          <EmptyListMessage title="Try searching by name." />
+          <View
+            style={{
+              height: 'auto',
+              backgroundColor: currentTheme.fadeColor,
+              borderRadius: 20,
+              padding: 15,
+              gap: 10,
+              marginTop: 20,
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: currentTheme.baseColor,
+              }}>
+              Search by name, number or email...
+            </Text>
+          </View>
         ) : (
           <View
             style={{
@@ -39,7 +56,7 @@ const SearchEmployee = () => {
             </Text>
             <FlatList
               data={employeeResults}
-              keyExtractor={s => s.id}
+              keyExtractor={s => s._id}
               renderItem={({item}) => <Tab i={item} />}
               nestedScrollEnabled
             />

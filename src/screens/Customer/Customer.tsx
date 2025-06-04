@@ -7,11 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, {
-  ReactNode,
-  useEffect,
-  useState,
-} from 'react';
+import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
 import {Customer as CustomerType, SoldProduct} from '../../../types';
@@ -34,22 +30,32 @@ import ConfirmPayment from '../../components/ConfirmPayment';
 import ScanQRToPay from '../../components/ScanQRToPay';
 import InvoicePDFViewer from '../PDFViewer/InvoicePDFViewer';
 import SearchContainer from './components/SlideContainers/SearchContainer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../store/store';
+import {back} from '../../utils/nagivationUtils';
 
 type RouteParams = {
-  customer: CustomerType;
+  customerId: CustomerType['_id'];
   openAddProduct: boolean | undefined;
 };
 
 const Customer = () => {
+  const d = useDispatch<AppDispatch>();
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
   const params = useRoute().params;
-  const {customer, openAddProduct} = params as RouteParams;
+  const {customerId, openAddProduct} = params as RouteParams;
   const {owner, currency} = useAnalytics();
-  const {lc_meta_data} = useSelector((s:RootState)=>s.appData.app)
+  const {user} = useSelector((s: RootState) => s.appData);
+  const customer = useMemo(
+    () => owner.customers.find(s => s._id === customerId)!,
+    [owner.customers, customerId],
+  );
+  if (!customer) {
+    back();
+    return null;
+  }
   const customers: CustomerType[] = owner.customers;
   const [openSearchContainer, setOpenSearchContainer] =
     useState<boolean>(false);
@@ -58,27 +64,21 @@ const Customer = () => {
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
   const [openSoldProductPDFView, setOpenSoldProductPDFView] =
     useState<boolean>(false);
-  const [currCustomer, setCurrCustomer] = useState<CustomerType>(customer);
   const [paidPayments, setPaidPayments] = useState<SoldProduct[]>([]);
   const [unpaidPayments, setUnpaidPayments] = useState<SoldProduct[]>([]);
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [unpaidAmount, setUnpaidAmount] = useState<number>(0);
-  const [addUdharVisible, setAddUdharVisible] = useState(
-    openAddProduct || false,
-  );
+  const [addUdharVisible, setAddUdharVisible] = useState(!!openAddProduct);
   const [content, setContent] = useState<'PAID' | 'UNPAID'>('UNPAID');
   const [openUnpaidSheet, setOpenUnpaidSheet] = useState<boolean>(false);
   const [openPaidSheet, setOpenPaidSheet] = useState<boolean>(false);
   const [unpaidProps, setUnpaidProps] = useState<{
-    products: SoldProduct[];
-    customer: CustomerType;
     date: string;
-  }>({products: [], customer, date: ''});
+  }>({date: ''});
   const [paidProps, setPaidProps] = useState<{
-    products: SoldProduct[];
-    customer: CustomerType;
     date: string;
-  }>({products: [], customer, date: ''});
+  }>({date: ''});
+
   const handleUnpaidAmount = () => {
     setUnpaidAmount(() => {
       let upa = unpaidPayments.reduce<number>(
@@ -126,14 +126,12 @@ const Customer = () => {
   };
 
   const findAndSetPayments = () => {
-    const foundCustomer = customers.find(c => c._id === customer._id);
-    if (foundCustomer) {
-      setCurrCustomer(foundCustomer);
+    if (customer) {
       setPaidPayments(
-        foundCustomer.buyedProducts.filter(p => p.state === PaymentState.PAID),
+        customer.buyedProducts.filter(p => p.state === PaymentState.PAID),
       );
       setUnpaidPayments(
-        foundCustomer.buyedProducts.filter(
+        customer.buyedProducts.filter(
           p =>
             p.state === PaymentState.UNPAID || p.state === PaymentState.PENDING,
         ),
@@ -143,7 +141,6 @@ const Customer = () => {
 
   const handleOpenSearchContainer = () => setOpenSearchContainer(true);
   const handleCloseSearchContainer = () => setOpenSearchContainer(false);
-
   useEffect(() => {
     findAndSetPayments();
   }, [customer, customers]);
@@ -151,11 +148,9 @@ const Customer = () => {
   useEffect(() => {
     handlePaidAmount();
     handleUnpaidAmount();
-  }, [paidPayments, unpaidPayments]);
+  }, [paidPayments, unpaidPayments, owner, user]);
 
   const handleTabPress = ({
-    products,
-    customer,
     date,
   }: {
     products: SoldProduct[];
@@ -164,10 +159,10 @@ const Customer = () => {
   }) => {
     openSearchContainer && handleCloseSearchContainer();
     if (content === 'PAID') {
-      setPaidProps({products, customer, date});
+      setPaidProps({date});
       setOpenPaidSheet(true);
     } else {
-      setUnpaidProps({products, customer, date});
+      setUnpaidProps({date});
       setOpenUnpaidSheet(true);
     }
   };
@@ -207,12 +202,47 @@ const Customer = () => {
       return null;
     }
   };
+
+  const filterProductsByDate = (
+    products: SoldProduct[],
+    date: string,
+  ): SoldProduct[] => {
+    if (!date) return [];
+    const targetDate = new Date(date).toISOString().slice(0, 10);
+    return products.filter(
+      p => new Date(p.createdAt).toISOString().slice(0, 10) === targetDate,
+    );
+  };
+
+  const unpaidProductsByDate = useMemo(
+    () =>
+      filterProductsByDate(
+        customer.buyedProducts.filter(
+          p =>
+            p.state === PaymentState.UNPAID || p.state === PaymentState.PENDING,
+        ),
+        unpaidProps.date,
+      ),
+    [customer, unpaidProps.date],
+  );
+
+  const paidProductsByDate = useMemo(
+    () =>
+      filterProductsByDate(
+        customer.buyedProducts.filter(p => {
+          return p.state === PaymentState.PAID;
+        }),
+        paidProps.date,
+      ),
+    [customer, paidProps.date],
+  );
+
   return (
     <KeyboardAvoidingView
       style={styles.parent}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Header
-        name={currCustomer.name}
+        name={customer.name}
         backButton
         customComponent={content === 'UNPAID'}
         renderItem={
@@ -235,7 +265,7 @@ const Customer = () => {
           styles.contentContainer,
           {backgroundColor: currentTheme.baseColor},
         ]}>
-        <CustomerInfo customer={currCustomer} />
+        <CustomerInfo customer={customer} />
         <View
           style={{
             flexDirection: 'row',
@@ -333,7 +363,7 @@ const Customer = () => {
           {content === 'UNPAID' ? (
             unpaidPayments.length > 0 ? (
               <ProductsByDate
-                customer={currCustomer}
+                customer={customer}
                 ArrWithDate={unpaidPayments}
                 onTabPress={handleTabPress}
               />
@@ -345,7 +375,7 @@ const Customer = () => {
             )
           ) : paidPayments.length > 0 ? (
             <ProductsByDate
-              customer={currCustomer}
+              customer={customer}
               ArrWithDate={paidPayments}
               onTabPress={handleTabPress}
             />
@@ -362,10 +392,7 @@ const Customer = () => {
         open={addUdharVisible}
         close={() => setAddUdharVisible(false)}
         height={deviceHeight * 0.6}>
-        <AddUdhar
-          close={() => setAddUdharVisible(false)}
-          customer={currCustomer}
-        />
+        <AddUdhar close={() => setAddUdharVisible(false)} customer={customer} />
       </SlideUpContainer>
 
       <SlideUpContainer
@@ -375,8 +402,8 @@ const Customer = () => {
         height={deviceHeight * 0.9}>
         <UnPaidPayments
           date={unpaidProps.date}
-          customer={unpaidProps.customer}
-          products={unpaidProps.products}
+          customer={customer}
+          products={unpaidProductsByDate}
           close={() => setOpenUnpaidSheet(false)}
         />
       </SlideUpContainer>
@@ -388,8 +415,8 @@ const Customer = () => {
         height={deviceHeight * 0.9}>
         <PaidPayments
           date={paidProps.date}
-          customer={paidProps.customer}
-          products={paidProps.products}
+          customer={customer}
+          products={paidProductsByDate}
           close={() => setOpenPaidSheet(false)}
         />
       </SlideUpContainer>
@@ -413,7 +440,8 @@ const Customer = () => {
         open={willingToPay}
         close={handleCloseQRCode}
         opacity={0.4}
-        height={deviceHeight * 0.6}>
+        height={deviceHeight * 0.6}
+        heightLimit={450}>
         <ScanQRToPay
           payableAmount={payableAmount}
           cancel={handleCloseQRCode}

@@ -54,10 +54,9 @@ const styles = StyleSheet.create({
   searchQueryContainer: {},
   searchQueryInput: {
     borderRadius: 8,
-    height: 45,
-    fontSize: 20,
+    height: 40,
+    fontSize: 16,
     paddingHorizontal: 12,
-    width: 'auto',
   },
 });
 

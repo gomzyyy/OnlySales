@@ -1,7 +1,7 @@
-export enum PLATFORM_SPECIFIED_CALLS{
-MOBILE = 'mobileapp',
-WEB_APP = 'webapp',
-WEBSITE = 'website'
+export enum PLATFORM_SPECIFIED_CALLS {
+  MOBILE = 'mobileapp',
+  WEB_APP = 'webapp',
+  WEBSITE = 'website',
 }
 export enum BusinessType {
   RETAIL = 'Retail',
@@ -38,6 +38,7 @@ export enum AdminRole {
   OWNER = 'Owner',
   PARTNER = 'Partner',
   EMPLOYEE = 'Employee',
+  ADMIN = 'Admin'
 }
 
 export enum LocationRef {
@@ -58,7 +59,7 @@ export enum AssetCategory {
   CASH = 'Cash',
   INVESTMENT = 'Investment',
   PROPERTY = 'Property',
-  VECHILE = 'Vehicle',
+  VEHICLE = 'Vehicle',
   STOCKS = 'Stocks',
   BONDS = 'Bonds',
   PATENTS = 'Patents',
@@ -82,7 +83,7 @@ export enum Gender {
 
 export enum Shift {
   MORNING = 'Morning',
-  evening = 'Evening',
+  EVENING = 'Evening',
   NIGHT = 'Night',
   UNDECIDED = 'Undecided',
   OTHER = 'Other',
@@ -99,12 +100,12 @@ export enum AssetStatus {
   UNDER_MAINTENANCE = 'Under-Maintenance',
 }
 
-export enum LibilityType {
+export enum LiabilityType {
   CURRENT = 'Current',
   NON_CURRENT = 'Non-Current',
   CONTINGENT = 'Contingent',
 }
-export enum LibilityStatus {
+export enum LiabilityStatus {
   ACTIVE = 'Active',
   PAID = 'Paid',
   OVERDUE = 'Overdue',
@@ -203,12 +204,58 @@ export enum ReviewerType {
 }
 export enum NATIVE_WEBVIEW_MESSAGE_TYPE {
   OWNER_PROFILE_UPDATE_SUCCESS = 'OWNER_PROFILE_UPDATE_SUCCESS',
-  OWNER_PROFILE_UPDATE_FAILED = 'OWNER_PROFILE_UPDATE_FAILED'
+  OWNER_PROFILE_UPDATE_FAILED = 'OWNER_PROFILE_UPDATE_FAILED',
 }
 export enum AIResponseLengthType {
-  vsm = "vsm",
-  sm = "sm",
-  md = "md",
-  lg = "lg",
-  xlg = "xlg",
+  vsm = 'vsm',
+  sm = 'sm',
+  md = 'md',
+  lg = 'lg',
+  xlg = 'xlg',
 }
+export enum EventHistoryReference {
+  OWNER = 'Owner',
+  PARNER = 'Partner',
+  EMPLOYEE = 'Employee',
+  CUSTOMER = 'Customer',
+}
+export enum EventReference {
+  OWNER = 'Owner',
+  PARNER = 'Partner',
+  EMPLOYEE = 'Employee',
+  CUSTOMER = 'Customer',
+  SoldProduct = 'SoldProduct',
+  Product = 'Product',
+  Asset = 'Asset',
+  Liability = 'Liability',
+  Review = 'Review',
+}
+export enum EventStatus{
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED'
+}
+export enum LegalDocType{
+  tnc="TERMS_AND_CONDITIONS",
+  pp="PRIVACY_POLICY"
+}
+export enum SUPPORT_THREAD_STATUS {
+  OPEN = "OPEN",
+  IN_PROGRESS = "IN_PROGRESS",
+  RESOLVED = "RESOLVED",
+  CLOSED = "CLOSED",
+}
+
+export enum SUPPORT_THREAD_PRIORITY {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  URGENT = "URGENT",
+}
+
+export enum SUPPORT_THREAD_CATEGORY {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  URGENT = "URGENT",
+}
+

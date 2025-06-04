@@ -1,4 +1,11 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Pressable,
+} from 'react-native';
 import React, {useState} from 'react';
 import {Customer, SoldProduct} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
@@ -6,7 +13,7 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import TabLongPressOptions from './TabLongPressOptions';
 import PopupContainer from '../../../components/PopUp';
-import {useTheme} from '../../../hooks/index';
+import {useStorage, useTheme} from '../../../hooks/index';
 import {useTranslation} from 'react-i18next';
 import {colors, deviceHeight} from '../../../utils/Constants';
 import SlideUpContainer from '../../../components/SlideUpContainer';
@@ -14,8 +21,9 @@ import ConfirmPayment from '../../../components/ConfirmPayment';
 import ScanQRToPay from '../../../components/ScanQRToPay';
 import {updateSoldProductStateAPI} from '../../../api/api.soldproduct';
 import {PaymentState} from '../../../../enums';
-import PDFPreViewer from '../../PDFViewer/components/PDFPreViewer';
 import InvoicePDFViewer from '../../PDFViewer/InvoicePDFViewer';
+import {showToast} from '../../../service/fn';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type TabProps = {
   i: SoldProduct;
@@ -64,13 +72,15 @@ const Tab: React.FC<TabProps> = ({
   customer,
   actionType,
   dummy = false,
-  onPay,
   date,
   closeParent,
 }): React.JSX.Element => {
+  const d = useDispatch<AppDispatch>();
   const {t} = useTranslation('customer');
   const {currentTheme} = useTheme();
-  const app = useSelector((s: RootState) => s.appData.app);
+  const {local} = useStorage();
+  const {updateUser} = local;
+  const {app} = useSelector((s: RootState) => s.appData);
   const {currency} = useSelector((s: RootState) => s.appData.app);
   const user = useSelector((s: RootState) => s.appData.user)!;
   const [payableAmount, setPayableAmount] = useState<number>(0);
@@ -78,38 +88,61 @@ const Tab: React.FC<TabProps> = ({
   const [willingToPay, setWillingToPay] = useState<boolean>(false);
   const [openSoldProductPDFView, setOpenSoldProductPDFView] =
     useState<boolean>(false);
-
+  const [changingState, setChangingState] = useState<boolean>(false);
   const [longPressActionOpen, setLongPressActionOpen] =
     useState<boolean>(false);
   const handleCloseConfirmPayment = () => {
     setAskConfirmPayment(false);
   };
   const handleCloseQRCode = () => {
+    // payment confirmation
     setWillingToPay(false);
   };
   const handleCloseSoldProductInvoiceViewer = () => {
     setOpenSoldProductPDFView(false);
   };
-
-  const handlePayButton = async () => {
-    setAskConfirmPayment(false);
-    setWillingToPay(true);
+  const changeSoldProductState = async (
+    state: PaymentState,
+    closeContainer: boolean = false,
+  ) => {
+    try {
+      setChangingState(true);
       await updateSoldProductStateAPI({
         query: {
           role: user.role,
-          updatedState: PaymentState.PENDING,
+          updatedState: state,
         },
         body: {
           soldProducts: [i],
         },
       });
+      await updateUser();
+      closeContainer && closeParent();
+    } catch (error) {
+      showToast({type: 'info', text1: 'unable to change product state.'});
+    } finally {
+      setChangingState(false);
+    }
   };
-  const handleInvoiceButton = () => {
+
+  const handlePayButton = async () => {
+    setAskConfirmPayment(false);
+    setWillingToPay(true);
+    await changeSoldProductState(PaymentState.PENDING);
+  };
+  const handleInvoiceButton = async () => {
     setWillingToPay(false);
     setOpenSoldProductPDFView(true);
   };
 
-  const openConfirmPay = (payAs: 'WHOLE' | 'SINGLE', item?: SoldProduct) => {
+  const openConfirmPay = async (
+    payAs: 'WHOLE' | 'SINGLE',
+    item?: SoldProduct,
+  ) => {
+    if (item && item.state === PaymentState.PENDING) {
+      await changeSoldProductState(PaymentState.PAID);
+      return;
+    }
     if (payAs === 'WHOLE') {
       setPayableAmount(
         i.count * (i.product.discountedPrice ?? i.product.basePrice),
@@ -127,18 +160,6 @@ const Tab: React.FC<TabProps> = ({
   const handleCloseTabOptions = () => setLongPressActionOpen(false);
   const longPressAction = () => setLongPressActionOpen(true);
 
-  const handleMarkAs = async () => {
-    if (actionType === 'PAID') {
-      // dispatch(setToUnpaid({customer, product: i}));
-      return;
-    } else if (actionType === 'UNPAID') {
-      // dispatch(setToPaid({customer, product: i}));
-      return;
-    } else {
-      return;
-    }
-  };
-
   return (
     <LongPressEnabled longPressAction={longPressAction}>
       <View
@@ -147,69 +168,156 @@ const Tab: React.FC<TabProps> = ({
           {
             marginBottom: lastIndex ? 70 : 6,
             backgroundColor: currentTheme.tab.bg,
+            paddingVertical: i.state === PaymentState.UNPAID ? 10 : 4,
           },
         ]}>
         <View style={styles.tabInfo}>
-          <View style={{flexDirection: 'row', gap: 4, alignItems: 'center'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 4,
+              alignItems: 'center',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
+              <Text
+                style={[styles.productName, {color: currentTheme.tab.label}]}>
+                {i.product.name}
+              </Text>
+              <View
+                style={{
+                  borderRadius: 100,
+                  backgroundColor: currentTheme.baseColor,
+                  height: 14,
+                  width: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.productName,
+                    {
+                      color: currentTheme.contrastColor,
+                      fontSize: 10,
+                    },
+                  ]}>
+                  {i.count}
+                </Text>
+              </View>
+            </View>
+            <Pressable
+              style={{
+                borderRadius: 100,
+                backgroundColor: currentTheme.baseColor,
+                height: 16,
+                width: 42,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() =>
+                PaymentState.PENDING &&
+                changeSoldProductState(PaymentState.UNPAID)
+              }>
+              {changingState ? (
+                <ActivityIndicator
+                  size={10}
+                  color={currentTheme.contrastColor}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.productName,
+                    {
+                      color: currentTheme.contrastColor,
+                      fontSize: 8,
+                    },
+                  ]}>
+                  {i.state}
+                </Text>
+              )}
+            </Pressable>
+          </View>
+          <View style={{gap: 2, justifyContent: 'center'}}>
             <Text
-              style={[styles.customerName, {color: currentTheme.tab.label}]}>
-              {i.product.name} {`x${i.count}`}
+              style={[styles.productAmount, {color: currentTheme.baseColor}]}>
+              {`${app.currency} ${
+                i.product.discountedPrice && i.product.discountedPrice !== 0
+                  ? i.count === 0
+                    ? i.product.discountedPrice
+                    : (
+                        Number(i.product.discountedPrice) * Number(i.count)
+                      ).toString()
+                  : i.count === 0
+                  ? i.product.basePrice
+                  : (Number(i.product.basePrice) * Number(i.count)).toString()
+              }`}
             </Text>
             {i.product.disabled && (
               <Text
                 style={{
                   color: colors.danger,
                   backgroundColor: colors.dangerFade,
-                  padding: 3,
-                  borderRadius: 6,
-                  fontSize: 10,
+                  borderRadius: 3,
+                  fontSize: 8,
+                  height: 14,
+                  textAlign: 'center',
+                  padding: 1,
+                  fontWeight: '600',
                 }}>
                 DELETED
               </Text>
             )}
-            {actionType === 'PAID' && (
-              <View
-                style={[
-                  styles.MarkAsPaid,
-                  {backgroundColor: currentTheme.contrastColor},
-                ]}>
-                <Text
-                  style={[
-                    styles.MarkAsPaidText,
-                    {color: currentTheme.tab.label},
-                  ]}>
-                  {t('c_paid_flag')}
-                </Text>
-              </View>
-            )}
           </View>
-
-          <Text style={[styles.productAmount, {color: currentTheme.baseColor}]}>
-            {`${app.currency} ${
-              i.product.discountedPrice && i.product.discountedPrice !== 0
-                ? i.count === 0
-                  ? i.product.discountedPrice
-                  : (
-                      Number(i.product.discountedPrice) * Number(i.count)
-                    ).toString()
-                : i.count === 0
-                ? i.product.basePrice
-                : (Number(i.product.basePrice) * Number(i.count)).toString()
-            }`}
-          </Text>
         </View>
         {actionType === 'PAID' && (
           <View style={styles.tabActionContainer}>
             <TouchableOpacity
               style={[
                 styles.MarkAsPaid,
+                {
+                  backgroundColor: currentTheme.tab.btnBg,
+                  height: 22,
+                },
+              ]}
+              activeOpacity={0.8}
+              onPress={() => {
+                changeSoldProductState(PaymentState.UNPAID);
+              }}>
+              {changingState ? (
+                <ActivityIndicator
+                  size={22}
+                  color={currentTheme.contrastColor}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.MarkAsPaidText,
+                    {
+                      color: currentTheme.tab.text,
+                      textAlign: 'center',
+                      fontSize: 12,
+                    },
+                  ]}>
+                  {t('c_markasunpaid')}
+                </Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.MarkAsPaid,
                 {backgroundColor: currentTheme.tab.btnBg},
               ]}
               activeOpacity={0.8}
-              onPress={handleMarkAs}>
+              onPress={() => setOpenSoldProductPDFView(true)}>
               <Text
-                style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
-                {t('c_markasunpaid')}
+                style={[
+                  styles.MarkAsPaidText,
+                  {
+                    color: currentTheme.tab.text,
+                    textAlign: 'center',
+                    fontSize: 12,
+                  },
+                ]}>
+                Invoice
               </Text>
             </TouchableOpacity>
           </View>
@@ -219,15 +327,58 @@ const Tab: React.FC<TabProps> = ({
             <TouchableOpacity
               style={[
                 styles.MarkAsPaid,
-                {backgroundColor: currentTheme.tab.btnBg},
+                {
+                  backgroundColor: currentTheme.tab.btnBg,
+                  height:
+                    i.state === PaymentState.PAID ||
+                    i.state === PaymentState.UNPAID
+                      ? 34
+                      : 22,
+                },
               ]}
               activeOpacity={0.8}
               onPress={() => openConfirmPay('SINGLE', i)}>
-              <Text
-                style={[styles.MarkAsPaidText, {color: currentTheme.tab.text}]}>
-                {t('c_pay_btn')}
-              </Text>
+              {i.state === PaymentState.UNPAID ? (
+                <Icon
+                  name="qrcode-scan"
+                  color={currentTheme.contrastColor}
+                  size={20}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.MarkAsPaidText,
+                    {
+                      color: currentTheme.tab.text,
+                      textAlign: 'center',
+                      fontSize: 10,
+                    },
+                  ]}>
+                  Recevied?
+                </Text>
+              )}
             </TouchableOpacity>
+            {i.state === PaymentState.PENDING && (
+              <TouchableOpacity
+                style={[
+                  styles.MarkAsPaid,
+                  {backgroundColor: currentTheme.tab.btnBg, height: 22},
+                ]}
+                activeOpacity={0.8}
+                onPress={() => setOpenSoldProductPDFView(true)}>
+                <Text
+                  style={[
+                    styles.MarkAsPaidText,
+                    {
+                      color: currentTheme.tab.text,
+                      textAlign: 'center',
+                      fontSize: 12,
+                    },
+                  ]}>
+                  Invoice
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
         <PopupContainer
@@ -277,7 +428,11 @@ const Tab: React.FC<TabProps> = ({
         open={openSoldProductPDFView}
         close={handleCloseSoldProductInvoiceViewer}
         height={deviceHeight * 0.5}>
-        <InvoicePDFViewer soldProducts={[i]} customer={i.buyer} closeViewer={handleCloseSoldProductInvoiceViewer} />
+        <InvoicePDFViewer
+          soldProducts={[i]}
+          customer={i.buyer}
+          closeViewer={handleCloseSoldProductInvoiceViewer}
+        />
       </SlideUpContainer>
     </LongPressEnabled>
   );
@@ -286,7 +441,6 @@ const Tab: React.FC<TabProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 8,
-    paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 8,
@@ -297,29 +451,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 4,
   },
-  customerName: {
-    fontSize: 18,
-    fontWeight: '400',
+  productName: {
+    fontSize: 16,
+    fontWeight: '900',
+    fontFamily: 'AntDesign',
   },
   productAmount: {
-    fontSize: 20,
+    fontSize: 14,
+    fontWeight: '600',
   },
   tabActionContainer: {
-    flexDirection: 'row',
-    gap: 4,
+    gap: 2,
   },
   MarkAsPaid: {
-    paddingHorizontal: 28,
-    paddingVertical: 12,
+    height: 26,
+    width: 60,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
   },
   MarkAsPaidText: {
     fontWeight: '600',
-    fontSize: 18,
   },
   contentToggleContainer: {
     flexDirection: 'row',

@@ -1,7 +1,7 @@
 import {AdminRole} from '../../enums';
 import {
   AnalyseBusinessAIAPIData,
-  AnalyseBusinessAIReturnType,
+  AnalyseBusinessAPIReturnType,
   AnalyseSingleProductAIAPIData,
   AnalyseSingleProductAIReturnType,
 } from './types.api';
@@ -44,13 +44,13 @@ export const analyseBusinessAIAPI = async (
       route: `/ask-ai/4/analytics/business?role=${role}&oid=${oid}&rl=${rl}`,
       method: 'GET',
     });
-    return (await fetching.json()) as AnalyseBusinessAIReturnType;
+    return (await fetching.json()) as AnalyseBusinessAPIReturnType;
   } catch (error) {
     return {
       message:
         error instanceof Error ? error.message : 'Internal server error!',
       success: false,
-    } as AnalyseBusinessAIReturnType;
+    } as AnalyseBusinessAPIReturnType;
   } finally {
     handleBooleanState(setState, false);
   }

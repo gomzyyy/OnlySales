@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     gap: 8,
     borderRadius: 16,
     height: 60,
-    width: 150,
+    width: '48%',
     justifyContent: 'center',
   },
   pressableText: {fontSize: 18, fontWeight: 'bold'},

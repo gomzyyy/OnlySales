@@ -83,7 +83,9 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
                 : currentTheme.baseColor,
           },
         ]}
-        onPress={() => onTabPress({products: i, date, customer})}>
+        onPress={() =>
+          onTabPress({products: i, date: i[0].createdAt, customer})
+        }>
         <Text
           style={[
             styles.date,

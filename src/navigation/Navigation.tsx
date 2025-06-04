@@ -49,9 +49,10 @@ import SearchFeatures from '../screens/SearchFeatures/SearchFeatures';
 import GetUserSignupImage from '../screens/Auth/SignUp/screens/GetUserSignupImage';
 import UITest from '../screens/Test/UITest';
 import Test from '../screens/Test/Test';
-import ReservedKeywords from '../screens/Help/ReservedKeywords';
+import ReservedKeywords from '../screens/Info/ReservedKeywords';
 import WebViewScreen from '../screens/WebView/WebViewScreen';
 import Invoices from '../screens/Invoices/Invoices';
+import TermsAndConditions from '../screens/Info/TermsAndConditions';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -109,6 +110,7 @@ const StackNav = () => {
       <stack.Screen name="SearchFeatures" component={SearchFeatures} />
       <stack.Screen name="WebViewScreen" component={WebViewScreen} />
       <stack.Screen name="Invoices" component={Invoices} />
+      <stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
       <stack.Screen
         name="Login"
         options={{gestureEnabled: false}}

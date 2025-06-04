@@ -110,6 +110,7 @@ const useStorage = (): useStorageReturnType => {
     onErrorSettingLocalState?: () => void,
   ) => {
     const res = await validateTokenAPI({role: user.role});
+    console.log(res);
     if (res.success && res.data && res.data.user) {
       d(setUser(res.data.user));
     } else {

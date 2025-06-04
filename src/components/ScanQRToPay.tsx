@@ -13,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {setPymtId} from '../../store/slices/business';
 import {Pressable} from 'react-native';
+import SlideUpContainer from './SlideUpContainer';
 const UPI_LOGO = require('../assets/images/UPI_LOGO.png');
 
 type ScanQRToPay = {
@@ -35,6 +36,8 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
     (s: RootState) => s.appData.app.lc_meta_data,
   );
   const [changeUpi, setChangeUpi] = useState<boolean>(false);
+  const [confirmPaymentSuccess, setConfirmPaymentSuccess] =
+    useState<boolean>(false);
   const [upiid, setUpiid] = useState<string>(upi_id.id);
   const handleEditUpiid = () => {
     if (upiid.trim().length > 0) {
@@ -45,12 +48,18 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
   useEffect(() => {
     setUpiid(upi_id.id);
   }, [upi_id]);
-  const cancelChangeUpi = () => setChangeUpi(false);
+  const cancelChangeUpi = () => {
+    if (upi_id.id.trim().length === 0) {
+      cancel();
+    }
+    setChangeUpi(false);
+  };
   const copyUPIid = () => Clipboard.setString(upi_id.id);
+  const handleInvoicePress = () => setConfirmPaymentSuccess(true);
   return (
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
-      {!changeUpi ? (
+      {!changeUpi && upi_id.id.trim().length !== 0 ? (
         <>
           <View style={styles.container}>
             <QRCode
@@ -58,9 +67,9 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
                 upi_id.id.length > 0 ? upi_id.id : 'gomzydhingra0001@okhdfcBank'
               }&pn=${
                 visible_name || 'Khata App'
-              }&mc=1234&tid=Txn${Date.now()}&tr=Order${randomId()}&tn=Payment%20for%20Udhar%20%26%20Pending%20Bills&am=${
-                payableAmount || 0
-              }&cu=${currency ?? CurrencyType.INR}`}
+              }&mc=1234&tid=Txn${Date.now()}&tr=Order${randomId()}&tn=${encodeURIComponent(
+                visible_message || 'Thanks for puschase.',
+              )}&am=${payableAmount || 0}&cu=${currency ?? CurrencyType.INR}`}
               size={200}
             />
             <View style={{flex: 1}}>
@@ -100,7 +109,7 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, {backgroundColor: colors.oliveGreenFade}]}
-              onPress={callback}>
+              onPress={handleInvoicePress}>
               <Text style={[styles.buttonText, {color: colors.oliveGreen}]}>
                 Invoice
               </Text>
@@ -125,7 +134,6 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
               style={[global.inputText, {fontSize: 14, textAlign: 'center'}]}
               placeholder="UPI id here"
               placeholderTextColor={'#ababab'}
-              autoFocus={true}
               cursorColor={'rgba(0,0,0,0)'}
             />
             <View style={{flex: 1, marginTop: 10}}>
@@ -173,6 +181,41 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
           </View>
         </>
       )}
+      <SlideUpContainer
+        open={confirmPaymentSuccess}
+        close={() => setConfirmPaymentSuccess(false)}
+        height={150}>
+        <View
+          style={{
+            backgroundColor: currentTheme.contrastColor,
+            height: 150,
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            marginBottom: 10,
+            borderRadius: 20,
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{fontSize: 22, fontWeight: '600', textAlign: 'center'}}>
+            Payment recieved?
+          </Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, {backgroundColor: colors.dangerFade}]}
+              onPress={() => setConfirmPaymentSuccess(false)}>
+              <Text style={[styles.buttonText, {color: colors.danger}]}>
+                No
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, {backgroundColor: colors.oliveGreenFade}]}
+              onPress={callback}>
+              <Text style={[styles.buttonText, {color: colors.oliveGreen}]}>
+                Yes
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SlideUpContainer>
     </View>
   );
 };
@@ -180,6 +223,7 @@ const ScanQRToPay: React.FC<ScanQRToPay> = ({
 const styles = StyleSheet.create({
   parent: {
     height: deviceHeight * 0.6,
+    maxHeight:450,
     marginBottom: 10,
     borderRadius: 20,
     padding: 20,

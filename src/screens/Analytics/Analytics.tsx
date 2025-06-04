@@ -1,15 +1,12 @@
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
-  Pressable,
   Image,
 } from 'react-native';
 import React from 'react';
 import Header from '../../components/Header';
 import {useAnalytics, useTheme} from '../../hooks';
-import Icon from 'react-native-vector-icons/Entypo';
 import TodayAnalyticsCard from './components/TodayAnalyticsCard';
 import WeeklySalesAnalysisCard from './components/WeeklySalesAnalysisCard';
 import MonthlySalesAnalysisCard from './components/MonthlySalesAnalyticsCard';
