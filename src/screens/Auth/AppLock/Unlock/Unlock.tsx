@@ -5,117 +5,96 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
-  Pressable,
+  TextInput,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Owner} from '../../../../../types';
-import {useRoute} from '@react-navigation/native';
-import InputPasscode from '../../../../customComponents/InputPasscode';
 import {colors, deviceHeight} from '../../../../utils/Constants';
-import Header from '../../../../components/Header';
 import {showToast} from '../../../../service/fn';
-import {
-  back,
-  navigate,
-  resetAndNavigate,
-} from '../../../../utils/nagivationUtils';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../../store/store';
-// import {login} from '../../../../../store/slices/business';
+import {resetAndNavigate} from '../../../../utils/nagivationUtils';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../../store/store';
+import {verifyPasscodeAPI} from '../../../../api/api.user';
+import {useTheme} from '../../../../hooks';
+import InputPasscode from '../../../../customComponents/InputPasscode';
+import {setLockedState} from '../../../../../store/slices/business';
+import {useRoute} from '@react-navigation/native';
 
 type UnlockParamsType = {
-  user: Owner;
-  logged?: boolean;
   navigateTo?: string;
-  localCheck?: boolean;
 };
 
 const Unlock = () => {
+  const {currentTheme} = useTheme();
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((s: RootState) => s.appData.user)!;
   const {params} = useRoute();
-  const {
-    user,
-    logged = false,
-    navigateTo,
-    localCheck = false,
-  } = params as UnlockParamsType;
-  const [passcode, setPasscode] = useState<[string, string, string, string]>([
-    '',
-    '',
-    '',
-    '',
-  ]);
-
+  const {navigateTo} = (params || {}) as UnlockParamsType;
+  const [passcode, setPasscode] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const passcodeInputTextRef = useRef<TextInput | null>(null);
 
-  const handleCheckPasscode = () => {
-    if (JSON.stringify(user.accessPasscode) === JSON.stringify(passcode)) {
-      if (localCheck && navigateTo) {
-        navigate(navigateTo);
-        return;
-      }
-      // !logged && dispatch(login({userId: user.userId}));
-      resetAndNavigate('Dashboard');
-      return;
-    } else {
+  const handleVerifyPasscode = async () => {
+    passcodeInputTextRef.current?.blur();
+    if (passcode.length < 4 || passcode.length > 16) {
       showToast({
         type: 'error',
-        text1: 'Incorrect Access Passcode!',
-        position: 'top',
+        text1: 'Password length should be 4-16 characters.',
       });
-      setPasscode(['', '', '', '']);
+    }
+    const res = await verifyPasscodeAPI({
+      query: {role: user.role},
+      body: {passcode},
+    });
+    if (!res.success) {
       setError(true);
-      return;
+      passcodeInputTextRef.current?.focus();
+      showToast({type: 'error', text1: res.message});
+    } else {
+      dispatch(setLockedState(false));
+      resetAndNavigate(`${navigateTo ? navigateTo : 'SplashScreen'}`, {
+        locked: false,
+      });
     }
   };
-
-  useEffect(() => {
-    if (
-      passcode[0].trim().length !== 0 ||
-      passcode[1].trim().length !== 0 ||
-      passcode[2].trim().length !== 0 ||
-      passcode[3].trim().length !== 0
-    ) {
-      error && setError(false);
-    }
-    if (
-      passcode[0].trim().length !== 0 &&
-      passcode[1].trim().length !== 0 &&
-      passcode[2].trim().length !== 0 &&
-      passcode[3].trim().length !== 0
-    ) {
-      handleCheckPasscode();
-    } else {
-      return;
-    }
-  }, [passcode]);
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <Header name="App Locked!" backButton />
+      {/* <Header name="App Locked!" /> */}
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>
-          {localCheck ? `Is this really you?` : `Welcome back ${user.name}!`}
-        </Text>
-        <Text style={styles.subTitle}>{`Please Enter your Passcode`}</Text>
+        {/* <Text style={styles.title}>
+          {localCheck ? 'Is this really you?' : `Welcome back ${user.name}!`}
+          This Business is secured.
+        </Text> */}
+        <Text style={styles.subTitle}>Please Enter your Passcode</Text>
+
         <View style={styles.inputPasscodeContainer}>
           <InputPasscode
-            state={passcode}
+            value={passcode}
             setState={setPasscode}
-            focused
-            error={error}
+            ref={passcodeInputTextRef}
+            placeholder="access code"
+            placeholderTextColor="#999"
+            onSubmitEditing={handleVerifyPasscode}
+            autoFocus
           />
+          {error && (
+            <Text style={[styles.errorMessage, {color: colors.danger}]}>
+              Incorrect passcode. Try again.
+            </Text>
+          )}
         </View>
-        {!localCheck && <Text style={styles.seperatorText}>OR</Text>}
+        {/* {!localCheck && <Text style={styles.seperatorText}>OR</Text>}
+
         {!localCheck && (
           <Pressable onPress={() => navigate('LoginOptions')}>
             <Text style={[styles.altLoginOptionText, {color: colors.link}]}>
               Login with a different Account.
             </Text>
           </Pressable>
-        )}
+        )} */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -128,30 +107,33 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: deviceHeight * 0.22,
+    marginTop: deviceHeight * 0.24,
   },
   subTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: deviceHeight * 0.28,
     paddingHorizontal: 18,
   },
   inputPasscodeContainer: {
     marginTop: 40,
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  seperatorText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  passcodeInput: {
+    fontSize: 14,
+    borderBottomWidth: 2,
+    width: '60%',
     textAlign: 'center',
-    marginTop: 40,
+    paddingVertical: 10,
+    borderColor: '#ccc',
+    color: '#000',
   },
-  altLoginOptionText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 30,
-    marginBottom: 60,
+  errorMessage: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
 

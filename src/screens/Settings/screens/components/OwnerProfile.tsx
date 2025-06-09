@@ -29,7 +29,7 @@ import Animated, {
 import SlideUpContainer from '../../../../components/SlideUpContainer';
 import FeatureInfoContainer from '../../../../components/FeatureInfoContainer';
 import {OWNER_PROPERTIES, OwnerPropertyObjType} from '../../../../utils/data';
-import { navigate } from '../../../../utils/nagivationUtils';
+import {navigate} from '../../../../utils/nagivationUtils';
 
 const OwnerProfile = () => {
   const {currentTheme} = useTheme();
@@ -142,6 +142,47 @@ const OwnerProfile = () => {
       <Header
         name="Profile"
         backButton
+        customTitle={
+          <View style={{alignItems: 'center'}}>
+            <Text style={{color: '#fff', fontSize: 22, fontWeight: 'bold'}}>
+              Profile
+            </Text>
+            {owner.documentAcceptance.terms.accepted &&
+              owner.documentAcceptance.privacyPolicy.accepted && (
+                <View style={{flexDirection: 'row', gap: 4}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{color: currentTheme.header.textColor}}>
+                      Terms{' '}
+                    </Text>
+                    <Icon1
+                      name="check"
+                      size={12}
+                      color={currentTheme.header.textColor}
+                    />
+                  </View>
+                  <Text
+                    style={{
+                      color: currentTheme.header.textColor,
+                      fontWeight: '900',
+                      position: 'relative',
+                      bottom: 3,
+                    }}>
+                    .
+                  </Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{color: currentTheme.header.textColor}}>
+                      Privacy policy{' '}
+                    </Text>
+                    <Icon1
+                      name="check"
+                      size={12}
+                      color={currentTheme.header.textColor}
+                    />
+                  </View>
+                </View>
+              )}
+          </View>
+        }
         headerBgColor={currentTheme.baseColor}
         titleColor={currentTheme.header.textColor}
         curved
@@ -157,7 +198,11 @@ const OwnerProfile = () => {
             }
           />
         }
-        customAction={() =>navigate('WebViewScreen',{uri:'http://192.168.1.71:3000/home?redirect=update_owner'})}
+        customAction={() =>
+          navigate('WebViewScreen', {
+            uri: 'http://192.168.1.71:3000/home?redirect=update_owner',
+          })
+        }
         customAction1={openNotice}
         renderItem1={
           <HeaderCustomComponent

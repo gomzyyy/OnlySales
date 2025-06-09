@@ -1,14 +1,15 @@
 import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {colors} from '../../../utils/Constants';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../../../store/store';
 import {Confirm, showToast} from '../../../service/fn';
 import {resetAndNavigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {deleteUser} from '../../../../store/slices/business';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import {DrawerActions} from '@react-navigation/native';
 
 type LogoutButtonProps = {
   theme?: 'red' | 'white';
@@ -59,8 +60,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap:8,
-    width:'100%'
+    gap: 8,
+    width: '100%',
   },
   buttonText: {
     fontSize: 22,

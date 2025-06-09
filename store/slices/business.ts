@@ -30,14 +30,6 @@ const initialState: appstate = {
       visible_name: 'onlySales',
       visible_message: 'Thanks for purchase.',
     },
-    fonts: {
-      bottomTab: {
-        title: {
-          large: 12,
-          small: 10,
-        },
-      },
-    },
   },
 };
 
@@ -88,6 +80,9 @@ const UserSlice = createSlice({
     setVisibleMessage: (state, action: PayloadAction<string>) => {
       state.app.lc_meta_data.visible_message = action.payload;
     },
+    setLockedState: (state, action: PayloadAction<boolean>) => {
+      state.app.appLocked = action.payload;
+    },
   },
 });
 export const {
@@ -99,5 +94,6 @@ export const {
   setPymtId,
   setVisibleMessage,
   setVisibleName,
+  setLockedState
 } = UserSlice.actions;
 export default UserSlice.reducer;

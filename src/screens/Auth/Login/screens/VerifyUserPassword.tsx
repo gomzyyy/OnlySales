@@ -22,6 +22,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
 import {showToast} from '../../../../service/fn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import InputPasscode from '../../../../customComponents/InputPasscode';
 
 const VerifyPassword = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -63,15 +64,10 @@ const VerifyPassword = () => {
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Enter your password:</Text>
-            <TextInput
+            <InputPasscode
               value={password}
-              onChangeText={setPassword}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
+              setState={setPassword}
               placeholder={`password`}
-              placeholderTextColor={currentTheme.baseColor}
             />
           </View>
           <TouchableOpacity

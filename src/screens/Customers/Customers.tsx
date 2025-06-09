@@ -3,21 +3,19 @@ import React, {useState} from 'react';
 import EmptyListMessage from './components/EmptyListMessage';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import CreateCustomer from '../../components/CreateCustomer';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
 import CreateButton from '../../components/CreateButton';
 import SearchBar from './components/SearchBar';
 import Header from '../../components/Header';
 import {useAnalytics, useTheme} from '../../hooks';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/Octicons';
 import {useHaptics} from '../../hooks';
-import { deviceHeight } from '../../utils/Constants';
-// import CreateUnknownPayment from '../../components/CreateUnknownPayment';
-import { useTranslation } from 'react-i18next';
+import {deviceHeight} from '../../utils/Constants';
+import {useTranslation} from 'react-i18next';
+import HeaderIcon from '../../components/HeaderIcon';
 
 const Customers = () => {
-  const {t} = useTranslation('customers')
+  const {t} = useTranslation('customers');
   const {lightTap} = useHaptics();
   const {currentTheme} = useTheme();
   const [openCreateCustomer, setopenCreateCustomer] = useState<boolean>(false);
@@ -35,7 +33,9 @@ const Customers = () => {
         titleColor={currentTheme.header.textColor}
         customComponent={true}
         renderItem={
-          <Icon name="plus" size={24} color={currentTheme.header.textColor} />
+          <HeaderIcon label="Add">
+            <Icon name="plus" color={currentTheme.baseColor} size={20} />
+          </HeaderIcon>
         }
         customAction={() => {
           setopenCreateCustomer(true);
@@ -59,7 +59,7 @@ const Customers = () => {
               keyExtractor={s => s._id}
               nestedScrollEnabled
               renderItem={({item}) => <Tab i={item} />}
-              style={{flex: 1,paddingBottom:90}}
+              style={{flex: 1, paddingBottom: 90}}
               showsVerticalScrollIndicator={false}
             />
           ) : (
@@ -75,8 +75,8 @@ const Customers = () => {
           close={handleCloseCreateCustomer}
           height={deviceHeight * 0.58}
           // height= {deviceHeight * 0.82}
-          >
-            {/* <CreateUnknownPayment callback={handleCloseCreateCustomer} /> */}
+        >
+          {/* <CreateUnknownPayment callback={handleCloseCreateCustomer} /> */}
           <CreateCustomer callback={handleCloseCreateCustomer} />
         </SlideUpContainer>
       )}

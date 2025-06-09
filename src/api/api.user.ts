@@ -5,6 +5,12 @@ import {
   GetUserAPIData,
   GetUserByIdAPIData,
   GetUserByIdAPIReturnType,
+  UpdateUserPasscodeAPIData,
+  UpdateUserPasscodeAPIReturnType,
+  VerifyUserPasscodeAPIData,
+  VerifyUserPasscodeAPIReturnType,
+  UpdateAppLockStateAPIData,
+  UpdateAppLockStateAPIReturnType,
 } from './types.api';
 
 export const getUserAPI = async (
@@ -60,6 +66,93 @@ export const getUserByIdAPI = async (
       },
       success: false,
     } as GetUserByIdAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+export const updatePasscodeAPI = async (
+  data: UpdateUserPasscodeAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const body = JSON.stringify(data.body);
+    const fetching = await FetchAPI({
+      reqType: 'cud',
+      route: `/user/passcode/update?role=${data.query.role}`,
+      method: 'POST',
+      body,
+    });
+    return (await fetching.json()) as UpdateUserPasscodeAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        user: undefined,
+      },
+      success: false,
+    } as GetUserAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+export const updateAppLockStateAPI = async (
+  data: UpdateAppLockStateAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const body = JSON.stringify(data.body);
+    const fetching = await FetchAPI({
+      reqType: 'cud',
+      route: `/user/security/app-lock/update?role=${data.query.role}`,
+      method: 'POST',
+      body,
+    });
+    return (await fetching.json()) as UpdateAppLockStateAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        user: undefined,
+      },
+      success: false,
+    } as GetUserAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+export const verifyPasscodeAPI = async (
+  data: VerifyUserPasscodeAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const body = JSON.stringify(data.body);
+    const fetching = await FetchAPI({
+      reqType: 'cud',
+      route: `/user/passcode/verify?role=${data.query.role}`,
+      method: 'POST',
+      body,
+    });
+    return (await fetching.json()) as VerifyUserPasscodeAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        user: undefined,
+      },
+      success: false,
+    } as GetUserAPIReturnType;
   } finally {
     handleBooleanState(setState, false);
   }

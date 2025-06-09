@@ -3,9 +3,13 @@ import React from 'react';
 import Tab from './shared/Tab';
 import {navigate} from '../../../utils/nagivationUtils';
 
-
 const AccountCenterOptions = [
-  {title: 'My Profile', navigateTo: 'MyProfile', id: 1},
+  {
+    title: 'My Profile',
+    navigateTo: 'MyProfile',
+    id: 1,
+    description:'user name, phone number, email, role, and more.',
+  },
 ];
 
 const AccountCenter = () => {
@@ -19,6 +23,7 @@ const AccountCenter = () => {
           key={s.id}
           title={s.title}
           onPress={() => handleOnTabPress(s.navigateTo)}
+          description={s.description}
         />
       ))}
     </View>

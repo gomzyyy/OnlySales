@@ -132,7 +132,9 @@ export function isValidEmail(email: string): boolean {
   return emailRegex.test(email.trim());
 }
 
-export const formatNumber = (num: number): string => {
+export const formatNumber = (x: string | number): string => {
+  if (Number.isNaN(x)) return '';
+  const num = Number(x);
   if (num >= 1_000_000_000) {
     return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
   } else if (num >= 10_00_00_000) {
@@ -146,6 +148,12 @@ export const formatNumber = (num: number): string => {
   } else {
     return num.toString();
   }
+};
+
+export const formatNumberWithComma = (x: string | number): string => {
+  if (Number.isNaN(x)) return '';
+  const num = Number(x);
+  return num.toLocaleString('en-IN');
 };
 
 export const copyTextToClipboard = (text: string, notifyOnCopy = true) => {
@@ -169,4 +177,36 @@ export const formatFileSize = (bytes: number): string => {
     return `${mb} MB`;
   }
 };
+export function debounce<T extends (...args: any[]) => void>(
+  fn: T,
+  delay = 300,
+) {
+  let timeout: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+}
+export function throttle<T extends (...args: any[]) => void>(
+  fn: T,
+  limit = 600,
+) {
+  let inThrottle: boolean;
+  let lastArgs: Parameters<T> | null = null;
 
+  return function (this: any, ...args: Parameters<T>) {
+    if (!inThrottle) {
+      fn.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+        if (lastArgs) {
+          fn.apply(this, lastArgs);
+          lastArgs = null;
+        }
+      }, limit);
+    } else {
+      lastArgs = args;
+    }
+  };
+}

@@ -4,34 +4,18 @@ import {
   DrawerContentScrollView,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
-import {navigate} from '../../utils/nagivationUtils';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store/store';
-import {useNavigation} from '@react-navigation/native';
-import {DrawerActions} from '@react-navigation/native';
-import {navigationRef} from '../../utils/nagivationUtils';
 const NoProfile = require('../../assets/images/no-profile.jpg');
 import {useTheme} from '../../hooks/index';
 import LogoutButton from '../../screens/Settings/components/LogoutButton';
 import MenuTab, {AppSettingsData, ManagementData, ToolsData} from './menu_data';
-import { deviceHeight } from '../../utils/Constants';
 
 const MenuContent: React.FC<DrawerContentComponentProps> = (
   props,
 ): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const currRoute = navigationRef.current?.getCurrentRoute()?.name;
-  const navigation = useNavigation();
   const user = useSelector((s: RootState) => s.appData.user);
-
-  const handleNavigationByMenu = (r: string): void => {
-    if (currRoute === r) {
-      navigation.dispatch(DrawerActions.closeDrawer());
-      return;
-    }
-    navigate(r);
-    navigation.dispatch(DrawerActions.closeDrawer());
-  };
 
   if (!user) {
     return (
@@ -40,8 +24,14 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
           styles.container,
           {backgroundColor: currentTheme.contrastColor},
         ]}>
-        <Text style={{textAlign: 'center', marginTop: 50, fontSize: 16}}>
-          Loading user...
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: 50,
+            fontSize: 18,
+            fontWeight: '600',
+          }}>
+          Please Login to see data.
         </Text>
       </View>
     );
@@ -54,11 +44,11 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
         <View
           style={[
             styles.infoContainer,
-            {backgroundColor: currentTheme.baseColor},
+            {backgroundColor: currentTheme.fadeColor},
           ]}>
           <View
             style={{
-              backgroundColor: currentTheme.contrastColor,
+              backgroundColor: currentTheme.baseColor,
               position: 'absolute',
               paddingHorizontal: 4,
               paddingVertical: 1,
@@ -70,7 +60,7 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
             }}>
             <Text
               style={{
-                color: currentTheme.baseColor,
+                color: currentTheme.contrastColor,
                 textAlign: 'center',
                 fontStyle: 'italic',
                 fontSize: 12,
@@ -90,10 +80,23 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
             />
           </View>
           <View style={styles.profileNameContainer}>
-            <Text
-              style={[styles.profileName, {color: currentTheme.contrastColor}]}>
+            <Text style={[styles.profileName, {color: currentTheme.baseColor}]}>
               {user?.name || 'Anonymous'}
             </Text>
+            {user.email?.value && (
+              <View style={styles.emailContainer}>
+                <Text
+                  ellipsizeMode="tail"
+                  style={[styles.email, {color: currentTheme.baseColor}]}
+                  numberOfLines={1}>
+                  {`${user.email.value.slice(0, 3)}***@***.${
+                    user.email.value.split('.')[
+                      user.email.value.split('.').length - 1
+                    ]
+                  }`}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -174,8 +177,8 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
           width: '90%',
           paddingHorizontal: 10,
           backgroundColor: currentTheme.contrastColor,
-          alignItems:'center',
-          alignSelf:'center'
+          alignItems: 'center',
+          alignSelf: 'center',
         }}>
         <LogoutButton theme="red" />
       </View>
@@ -197,13 +200,13 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
     paddingHorizontal: 14,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 15,
-    height: 110,
+    height: 100,
   },
   profileImageContainer: {
-    height: 70,
-    width: 70,
+    height: 60,
+    width: 60,
     borderRadius: 45,
     overflow: 'hidden',
   },
@@ -224,6 +227,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: '80%',
     flex: 1,
+  },
+  emailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 30,
+  },
+  email: {
+    fontSize: 14,
+    textAlignVertical: 'center',
   },
 });
 

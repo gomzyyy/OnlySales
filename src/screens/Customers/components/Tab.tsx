@@ -85,13 +85,12 @@ const Tab: React.FC<TabProps> = ({
         </View>
 
         {openEditCustomer && i && (
-          <SlideUpContainer
+          <PopupContainer
             open={openEditCustomer}
             close={handleCloseEditCustomer}
-            opacity={0.8}
-            height={deviceHeight * 0.52}>
+            padding>
             <EditCustomer i={i} close={handleCloseEditCustomer} />
-          </SlideUpContainer>
+          </PopupContainer>
         )}
       </View>
     </LongPressEnabled>

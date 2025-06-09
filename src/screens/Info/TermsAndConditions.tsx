@@ -59,6 +59,7 @@ const TermsAndConditions = () => {
       return;
     }
     const res = await getTermsAndConditionsAPI(setLoadingTnc);
+    console.log(res);
     if (res.success && res.data && res.data.tnc) {
       setTncData(res.data.tnc);
       set(res.data.tnc.documentType, res.data.tnc);

@@ -5,6 +5,8 @@ import {
   CreateProductAPIReturnType,
   DeleteProductAPIData,
   DeleteProductAPIReturnType,
+  UpdateProductAPIData,
+  UpdateProductAPIReturnType,
 } from './types.api';
 
 export const createProductAPI = async (
@@ -21,7 +23,9 @@ export const createProductAPI = async (
     formData.append('stock', data.body.stock.toString());
     formData.append('productCost', data.body.productCost.toString());
     formData.append('productType', data.body.productType);
-
+    if (data.body.discountedPrice) {
+      formData.append('discountedPrice', data.body.discountedPrice.toString());
+    }
     if (data.body.measurementTypeDescription) {
       formData.append(
         'measurementTypeDescription',
@@ -73,6 +77,65 @@ export const deleteProductAPI = async (
     });
 
     return (await fetching.json()) as DeleteProductAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        product: undefined,
+      },
+      success: false,
+    } as CreateProductAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+
+export const updateProductAPI = async (
+  data: UpdateProductAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const formData = new FormData();
+    if (data.body.name) formData.append('name', data.body.name);
+    if (data.body.basePrice)
+      formData.append('basePrice', data.body.basePrice.toString());
+    if (data.body.quantity)
+      formData.append('quantity', data.body.quantity.toString());
+    if (data.body.measurementType)
+      formData.append('measurementType', data.body.measurementType);
+    if (data.body.stock) formData.append('stock', data.body.stock.toString());
+    if (data.body.productCost)
+      formData.append('productCost', data.body.productCost.toString());
+    if (data.body.productType)
+      formData.append('productType', data.body.productType);
+    if (data.body.discountedPrice) {
+      formData.append('discountedPrice', data.body.discountedPrice.toString());
+    }
+    if (data.body.measurementTypeDescription) {
+      formData.append(
+        'measurementTypeDescription',
+        data.body.measurementTypeDescription,
+      );
+    }
+    if (data.media.image) {
+      formData.append('img', {
+        uri: data.media.image,
+        type: 'image/jpeg',
+        name: 'product.jpg',
+      } as any);
+    }
+
+    const fetching = await FetchAPI({
+      route: `/update/product?role=${data.query.role}&productId=${data.query.productId}`,
+      reqType: 'cud',
+      method: 'POST',
+    });
+
+    return (await fetching.json()) as UpdateProductAPIReturnType;
   } catch (error) {
     return {
       message:

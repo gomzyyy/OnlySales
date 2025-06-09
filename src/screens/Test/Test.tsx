@@ -10,9 +10,7 @@ import d from 'react-native-device-info';
 import {analyseBusinessAIAPI} from '../../api/api.ai';
 
 const Test = () => {
-  const {currentTheme} = useTheme();
-  const user = useSelector((s: RootState) => s.appData.user)!;
-  const {owner} = useAnalytics();
+  const {currentTheme} = useTheme();  const {owner} = useAnalytics();
   const getDeviceInfo = async () => {
     console.log(d.getDeviceNameSync());
   };

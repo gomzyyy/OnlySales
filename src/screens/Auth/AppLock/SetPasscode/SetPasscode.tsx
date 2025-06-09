@@ -5,143 +5,202 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Header from '../../../../components/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../../store/store';
-import InputPasscode from '../../../../customComponents/InputPasscode';
 import {colors, deviceHeight} from '../../../../utils/Constants';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useTheme} from '../../../../hooks/index';
-// import {
-//   setAccessPassword,
-//   toogleLockApp,
-// } from '../../../../../store/slices/business';
+import {useStorage, useTheme} from '../../../../hooks/index';
 import {back} from '../../../../utils/nagivationUtils';
-import {showToast} from '../../../../service/fn';
-import { Owner } from '../../../../../types';
+import {debounce, showToast, throttle} from '../../../../service/fn';
+import {Owner} from '../../../../../types';
+import {updatePasscodeAPI, verifyPasscodeAPI} from '../../../../api/api.user';
+import InputPasscode from '../../../../customComponents/InputPasscode';
 
 const SetPasscode = () => {
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
-  const {accessPasscode} = useSelector(
-    (s: RootState) => s.appData.user as Owner,
-  );
-  const {appLocked} = useSelector((s: RootState) => s.appData.app);
-  const [locked, setLocked] = useState<boolean>(false);
+  const {user} = useStorage();
+  const u = useSelector((s: RootState) => s.appData.user)!;
+  const {accessPasscode, isLocked} = u;
+
+  const [currPasscode, setCurrPasscode] = useState('');
+  const [newPasscode, setNewPasscode] = useState('');
+  const [confirmPasscode, setConfirmPasscode] = useState('');
   const [currPasscodeError, setCurrPasscodeError] = useState<boolean>(false);
-  const [currPasscode, setCurrPasscode] = useState<
-    [string, string, string, string]
-  >(['', '', '', '']);
-  const [newPasscode, setNewPasscode] = useState<
-    [string, string, string, string]
-  >(['', '', '', '']);
-  const [confirmPasscode, setConfirmPasscode] = useState<
-    [string, string, string, string]
-  >(['', '', '', '']);
+  const [currPasscodeSuccess, setCurrPasscodeSuccess] =
+    useState<boolean>(false);
   const [passwordConfirmed, setPasswordConfirmed] = useState<boolean>(false);
-  const handlePasswordConfirmed = () => {
-    if (
-      confirmPasscode[0].trim().length > 0 ||
-      confirmPasscode[1].trim().length > 0 ||
-      confirmPasscode[2].trim().length > 0 ||
-      confirmPasscode[3].trim().length > 0
-    ) {
-      if (JSON.stringify(confirmPasscode) !== JSON.stringify(newPasscode)) {
-        setPasswordConfirmed(false);
-      } else {
-        setPasswordConfirmed(true);
-      }
-    }
-  };
-  const handleSaveButton = () => {
-    if (
-      locked &&
-      JSON.stringify(currPasscode) !== JSON.stringify(accessPasscode)
-    ) {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [changingState, setChangingState] = useState<boolean>(false);
+
+  useEffect(() => {
+    setPasswordConfirmed(newPasscode === confirmPasscode);
+  }, [newPasscode, confirmPasscode]);
+
+  const handleSaveButton = async () => {
+    if (newPasscode.length < 4 || newPasscode.length > 16) {
       showToast({
         type: 'error',
-        text1: 'Password not matched with current password!',
-        position: 'top',
+        text1: 'Passcode must be 4-16 digits.',
       });
-      setCurrPasscode(['', '', '', '']);
-      setCurrPasscodeError(true);
       return;
     }
 
     if (!passwordConfirmed) {
       showToast({
         type: 'error',
-        text1: 'Password not matched!',
-        position: 'top',
+        text1: 'Passwords do not match!',
       });
       return;
     }
-    // dispatch(setAccessPassword(newPasscode));
-    // dispatch(toogleLockApp(true));
-    showToast({
-      type: 'success',
-      text1: locked
-        ? 'Passcode changed successfully!'
-        : 'App lock enabled successfully!',
+
+    const res = await user.updateAppPasscode({
+      query: {role: u.role},
+      body: {newPasscode, currPasscode},
     });
-    back();
+    showToast({
+      type: res.success ? 'success' : 'error',
+      text1: res.message,
+    });
+    if (res.success) back();
   };
-  useEffect(() => {
-    handlePasswordConfirmed();
-    setLocked(Array.isArray(accessPasscode));
-  }, [confirmPasscode, newPasscode, accessPasscode]);
-  useEffect(() => {
-    if (
-      currPasscode[0].trim().length !== 0 ||
-      currPasscode[0].trim().length !== 0 ||
-      currPasscode[0].trim().length !== 0 ||
-      currPasscode[0].trim().length !== 0
-    ) {
-      setCurrPasscodeError(false);
+
+  const checkCurrPasscode = async (passcode: string) => {
+    setCurrPasscodeSuccess(false);
+    const res = await verifyPasscodeAPI(
+      {
+        query: {role: u.role},
+        body: {passcode},
+      },
+      setLoading,
+    );
+    if (!res.success) {
+      setCurrPasscodeError(true);
+    } else {
+      setCurrPasscodeSuccess(true);
     }
-    handlePasswordConfirmed();
-    setLocked(Array.isArray(accessPasscode));
+  };
+
+  const debouncedCheck = useRef(debounce(checkCurrPasscode, 800)).current;
+  useEffect(() => {
+    if (currPasscode.trim().length === 0) return;
+    debouncedCheck(currPasscode);
   }, [currPasscode]);
+
+  const updateLockState = useCallback(async () => {
+    await user.changeAppLockState(
+      {
+        query: {role: u.role},
+        body: {state: u.isLocked ? 0 : 1},
+      },
+      setChangingState,
+    );
+  }, [user, u.role, u.isLocked]);
+
+  const throttledCall = useRef(throttle(updateLockState, 800));
+
+  useEffect(() => {
+    throttledCall.current = throttle(updateLockState, 800);
+  }, [updateLockState]);
+
+  const ToogleButton = () => {
+    if (u.accessPasscode.length === 0) {
+      return null;
+    }
+    return (
+      <View
+        style={{
+          backgroundColor: u.isLocked ? colors.oliveGreen : colors.danger,
+          height: 24,
+          width: 32,
+          borderRadius: 6,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        {changingState ? (
+          <ActivityIndicator size={14} color={'#fff'} />
+        ) : (
+          <Text style={{fontWeight: '600', color: '#fff'}}>
+            {u.isLocked ? 'On' : 'Off'}
+          </Text>
+        )}
+      </View>
+    );
+  };
+
   return (
     <>
-      <Header name="Set a new Passcode" backButton={true} />
+      <Header
+        name="App Lock"
+        backButton={true}
+        customComponent={true}
+        renderItem={<ToogleButton />}
+        customAction={() => throttledCall.current()}
+      />
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView style={{flex: 1, paddingHorizontal: 20}} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={{flex: 1, paddingHorizontal: 20}}
+          showsVerticalScrollIndicator={false}>
           <View style={styles.innerContainer}>
-            {locked && (
+            {(isLocked || accessPasscode.trim().length > 0) && (
               <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Enter Current Passcode</Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={styles.inputLabel}>Enter Current Passcode</Text>
+                  {loading && <ActivityIndicator size={14} color={'#000'} />}
+                </View>
                 <InputPasscode
-                  state={currPasscode}
+                  value={currPasscode}
                   setState={setCurrPasscode}
-                  focused
-                  error={currPasscodeError}
+                  placeholder="current passcode"
                 />
+                {!currPasscodeSuccess && (
+                  <Text
+                    style={{
+                      color: colors.danger,
+                      fontSize: 14,
+                      paddingHorizontal: 20,
+                    }}>
+                    {currPasscodeError ? 'Invalid passcode' : ''}
+                  </Text>
+                )}
+                {currPasscodeSuccess && (
+                  <Text
+                    style={{
+                      color: colors.oliveGreen,
+                      fontSize: 14,
+                      paddingHorizontal: 20,
+                    }}>
+                    {'passcode matched!'}
+                  </Text>
+                )}
               </View>
             )}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Enter New Passcode</Text>
               <InputPasscode
-                state={newPasscode}
+                value={newPasscode}
                 setState={setNewPasscode}
-                focused={!locked}
+                placeholder="new passcode"
               />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Confirm New Passcode</Text>
               <InputPasscode
-                state={confirmPasscode}
+                value={confirmPasscode}
                 setState={setConfirmPasscode}
+                placeholder="confirm passcode"
               />
               {!passwordConfirmed &&
-                confirmPasscode[3].trim().length !== 0 &&
-                newPasscode[3].trim().length !== 0 && (
+                confirmPasscode.length === 4 &&
+                newPasscode.length === 4 && (
                   <Text style={[styles.errorMessage, {color: colors.danger}]}>
-                    Password not matched
+                    Passwords do not match
                   </Text>
                 )}
             </View>
@@ -181,7 +240,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     paddingHorizontal: 20,
   },
-  errorMessage: {paddingHorizontal: 28, fontSize: 16, fontWeight: '400'},
+  input: {
+    fontSize: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: '#ccc',
+    color: '#000',
+  },
+  errorMessage: {
+    paddingHorizontal: 28,
+    fontSize: 16,
+    fontWeight: '400',
+  },
   saveButton: {
     marginTop: deviceHeight * 0.08,
     justifyContent: 'center',

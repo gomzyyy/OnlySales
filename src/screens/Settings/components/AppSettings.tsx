@@ -4,9 +4,25 @@ import Tab from './shared/Tab';
 import {navigate} from '../../../utils/nagivationUtils';
 
 const AppSettingsOptions = [
-  {title: 'App Lock', navigateTo: 'SetPasscode', id: 1},
-  {title: 'Themes', navigateTo: 'ChangeTheme', id: 2},
-  {title: 'App Info', navigateTo: 'AppInfo', id: 3},
+  {
+    title: 'App Lock',
+    navigateTo: 'SetPasscode',
+    id: 1,
+    description:
+      'lock your business app and never let unknown users to access your business.',
+  },
+  {
+    title: 'Themes',
+    navigateTo: 'ChangeTheme',
+    id: 2,
+    description: 'you can choose app theme based on your choice.',
+  },
+  {
+    title: 'App Info',
+    navigateTo: 'AppInfo',
+    id: 3,
+    description: 'version, properties, accessibility, support; know your app better.',
+  },
 ];
 
 const AppSettings = () => {
@@ -17,6 +33,7 @@ const AppSettings = () => {
           key={s.id}
           title={s.title}
           onPress={() => navigate(`${s.navigateTo}`)}
+          description={s.description}
         />
       ))}
     </View>

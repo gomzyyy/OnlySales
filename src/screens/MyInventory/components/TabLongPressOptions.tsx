@@ -13,9 +13,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useStorage, useTheme} from '../../../hooks/index';
-import {deleteProductAPI} from '../../../api/api.product';
-import {validateTokenAPI} from '../../../api/api.auth';
-import {setUser} from '../../../../store/slices/business';
 import {useTranslation} from 'react-i18next';
 
 type TabLongPressOptionsProps = {
@@ -81,7 +78,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 const styles = StyleSheet.create({
   parent: {
     paddingTop: 20,
-    height: deviceHeight * 0.18,
+    height: 140,
     borderRadius: 20,
     marginTop: 60,
     elevation: 30,

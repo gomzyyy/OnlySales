@@ -1,10 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  Pressable,
-} from 'react-native';
+import {View, StyleSheet, ScrollView, Text, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
@@ -30,6 +24,7 @@ import {useSocket} from '../../hooks/index';
 import DropDownMenu, {
   DropDownOptionsType,
 } from './components/animated/DropDownMenu';
+import {APP_VERSION} from '@env';
 
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
@@ -73,12 +68,11 @@ const Dashboard = () => {
   ];
 
   const {currentTheme} = useTheme();
-  const [openRequestPayment, setOpenRequestPayment] = useState<boolean>(false);
+  const user = useSelector((s: RootState) => s.appData.user)!;
+
+  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [openQuery, setOpenQuery] = useState<boolean>(false);
   const [overScrolled, setOverScrolled] = useState<boolean>(false);
-  const user = useSelector((s: RootState) => s.appData.user)!;
-  const [payableAmount, setPayableAmount] = useState<number>(0);
-  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
 
   const closeDropDown = () => setOpenDropDown(false);
 
@@ -89,6 +83,7 @@ const Dashboard = () => {
   useEffect(() => {
     socket?.on('getOnlineUsers', d => console.log(d));
     socket?.on('getOnlineUsers_meta_data', d => console.log(d));
+    console.log(APP_VERSION);
   }, [socket]);
 
   const dropDownOptions: DropDownOptionsType[] = [
@@ -148,7 +143,7 @@ const Dashboard = () => {
             right={10}
           />
         )}
-        <Pressable
+        {/* <Pressable
           style={{
             backgroundColor: 'white',
             borderRadius: 10,
@@ -166,7 +161,7 @@ const Dashboard = () => {
             }}>
             Test UI
           </Text>
-        </Pressable>
+        </Pressable> */}
         {!user.email?.verified && <NotVerifiedAlert />}
         <View style={styles.contentContainer}>
           <DashboardHeader
@@ -228,7 +223,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: 10,
-    paddingHorizontal:10
+    paddingHorizontal: 10,
   },
   inputText: {
     borderWidth: 2,

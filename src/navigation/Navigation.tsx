@@ -53,6 +53,7 @@ import ReservedKeywords from '../screens/Info/ReservedKeywords';
 import WebViewScreen from '../screens/WebView/WebViewScreen';
 import Invoices from '../screens/Invoices/Invoices';
 import TermsAndConditions from '../screens/Info/TermsAndConditions';
+import {setLockedState} from '../../store/slices/business';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -62,16 +63,20 @@ const StackNav = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const {appLocked} = useSelector((s: RootState) => s.appData.app);
+  const {user} = useSelector((s: RootState) => s.appData);
+  // if (!user) {
+  //   return null;
+  // }
   useEffect(() => {
     const handleAppStateChange = (nextAppState: string) => {
-      // if (
-      //   nextAppState === 'background' ||
-      //   (nextAppState === 'inactive' &&
-      //     accessPasscode &&
-      //     Array.isArray(accessPasscode))
-      // ) {
-      //   dispatch(toogleLockApp(true));
-      // }
+      if (
+        (nextAppState === 'background' || nextAppState === 'inactive') &&
+        user &&
+        user.accessPasscode &&
+        user.accessPasscode.trim().length !== 0
+      ) {
+        dispatch(setLockedState(true));
+      }
     };
     const subscription = AppState.addEventListener(
       'change',
@@ -80,7 +85,8 @@ const StackNav = () => {
     return () => {
       subscription.remove();
     };
-  }, [appLocked, dispatch]);
+  }, [user, dispatch]);
+
   return (
     <stack.Navigator
       screenOptions={{
@@ -122,6 +128,7 @@ const StackNav = () => {
         component={SignUp}
       />
       <stack.Screen name="SetPassword" component={SetPassword} />
+      <stack.Screen name="Unlock" component={Unlock} />
       <stack.Screen
         name="UserNotFound"
         options={{gestureEnabled: false}}
@@ -149,11 +156,7 @@ const StackNav = () => {
         options={{gestureEnabled: false}}
         component={ChangeTheme}
       />
-      <stack.Screen
-        name="Unlock"
-        options={{gestureEnabled: false}}
-        component={Unlock}
-      />
+
       <stack.Screen
         name="LoginOptions"
         options={{gestureEnabled: false}}

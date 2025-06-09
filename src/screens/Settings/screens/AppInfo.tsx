@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   StyleSheet,
@@ -5,159 +6,250 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Pressable,
+  Linking,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
-import OwnerInfo from '../components/UserInfo';
-import {TextInput} from 'react-native-gesture-handler';
-import {useAnalytics, useTheme} from '../../../hooks/index';
-import {AdminRole, BusinessType} from '../../../../enums';
-import {Confirm, showToast} from '../../../service/fn';
-import RolePicker from '../../../components/RolePicker';
-import BusinessTypePicker from '../../../components/BusinessTypePicker';
-import {isNumber} from '../../../service/test';
-import {back} from '../../../utils/nagivationUtils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTheme} from '../../../hooks/index';
+import {navigate} from '../../../utils/nagivationUtils';
+import {APP_NAME,APP_VERSION,APP_SUPPORT_MAIL} from '@env';
+
+type SectionRow = {
+  label: string;
+  value?: string;
+  isPressable?: boolean;
+  onPress?: () => void;
+};
+
+type Section = {
+  title: string;
+  description?: string;
+  rows: SectionRow[];
+};
+
+const warmBackgroundColor = '#fdf6e3';
+const borderColor = '#e3d8b8';
 
 const AppInfo = () => {
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
-  const {owner} = useAnalytics();
-  const user = useSelector((s: RootState) => s.appData.user)!;
-  const [name, setName] = useState<string>(user.name);
-  const [profileImageValue, setProfileImageValue] = useState<
-    string | undefined
-  >(user.image);
-  const [role, setRole] = useState<AdminRole>(user.role);
-  const [phoneNumber, setPhoneNumber] = useState<string>(
-    user.phoneNumber?.value || '',
-  );
-  const [businessType, setBusinessType] = useState<BusinessType>(
-    owner.businessType || BusinessType.RETAIL,
-  );
-  const [edited, setEdited] = useState<boolean>(false);
-  const [businessDescription, setBusinessDescription] = useState<string>(
-    owner.businessDescription || '',
-  );
 
-  const handleProfileEdit = async () => {
-    if (
-      name.trim().length === 0 ||
-      name.trim().length < 4 ||
-      name.trim().length > 16
-    ) {
-      showToast({type: 'error', text1: 'Name should 4-16 characters long.'});
-      return;
-    }
-    if (user.phoneNumber && phoneNumber !== user.phoneNumber.value) {
-      if (
-        phoneNumber.trim().length === 0 ||
-        phoneNumber.trim().length > 10 ||
-        phoneNumber.trim().length < 10 ||
-        !isNumber(phoneNumber)
-      ) {
-        showToast({type: 'error', text1: 'Please enter a valid phone number'});
-        return;
-      }
-    }
-
-    const res = await Confirm(
-      'Save changes?',
-      'are you sure you have entered correct details?',
-    );
-    if (!res) return;
-    showToast({type: 'success', text1: 'Profile updated successfully.'});
-    back();
-  };
-  const checkIfEdited = () => {
-    if (
-      name.trim() !== user.name.trim() ||
-      role !== user.role ||
-      businessType !== owner.businessType ||
-      (phoneNumber.trim().length !== 0 &&
-        phoneNumber !== user.phoneNumber?.value) ||
-      (businessType === BusinessType.OTHER &&
-        businessDescription.trim().length !== 0 &&
-        businessDescription !== owner.businessDescription) ||
-      user.image !== profileImageValue
-    ) {
-      setEdited(true);
-    } else {
-      setEdited(false);
-    }
-  };
-
-  useEffect(() => {
-    checkIfEdited();
-    const getPa = async () => {
-      const pa = await AsyncStorage.getItem('pa');
-    };
-    getPa();
-  }, [
-    name,
-    role,
-    businessType,
-    owner,
-    phoneNumber,
-    businessDescription,
-    profileImageValue,
-  ]);
+  const sections: Section[] = [
+    {
+      title: 'About the App',
+      description: `'${APP_NAME}' helps local sellers manage their finances easily, empowering small businesses to grow. Committed to empowering local businesses in India. Made with ❤️ in your city.`,
+      rows: [],
+    },
+    {
+      title: 'Version',
+      rows: [{label: 'App Version:', value: `v${APP_VERSION}`}],
+    },
+    {
+      title: 'Developer',
+      rows: [
+        {label: 'Built By:', value: 'Gomzy Dhingra'},
+        {
+          label: 'Email:',
+          value: `${APP_SUPPORT_MAIL}`,
+          isPressable: true,
+          onPress: () => {
+            Linking.openURL(`mailto:${APP_SUPPORT_MAIL}`);
+          },
+        },
+      ],
+    },
+    {
+      title: 'Support & Feedback',
+      rows: [
+        {
+          label: 'Email us at:',
+          value: `${APP_SUPPORT_MAIL}`,
+          isPressable: true,
+          onPress: () => {
+            Linking.openURL(`mailto:${APP_SUPPORT_MAIL}`);
+          },
+        },
+        {label: 'Note:', value: 'Facing issues? Reach out anytime!'},
+      ],
+    },
+    {
+      title: 'Legal',
+      rows: [
+        {
+          label: 'Terms & Conditions',
+          isPressable: true,
+          onPress: () => {
+            navigate('TermsAndConditions');
+          },
+        },
+        {
+          label: 'Privacy Policy',
+          isPressable: true,
+          onPress: () => {
+            navigate('TermsAndConditions');
+          },
+        },
+        {
+          label: 'Note:',
+          value: 'All rights reserved. Do not copy or distribute.',
+        },
+      ],
+    },
+    {
+      title: 'Credits & Thanks',
+      rows: [
+        {
+          label: 'Special thanks:',
+          value:
+            'To Rajbhallav Kumar.',
+        },
+      ],
+    },
+  ];
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.parent}>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <Header
-          name="App info"
-          backButton
-          customComponent={edited}
-          renderItem={
-            <Text style={{fontSize: 20, color: currentTheme.header.textColor}}>
-              Save
+      <View style={styles.wrapper}>
+        <Header name="App info" backButton />
+        <ScrollView
+          style={{flex: 1, paddingHorizontal: 16}}
+          showsVerticalScrollIndicator={false}>
+          {sections.map((section, idx) => (
+            <View
+              key={idx}
+              style={[
+                styles.sectionContainer,
+                {backgroundColor: warmBackgroundColor, borderColor},
+              ]}>
+              <Text
+                style={[styles.sectionTitle, {color: currentTheme.textColor}]}>
+                {section.title}
+              </Text>
+              {section.description && (
+                <Text
+                  style={[
+                    styles.sectionDescription,
+                    {color: currentTheme.textAlt, marginBottom: 10},
+                  ]}>
+                  {section.description}
+                </Text>
+              )}
+
+              {section.rows.map((row, i) => (
+                <Pressable
+                  key={i}
+                  onPress={
+                    row.isPressable && row.onPress ? row.onPress : undefined
+                  }
+                  style={({pressed}) => [
+                    styles.rowContainer,
+                    pressed && row.isPressable ? styles.pressed : null,
+                  ]}>
+                  <Text
+                    style={[
+                      styles.rowLabel,
+                      {color: currentTheme.textColor},
+                      row.isPressable && styles.pressableText,
+                    ]}>
+                    {row.label}
+                  </Text>
+                  {row.value ? (
+                    <View style={{width: '50%'}}>
+                      <Text
+                        style={[
+                          styles.rowValue,
+                          {color: currentTheme.textAlt},
+                          row.isPressable && styles.pressableText,
+                        ]}>
+                        {row.value}
+                      </Text>
+                    </View>
+                  ) : null}
+                </Pressable>
+              ))}
+            </View>
+          ))}
+        </ScrollView>
+
+        <View
+          style={[
+            styles.footer,
+            {
+              backgroundColor: currentTheme.bgColor,
+              borderTopColor: currentTheme.borderColor,
+            },
+          ]}>
+          <View style={styles.footerRow}>
+            <Text style={[styles.footerText, {color: currentTheme.textAlt}]}>
+              App Version: {`v${APP_VERSION}`}
             </Text>
-          }
-          customAction={handleProfileEdit}
-          headerBgColor={currentTheme.baseColor}
-          titleColor={currentTheme.header.textColor}
-        />
-        <View style={styles.settingsContainer}>
-          <View style={{backgroundColor: currentTheme.baseColor}}>
-            <Text>Hello</Text>
+            <Text style={[styles.footerText, {color: currentTheme.textAlt}]}>
+              All rights reserved.
+            </Text>
           </View>
+          <Text style={[styles.loveText, {color: currentTheme.textAlt}]}>
+            Built with 💖 by Gomzy Dhingra to support local producers and
+            sellers.
+          </Text>
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   parent: {flex: 1},
-  infoContainer: {},
-  settingsContainer: {
-    paddingHorizontal: 10,
-    marginBottom: 40,
-  },
-  container: {
-    marginTop: 20,
-    gap: 16,
-  },
-  inputContainer: {
-    gap: 10,
-  },
-  inputLabel: {
-    paddingLeft: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  inputText: {
-    borderWidth: 2,
+  wrapper: {flex: 1},
+  sectionContainer: {
+    borderWidth: 1,
     borderRadius: 8,
-    height: 50,
+    padding: 12,
+    marginVertical: 8,
+  },
+  sectionTitle: {
     fontSize: 18,
-    paddingHorizontal: 12,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  sectionDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+  },
+  rowLabel: {
+    fontSize: 16,
+  },
+  rowValue: {
+    fontSize: 16,
+  },
+  pressableText: {
+    color: '#0066cc',
+    textDecorationLine: 'underline',
+  },
+  pressed: {
+    opacity: 0.6,
+  },
+  footer: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  footerText: {
+    fontSize: 12,
+  },
+  loveText: {
+    marginTop: 4,
+    fontSize: 12,
+    textAlign: 'center',
   },
 });
 

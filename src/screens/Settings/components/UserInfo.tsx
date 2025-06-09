@@ -5,8 +5,10 @@ const NoProfile = require('../../../assets/images/no-profile.jpg');
 import {useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/SimpleLineIcons';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import FilePicker from '../../../components/FilePicker';
 import SlideUpContainer from '../../../components/SlideUpContainer';
+import LinearGradient from 'react-native-linear-gradient';
 
 type UserInfoProps = {
   user: Employee | Owner | Partner;
@@ -30,10 +32,12 @@ const UserInfo: React.FC<UserInfoProps> = ({
   };
 
   return (
-    <View
+    <LinearGradient
+      colors={[currentTheme.fadeColor, '#fff']}
+      start={{x: 0, y: 0}}
       style={[
         styles.userInfoParentContainer,
-        {backgroundColor: currentTheme.contrastColor},
+        {borderLeftColor: currentTheme.baseColor, borderLeftWidth: 2},
       ]}>
       <Pressable
         style={styles.profileImageContainer}
@@ -48,9 +52,20 @@ const UserInfo: React.FC<UserInfoProps> = ({
         />
       </Pressable>
       <View style={styles.userInfoContainer}>
-        <Text style={[styles.name, {color: currentTheme.baseColor}]}>
-          {user.name}
-        </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
+          <Text style={[styles.name, {color: currentTheme.baseColor}]}>
+            {user.name}
+          </Text>
+          {user.email?.verified && (
+            <View>
+              <Icon2
+                name="verified-user"
+                size={16}
+                color={currentTheme.baseColor}
+              />
+            </View>
+          )}
+        </View>
         {user.phoneNumber?.value && (
           <View style={styles.phoneNumberContainer}>
             <Icon name="mobile1" color={currentTheme.baseColor} size={12} />
@@ -70,7 +85,11 @@ const UserInfo: React.FC<UserInfoProps> = ({
               style={[styles.email, {color: currentTheme.baseColor}]}>
               :{' '}
               {secure
-                ? `${user.email.value.slice(0, 3)}***@***.com`
+                ? `${user.email.value.slice(0, 3)}***@***.${
+                    user.email.value.split('.')[
+                      user.email.value.split('.').length - 1
+                    ]
+                  }`
                 : user.email.value}
             </Text>
           </View>
@@ -124,7 +143,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
           {user.role}
         </Text>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -132,30 +151,27 @@ const styles = StyleSheet.create({
   userInfoParentContainer: {
     paddingVertical: 20,
     paddingHorizontal: 10,
-    borderRadius: 10,
     flexDirection: 'row',
     gap: 10,
   },
   profileImageContainer: {
-    height: 90,
-    width: 90,
+    height: 60,
+    width: 60,
     borderRadius: 45,
-    elevation: 10,
   },
   profileImage: {
     height: '100%',
     width: 'auto',
     resizeMode: 'cover',
     borderRadius: 45,
-    borderWidth: 2,
   },
   userInfoContainer: {
     justifyContent: 'center',
-    gap: 6,
+    gap: 2,
   },
   name: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '600',
   },
   phoneNumberContainer: {
     flexDirection: 'row',

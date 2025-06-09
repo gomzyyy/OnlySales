@@ -2,7 +2,7 @@ import {useEffect, useRef} from 'react';
 import {useSelector} from 'react-redux';
 import {io, Socket} from 'socket.io-client';
 import {RootState} from '../../store/store';
-import d from 'react-native-device-info';
+import {useDevice} from './index';
 import {PLATFORM_SPECIFIED_CALLS} from '../../enums';
 
 type UseSocketReturnType = {
@@ -12,6 +12,7 @@ type UseSocketReturnType = {
 const SOCKET_URL = 'http://192.168.1.71:6900/';
 
 const useSocket = (): UseSocketReturnType => {
+  const {deviceId, deviceName} = useDevice();
   const user = useSelector((s: RootState) => s.appData.user);
   const socketRef = useRef<Socket | null>(null);
 
@@ -23,10 +24,10 @@ const useSocket = (): UseSocketReturnType => {
       transports: ['websocket'],
       query: {
         uid: String(user._id),
-        deviceName: String(d.getDeviceNameSync()),
+        deviceName,
         platform: String(PLATFORM_SPECIFIED_CALLS.MOBILE),
         role: user.role,
-        deviceId:String(d.getDeviceId())
+        deviceId,
       },
     });
 

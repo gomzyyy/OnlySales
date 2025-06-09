@@ -12,7 +12,12 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useState} from 'react';
-import {modifyUserName, showToast} from '../service/fn';
+import {
+  formatNumber,
+  formatNumberWithComma,
+  modifyUserName,
+  showToast,
+} from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {useAnalytics, useHaptics, useTheme} from '../hooks/index';
@@ -32,7 +37,8 @@ import {Employee, Owner} from '../../types';
 import {createEmployeeAPI} from '../api/api.employee';
 import {ActivityIndicator} from 'react-native';
 import Picker from '../customComponents/Picker';
-import { global } from '../styles/global';
+import {global} from '../styles/global';
+import InputPasscode from '../customComponents/InputPasscode';
 type CreateEmployeeProps = {
   callback: () => void;
 };
@@ -285,7 +291,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Annual salary in {currency}?
+              Monthly salary in {currency}?
             </Text>
             <TextInput
               value={salary}
@@ -294,47 +300,53 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
                 global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter salary"
+              placeholder="Enter salary eg: 20000."
               placeholderTextColor={'grey'}
               keyboardType="numeric"
             />
+            {
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {
+                    color: currentTheme.modal.title,
+                    fontSize: 12,
+                    fontWeight: '400',
+                  },
+                ]}>
+                {salary.trim().length !== 0 &&
+                  `Estimated annual salary: ${currency} ${formatNumberWithComma(
+                    Number(salary),
+                  )}`}
+              </Text>
+            }
           </View>
 
-          {/* Password Field */}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Password
             </Text>
-            <TextInput
+            <InputPasscode
               value={password}
-              onChangeText={setPassword}
-              style={[
-                global.inputText,
-                {borderColor: currentTheme.modal.inputBorder, color: '#000'},
-              ]}
+              setState={setPassword}
               placeholder="Enter password"
               placeholderTextColor={'grey'}
-              secureTextEntry // Sensitive field
+              fill={true}
             />
           </View>
 
-          {/* Confirm Password Field */}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Confirm Password
             </Text>
-            <TextInput
+            <InputPasscode
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              style={[
-                global.inputText,
-                {borderColor: currentTheme.modal.inputBorder, color: '#000'},
-              ]}
+              setState={setConfirmPassword}
               placeholder="Confirm password"
               placeholderTextColor={'grey'}
-              secureTextEntry
+              fill={true}
             />
           </View>
 
@@ -343,7 +355,12 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Choose Gender:
             </Text>
-             <Picker value={gender} setState={setGender} enabled={true} data={Gender} />
+            <Picker
+              value={gender}
+              setState={setGender}
+              enabled={true}
+              data={Gender}
+            />
           </View>
 
           <View style={styles.inputTitleContainer}>
@@ -351,7 +368,12 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               What about Shift?
             </Text>
-             <Picker value={shift} setState={setShift} enabled={true} data={Shift} />
+            <Picker
+              value={shift}
+              setState={setShift}
+              enabled={true}
+              data={Shift}
+            />
           </View>
 
           <View style={styles.inputTitleContainer}>
@@ -359,8 +381,13 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               {'status? (Active by default)'}
             </Text>
-           
-             <Picker value={status} setState={setStatus} enabled={true} data={EmploymentStatus} />
+
+            <Picker
+              value={status}
+              setState={setStatus}
+              enabled={true}
+              data={EmploymentStatus}
+            />
           </View>
 
           <View style={styles.inputTitleContainer}>
@@ -368,7 +395,12 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               What about Position?
             </Text>
-          <Picker value={position} setState={setPosition} enabled={true} data={Position} />
+            <Picker
+              value={position}
+              setState={setPosition}
+              enabled={true}
+              data={Position}
+            />
           </View>
 
           <View style={styles.inputTitleContainer}>
@@ -376,8 +408,13 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
               Department
             </Text>
-            
-            <Picker value={department} setState={setDepartment} enabled={true} data={Department} />
+
+            <Picker
+              value={department}
+              setState={setDepartment}
+              enabled={true}
+              data={Department}
+            />
           </View>
           <View style={[styles.inputTitleContainer, {alignItems: 'center'}]}>
             <Text

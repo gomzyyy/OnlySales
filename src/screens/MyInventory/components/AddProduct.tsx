@@ -24,16 +24,17 @@ import {createProductAPI} from '../../../api/api.product';
 import ProductTypePicker from '../../../components/ProductTypePicker';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import FilePicker from '../../../components/FilePicker';
-import { global } from '../../../styles/global';
+import {global} from '../../../styles/global';
 import {useTranslation} from 'react-i18next';
 
 type EditProductProps = {
   close: () => void;
 };
+const quantifiableProductTypes = [ProductType.PHYSICAL];
 
 const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
- const {product} = useStorage()
+  const {product} = useStorage();
   const {t} = useTranslation('inventory');
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
@@ -89,7 +90,10 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       );
       return;
     }
-    if (Number(stock) === 0) {
+    if (
+      quantifiableProductTypes.includes(productType) &&
+      Number(stock) === 0
+    ) {
       const res = await Confirm(
         "Stock value can't be zero!",
         'stock is required to keep a record and analytical calculations.',
@@ -160,7 +164,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_itemname')}
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={'#ababab'}
             />
           </View>
           <View style={styles.inputTitleContainer}>
@@ -189,7 +193,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_price')}
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={'#ababab'}
               keyboardType="numeric"
             />
           </View>
@@ -209,7 +213,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_discountedprice')}
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={'#ababab'}
               keyboardType="numeric"
             />
           </View>
@@ -229,38 +233,39 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={t('i_addinventoryitem_placeholder_quantity')}
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={'#ababab'}
               keyboardType="numeric"
             />
           </View>
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[
-                styles.inputLabel,
-                {color: currentTheme.modal.inputText},
-              ]}>
-              {t('i_addinventoryitem_label_itemstock')}
-            </Text>
-            <TextInput
-              value={stock}
-              onChangeText={value => setStock(value)}
-              style={[
-                global.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder=  {t('i_addinventoryitem_placeholder_stock')}
-              placeholderTextColor={currentTheme.baseColor}
-              keyboardType="numeric"
-            />
-          </View>
-          {productType === ProductType.PHYSICAL && (
+          {quantifiableProductTypes.includes(productType) && (
+            <View style={styles.inputTitleContainer}>
+              <Text
+                style={[
+                  styles.inputLabel,
+                  {color: currentTheme.modal.inputText},
+                ]}>
+                {t('i_addinventoryitem_label_itemstock')}
+              </Text>
+              <TextInput
+                value={stock}
+                onChangeText={value => setStock(value)}
+                style={[
+                  global.inputText,
+                  {borderColor: currentTheme.modal.inputBorder},
+                ]}
+                placeholder={t('i_addinventoryitem_placeholder_stock')}
+                placeholderTextColor={'#ababab'}
+                keyboardType="numeric"
+              />
+            </View>
+          )}
             <View style={[styles.inputTitleContainer, {gap: 5}]}>
               <Text
                 style={[
                   styles.inputLabel,
                   {color: currentTheme.modal.inputText},
                 ]}>
-                {t('i_addinventoryitem_label_itemmakingcost')}{' '}
+                {t('i_addinventoryitem_label_itemmakingcost')}
               </Text>
               <TextInput
                 value={productCost}
@@ -269,12 +274,11 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                   global.inputText,
                   {borderColor: currentTheme.modal.inputBorder},
                 ]}
-                placeholder= {t('i_addinventoryitem_placeholder_makingcost')}
-                placeholderTextColor={currentTheme.baseColor}
+                placeholder={t('i_addinventoryitem_placeholder_makingcost')}
+                placeholderTextColor={'#ababab'}
                 keyboardType="numeric"
               />
             </View>
-          )}
           <View style={styles.inputTitleContainer}>
             <Text
               style={[
@@ -283,30 +287,38 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               ]}>
               {t('i_addinventoryitem_label_itemmeasurementtype')}
             </Text>
-            <Picker
-              selectedValue={measurementType}
-              onValueChange={value => setMeasurementType(value)}
-              dropdownIconColor={currentTheme.textAlt}
-              style={[
-                styles.dropdown,
-                {
-                  color: currentTheme.modal.pickerText,
-                  backgroundColor: currentTheme.modal.pickerbg,
-                },
-              ]}>
-              <Picker.Item label="Ml" value={MeasurementType.ML} />
-              <Picker.Item label="Litre" value={MeasurementType.LITRE} />
-              <Picker.Item label="Kilograms" value={MeasurementType.KILOGRAM} />
-              <Picker.Item label="Grams" value={MeasurementType.GRAMS} />
-              <Picker.Item label="Pcs" value={MeasurementType.PCS} />
-              <Picker.Item label="Pack" value={MeasurementType.PACK} />
-              <Picker.Item label="Dozen" value={MeasurementType.DOZEN} />
-            </Picker>
+            {quantifiableProductTypes.includes(productType) && (
+              <Picker
+                selectedValue={measurementType}
+                onValueChange={value => setMeasurementType(value)}
+                dropdownIconColor={currentTheme.textAlt}
+                style={[
+                  styles.dropdown,
+                  {
+                    color: currentTheme.modal.pickerText,
+                    backgroundColor: currentTheme.modal.pickerbg,
+                  },
+                ]}>
+                <Picker.Item label="Ml" value={MeasurementType.ML} />
+                <Picker.Item label="Litre" value={MeasurementType.LITRE} />
+                <Picker.Item
+                  label="Kilograms"
+                  value={MeasurementType.KILOGRAM}
+                />
+                <Picker.Item label="Grams" value={MeasurementType.GRAMS} />
+                <Picker.Item label="Pcs" value={MeasurementType.PCS} />
+                <Picker.Item label="Pack" value={MeasurementType.PACK} />
+                <Picker.Item label="Dozen" value={MeasurementType.DOZEN} />
+              </Picker>
+            )}
           </View>
           {image && image.trim().length !== 0 ? (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
-              <Button title={t('i_addinventoryitem_label_itemremoveimagetext')} onPress={() => setImage(undefined)} />
+              <Button
+                title={t('i_addinventoryitem_label_itemremoveimagetext')}
+                onPress={() => setImage(undefined)}
+              />
             </View>
           ) : (
             <View
@@ -328,7 +340,9 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
             activeOpacity={0.8}
             onPress={handleOnSubmit}>
             <Text style={styles.saveButtonText}>
-              {loading ? t('i_addinventoryitem_label_itemsaving') : t('i_addinventoryitem_label_itemsave')}
+              {loading
+                ? t('i_addinventoryitem_label_itemsaving')
+                : t('i_addinventoryitem_label_itemsave')}
             </Text>
             {loading && (
               <ActivityIndicator size={18} color={currentTheme.contrastColor} />
@@ -376,8 +390,8 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     paddingLeft: 8,
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '600',
   },
   inputText: {
     borderWidth: 2,

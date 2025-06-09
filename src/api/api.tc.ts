@@ -3,7 +3,7 @@ import {FetchAPI, handleBooleanState} from './helper/fn';
 import {
   GetTermsAndConditionsAPIReturnType,
   GetPrivacyPolicyAPIReturnType,
-  GetTermsAndPolicyAPIData
+  GetTermsAndPolicyAPIData,
 } from './types.api';
 
 export const getTermsAndConditionsAPI = async (
@@ -15,6 +15,7 @@ export const getTermsAndConditionsAPI = async (
       route: `/terms-policy?r=tnc`,
       reqType: 'r',
       method: 'GET',
+      secure: false,
     });
     return (await fetching.json()) as GetTermsAndConditionsAPIReturnType;
   } catch (error) {
@@ -37,6 +38,7 @@ export const getPrivacyPolicyAPI = async (
       route: `/terms-policy?r=pp`,
       reqType: 'r',
       method: 'GET',
+      secure: false,
     });
     return (await fetching.json()) as GetPrivacyPolicyAPIReturnType;
   } catch (error) {

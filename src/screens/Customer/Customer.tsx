@@ -7,12 +7,13 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, {ReactNode, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Header from '../../components/Header';
 import {useRoute} from '@react-navigation/native';
 import {Customer as CustomerType, SoldProduct} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Octicons';
 import {ToogleButton} from './components/Tab';
 import {ProductsByDate} from '../../components/shared/ProductByDate';
 import CustomerInfo from './components/CustomerInfo';
@@ -33,6 +34,7 @@ import SearchContainer from './components/SlideContainers/SearchContainer';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
 import {back} from '../../utils/nagivationUtils';
+import HeaderIcon from '../../components/HeaderIcon'
 
 type RouteParams = {
   customerId: CustomerType['_id'];
@@ -167,42 +169,6 @@ const Customer = () => {
     }
   };
 
-  const HeaderIcon = ({
-    children,
-    label,
-    show = true,
-  }: {
-    children: ReactNode;
-    label?: string;
-    show?: boolean;
-  }) => {
-    if (show) {
-      return (
-        <View
-          style={{
-            backgroundColor: currentTheme.contrastColor,
-            paddingVertical: 3,
-            paddingHorizontal: 5,
-            borderRadius: 10,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {children}
-          <Text
-            style={{
-              fontSize: 8,
-              fontWeight: '900',
-              color: currentTheme.baseColor,
-            }}>
-            {label}
-          </Text>
-        </View>
-      );
-    } else {
-      return null;
-    }
-  };
-
   const filterProductsByDate = (
     products: SoldProduct[],
     date: string,
@@ -253,7 +219,7 @@ const Customer = () => {
         customAction={openConfirmPay}
         renderItem1={
           <HeaderIcon label="Add">
-            <Icon name="plus" color={currentTheme.baseColor} size={20} />
+            <Icon2 name="plus" color={currentTheme.baseColor} size={20} />
           </HeaderIcon>
         }
         customAction1={toogleState(setAddUdharVisible).true}

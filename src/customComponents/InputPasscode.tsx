@@ -1,93 +1,83 @@
 import {
-  View,
+  Pressable,
   StyleSheet,
   TextInput,
-  NativeSyntheticEvent,
-  TextInputKeyPressEventData,
+  View,
+  TextInputProps,
 } from 'react-native';
-import React, {SetStateAction, useRef} from 'react';
-import {colors} from '../utils/Constants';
-import {isNumber} from '../service/test';
+import React, {Dispatch, SetStateAction, useState, forwardRef} from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-type InputPasscodeProps = {
-  state: [string, string, string, string];
-  setState: React.Dispatch<SetStateAction<[string, string, string, string]>>;
-  focused?: boolean;
-  error?: boolean;
-};
+export type InputPasscodeProps = {
+  value: string;
+  setState: Dispatch<SetStateAction<string>>;
+  toogleHiddenText?: boolean;
+  placeholder?: string;
+  fill?: boolean;
+} & TextInputProps;
 
-const InputPasscode: React.FC<InputPasscodeProps> = ({
-  state,
-  setState,
-  focused = false,
-  error = false,
-}): React.JSX.Element => {
-  const refs = [
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-  ];
-  const handleOnChangeText = (index: number, value: string) => {
-    if (!isNumber(value)) return;
-    if (value.trim().length > 1) return;
-    const newVal: [string, string, string, string] = [...state];
-    newVal[index] = value;
-    setState(newVal);
-    if (value && index < refs.length - 1) {
-      refs[index + 1].current?.focus();
-    }
-  };
-  const handleOnKeyChange = (
-    index: number,
-    event: NativeSyntheticEvent<TextInputKeyPressEventData>,
+const InputPasscode = forwardRef<TextInput, InputPasscodeProps>(
+  (
+    {
+      value,
+      setState,
+      toogleHiddenText = true,
+      fill = false,
+      placeholder = 'passcode',
+      placeholderTextColor = '#ababab',
+      ...rest
+    },
+    ref,
   ) => {
-    if (event.nativeEvent.key === 'Backspace' && !state[index] && index > 0) {
-      refs[index - 1].current?.focus();
-    }
-  };
-  return (
-    <View style={styles.container}>
-      {state.map((s, i) => (
-        <View
-          style={[
-            styles.inputContainer,
-            {borderColor: error ? colors.danger : '#000'},
-          ]}
-          key={i}>
-          <TextInput
-            ref={refs[i]}
-            style={styles.input}
-            value={s}
-            autoFocus={i === 0 && focused}
-            onChangeText={v => handleOnChangeText(i, v)}
-            onKeyPress={e => handleOnKeyChange(i, e)}
-            keyboardType="numeric"
-            secureTextEntry={true}
-          />
-        </View>
-      ))}
-    </View>
-  );
-};
+    const [show, setShow] = useState<boolean>(true);
+
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          borderColor: fill ? 'rgba(0,0,0,0)' : '#ccc',
+          borderWidth: 1.6,
+          borderRadius: 10,
+          paddingHorizontal: 16,
+          paddingVertical: 4,
+          alignItems: 'center',
+          backgroundColor: fill ? '#f2f2f2' : 'rgba(0,0,0,0)',
+        }}>
+        <TextInput
+          ref={ref}
+          value={value}
+          onChangeText={setState}
+          style={styles.passcodeInput}
+          secureTextEntry={toogleHiddenText ? show : false}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor}
+          numberOfLines={1}
+          {...rest}
+        />
+        {toogleHiddenText && (
+          <Pressable
+            onPress={() => setShow(!show)}
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            {!show ? (
+              <Icon name="eye" size={20} color={'#ababab'} />
+            ) : (
+              <Icon name="eye-off" size={20} color={'#ababab'} />
+            )}
+          </Pressable>
+        )}
+      </View>
+    );
+  },
+);
+
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    gap: 18,
-    alignSelf: 'center',
-  },
-  inputContainer: {
-    borderBottomWidth: 4,
-    borderColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-    width: 50,
-    // borderRadius: 20,
-  },
-  input: {
-    color: 'black',
-    fontSize: 28,
+  passcodeInput: {
+    fontSize: 18,
+    color: '#000',
+    flex: 1,
   },
 });
 

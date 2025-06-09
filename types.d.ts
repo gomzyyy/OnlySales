@@ -82,18 +82,6 @@ export interface TabTheme {
   text: string;
 }
 
-export interface AppFontSize {
-  bottomTab: {
-    title: {
-      large: number;
-      small: number;
-    };
-  };
-  // dasboard:{
-
-  // }
-}
-
 export interface App {
   searchResults: {
     customerResults: Customer[];
@@ -105,7 +93,6 @@ export interface App {
   previousOwners: Owner[] | Partner[] | Employee[];
   deviceId?: string | undefined;
   appLocked: boolean;
-  fonts: AppFontSize;
   lc_meta_data: {
     upi_id: {
       valid: boolean;
@@ -147,7 +134,7 @@ export interface User extends CommonProps {
   };
   address?: string;
   userId: string;
-  accessPasscode: [string, string, string, string] | undefined;
+  accessPasscode: string;
   isLocked: boolean;
   location: Location;
 }
@@ -314,7 +301,6 @@ export interface Partner extends User {
   password: string;
   equity: number;
   role: AdminRole;
-  accessPasscode: [string, string, string, string];
   permissions: UserPermissions;
 }
 
@@ -354,7 +340,7 @@ export interface Product extends CommonProps {
   quantity: number;
   measurementType: MeasurementType;
   measurementTypeDescription?: string;
-  stock: number;
+  stock?: number;
   productCost: number;
   createdBy: Owner | Partner | Employee;
   createdByModel: AdminRole;

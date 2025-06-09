@@ -18,12 +18,12 @@ const replace = (routeName: string, params?: object) => {
     navigationRef.dispatch(StackActions.replace(routeName, params));
   }
 };
-const resetAndNavigate = (routeName: string, i?: number) => {
+const resetAndNavigate = (routeName: string, params?: object, i?: number) => {
   if (navigationRef.isReady()) {
     navigationRef.dispatch(
       CommonActions.reset({
         index: i ?? 0,
-        routes: [{name: routeName}],
+        routes: [{name: routeName, params}],
       }),
     );
   }

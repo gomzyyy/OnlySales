@@ -11,7 +11,7 @@ import React, {useState} from 'react';
 import {Product} from '../../../../types';
 import {useAnalytics, useTheme} from '../../../hooks/index';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
-import EditProduct from '../components/EditCreateProduct';
+import EditProduct from './EditProduct';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
@@ -25,7 +25,7 @@ import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import FeatureInfoContainer from '../../../components/FeatureInfoContainer';
 import {AIResponseLengthType} from '../../../../enums';
-import { deviceHeight } from '../../../utils/Constants';
+import {deviceHeight} from '../../../utils/Constants';
 const COHERE_LOGO0 = require('../../../assets/images/Cohere-Logo0.png');
 const NoPhoto = require('../../../assets/images/no_product_image.jpg');
 
@@ -124,8 +124,16 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
   };
   const handleClosePrefrenceDetails = () =>
     setOpenAnalyticsPrefrenceDetails(false);
-  const handleOpenPrefrenceDetails = (label: string, description: string,tokens:number) => {
-    setPrefrenceInfo({label, text1: description,text2:`Estimated credit usage: ${(tokens*0.01/1000).toFixed(4)}`});
+  const handleOpenPrefrenceDetails = (
+    label: string,
+    description: string,
+    tokens: number,
+  ) => {
+    setPrefrenceInfo({
+      label,
+      text1: description,
+      text2: `Estimated credit usage: ${((tokens * 0.01) / 1000).toFixed(4)}`,
+    });
     setOpenAnalyticsPrefrenceDetails(true);
   };
   const handleChangePrefrence = () => {
@@ -133,99 +141,114 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     setShowAIResponse(false);
     setAskAnalyticsPrefrence(true);
   };
+  const ProductInfo = () => {
+    const netProfit =
+      i.productCost &&
+      parseFloat(
+        (i.discountedPrice && i.discountedPrice > 0
+          ? (i.discountedPrice / i.productCost) * 100 - 100
+          : (i.basePrice / i.productCost) * 100 - 100
+        ).toFixed(1),
+      );
 
-  const ProductInfo = () => (
-    <>
-      <View
-        style={[styles.tabLabel, {backgroundColor: currentTheme?.baseColor}]}>
-        <Text style={[styles.productName, {color: currentTheme?.tab.text}]}>
-          {i.name}
-        </Text>
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            gap: 4,
-            paddingHorizontal: 4,
-            borderRadius: 10,
-            backgroundColor: currentTheme.contrastColor,
-            alignItems: 'center',
-          }}
-          activeOpacity={0.8}
-          onPress={() => setAskAnalyticsPrefrence(true)}>
-          <Image source={COHERE_LOGO0} style={{height: 13, width: 13}} />
-          <Text style={{fontSize: 12, fontWeight: '900', fontStyle: 'italic'}}>
-            Analyse
+    return (
+      <>
+        <View
+          style={[styles.tabLabel, {backgroundColor: currentTheme?.baseColor}]}>
+          <Text style={[styles.productName, {color: currentTheme?.tab.text}]}>
+            {i.name}
           </Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={[
-          styles.productInfoContainer,
-          {backgroundColor: currentTheme?.baseColor},
-        ]}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={i.image ? {uri: i.image} : NoPhoto}
+
+          <TouchableOpacity
             style={{
-              height: 120,
-              width: 120,
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: currentTheme?.contrastColor || '#000',
+              flexDirection: 'row',
+              columnGap: 4,
+              paddingHorizontal: 4,
+              borderRadius: 10,
+              backgroundColor: currentTheme.contrastColor,
+              alignItems: 'center',
             }}
-          />
-        </View>
-        <View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-              {t('i_tab_price')}: {`${currency} ${i.basePrice}`}
+            activeOpacity={0.8}
+            onPress={() => setAskAnalyticsPrefrence(true)}>
+            <Image source={COHERE_LOGO0} style={{height: 13, width: 13}} />
+            <Text
+              style={{fontSize: 12, fontWeight: '900', fontStyle: 'italic'}}>
+              Analyse
             </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View
+          style={[
+            styles.productInfoContainer,
+            {backgroundColor: currentTheme?.baseColor},
+          ]}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={i.image ? {uri: i.image} : NoPhoto}
+              style={{
+                height: 120,
+                width: 120,
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: currentTheme?.contrastColor || '#000',
+              }}
+            />
           </View>
-          {i.discountedPrice && (
+
+          <View>
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-                {t('i_tab_discountedPrice')}:{' '}
-                {`${currency} ${i.discountedPrice}`}
+                {t('i_tab_price')}: {currency} {i.basePrice}
               </Text>
             </View>
-          )}
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-              {t('i_tab_includes')}: {i.quantity} {i.measurementType}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-              {t('i_tab_totalSold')}: {i.totalSold}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-              {t('i_tab_stock')}: {i.stock}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-              {t('i_tab_productCost')}: {`${currency} ${i.productCost}`}
-            </Text>
-          </View>
-          {i.productCost && (
+
+            {i.discountedPrice && (
+              <View style={styles.infoContainer}>
+                <Text
+                  style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+                  {t('i_tab_discountedPrice')}: {currency} {i.discountedPrice}
+                </Text>
+              </View>
+            )}
+
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-                {t('i_tab_netProfit')}:{' '}
-                {`${parseFloat(
-                  (i.discountedPrice && i.discountedPrice > 0
-                    ? (i.discountedPrice / i.productCost) * 100 - 100
-                    : (i.basePrice / i.productCost) * 100 - 100
-                  ).toFixed(1),
-                )}%`}
+                {t('i_tab_includes')}: {i.quantity} {i.measurementType}
               </Text>
             </View>
-          )}
+
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+                {t('i_tab_totalSold')}: {i.totalSold}
+              </Text>
+            </View>
+
+            {i.stock !== undefined && (
+              <View style={styles.infoContainer}>
+                <Text
+                  style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+                  {t('i_tab_stock')}: {i.stock}
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+                {t('i_tab_productCost')}: {currency} {i.productCost}
+              </Text>
+            </View>
+
+            <View style={styles.infoContainer}>
+              <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+                {`${t('i_tab_netProfit')}: ${netProfit}%`}
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
-    </>
-  );
+      </>
+    );
+  };
 
   const ProductDetails = () => (
     <LongPressEnabled
@@ -295,13 +318,12 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
                       setAskAnalyticsPrefrence(false);
                       requestAIAnalysis4SingleProduct({rl: s.actiontype});
                     }}
-                    activeOpacity={0.8}
-                    >
+                    activeOpacity={0.8}>
                     <View>
                       <Text
                         style={{
                           fontSize: 16,
-                          fontWeight: 600,
+                          fontWeight: '600',
                           fontStyle: 'italic',
                         }}>
                         {s.name}
@@ -309,7 +331,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
                       <Text
                         style={{
                           fontSize: 12,
-                          fontWeight: 400,
+                          fontWeight: '400',
                           fontStyle: 'italic',
                         }}
                         numberOfLines={1}>
@@ -326,9 +348,14 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
-                    onPress={() =>handleOpenPrefrenceDetails(s.name, s.description(i),s.estimatedOutputTokenUsage)}
-                    activeOpacity={0.8}
-                    >
+                    onPress={() =>
+                      handleOpenPrefrenceDetails(
+                        s.name,
+                        s.description(i),
+                        s.estimatedOutputTokenUsage,
+                      )
+                    }
+                    activeOpacity={0.8}>
                     <Icon
                       name="info"
                       size={12}
@@ -340,11 +367,12 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
             </ScrollView>
           </View>
         ) : (
+          // <View />
           <ProductInfo />
         )}
-        <SlideUpContainer open={openEditing} close={handleCloseEditing} height={ deviceHeight * 0.75}>
+        <PopupContainer open={openEditing} close={handleCloseEditing}>
           <EditProduct product={i} close={handleCloseEditing} />
-        </SlideUpContainer>
+        </PopupContainer>
         <PopupContainer
           open={openLongPressOptions}
           close={handleCloseLongPressOptions}
@@ -354,8 +382,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
         <SlideUpContainer
           open={openAnalyticsPrefrenceDetails}
           close={handleClosePrefrenceDetails}
-          height={deviceHeight * 0.35}
-          >
+          height={deviceHeight * 0.35}>
           <FeatureInfoContainer info={prefrenceInfo} />
         </SlideUpContainer>
       </View>
@@ -410,10 +437,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   infoContainer: {
-    marginTop: 6,
+    marginTop: 2,
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

@@ -160,6 +160,7 @@ export interface CreateProductAPIData {
     productCost: number;
     productType: ProductType;
     measurementTypeDescription?: string;
+    discountedPrice?: number;
   };
   media: {
     image?: string;
@@ -181,6 +182,30 @@ export interface DeleteProductAPIData {
 }
 
 export interface DeleteProductAPIReturnType extends APIReturnType {}
+
+export interface UpdateProductAPIData {
+  query: {
+    productId: string;
+    role: AdminRole;
+    oid: string;
+  };
+  body: {
+    name?: string;
+    basePrice?: number;
+    quantity?: number;
+    measurementType?: MeasurementType;
+    stock?: number;
+    productCost?: number;
+    productType?: ProductType;
+    measurementTypeDescription?: string;
+    discountedPrice?: number;
+  };
+  media: {
+    image?: string;
+  };
+}
+
+export interface UpdateProductAPIReturnType extends APIReturnType {}
 
 export interface SellProductData {
   query: {
@@ -376,18 +401,45 @@ export interface AnalyseBusinessAPIReturnType extends APIReturnType {
   };
 }
 export interface GetTermsAndPolicyAPIData {
-   query: {
-    r:'tnc' | 'pp'
-  }
+  query: {
+    r: 'tnc' | 'pp';
+  };
 }
 export interface GetTermsAndConditionsAPIReturnType extends APIReturnType {
   data: {
-    tnc?:TermsAndConditions;
+    tnc?: TermsAndConditions;
   };
 }
 export interface GetPrivacyPolicyAPIReturnType extends APIReturnType {
   data: {
-    pp?:PrivacyPolicy;
+    pp?: PrivacyPolicy;
   };
 }
-
+export interface UpdateUserPasscodeAPIData {
+  query: {
+    role: AdminRole;
+  };
+  body: {
+    newPasscode: string;
+    currPasscode?: string;
+  };
+}
+export interface UpdateUserPasscodeAPIReturnType extends APIReturnType {}
+export interface UpdateAppLockStateAPIData {
+  query: {
+    role: AdminRole;
+  };
+  body: {
+    state: 1 | 0;
+  };
+}
+export interface UpdateAppLockStateAPIReturnType extends APIReturnType {}
+export interface VerifyUserPasscodeAPIData {
+  query: {
+    role: AdminRole;
+  };
+  body: {
+    passcode: string;
+  };
+}
+export interface VerifyUserPasscodeAPIReturnType extends APIReturnType {}

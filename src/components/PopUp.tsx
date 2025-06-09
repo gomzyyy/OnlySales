@@ -1,15 +1,21 @@
 import {
   Modal,
+  ModalProps,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import {useTheme} from '../hooks/index';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 type PopupContainerProps = {
   children: ReactNode;
@@ -18,7 +24,7 @@ type PopupContainerProps = {
   bgcolor?: string;
   padding?: boolean;
   opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
-};
+} & ModalProps;
 
 const PopupContainer: React.FC<PopupContainerProps> = ({
   children,
@@ -26,24 +32,45 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
   close,
   bgcolor = `rgba(0,0,0,${'0.5'})`,
   padding = false,
-  opacity = 0.6
+  opacity = 0.6,
+  ...props
 }): React.JSX.Element => {
+  const childScale = useSharedValue(0);
+  const childY = useSharedValue(0);
+  const childAnimation = useAnimatedStyle(() => ({
+    transform: [{translateY: childY.value}, {scale: childScale.value}],
+  }));
+  const closeContainer = () => {
+    childScale.value = withTiming(0, {duration: 260});
+    childY.value = withTiming(
+      deviceHeight * 0.6,
+      {duration: 300},
+      isFinished => {
+        if (isFinished) {
+          runOnJS(close)();
+        }
+      },
+    );
+  };
+  useEffect(() => {
+    childScale.value = withTiming(1, {duration: 260});
+  }, []);
   return (
     <Modal
-      animationType="fade"
       transparent={true}
       statusBarTranslucent={true}
       visible={open}
-      onRequestClose={close}
-      hardwareAccelerated={true}>
+      onRequestClose={closeContainer}
+      hardwareAccelerated={true}
+      {...props}>
       <Pressable
         style={[
           styles.childContainer,
           {backgroundColor: bgcolor, paddingHorizontal: padding ? 20 : 10},
         ]}
-        onPress={close}>
+        onPress={closeContainer}>
         <Pressable onPress={e => e.stopPropagation()}>
-          <Animated.View>{children}</Animated.View>
+          <Animated.View style={childAnimation}>{children}</Animated.View>
         </Pressable>
       </Pressable>
     </Modal>
@@ -84,7 +111,6 @@ const Prompt: React.FC<CustomPromptProps> = ({
           styles.InnerContainer,
           {backgroundColor: currentTheme.contrastColor},
         ]}>
-        {' '}
       </View>
     </PopupContainer>
   );

@@ -1,22 +1,12 @@
 import {
-  View,
   StyleSheet,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Header from '../../../components/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import UserInfo from '../components/UserInfo';
-import {TextInput} from 'react-native-gesture-handler';
 import {useTheme} from '../../../hooks/index';
 import {AdminRole, BusinessType} from '../../../../enums';
 import {Confirm, showToast} from '../../../service/fn';
-import RolePicker from '../../../components/RolePicker';
-import BusinessTypePicker from '../../../components/BusinessTypePicker';
 import {isNumber} from '../../../service/test';
 import {back} from '../../../utils/nagivationUtils';
 import {Employee, Owner, Partner} from '../../../../types';
