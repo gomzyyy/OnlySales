@@ -10,9 +10,10 @@ import {
   Review,
   App,
 } from '../../types';
-import {checkDate} from '../service/fn';
+import {checkDate, showToast} from '../service/fn';
 import {AdminRole, PaymentState} from '../../enums';
 import {useMemo} from 'react';
+import { resetAndNavigate } from '../utils/nagivationUtils';
 
 export interface useAnalyticsReturnType extends Owner, App {
   owner: Owner;
@@ -56,7 +57,11 @@ const useAnalytics = (bestSellerCount: number = 5): useAnalyticsReturnType => {
   } else if (user.role === AdminRole.EMPLOYEE) {
     owner = (user as Employee).businessOwner;
   } else {
-    throw new Error('Invalid role or missing business owner');
+    showToast({
+      type:'error',text1:'Cannot recogonise user.',text2:'Maybe user has used invalid or illigal mean of login.'
+    })
+    resetAndNavigate('GetStarted');
+    throw new Error('Error occured while trying to process analytics.');
   }
   const bestSellers = [...owner.inventory]
     .sort((a, b) => b.totalSold - a.totalSold)

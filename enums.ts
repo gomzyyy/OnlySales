@@ -15,6 +15,7 @@ export enum CurrencyType {
   INR = 'INR',
 }
 export enum MeasurementType {
+  SUBSCRIPTION = 'Subscription',
   ML = 'Ml',
   LITRE = 'Litre',
   KILOGRAM = 'Kilogram',
@@ -38,7 +39,7 @@ export enum AdminRole {
   OWNER = 'Owner',
   PARTNER = 'Partner',
   EMPLOYEE = 'Employee',
-  ADMIN = 'Admin'
+  ADMIN = 'Admin',
 }
 
 export enum LocationRef {
@@ -230,32 +231,55 @@ export enum EventReference {
   Liability = 'Liability',
   Review = 'Review',
 }
-export enum EventStatus{
+export enum EventStatus {
   SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED'
+  FAILED = 'FAILED',
 }
-export enum LegalDocType{
-  tnc="TERMS_AND_CONDITIONS",
-  pp="PRIVACY_POLICY"
+export enum LegalDocType {
+  tnc = 'TERMS_AND_CONDITIONS',
+  pp = 'PRIVACY_POLICY',
 }
 export enum SUPPORT_THREAD_STATUS {
-  OPEN = "OPEN",
-  IN_PROGRESS = "IN_PROGRESS",
-  RESOLVED = "RESOLVED",
-  CLOSED = "CLOSED",
+  OPEN = 'OPEN',
+  IN_PROGRESS = 'IN_PROGRESS',
+  RESOLVED = 'RESOLVED',
+  CLOSED = 'CLOSED',
 }
 
 export enum SUPPORT_THREAD_PRIORITY {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-  URGENT = "URGENT",
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT',
 }
 
 export enum SUPPORT_THREAD_CATEGORY {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-  URGENT = "URGENT",
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT',
+}
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  READY = 'READY',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
 }
 
+export enum PaymentMethods {
+  CASH = "CASH",
+  UPI = "UPI",
+  CARD = "CARD",
+  NETBANKING = "NETBANKING",
+  WALLET = "WALLET",
+  // Add more as needed
+}
+
+export enum AcceptedByType {
+  OWNER = "owner",
+  PARTNER = "partner",
+  EMPLOYEE = "employee",
+}

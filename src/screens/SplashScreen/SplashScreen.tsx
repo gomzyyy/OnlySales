@@ -64,6 +64,7 @@ const SplashScreen = () => {
                       periodicLongitude: longitude,
                     },
                   };
+                  console.log(locationData);
                   await updateUserLocationAPI(locationData, setLoading);
                 }
               });

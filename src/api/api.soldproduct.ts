@@ -18,7 +18,7 @@ export const sellProductAPI = async (
     const {buyerId, sellerId, role} = data.query;
     const body = JSON.stringify(data.body);
     const fetching = await FetchAPI({
-      route: `/sell/product?buyerId=${buyerId}&sellerId=${sellerId}&role=${role}`,
+      route: `/sell/product?buyerId=${buyerId}&sellerId=${sellerId}&role=${role}&orderStatus=${data.query.orderStatus}`,
       reqType: 'cud',
       method: 'POST',
       body,

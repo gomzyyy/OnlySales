@@ -1,4 +1,3 @@
-import {View, Text} from 'react-native';
 import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import {
@@ -27,6 +26,8 @@ import {
   UpdateUserPasscodeAPIReturnType,
   UpdateProductAPIData,
   UpdateProductAPIReturnType,
+  GetEventsAPIData,
+  GetEventsAPIReturnType,
 } from '../api/types.api';
 import {
   createCustomerAPI,
@@ -41,12 +42,16 @@ import {
 } from '../api/api.product';
 import {deleteSoldProductAPI, sellProductAPI} from '../api/api.soldproduct';
 import {validateTokenAPI} from '../api/api.auth';
-import useAnalytics from './useAnalytics';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {setUser} from '../../store/slices/business';
+import {handleEvents, setUser} from '../../store/slices/business';
 import {showToast} from '../service/fn';
-import {updateAppLockStateAPI, updatePasscodeAPI} from '../api/api.user';
+import {
+  getEventsAPI,
+  updateAppLockStateAPI,
+  updatePasscodeAPI,
+} from '../api/api.user';
+import {handleBooleanState} from '../api/helper/fn';
 
 export interface useStorageReturnType {
   customer: {
@@ -89,7 +94,7 @@ export interface useStorageReturnType {
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
     ) => Promise<DeleteProductAPIReturnType>;
-     update: (
+    update: (
       t: UpdateProductAPIData,
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
@@ -118,6 +123,11 @@ export interface useStorageReturnType {
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
     ) => Promise<UpdateUserPasscodeAPIReturnType>;
+    getEvents: (
+      data: GetEventsAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+      onErrorSettingLocalState?: () => void,
+    ) => Promise<GetEventsAPIReturnType>;
   };
   local: {
     updateUser: (
@@ -142,6 +152,7 @@ const useStorage = (): useStorageReturnType => {
     onErrorSettingLocalState?: () => void,
     setState?: Dispatch<SetStateAction<boolean>>,
   ) => {
+    handleBooleanState(setState, true);
     const res = await validateTokenAPI({role: u.role});
     if (res.success && res.data && res.data.user) {
       d(setUser(res.data.user));
@@ -152,9 +163,10 @@ const useStorage = (): useStorageReturnType => {
             type: 'info',
             text1: 'Error occured while syncing app.',
             text2:
-              'Causes: 1). slow network 2). memory full 2). server issue. Fix: Restart the App.',
+              'Causes:1). Token expired. 2). slow network 3). memory full; Fix: Restart the App.',
           });
     }
+    handleBooleanState(setState, false);
     return res as ValidateTokenReturnType;
   };
   const customer = {
@@ -294,6 +306,18 @@ const useStorage = (): useStorageReturnType => {
     ) => {
       const res = await updatePasscodeAPI(data, setState);
       if (res.success) {
+        await updateLocalUserState(onErrorSettingLocalState);
+      }
+      return res;
+    },
+    getEvents: async (
+      data: GetEventsAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+      onErrorSettingLocalState?: () => void,
+    ) => {
+      const res = await getEventsAPI(data, setState);
+      if (res.success && res.data && res.data.events) {
+        d(handleEvents(res.data.events));
         await updateLocalUserState(onErrorSettingLocalState);
       }
       return res;

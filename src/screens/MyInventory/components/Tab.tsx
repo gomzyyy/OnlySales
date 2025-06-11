@@ -214,7 +214,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
 
             <View style={styles.infoContainer}>
               <Text style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-                {t('i_tab_includes')}: {i.quantity} {i.measurementType}
+                {t('i_tab_includes')}: {i.quantity} item
               </Text>
             </View>
 

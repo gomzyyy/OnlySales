@@ -3,17 +3,17 @@ import {getFCMToken} from '../api/fcm/fn';
 import {NetworkInfo as n} from 'react-native-network-info';
 
 export interface useDeviceReturnType {
-  fmctoken: Promise<string>;
+  fmctoken: ()=>Promise<string>;
   deviceName: string;
   deviceId: string;
-  ipv4: Promise<string | null>;
+  ipv4: ()=>Promise<string | null>;
 }
 
 const useDevice = (): useDeviceReturnType => {
-  const fmctoken = (async () => await getFCMToken())();
+  const fmctoken = getFCMToken
   const deviceName = String(d.getDeviceNameSync());
   const deviceId = String(d.getDeviceId());
-  const ipv4 = (async () => await n.getIPV4Address())();
+  const ipv4 = n.getIPV4Address;
 
   return {
     fmctoken,

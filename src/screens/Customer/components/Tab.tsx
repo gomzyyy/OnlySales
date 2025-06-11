@@ -213,10 +213,17 @@ const Tab: React.FC<TabProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onPress={() =>
-                PaymentState.PENDING &&
-                changeSoldProductState(PaymentState.UNPAID)
-              }>
+              onPress={() => {
+                if (i.state === PaymentState.PENDING) {
+                  changeSoldProductState(PaymentState.UNPAID);
+                } else if (i.state === PaymentState.UNPAID) {
+                  changeSoldProductState(PaymentState.PAID);
+                } else if (i.state === PaymentState.PAID) {
+                  changeSoldProductState(PaymentState.UNPAID);
+                } else {
+                  return;
+                }
+              }}>
               {changingState ? (
                 <ActivityIndicator
                   size={10}

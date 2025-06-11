@@ -159,14 +159,16 @@ const InvoicePDFViewer = ({
       <View style={{flexDirection: 'row', gap: 8}}>
         <TouchableOpacity
           style={[styles.button, {flex: 6}]}
-          onPress={handleShare}>
+          onPress={handleShare}
+          disabled={loading}>
           <Icon1 name="share" size={20} color={'white'} />
           <Text style={styles.buttonText}>Share via...</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, {flex: 1}]}
-          onPress={handleShareViaWhatsApp}>
+          onPress={handleShareViaWhatsApp}
+          disabled={loading}>
           <Icon name="whatsapp" size={20} color={'white'} />
         </TouchableOpacity>
       </View>

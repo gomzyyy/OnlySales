@@ -21,7 +21,7 @@
   "c_addproduct_error_generic": "Unexpected error occurred.",
   "c_addproduct_error_item": "Error occurred while selling: {{productName}}",
   "c_addproduct_error_response": "{{errorMessage}}",
-  "c_addproduct_addudhar": "Add Udhar of {{currency}} {{amount}}",
+  "c_addproduct_addudhar": "Total: {{currency}} {{amount}}",
   "c_addproduct_addbtn": "Add",
   "p_paidpayments_title": "Pending Payments",
   "p_paidpayments_nodata_title": "No PAID Payments at the moment.",

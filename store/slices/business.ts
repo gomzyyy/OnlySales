@@ -1,5 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {Owner, App, Customer, AppTheme, Employee, Partner} from '../../types';
+import {
+  Owner,
+  App,
+  Customer,
+  AppTheme,
+  Employee,
+  Partner,
+  Event,
+} from '../../types';
 import {CurrencyType} from '../../enums';
 import 'react-native-get-random-values';
 import {Theme} from '../../src/utils/Constants';
@@ -22,6 +30,10 @@ const initialState: appstate = {
     previousOwners: [],
     deviceId: undefined,
     appLocked: false,
+    eventData: {
+      events: [],
+      newEventCount: 0,
+    },
     lc_meta_data: {
       upi_id: {
         valid: false,
@@ -43,6 +55,8 @@ const UserSlice = createSlice({
     },
     deleteUser: state => {
       state.user = undefined;
+      state.app.eventData.events = [];
+      state.app.eventData.newEventCount = 0;
     },
     setTheme: (state, action: PayloadAction<AppTheme>) => {
       const choosedTheme: AppTheme = action.payload;
@@ -83,6 +97,20 @@ const UserSlice = createSlice({
     setLockedState: (state, action: PayloadAction<boolean>) => {
       state.app.appLocked = action.payload;
     },
+    handleEvents: (state, action: PayloadAction<Event[]>) => {
+      const events = action.payload;
+      state.app.eventData.events = [...events];
+    },
+    handleEventCount: (state, action: PayloadAction<1 | 0>) => {
+      const newCount =
+        action.payload === 1
+          ? state.app.eventData.newEventCount + 1
+          : state.app.eventData.newEventCount - 1;
+      state.app.eventData.newEventCount = newCount;
+    },
+    resetEventCount: state => {
+      state.app.eventData.newEventCount = 0;
+    },
   },
 });
 export const {
@@ -94,6 +122,9 @@ export const {
   setPymtId,
   setVisibleMessage,
   setVisibleName,
-  setLockedState
+  setLockedState,
+  handleEvents,
+  handleEventCount,
+  resetEventCount
 } = UserSlice.actions;
 export default UserSlice.reducer;

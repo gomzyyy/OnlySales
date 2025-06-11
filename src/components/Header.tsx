@@ -96,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({
                 fontWeight: 'bold',
                 color: titleColor,
               }}>
-              {name.slice(0,12)}
+              {name.slice(0,16)}
             </Text>
           )}
         </View>

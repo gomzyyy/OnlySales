@@ -25,12 +25,12 @@ import DropDownMenu, {
   DropDownOptionsType,
 } from './components/animated/DropDownMenu';
 import {APP_VERSION} from '@env';
+import HeaderIcon from '../../components/HeaderIcon';
 
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
-
   const {socket} = useSocket();
-
+const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
   const DashboardOptions = [
     {
       id: 0,
@@ -126,13 +126,11 @@ const Dashboard = () => {
           titleColor={currentTheme.header.textColor}
           customComponent={true}
           renderItem={
-            <Icon5
-              name="more-vert"
-              size={26}
-              color={currentTheme.contrastColor}
-            />
+            <HeaderIcon label="Inbox" showAlertDot={newEventCount!==0} alertCount={newEventCount}>
+              <Icon3 name="inbox" size={20} color={currentTheme.baseColor} />
+            </HeaderIcon>
           }
-          customAction={() => setOpenDropDown(!openDropDown)}
+          customAction={() => navigate('Events')}
         />
         {openDropDown && (
           <DropDownMenu

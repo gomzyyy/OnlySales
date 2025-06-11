@@ -12,11 +12,9 @@ type InventoryItemProps = {
   callback: ({
     product,
     action,
-    count,
   }: {
     product: Product;
     action: 'ADD' | 'MINUS';
-    count: number;
   }) => void;
   onSelectProduct: (data: {
     product: Product;
@@ -29,31 +27,28 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
   addIcon = true,
   removeIcon = true,
   callback,
-  onSelectProduct
+  onSelectProduct,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
   const [count, setCount] = useState<number>(0);
 
   const handlePlusMinus = (action: 'ADD' | 'MINUS') => {
-    setCount(prevCount => {
-      let newCount;
-
-      if (action === 'ADD') {
-        newCount = prevCount + 1;
-      } else {
-        if (prevCount === 0) {
-          return prevCount;
-        }
-        newCount = prevCount - 1;
+    let newCount = count;
+    if (action === 'ADD') {
+      newCount = count + 1;
+    } else {
+      if (count === 0) {
+        return;
       }
-      const data = {product, action, count: newCount};
-      callback(data);
-      onSelectProduct({
-        product,
-        count: newCount,
-      });
-      return newCount;
+      newCount = count - 1;
+    }
+    setCount(newCount);
+    const data = {product, action, count: newCount};
+    callback(data);
+    onSelectProduct({
+      product,
+      count: newCount,
     });
   };
 
@@ -102,6 +97,7 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   parent: {
     paddingHorizontal: 5,

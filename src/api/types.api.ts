@@ -3,6 +3,7 @@ import {
   AIResponseLengthType,
   BusinessType,
   MeasurementType,
+  OrderStatus,
   PaymentHistoryReferenceType,
   PaymentState,
   ProductType,
@@ -19,6 +20,8 @@ import {
   User,
   TermsAndConditions,
   PrivacyPolicy,
+  CommonProps,
+  Event,
 } from '../../types';
 
 export interface APIReturnType {
@@ -212,6 +215,7 @@ export interface SellProductData {
     buyerId: string;
     sellerId: string;
     role: AdminRole;
+    orderStatus?: OrderStatus;
   };
   body: {
     productId: string;
@@ -443,3 +447,15 @@ export interface VerifyUserPasscodeAPIData {
   };
 }
 export interface VerifyUserPasscodeAPIReturnType extends APIReturnType {}
+
+export interface GetEventsAPIData {
+  query: {
+    role: AdminRole;
+    oid: CommonProps['_id'];
+  };
+}
+export interface GetEventsAPIReturnType extends APIReturnType {
+  data: {
+    events?: Event[];
+  };
+}

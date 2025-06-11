@@ -14,7 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import InventoryItem from './InventoryItem';
 import SearchBar from '../../SearchCustomer/components/subcomponents/SearchBar';
-import {Customer, SoldProduct, Product, Owner} from '../../../../types';
+import {Customer, Product} from '../../../../types';
 import {useAnalytics, useTheme} from '../../../hooks/index';
 import EmptyListMessage from '../../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -24,6 +24,7 @@ import {setUser} from '../../../../store/slices/business';
 import {showToast} from '../../../service/fn';
 import {useTranslation} from 'react-i18next';
 import {validateTokenAPI} from '../../../api/api.auth';
+import {OrderStatus} from '../../../../enums';
 
 type AddUdharProps = {
   close?: () => void;
@@ -84,11 +85,9 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   const handleSetUdharAmount = ({
     product,
     action,
-    count,
   }: {
     product: Product;
     action: 'ADD' | 'MINUS';
-    count: number;
   }) => {
     if (action === 'ADD') {
       setUdharAmount(
@@ -113,6 +112,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
   };
   const handleAddUdharBtn = async () => {
     let atLeastOneSuccess = false;
+    let spIds: string[] = [];
     setLoading(true);
     try {
       for (const p of selectedProducts) {
@@ -122,12 +122,17 @@ const AddUdhar: React.FC<AddUdharProps> = ({
               buyerId: customer._id,
               sellerId: user._id,
               role: user.role,
+              orderStatus: OrderStatus.COMPLETED,
             },
             body: {productId: p.product._id, count: p.count},
           };
           const res = await sellProductAPI(data);
           if (res.success) {
             atLeastOneSuccess = true;
+            const soldId = res.data?.soldProduct?._id;
+            if (soldId) {
+              spIds.push(soldId);
+            }
           } else {
             showToast({
               type: 'error',
@@ -246,7 +251,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
                 styles.doneAddingText,
                 {color: currentTheme.modal.saveBtnText},
               ]}>
-              {udharAmount === 0
+              {selectedProducts.length === 0
                 ? t('c_addproduct_cancel')
                 : loading
                 ? t('c_addproduct_adding')

@@ -28,6 +28,9 @@ import {
   SUPPORT_THREAD_PRIORITY,
   SUPPORT_THREAD_STATUS,
   SUPPORT_THREAD_CATEGORY,
+  OrderStatus,
+  AcceptedByType,
+  PaymentMethods,
 } from './enums';
 
 declare global {
@@ -93,6 +96,10 @@ export interface App {
   previousOwners: Owner[] | Partner[] | Employee[];
   deviceId?: string | undefined;
   appLocked: boolean;
+  eventData:{
+      events:Event[],
+      newEventCount:number
+    },
   lc_meta_data: {
     upi_id: {
       valid: boolean;
@@ -187,26 +194,26 @@ export interface OwnerProperties {
   isPrivate: boolean;
   partnerSearchable: boolean;
   employeeSearchable: boolean;
-  notificationSettings:{
-    email:boolean;
-    sms:boolean;
-    inApp:boolean;
+  notificationSettings: {
+    email: boolean;
+    sms: boolean;
+    inApp: boolean;
   };
-  isDeleted:{
-    ok:boolean;
-    deletedAt:Date;
+  isDeleted: {
+    ok: boolean;
+    deletedAt: Date;
   };
-  loginInfo:{
-    lastLogin:Date;
-    loginAttempts:number
-  }
+  loginInfo: {
+    lastLogin: Date;
+    loginAttempts: number;
+  };
 }
 
-export interface Document{
-  name:string;
-  url:string;
-  uploadedAt:Date;
-  verified:boolean
+export interface Document {
+  name: string;
+  url: string;
+  uploadedAt: Date;
+  verified: boolean;
 }
 
 export interface ISupportTicket extends CommonProps {
@@ -229,7 +236,6 @@ export interface ISupportTicket extends CommonProps {
   resolvedAt?: Date;
 }
 
-
 export interface Owner extends User {
   referralCode: string;
   credits: number;
@@ -244,6 +250,7 @@ export interface Owner extends User {
     value: string;
     verified: boolean;
   };
+  orders: string[];
   businessPartners: Partner[];
   gstNumber: string;
   accountType: AccountType;
@@ -257,20 +264,20 @@ export interface Owner extends User {
   role: AdminRole;
   assets: Asset[];
   liabilities: Liability[];
-  documentAcceptance:{
-    terms:{
-      accepted:boolean;
-      acceptedAt:Date;
-      version:string
+  documentAcceptance: {
+    terms: {
+      accepted: boolean;
+      acceptedAt: Date;
+      version: string;
     };
-     privacyPolicy:{
-      accepted:boolean;
-      acceptedAt:Date;
-      version:string
+    privacyPolicy: {
+      accepted: boolean;
+      acceptedAt: Date;
+      version: string;
     };
   };
-documents:Document[];
-supportThreads:ISupportTicket[];
+  documents: Document[];
+  supportThreads: ISupportTicket[];
 }
 
 export interface OTP {
@@ -346,12 +353,44 @@ export interface Product extends CommonProps {
   createdByModel: AdminRole;
 }
 
+// Delivery Info Interface
+export interface DeliveryInfo {
+  shortAddress?: string;
+  suggestions?: string;
+  shortNote?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}
+
+// Order Interface
+export interface Order {
+  _id?: Types.ObjectId;
+  ownerId: Types.ObjectId;
+  orderedBy: Types.ObjectId;
+  products: Types.ObjectId[];
+  totalAmount: number;
+  acceptedByType?: AcceptedByType;
+  acceptedBy?: Types.ObjectId;
+  orderedAt?: Date;
+  orderStatus?: OrderStatus;
+  acceptedAt?: Date;
+  deliveredAt?: Date;
+  deliveryInfo?: DeliveryInfo;
+  paymentMethod?: PaymentMethods;
+  expiresAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface SoldProduct extends CommonProps {
   product: Product;
   buyer: Customer;
   state: PaymentState;
   disabled: boolean;
   count: number;
+  orderStatus: OrderStatus;
   soldBy: Owner | Employee | Partner;
   soldByModel: AdminRole;
 }
@@ -440,6 +479,7 @@ export interface PaymentHistory extends CommonProps {
 export interface Event extends CommonProps {
   title: string;
   description: string;
+  owner:Owner['_id']
   refType: EventHistoryReference;
   reference: Owner | Partner | Employee | Customer | CommonProps['_id'];
   refDescription?: string;

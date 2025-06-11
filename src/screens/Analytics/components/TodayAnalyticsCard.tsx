@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useAnalytics, useTheme} from '../../../hooks';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
@@ -14,11 +14,6 @@ import {RootState} from '../../../../store/store';
 import TodayBestSellerAnalyticsGraph from './graphs/TodayBestSellerAnalyticsGraph';
 const NoProductImage = require('../../../assets/images/no_product_image.jpg');
 const NoUserImage = require('../../../assets/image/no-profile.jpg');
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
 
 const TodayAnalyticsCard = () => {
   const {currentTheme} = useTheme();
@@ -44,7 +39,7 @@ const TodayAnalyticsCard = () => {
   }, 0);
 
   return (
-    <Animated.View
+    <View
       style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
       <Text style={styles.headerText}>Today Sales 📈</Text>
 
@@ -136,7 +131,7 @@ const TodayAnalyticsCard = () => {
           <TodayBestSellerAnalyticsGraph />
         </View>
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 };
 

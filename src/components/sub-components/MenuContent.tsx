@@ -176,7 +176,6 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
           bottom: 10,
           width: '90%',
           paddingHorizontal: 10,
-          backgroundColor: currentTheme.contrastColor,
           alignItems: 'center',
           alignSelf: 'center',
         }}>

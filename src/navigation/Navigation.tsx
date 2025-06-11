@@ -54,6 +54,7 @@ import WebViewScreen from '../screens/WebView/WebViewScreen';
 import Invoices from '../screens/Invoices/Invoices';
 import TermsAndConditions from '../screens/Info/TermsAndConditions';
 import {setLockedState} from '../../store/slices/business';
+import Events from '../screens/Events/Events';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -116,6 +117,7 @@ const StackNav = () => {
       <stack.Screen name="SearchFeatures" component={SearchFeatures} />
       <stack.Screen name="WebViewScreen" component={WebViewScreen} />
       <stack.Screen name="Invoices" component={Invoices} />
+      <stack.Screen name="Events" component={Events} />
       <stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
       <stack.Screen
         name="Login"

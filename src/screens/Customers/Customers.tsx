@@ -58,7 +58,7 @@ const Customers = () => {
               data={[...customers].reverse()}
               keyExtractor={s => s._id}
               nestedScrollEnabled
-              renderItem={({item}) => <Tab i={item} />}
+              renderItem={({item,index}) => <Tab i={item} lastIndex={customers.length-1===index} />}
               style={{flex: 1, paddingBottom: 90}}
               showsVerticalScrollIndicator={false}
             />

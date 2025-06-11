@@ -11,6 +11,8 @@ import {
   VerifyUserPasscodeAPIReturnType,
   UpdateAppLockStateAPIData,
   UpdateAppLockStateAPIReturnType,
+  GetEventsAPIData,
+  GetEventsAPIReturnType,
 } from './types.api';
 
 export const getUserAPI = async (
@@ -153,6 +155,34 @@ export const verifyPasscodeAPI = async (
       },
       success: false,
     } as GetUserAPIReturnType;
+  } finally {
+    handleBooleanState(setState, false);
+  }
+};
+
+export const getEventsAPI = async (
+  data: GetEventsAPIData,
+  setState?: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  handleBooleanState(setState, true);
+  try {
+    const fetching = await FetchAPI({
+      reqType: 'r',
+      route: `/get/events?role=${data.query.role}&oid=${data.query.oid}`,
+      method: 'GET',
+    });
+    return (await fetching.json()) as GetEventsAPIReturnType;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
+      data: {
+        events: undefined,
+      },
+      success: false,
+    } as GetEventsAPIReturnType;
   } finally {
     handleBooleanState(setState, false);
   }
