@@ -60,7 +60,7 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
     return Object.values(grouped);
   }, [todaysMostSoldProducts]);
 
-  const prices = aggregatedProducts.slice(0, 5).map(calculatePrice);
+  const prices = (aggregatedProducts.slice(0, 5) as number[]).map(calculatePrice);
   const labels = aggregatedProducts.slice(0, 5).map(item => item.product.name);
 
   const data: Dataset = {
@@ -95,6 +95,9 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
         maxWidth: deviceWidth * 0.96,
         borderRadius: 10,
         marginTop: 10,
+        borderWidth:1,
+        padding:4,
+        borderColor:currentTheme.fadeColor
       }}>
       {todaysMostSoldProducts.length !== 0 ? (
         <LineChart
@@ -148,7 +151,7 @@ const TodayBestSellerInfoGraph: React.FC<TodayBestSellerInfoGraphProps> = ({
         <View
           style={{
             height: 220,
-            backgroundColor: currentTheme.contrastColor,
+            // backgroundColor: currentTheme.fadeColor,
             width: deviceWidth * 0.96,
             alignItems: 'center',
             justifyContent: 'center',

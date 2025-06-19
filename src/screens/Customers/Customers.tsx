@@ -13,6 +13,7 @@ import {useHaptics} from '../../hooks';
 import {deviceHeight} from '../../utils/Constants';
 import {useTranslation} from 'react-i18next';
 import HeaderIcon from '../../components/HeaderIcon';
+import FallbackMessage from '../../components/FallbackMessage';
 
 const Customers = () => {
   const {t} = useTranslation('customers');
@@ -26,12 +27,14 @@ const Customers = () => {
     lightTap();
   };
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
+    <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>
       <Header
         name={t('header_title')}
         backButton={true}
         titleColor={currentTheme.header.textColor}
         customComponent={true}
+        curved
+        headerBgColor={currentTheme.baseColor}
         renderItem={
           <HeaderIcon label="Add">
             <Icon name="plus" color={currentTheme.baseColor} size={20} />
@@ -48,24 +51,25 @@ const Customers = () => {
         )}
         <View style={{flex: 1}}>
           <View style={styles.searchBarContainer}>
-            <SearchBar
-              textColor={currentTheme.header.textColor}
-              enable={customers.length !== 0}
-            />
+            {customers.length !== 0 && (
+              <SearchBar textColor={currentTheme.header.textColor} enable />
+            )}
           </View>
           {customers.length !== 0 ? (
             <FlatList
               data={[...customers].reverse()}
               keyExtractor={s => s._id}
               nestedScrollEnabled
-              renderItem={({item,index}) => <Tab i={item} lastIndex={customers.length-1===index} />}
+              renderItem={({item, index}) => (
+                <Tab i={item} lastIndex={customers.length - 1 === index} />
+              )}
               style={{flex: 1, paddingBottom: 90}}
               showsVerticalScrollIndicator={false}
             />
           ) : (
-            <View style={{flex: 1}}>
-              <EmptyListMessage textColor={currentTheme.header.textColor} />
-            </View>
+            <FallbackMessage
+              text={"No Customers yet, Tap '+' to create customer"}
+            />
           )}
         </View>
       </View>

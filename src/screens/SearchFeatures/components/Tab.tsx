@@ -6,6 +6,7 @@ import {useTheme} from '../../../hooks/index';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 const NoPhoto = require('../../../assets/images/no-profile.jpg');
 import {ToolsData} from '../../SearchFeatures/SearchFeatures';
+import LinearGradient from 'react-native-linear-gradient';
 
 const EditCustomer = React.lazy(
   () => import('../../../components/EditCustomer'),
@@ -32,12 +33,14 @@ const Tab: React.FC<TabProps> = ({
       longPressCanceledAction={() => handleLongPressCancelAction(i.navigateTo)}
       longPressAction={() => {}}
       dummy={i.disabled}>
-      <View
+      <LinearGradient
+        colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
+            start={{x: 0, y: 0}}
         style={[
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.tab.bg,
+             borderLeftColor: currentTheme.baseColor,
           },
         ]}>
         <View>{i.icon(currentTheme.contrastColor)}</View>
@@ -51,7 +54,7 @@ const Tab: React.FC<TabProps> = ({
             {i.title}
           </Text>
         </View>
-      </View>
+      </LinearGradient>
     </LongPressEnabled>
   );
 };
@@ -60,9 +63,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     flexDirection: 'row',
-    borderRadius: 8,
     alignItems: 'center',
     gap: 12,
+    borderLeftWidth: 2,
   },
   profileImage: {
     height: 50,

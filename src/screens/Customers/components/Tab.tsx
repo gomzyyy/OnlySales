@@ -9,6 +9,7 @@ import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
 import {deviceHeight} from '../../../utils/Constants';
+import LinearGradient from 'react-native-linear-gradient';
 const NoPhoto = require('../../../assets/images/no-profile.jpg');
 
 const EditCustomer = React.lazy(
@@ -48,12 +49,14 @@ const Tab: React.FC<TabProps> = ({
       longPressCanceledAction={handleLongPressCancelAction}
       longPressAction={handleOpenLongPressOptions}
       dummy={dummy}>
-      <View
+    <LinearGradient
+            colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
+            start={{x: 0, y: 0}}
         style={[
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.tab.bg,
+            borderLeftColor: currentTheme.baseColor,
           },
         ]}>
         <View style={{height: 50, width: 50, overflow: 'hidden'}}>
@@ -65,11 +68,10 @@ const Tab: React.FC<TabProps> = ({
           />
         </View>
         <View style={styles.innerContainer}>
-          <Text style={[styles.customerName, {color: currentTheme.tab.label}]}>
+          <Text numberOfLines={1} style={[styles.customerName, {color: currentTheme.tab.label}]}>
             {i.name}
           </Text>
 
-          <Icon name="right" color={currentTheme.tab.icon} size={22} />
           {openTabOptions && i && (
             <PopupContainer
               open={openTabOptions}
@@ -92,7 +94,7 @@ const Tab: React.FC<TabProps> = ({
             <EditCustomer i={i} close={handleCloseEditCustomer} />
           </PopupContainer>
         )}
-      </View>
+      </LinearGradient>
     </LongPressEnabled>
   );
 };
@@ -101,9 +103,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     flexDirection: 'row',
-    borderRadius: 8,
     alignItems: 'center',
     gap: 12,
+     borderLeftWidth: 2,
   },
   profileImage: {
     height: 50,
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   customerName: {
-    fontSize: 22,
+    fontSize: 14,
     fontWeight: '500',
   },
 });

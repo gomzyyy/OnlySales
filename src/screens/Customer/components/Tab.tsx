@@ -24,6 +24,7 @@ import {PaymentState} from '../../../../enums';
 import InvoicePDFViewer from '../../PDFViewer/InvoicePDFViewer';
 import {showToast} from '../../../service/fn';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import LinearGradient from 'react-native-linear-gradient';
 
 type TabProps = {
   i: SoldProduct;
@@ -162,13 +163,17 @@ const Tab: React.FC<TabProps> = ({
 
   return (
     <LongPressEnabled longPressAction={longPressAction}>
-      <View
+      <LinearGradient
+        colors={[currentTheme.fadeColor, '#fff']}
+        start={{x: 0, y: 0}}
         style={[
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
             backgroundColor: currentTheme.tab.bg,
             paddingVertical: i.state === PaymentState.UNPAID ? 10 : 4,
+            borderLeftColor: currentTheme.baseColor,
+            borderLeftWidth: 2,
           },
         ]}>
         <View style={styles.tabInfo}>
@@ -281,7 +286,7 @@ const Tab: React.FC<TabProps> = ({
               style={[
                 styles.MarkAsPaid,
                 {
-                  backgroundColor: currentTheme.tab.btnBg,
+                  backgroundColor: currentTheme.fadeColor,
                   height: 22,
                 },
               ]}
@@ -291,15 +296,15 @@ const Tab: React.FC<TabProps> = ({
               }}>
               {changingState ? (
                 <ActivityIndicator
-                  size={22}
-                  color={currentTheme.contrastColor}
+                  size={18}
+                  color={currentTheme.baseColor}
                 />
               ) : (
                 <Text
                   style={[
                     styles.MarkAsPaidText,
                     {
-                      color: currentTheme.tab.text,
+                      color: currentTheme.baseColor,
                       textAlign: 'center',
                       fontSize: 12,
                     },
@@ -311,7 +316,7 @@ const Tab: React.FC<TabProps> = ({
             <TouchableOpacity
               style={[
                 styles.MarkAsPaid,
-                {backgroundColor: currentTheme.tab.btnBg},
+                {backgroundColor: currentTheme.fadeColor},
               ]}
               activeOpacity={0.8}
               onPress={() => setOpenSoldProductPDFView(true)}>
@@ -319,7 +324,7 @@ const Tab: React.FC<TabProps> = ({
                 style={[
                   styles.MarkAsPaidText,
                   {
-                    color: currentTheme.tab.text,
+                    color: currentTheme.baseColor,
                     textAlign: 'center',
                     fontSize: 12,
                   },
@@ -335,7 +340,7 @@ const Tab: React.FC<TabProps> = ({
               style={[
                 styles.MarkAsPaid,
                 {
-                  backgroundColor: currentTheme.tab.btnBg,
+                  backgroundColor: currentTheme.fadeColor,
                   height:
                     i.state === PaymentState.PAID ||
                     i.state === PaymentState.UNPAID
@@ -348,7 +353,7 @@ const Tab: React.FC<TabProps> = ({
               {i.state === PaymentState.UNPAID ? (
                 <Icon
                   name="qrcode-scan"
-                  color={currentTheme.contrastColor}
+                  color={currentTheme.baseColor}
                   size={20}
                 />
               ) : (
@@ -356,7 +361,7 @@ const Tab: React.FC<TabProps> = ({
                   style={[
                     styles.MarkAsPaidText,
                     {
-                      color: currentTheme.tab.text,
+                      color: currentTheme.baseColor,
                       textAlign: 'center',
                       fontSize: 10,
                     },
@@ -369,7 +374,7 @@ const Tab: React.FC<TabProps> = ({
               <TouchableOpacity
                 style={[
                   styles.MarkAsPaid,
-                  {backgroundColor: currentTheme.tab.btnBg, height: 22},
+                  {backgroundColor: currentTheme.fadeColor, height: 22},
                 ]}
                 activeOpacity={0.8}
                 onPress={() => setOpenSoldProductPDFView(true)}>
@@ -377,7 +382,7 @@ const Tab: React.FC<TabProps> = ({
                   style={[
                     styles.MarkAsPaidText,
                     {
-                      color: currentTheme.tab.text,
+                      color: currentTheme.baseColor,
                       textAlign: 'center',
                       fontSize: 12,
                     },
@@ -403,7 +408,7 @@ const Tab: React.FC<TabProps> = ({
             }}
           />
         </PopupContainer>
-      </View>
+      </LinearGradient>
       <SlideUpContainer
         open={askConfirmPayment}
         close={handleCloseConfirmPayment}
@@ -450,7 +455,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 8,
   },
   tabInfo: {
     flexDirection: 'row',

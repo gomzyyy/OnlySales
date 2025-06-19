@@ -18,6 +18,7 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
+import { formatNumber } from '../service/fn';
 
 type DashboardHeaderProps = {
   searchBar?: boolean;
@@ -75,11 +76,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const dashboardHeaderTabs = [
     {
       name: t('d_header_thismonth'),
-      data: {value: monthlySales},
+      data: {value: formatNumber(monthlySales)},
     },
     {
       name: t('d_header_today'),
-      data: {value: todaySalesNum},
+      data: {value: formatNumber(todaySalesNum)},
     },
   ];
 
@@ -98,14 +99,16 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               key={t.name}
               style={[
                 styles.innerBox,
-                {backgroundColor: currentTheme.contrastColor},
+                {backgroundColor: currentTheme.fadeColor},
               ]}>
               <View style={styles.infoContainer}>
                 <Text
+                numberOfLines={1}
                   style={[styles.textLabel, {color: currentTheme.baseColor}]}>
                   {t.name}
                 </Text>
                 <Text
+                numberOfLines={1}
                   style={[
                     styles.textInfo,
                     {color: currentTheme.baseColor},
@@ -164,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-evenly',
     paddingVertical: 10,
-    elevation: 10,
+    elevation: 2,
   },
   textLabel: {
     fontSize: 22,
@@ -176,12 +179,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchQueryContainer: {
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     paddingTop: 12,
     paddingBottom: 10,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    elevation: 10,
   },
   searchQueryInput: {
     borderRadius: 14,

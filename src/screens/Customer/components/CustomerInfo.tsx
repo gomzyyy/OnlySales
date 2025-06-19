@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image, Pressable, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useState} from 'react';
 import {Customer} from '../../../../types';
 const NoProfile = require('../../../assets/images/no-profile.jpg');
@@ -8,7 +15,6 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/Entypo';
 import {useTranslation} from 'react-i18next';
 import SlideUpContainer from '../../../components/SlideUpContainer';
-import FilePicker from '../../../components/FilePicker';
 import EditCustomer from '../../../components/EditCustomer';
 import {deviceHeight} from '../../../utils/Constants';
 
@@ -31,8 +37,12 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
 
   return (
     <LinearGradient
-      colors={[currentTheme.contrastColor, currentTheme.contrastColor]}
-      style={[styles.customerInfoParent]}>
+      colors={[currentTheme.fadeColor, '#fff']}
+      start={{x: 0, y: 0}}
+      style={[
+        styles.customerInfoParent,
+        {borderLeftColor: currentTheme.baseColor, borderLeftWidth: 2},
+      ]}>
       <Pressable
         style={[
           styles.profileImageContainer,
@@ -48,7 +58,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
         />
       </Pressable>
       <TouchableOpacity
-      activeOpacity={0.4}
+        activeOpacity={0.4}
         style={styles.customerInfoContainer}
         onPress={handleOpenTriggerEdit}>
         <Text style={[styles.name, {color: currentTheme.baseColor}]}>
@@ -85,7 +95,6 @@ const styles = StyleSheet.create({
   customerInfoParent: {
     paddingVertical: 20,
     alignItems: 'flex-start',
-    borderRadius: 10,
     paddingHorizontal: 20,
     flexDirection: 'row',
     gap: 10,

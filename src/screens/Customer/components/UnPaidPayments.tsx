@@ -4,12 +4,12 @@ import {Customer, SoldProduct} from '../../../../types';
 import {deviceHeight} from '../../../utils/Constants';
 import {useTheme} from '../../../hooks';
 import {TouchableOpacity} from 'react-native';
-import EmptyListMessage from '../../../components/EmptyListMessage';
-import {back} from '../../../utils/nagivationUtils';
 import CustomerInfo from './CustomerInfo';
 import Tab from './Tab';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTranslation} from 'react-i18next';
+import FallbackMessage from '../../../components/FallbackMessage';
+import Header from '../../../components/Header';
 
 type UnpaidPaymentsProps = {
   customer: Customer;
@@ -28,12 +28,20 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
   const {currentTheme} = useTheme();
   const {t} = useTranslation('customer');
   return (
-    <View style={[styles.parent, {backgroundColor: currentTheme.baseColor}]}>
-      <Text style={[styles.label, {color: currentTheme.contrastColor}]}>
-        {t('c_pendingpayments')}
-      </Text>
+    <View
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
+      <Header
+        curved
+        headerBgColor={currentTheme.fadeColor}
+        name={t('c_pendingpayments')}
+        titleColor={currentTheme.baseColor}
+      />
+
       <View
-        style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
+        style={[
+          styles.container,
+          {backgroundColor: currentTheme.contrastColor},
+        ]}>
         <CustomerInfo customer={customer} />
         <View style={styles.itemListContainer}>
           {products.length !== 0 ? (
@@ -54,14 +62,11 @@ const UnPaidPayments: React.FC<UnpaidPaymentsProps> = ({
             />
           ) : (
             <View style={styles.emptyListContainer}>
-              <EmptyListMessage
-                title={t('c_empty_unpaid_alert')}
-                textColor={currentTheme.contrastColor}
-              />
+              <FallbackMessage text={t('c_empty_unpaid_alert')} />
               <TouchableOpacity
                 style={[
                   styles.backBtnContainer,
-                  {backgroundColor: currentTheme.contrastColor},
+                  {backgroundColor: currentTheme.fadeColor},
                 ]}
                 onPress={() => close()}>
                 <Icon
@@ -86,9 +91,9 @@ const styles = StyleSheet.create({
   parent: {
     height: deviceHeight * 0.9,
     backgroundColor: 'white',
-    marginBottom: 10,
-    borderRadius: 20,
-    paddingVertical: 20,
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
+    overflow: 'hidden',
   },
   label: {
     textAlign: 'center',

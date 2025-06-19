@@ -80,7 +80,6 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
           customer={customer}
           ArrWithDate={result}
           onTabPress={onTabPress}
-          tabColor="colorful"
         />
       </View>
       <Text style={{fontWeight: '600', textAlign: 'center', marginTop: 10}}>

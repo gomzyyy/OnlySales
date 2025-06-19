@@ -4,11 +4,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
-import {colors, deviceHeight} from '../../../utils/Constants';
+import {deviceHeight, deviceWidth} from '../../../utils/Constants';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Customer, Event} from '../../../../types';
+import {Event} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {useTheme} from '../../../hooks/index';
@@ -23,48 +25,97 @@ const EventDataContainer: React.FC<EventDataContainerProps> = ({
   close,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const user = useSelector((s: RootState) => s.appData.user)!;
-  const dispatch = useDispatch<AppDispatch>();
-  const [loading, setLoading] = useState<boolean>(false);
+
   return (
     <View
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
-      <Text style={styles.label}>{event.title || ''}</Text>
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity
-          style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
-          activeOpacity={0.8}
-          >
-          <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            {loading ? 'Deleteing' : 'Delete'}
+      <Text style={styles.title}>{event.title || 'Untitled Event'}</Text>
+
+      <ScrollView style={{flex:1}} contentContainerStyle={{paddingBottom: 20}}>
+        <View style={styles.section}>
+          <Text style={styles.label}>Description:</Text>
+          <Text style={styles.value}>{event.description || 'N/A'}</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Reference Type:</Text>
+          <Text style={styles.value}>{event.refType || 'N/A'}</Text>
+        </View>
+
+        {event.refDescription && (
+          <View style={styles.section}>
+            <Text style={styles.label}>Ref Description:</Text>
+            <Text style={styles.value}>{event.refDescription}</Text>
+          </View>
+        )}
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Status:</Text>
+          <Text style={[styles.value, {color: '#007BFF'}]}>{event.status}</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Located At:</Text>
+          <Text style={styles.value}>
+            {typeof event.locatedAt === 'string'
+              ? event.locatedAt
+              : 'Location object'}
           </Text>
-          {loading ? (
-            <ActivityIndicator size={18} color={colors.danger} />
-          ) : (
-            <Icon name="delete" size={18} color={colors.danger} />
-          )}
-        </TouchableOpacity>
-      </View>
+        </View>
+
+        {event.files?.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.label}>Files:</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{marginTop: 6}}>
+              {event.files.map((uri, i) => (
+                <Image
+                  key={i}
+                  source={{uri}}
+                  style={styles.fileThumb}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   parent: {
-    paddingVertical: 14,
-    height: deviceHeight*0.6,
+    padding: 16,
+    height: deviceHeight * 0.6,
     borderRadius: 20,
     marginBottom: 10,
     elevation: 30,
+    alignSelf: 'center',
   },
-  label: {
-    fontSize: 20,
+  title: {
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 10,
+  },
+  section: {
+    marginVertical: 8,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#666666',
+  },
+  value: {
+    fontSize: 15,
+    color: '#000000',
+    marginTop: 2,
   },
   optionsContainer: {
-    paddingHorizontal: 20,
-    marginTop: 26,
+    paddingTop: 16,
     gap: 10,
   },
   buttonDanger: {
@@ -75,26 +126,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
   },
-  buttonIconContainer: {
-    alignItems: 'center',
-  },
   buttonDangerText: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
   },
-  buttonEdit: {
-    height: 50,
-    borderRadius: 12,
-    borderWidth: 0.8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  buttonEditText: {
-    textAlign: 'center',
-
-    fontSize: 20,
+  fileThumb: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+    marginRight: 8,
+    backgroundColor: '#E0E0E0',
   },
 });
 

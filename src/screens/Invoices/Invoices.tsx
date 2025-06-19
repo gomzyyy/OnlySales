@@ -5,6 +5,7 @@ import {useTheme} from '../../hooks';
 import FS from 'react-native-fs';
 import Tab from './components/Tab';
 import EmptyListMessage from '../../components/EmptyListMessage';
+import FallbackMessage from '../../components/FallbackMessage';
 
 const Invoices = () => {
   const {currentTheme} = useTheme();
@@ -42,7 +43,7 @@ const Invoices = () => {
               style={{flex: 1}}
             />
           ) : (
-            <EmptyListMessage title="No Invoice files found." />
+            <FallbackMessage text="No Invoice files found." />
           )}
         </View>
       </View>

@@ -1,8 +1,10 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Customer, SoldProduct} from '../../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../hooks/index';
 import {useMemo} from 'react';
+import LongPressEnabled from '../../customComponents/LongPressEnabled';
+import LinearGradient from 'react-native-linear-gradient';
 
 type ProductsByDateProps = {
   ArrWithDate: SoldProduct[];
@@ -71,43 +73,39 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
     placeHolder,
   }): React.JSX.Element => {
     return (
-      <TouchableOpacity
-        activeOpacity={0.8}
-        style={[
-          styles.container,
-          {
-            marginBottom: lastIndex ? 70 : 6,
-            backgroundColor:
-              tabColor === 'contrast'
-                ? currentTheme.tab.bg
-                : currentTheme.baseColor,
-          },
-        ]}
-        onPress={() =>
+      <LongPressEnabled
+        longPressCanceledAction={() =>
           onTabPress({products: i, date: i[0].createdAt, customer})
-        }>
-        <Text
+        }
+        longPressAction={() => {}}>
+        <LinearGradient
+          colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
+          start={{x: 0, y: 0}}
           style={[
-            styles.date,
+            styles.container,
             {
-              color:
+              marginBottom: lastIndex ? 70 : 6,
+              backgroundColor:
                 tabColor === 'contrast'
-                  ? currentTheme.tab.label
-                  : currentTheme.contrastColor,
+                  ? currentTheme.tab.bg
+                  : currentTheme.baseColor,
+              borderLeftColor: currentTheme.baseColor,
             },
           ]}>
-          {placeHolder || date}
-        </Text>
-        <Icon
-          name="right"
-          color={
-            tabColor === 'contrast'
-              ? currentTheme.tab.label
-              : currentTheme.contrastColor
-          }
-          size={22}
-        />
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.date,
+              {
+                color:
+                  tabColor === 'contrast'
+                    ? currentTheme.tab.label
+                    : currentTheme.contrastColor,
+              },
+            ]}>
+            {placeHolder || date}
+          </Text>
+        </LinearGradient>
+      </LongPressEnabled>
     );
   };
   return (
@@ -123,7 +121,7 @@ export const ProductsByDate: React.FC<ProductsByDateProps> = ({
         />
       )}
       nestedScrollEnabled
-      style={{flex: 1, borderRadius: 10}}
+      style={{flex: 1}}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
     />
@@ -136,8 +134,8 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 8,
     alignItems: 'center',
+     borderLeftWidth: 2,
   },
   date: {
     fontSize: 20,

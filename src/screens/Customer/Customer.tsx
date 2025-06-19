@@ -20,7 +20,7 @@ import CustomerInfo from './components/CustomerInfo';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddUdhar from './components/AddUdhar';
-import {toogleState} from '../../service/fn';
+import {formatNumber, toogleState} from '../../service/fn';
 import {useTheme, useHaptics, useAnalytics} from '../../hooks';
 import UnPaidPayments from './components/UnPaidPayments';
 import PaidPayments from './components/PaidPayments';
@@ -34,7 +34,8 @@ import SearchContainer from './components/SlideContainers/SearchContainer';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
 import {back} from '../../utils/nagivationUtils';
-import HeaderIcon from '../../components/HeaderIcon'
+import HeaderIcon from '../../components/HeaderIcon';
+import FallbackMessage from '../../components/FallbackMessage';
 
 type RouteParams = {
   customerId: CustomerType['_id'];
@@ -205,12 +206,13 @@ const Customer = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.parent}
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Header
         name={customer.name}
         backButton
         customComponent={content === 'UNPAID'}
+        curved
         renderItem={
           <HeaderIcon label="Request" show={unpaidAmount !== 0}>
             <Icon name="qrcode" color={currentTheme.baseColor} size={20} />
@@ -229,7 +231,7 @@ const Customer = () => {
       <View
         style={[
           styles.contentContainer,
-          {backgroundColor: currentTheme.baseColor},
+          // {backgroundColor:currentTheme.baseColor}
         ]}>
         <CustomerInfo customer={customer} />
         <View
@@ -246,7 +248,7 @@ const Customer = () => {
               justifyContent: 'space-between',
               paddingHorizontal: 18,
               paddingVertical: 10,
-              backgroundColor: currentTheme.contrastColor,
+              backgroundColor: currentTheme.fadeColor,
               borderRadius: 10,
               flex: 1,
             }}>
@@ -262,7 +264,7 @@ const Customer = () => {
                   fontWeight: 400,
                   fontStyle: 'normal',
                   color: '#000',
-                }}>{` ${currency} ${unpaidAmount}`}</Text>
+                }}>{` ${currency}${formatNumber(unpaidAmount)}`}</Text>
             </Text>
             <Text
               style={{
@@ -276,12 +278,12 @@ const Customer = () => {
                   fontWeight: 400,
                   fontStyle: 'normal',
                   color: '#000',
-                }}>{` ${currency} ${paidAmount}`}</Text>
+                }}>{` ${currency}${formatNumber(paidAmount)}`}</Text>
             </Text>
           </View>
           <TouchableOpacity
             style={{
-              backgroundColor: currentTheme.contrastColor,
+              backgroundColor: currentTheme.fadeColor,
               borderRadius: 10,
               paddingHorizontal: 6,
               paddingVertical: 2,
@@ -305,9 +307,14 @@ const Customer = () => {
             style={{flex: 1}}>
             <ToogleButton
               title={t('c_pendingpayments')}
-              textColor={currentTheme.contrastColor}
+              textColor={currentTheme.baseColor}
               border={content === 'UNPAID'}
               borderColor={currentTheme.contrastColor}
+              bgcolor={
+                content === 'UNPAID'
+                  ? currentTheme.fadeColor
+                  : currentTheme.contrastColor
+             }
             />
           </Pressable>
           <Pressable
@@ -318,9 +325,14 @@ const Customer = () => {
             style={{flex: 1}}>
             <ToogleButton
               title={t('c_paidpayments')}
-              textColor={currentTheme.contrastColor}
+              textColor={currentTheme.baseColor}
               border={content === 'PAID'}
               borderColor={currentTheme.contrastColor}
+              bgcolor={
+                content === 'PAID'
+                  ? currentTheme.fadeColor
+                  : currentTheme.contrastColor
+              }
             />
           </Pressable>
         </View>
@@ -334,9 +346,8 @@ const Customer = () => {
                 onTabPress={handleTabPress}
               />
             ) : (
-              <EmptyListMessage
-                title={t('c_empty_unpaid_title')}
-                textColor={currentTheme.contrastColor}
+              <FallbackMessage
+                text={t('c_empty_unpaid_title')}
               />
             )
           ) : paidPayments.length > 0 ? (
@@ -346,9 +357,8 @@ const Customer = () => {
               onTabPress={handleTabPress}
             />
           ) : (
-            <EmptyListMessage
-              title={t('c_empty_paid_title')}
-              textColor={currentTheme.contrastColor}
+            <FallbackMessage
+              text={t('c_empty_paid_title')}
             />
           )}
         </View>
@@ -365,7 +375,9 @@ const Customer = () => {
         open={openUnpaidSheet}
         close={() => setOpenUnpaidSheet(false)}
         opacity={0.7}
-        height={deviceHeight * 0.9}>
+        height={deviceHeight * 0.9}
+        usepadding={false}
+        >
         <UnPaidPayments
           date={unpaidProps.date}
           customer={customer}
@@ -378,7 +390,9 @@ const Customer = () => {
         open={openPaidSheet}
         close={() => setOpenPaidSheet(false)}
         opacity={0.7}
-        height={deviceHeight * 0.9}>
+        height={deviceHeight * 0.9}
+        usepadding={false}
+        >
         <PaidPayments
           date={paidProps.date}
           customer={customer}
@@ -446,6 +460,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingHorizontal: 10,
+    marginTop: 10,
   },
   contentToggleContainer: {
     flexDirection: 'row',

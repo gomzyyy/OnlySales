@@ -167,7 +167,8 @@ const SearchFeatures = () => {
   }, [query]);
 
   return (
-    <View style={styles.parent}>
+    <View
+      style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Header backButton setQuery={setQuery} query={query} />
       <View style={[styles.contentContainer]}>
         {searchResults.length === 0 ? (
@@ -193,17 +194,17 @@ const SearchFeatures = () => {
           <View
             style={{
               height: 'auto',
-              backgroundColor: currentTheme.baseColor,
+              // backgroundColor: currentTheme.fadeColor,
               borderRadius: 20,
               padding: 15,
               gap: 10,
-              elevation: 5,
+              marginTop: 10,
             }}>
             <Text
               style={{
                 fontSize: 20,
                 fontWeight: 'bold',
-                color: currentTheme.header.textColor,
+                color: currentTheme.baseColor,
               }}>
               Results:
             </Text>

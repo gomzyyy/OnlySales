@@ -34,7 +34,7 @@ const Dashboard = () => {
   const {socket} = useSocket();
   const {eventData, orderData} = useSelector((s: RootState) => s.events);
   const [openOrderOnlineQR, setOpenOrderOnlineQR] = useState<boolean>(false);
-   const [openNotes, setOpenNotes] = useState<boolean>(false);
+  const [openNotes, setOpenNotes] = useState<boolean>(false);
   const DashboardOptions = [
     {
       id: 0,
@@ -65,9 +65,7 @@ const Dashboard = () => {
       id: 3,
       title: t('d_options_employees'),
       navigateTo: 'Employees',
-      icon: (color: string) => (
-        <Icon2 name="work" size={24} color={color} />
-      ),
+      icon: (color: string) => <Icon2 name="work" size={24} color={color} />,
       onPress: undefined,
     },
     {
@@ -99,7 +97,9 @@ const Dashboard = () => {
       id: 8,
       title: 'Notes',
       navigateTo: undefined,
-      icon: (color: string) => <Icon2 name="sticky-note-2" size={24} color={color} />,
+      icon: (color: string) => (
+        <Icon2 name="sticky-note-2" size={24} color={color} />
+      ),
       onPress: () => setOpenNotes(true),
     },
   ];
@@ -199,7 +199,7 @@ const Dashboard = () => {
           </Text>
         </Pressable> */}
         {!user.email?.verified && <NotVerifiedAlert />}
-        <View style={{paddingHorizontal:10,marginTop:10}}>
+        <View style={{paddingHorizontal: 10, marginTop: 10}}>
           <PromotionalCarousel />
         </View>
         <View style={styles.contentContainer}>
@@ -263,17 +263,22 @@ const Dashboard = () => {
             </Text>
             <WeeklySalesInfoGraph />
           </View>
+
+          <SlideUpContainer open={openQuery} close={closeQuery}>
+            <QueryContainer close={closeQuery} />
+          </SlideUpContainer>
+          <SlideUpContainer
+            open={openNotes}
+            close={closeNotes}
+            height={deviceHeight * 0.62}
+            usepadding={false}>
+            <NotesContainer close={closeNotes} />
+          </SlideUpContainer>
           <SlideUpContainer
             open={openOrderOnlineQR}
             close={closeOrderOnlineQR}
             height={deviceHeight * 0.6 < 460 ? 460 : deviceHeight * 0.6}>
             <OrderPageRedirectQRCode />
-          </SlideUpContainer>
-          <SlideUpContainer open={openQuery} close={closeQuery}>
-            <QueryContainer close={closeQuery} />
-          </SlideUpContainer>
-          <SlideUpContainer open={openNotes} close={closeNotes} height={deviceHeight*0.62} usepadding={false}>
-            <NotesContainer close={closeNotes} />
           </SlideUpContainer>
         </View>
       </ScrollView>

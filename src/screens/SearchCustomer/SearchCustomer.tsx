@@ -14,7 +14,7 @@ const SearchCustomer = () => {
     (s: RootState) => s.appData.app.searchResults,
   ).customerResults;
   return (
-    <View style={styles.parent}>
+    <View style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Header backButton />
       <View style={[styles.contentContainer]}>
         {searchResults.length === 0 ? (
@@ -40,17 +40,15 @@ const SearchCustomer = () => {
           <View
             style={{
               height: 'auto',
-              backgroundColor: currentTheme.baseColor,
               borderRadius: 20,
               padding: 15,
               gap: 10,
-              elevation: 5,
             }}>
             <Text
               style={{
                 fontSize: 20,
                 fontWeight: 'bold',
-                color: currentTheme.header.textColor,
+                color: currentTheme.baseColor,
               }}>
               Results:
             </Text>

@@ -28,7 +28,7 @@ const OpenMenuButton: React.FC<OpenMenuButtonProps> = ({
 
   useEffect(() => {
     if (open) {
-      menuBtnX.value = withTiming(0, {
+      menuBtnX.value = withTiming(10, {
         duration: 300,
         // damping: 14,
         // stiffness: 100,
@@ -49,7 +49,7 @@ const OpenMenuButton: React.FC<OpenMenuButtonProps> = ({
     }, 300);
     setTimeout(() => {
       if (open) {
-        menuBtnX.value = withTiming(0, {
+        menuBtnX.value = withTiming(10, {
           duration: 300,
         });
       }
@@ -60,13 +60,12 @@ const OpenMenuButton: React.FC<OpenMenuButtonProps> = ({
     <Animated.View
       style={[
         styles.buttonContainer,
-        {backgroundColor: 'rgba(0,0,0,0.02)'},
         menuBtnAnimatedStyles,
       ]}>
       <Pressable
-        style={[styles.button, {backgroundColor: currentTheme.contrastColor}]}
+        style={[styles.button, {backgroundColor: currentTheme.baseColor}]}
         onPress={handleMenuBtnPress}>
-        <Icon2 name="chevron-right" size={34} color={currentTheme.baseColor} />
+        <Icon2 name="menu" size={26} color={currentTheme.contrastColor} />
       </Pressable>
     </Animated.View>
   );
@@ -75,25 +74,16 @@ const OpenMenuButton: React.FC<OpenMenuButtonProps> = ({
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
-    top: 60,
+    top: 80,
     left: 0,
     zIndex: 10,
-    // padding: 4,
-    borderTopRightRadius: 40,
   },
   button: {
-    width: 70,
-    height: 60,
-    borderTopRightRadius: 30,
-    borderBottomRightRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
-    alignItems: 'flex-end',
-    paddingRight: 10,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
+    alignItems: 'center',
   },
 });
 

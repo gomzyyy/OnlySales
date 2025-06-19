@@ -117,6 +117,9 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
         maxWidth: deviceWidth * 0.96,
         borderRadius: 10,
         marginTop: 10,
+        borderWidth:1,
+        padding:4,
+        borderColor:currentTheme.fadeColor
       }}>
       {!data.data.every(s => s === 0) ? (
         <LineChart
@@ -170,7 +173,7 @@ const MonthlySalesInfoGraph: React.FC<MonthlySalesInfoGraphProps> = ({
         <View
           style={{
             height: 220,
-            backgroundColor: currentTheme.contrastColor,
+            // backgroundColor: currentTheme.fadeColor,
             width: deviceWidth * 0.96,
             alignItems: 'center',
             justifyContent: 'center',

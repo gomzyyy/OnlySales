@@ -10,6 +10,7 @@ import Pdf from 'react-native-pdf';
 import {formatFileSize, showToast} from '../../../service/fn';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './LongPressOptions';
+import LinearGradient from 'react-native-linear-gradient';
 
 const FileIcon = require('../../../assets/images/INVOICE_IMG.png');
 
@@ -34,25 +35,25 @@ const Tab: React.FC<TabProps> = ({file, lastIndex = false}) => {
       opacity={1}
       longPressCanceledAction={handleLongPressAction}
       longPressAction={() => setOpenOptions(true)}>
-      <View
+      <LinearGradient
+        colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
+        start={{x: 0, y: 0}}
         style={[
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.baseColor,
+            borderLeftColor: currentTheme.baseColor,
           },
         ]}>
         <View style={{height: 50, width: 50, overflow: 'hidden'}}>
-          <Image
-            source={FileIcon}
-            style={[styles.profileImage, {borderColor: currentTheme.baseColor}]}
-          />
+          <Image source={FileIcon} style={[styles.profileImage]} />
         </View>
 
         <View style={styles.innerContainer}>
           <View style={{}}>
             <Text
-              style={[styles.fileName, {color: currentTheme.contrastColor}]}>
+              numberOfLines={1}
+              style={[styles.fileName, {color: currentTheme.baseColor}]}>
               {file.name}
             </Text>
             <View style={{flexDirection: 'row', gap: 6}}>
@@ -60,7 +61,7 @@ const Tab: React.FC<TabProps> = ({file, lastIndex = false}) => {
                 style={{
                   fontStyle: 'italic',
                   fontWeight: '400',
-                  color: currentTheme.contrastColor,
+                  color: currentTheme.baseColor,
                 }}>
                 {formatFileSize(file.size)}
               </Text>
@@ -68,7 +69,7 @@ const Tab: React.FC<TabProps> = ({file, lastIndex = false}) => {
                 style={{
                   fontStyle: 'italic',
                   fontWeight: '900',
-                  color: currentTheme.contrastColor,
+                  color: currentTheme.baseColor,
                 }}>
                 .
               </Text>
@@ -76,15 +77,11 @@ const Tab: React.FC<TabProps> = ({file, lastIndex = false}) => {
                 style={{
                   fontStyle: 'italic',
                   fontWeight: '400',
-                  color: currentTheme.contrastColor,
+                  color: currentTheme.baseColor,
                 }}>
                 {file.mtime ? file.mtime.toLocaleDateString() : 'N/A'}
               </Text>
             </View>
-          </View>
-
-          <View>
-            <Icon name="right" color={currentTheme.contrastColor} size={22} />
           </View>
         </View>
 
@@ -132,9 +129,12 @@ const Tab: React.FC<TabProps> = ({file, lastIndex = false}) => {
           </SlideUpContainer>
         )}
         <PopupContainer open={openOptions} close={() => setOpenOptions(false)}>
-          <TabLongPressOptions file={file} close={() => setOpenOptions(false)} />
+          <TabLongPressOptions
+            file={file}
+            close={() => setOpenOptions(false)}
+          />
         </PopupContainer>
-      </View>
+      </LinearGradient>
     </LongPressEnabled>
   );
 };
@@ -144,16 +144,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     flexDirection: 'row',
-    borderRadius: 8,
     alignItems: 'center',
     gap: 12,
+    borderLeftWidth: 2,
   },
   profileImage: {
     height: 50,
     width: 50,
     resizeMode: 'cover',
     borderRadius: 16,
-    borderWidth: 1,
   },
   innerContainer: {
     flexDirection: 'row',
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fileName: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '500',
   },
 });

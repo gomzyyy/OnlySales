@@ -6,6 +6,10 @@ import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import {deviceHeight, deviceWidth} from '../../../utils/Constants';
 import SlideUpContainer from '../../../components/SlideUpContainer';
 import OrderDetailsContainer from './OrderDetailsContainer';
+import {updateOrderStatusAPI} from '../../../api/api.orders';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../store/store';
+import {OrderStatus} from '../../../../enums';
 
 type TabProps = {
   i: Order;

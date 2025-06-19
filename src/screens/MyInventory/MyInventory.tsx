@@ -11,6 +11,7 @@ import AddProduct from './components/AddProduct';
 import {useAnalytics, useTheme} from '../../hooks/index';
 import {useTranslation} from 'react-i18next';
 import HeaderIcon from '../../components/HeaderIcon';
+import FallbackMessage from '../../components/FallbackMessage';
 
 const MyInventory = () => {
   const {currentTheme} = useTheme();
@@ -49,15 +50,7 @@ const MyInventory = () => {
             ))}
           </ScrollView>
         ) : (
-          <View
-            style={[
-              styles.assistTextContainer,
-              {backgroundColor: currentTheme.fadeColor},
-            ]}>
-            <Text style={[styles.assistText, {color: currentTheme.baseColor}]}>
-              {t('i_inventory_empty')}
-            </Text>
-          </View>
+          <FallbackMessage text={t('i_inventory_empty')} />
         )}
       </View>
       {openAddProduct && (
@@ -80,22 +73,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 10,
     flex: 1,
+    alignItems:'center'
   },
   listContainer: {
     // justifyContent: 'space-evenly',
     // flexWrap: 'wrap',
-  },
-  assistTextContainer: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginTop: 40,
-  },
-  assistText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
 });
 

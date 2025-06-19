@@ -50,7 +50,7 @@ const Employees = () => {
         <View style={styles.innerContent}>
           {employees.length > 0 && (
             <View style={styles.searchBarWrapper}>
-              <SearchBar textColor={currentTheme.header.textColor} />
+              <SearchBar textColor={currentTheme.header.textColor} enable />
             </View>
           )}
 
