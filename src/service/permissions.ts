@@ -53,16 +53,16 @@ type PermissionResult = {
 export const RequestUXPermission = async (
   fallback?: () => void,
 ): Promise<PermissionResult> => {
-  try {
-    if (Platform.OS !== 'android') {
-      return {
-        notification_permissions: false,
-        write_contact_permissions: false,
-        read_contact_permissions: false,
-        fine_location_permissions: false,
-      };
-    }
+  if (Platform.OS !== 'android') {
+    return {
+      notification_permissions: false,
+      write_contact_permissions: false,
+      read_contact_permissions: false,
+      fine_location_permissions: false,
+    };
+  }
 
+  try {
     const permissions = {
       'android.permission.POST_NOTIFICATIONS': {
         key: 'notification_permissions',
@@ -84,22 +84,20 @@ export const RequestUXPermission = async (
       },
       'android.permission.ACCESS_FINE_LOCATION': {
         key: 'fine_location_permissions',
-        title: 'Notification Permission Required',
+        title: 'Location Permission Required',
         message:
-          'We need notification access to keep you informed. Please enable it in settings.',
+          'We need location access to provide better recommendations. Please enable it in settings.',
       },
     };
 
-    const requestKeys = Object.keys(permissions) as Array<
-      keyof typeof permissions
-    >;
+    const requestKeys = Object.keys(permissions) as Array<keyof typeof permissions>;
     const res = await PermissionsAndroid.requestMultiple(requestKeys);
 
     const results: Record<string, boolean> = {};
 
     for (const perm of requestKeys) {
-      const result = res[perm];
       const key = permissions[perm].key;
+      const result = res[perm];
 
       if (result === PermissionsAndroid.RESULTS.GRANTED) {
         results[key] = true;
@@ -126,7 +124,8 @@ export const RequestUXPermission = async (
       fine_location_permissions: results.fine_location_permissions || false,
     };
   } catch (error) {
-    fallback && fallback();
+    console.error('Permission request failed:', error);
+    if (fallback) fallback();
     return {
       notification_permissions: false,
       write_contact_permissions: false,
@@ -135,3 +134,4 @@ export const RequestUXPermission = async (
     };
   }
 };
+

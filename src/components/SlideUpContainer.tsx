@@ -20,7 +20,8 @@ type SlideUpContainerProps = PropsWithChildren<{
   padding?: boolean;
   height?: number;
   heightLimit?: number;
-  bottom?:boolean
+  bottom?: boolean;
+  usepadding?: boolean;
 }>;
 
 const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
@@ -31,7 +32,8 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   padding = false,
   height = deviceHeight,
   heightLimit,
-  bottom = true
+  bottom = true,
+  usepadding = true,
 }): React.JSX.Element => {
   const childHeight = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -73,7 +75,9 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
       translateY.value = 0;
       setTimeout(() => {
         childHeight.value = withTiming(
-          ((typeof heightLimit === 'number' && height > heightLimit) ? heightLimit : height) + 30,
+          (typeof heightLimit === 'number' && height > heightLimit
+            ? heightLimit
+            : height) + 30,
           {duration: 200},
         );
       }, 40);
@@ -94,7 +98,7 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
             styles.childContainer,
             {
               backgroundColor: `rgba(0,0,0,0.6)`,
-              paddingHorizontal: padding ? 14 : 10,
+              paddingHorizontal: usepadding ? (padding ? 14 : 10) : 0,
             },
           ]}
           onPress={closeSlideUpContainer}>
@@ -118,7 +122,6 @@ const styles = StyleSheet.create({
   childContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    paddingHorizontal: 10,
   },
   dragTabContainer: {
     width: '100%',

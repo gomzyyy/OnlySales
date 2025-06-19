@@ -177,6 +177,8 @@ export const colors = {
   dangerFade: 'rgba(255,0,0,0.2)',
   oliveGreen: 'rgb(158, 195, 120)',
   oliveGreenFade: 'rgba(158, 195, 120,0.2)',
+  yellow:'rgb(255, 216, 0)',
+  yellowFade:'rgba(255, 216, 0,0.2)',
   iconBlack: 'rgb(0,0,0)',
   link: '#007bff',
 };

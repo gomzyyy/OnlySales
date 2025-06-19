@@ -22,6 +22,8 @@ import {
   PrivacyPolicy,
   CommonProps,
   Event,
+  Order,
+  PromoCorouselContext,
 } from '../../types';
 
 export interface APIReturnType {
@@ -458,4 +460,30 @@ export interface GetEventsAPIReturnType extends APIReturnType {
   data: {
     events?: Event[];
   };
+}
+export interface GetOrdersByOwnerIdAPIData {
+  query: {
+    role: AdminRole;
+    oid: CommonProps['_id'];
+  };
+}
+export interface GetOrdersByOwnerIdAPIReturnType extends APIReturnType {
+  data: {
+    orders?: Order[];
+  };
+}
+export interface UpdateOrderStatusAPIData {
+  query: {
+    role: AdminRole;
+    updatedStatus: OrderStatus;
+  };
+  body: {
+    order: Order['_id'];
+  };
+}
+export interface UpdateOrderStatusAPIReturnType extends APIReturnType {}
+export interface GetPromoForCorouselAPIReturnType extends APIReturnType {
+data:{
+  context?:PromoCorouselContext
+}
 }

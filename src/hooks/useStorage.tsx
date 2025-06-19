@@ -28,6 +28,8 @@ import {
   UpdateProductAPIReturnType,
   GetEventsAPIData,
   GetEventsAPIReturnType,
+  GetOrdersByOwnerIdAPIData,
+  GetOrdersByOwnerIdAPIReturnType,
 } from '../api/types.api';
 import {
   createCustomerAPI,
@@ -44,7 +46,8 @@ import {deleteSoldProductAPI, sellProductAPI} from '../api/api.soldproduct';
 import {validateTokenAPI} from '../api/api.auth';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {handleEvents, setUser} from '../../store/slices/business';
+import {handleEvents, handleOrders} from '../../store/slices/events';
+import {setUser} from '../../store/slices/business';
 import {showToast} from '../service/fn';
 import {
   getEventsAPI,
@@ -52,6 +55,7 @@ import {
   updatePasscodeAPI,
 } from '../api/api.user';
 import {handleBooleanState} from '../api/helper/fn';
+import { getOrdersByOwnerIdAPI } from '../api/api.orders';
 
 export interface useStorageReturnType {
   customer: {
@@ -128,6 +132,11 @@ export interface useStorageReturnType {
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
     ) => Promise<GetEventsAPIReturnType>;
+    getOrders:(
+      data: GetOrdersByOwnerIdAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+      onErrorSettingLocalState?: () => void,
+    ) => Promise<GetOrdersByOwnerIdAPIReturnType>;
   };
   local: {
     updateUser: (
@@ -318,6 +327,18 @@ const useStorage = (): useStorageReturnType => {
       const res = await getEventsAPI(data, setState);
       if (res.success && res.data && res.data.events) {
         d(handleEvents(res.data.events));
+        await updateLocalUserState(onErrorSettingLocalState);
+      }
+      return res;
+    },
+     getOrders: async (
+      data: GetOrdersByOwnerIdAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+      onErrorSettingLocalState?: () => void,
+    ) => {
+      const res = await getOrdersByOwnerIdAPI(data, setState);
+      if (res.success && res.data && res.data.orders) {
+        d(handleOrders(res.data.orders));
         await updateLocalUserState(onErrorSettingLocalState);
       }
       return res;

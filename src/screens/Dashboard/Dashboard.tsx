@@ -1,4 +1,4 @@
-import {View, StyleSheet, ScrollView, Text, Pressable} from 'react-native';
+import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
@@ -9,8 +9,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/AntDesign';
-import Icon5 from 'react-native-vector-icons/MaterialIcons';
-import Icon6 from 'react-native-vector-icons/Entypo';
+import Icon5 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon7 from 'react-native-vector-icons/FontAwesome6';
 import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 import {useSelector} from 'react-redux';
@@ -21,16 +21,20 @@ import QueryContainer from './components/QueryContainer';
 import NotVerifiedAlert from './components/animated/NotVerifiedAlert';
 import OpenMenuButton from './components/animated/OpenMenuButton';
 import {useSocket} from '../../hooks/index';
-import DropDownMenu, {
-  DropDownOptionsType,
-} from './components/animated/DropDownMenu';
 import {APP_VERSION} from '@env';
 import HeaderIcon from '../../components/HeaderIcon';
+import OrderPageRedirectQRCode from '../../components/OrderPageRedirectORCode';
+import {deviceHeight} from '../../utils/Constants';
+import LinearGradient from 'react-native-linear-gradient';
+import PromotionalCarousel from '../../components/animated/PromotionalCarousel';
+import NotesContainer from '../../components/NotesContainer';
 
 const Dashboard = () => {
   const {t} = useTranslation('dashboard');
   const {socket} = useSocket();
-const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
+  const {eventData, orderData} = useSelector((s: RootState) => s.events);
+  const [openOrderOnlineQR, setOpenOrderOnlineQR] = useState<boolean>(false);
+   const [openNotes, setOpenNotes] = useState<boolean>(false);
   const DashboardOptions = [
     {
       id: 0,
@@ -39,8 +43,15 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
       icon: (color: string) => (
         <Icon3 name="codepen-circle" size={24} color={color} />
       ),
+      onPress: undefined,
     },
-
+    {
+      id: 5,
+      title: t('d_options_insta_buy'),
+      navigateTo: undefined,
+      icon: (color: string) => <Icon3 name="qrcode" size={24} color={color} />,
+      onPress: () => setOpenOrderOnlineQR(true),
+    },
     {
       id: 1,
       title: t('d_options_analytics'),
@@ -48,14 +59,16 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
       icon: (color: string) => (
         <Icon2 name="analytics" size={24} color={color} />
       ),
+      onPress: undefined,
     },
     {
       id: 3,
       title: t('d_options_employees'),
       navigateTo: 'Employees',
       icon: (color: string) => (
-        <Icon name="people-sharp" size={24} color={color} />
+        <Icon2 name="work" size={24} color={color} />
       ),
+      onPress: undefined,
     },
     {
       id: 4,
@@ -64,6 +77,30 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
       icon: (color: string) => (
         <Icon name="people-sharp" size={24} color={color} />
       ),
+      onPress: undefined,
+    },
+    {
+      id: 6,
+      title: 'Invoices',
+      navigateTo: 'Invoices',
+      icon: (color: string) => (
+        <Icon7 name="file-invoice" size={24} color={color} />
+      ),
+      onPress: undefined,
+    },
+    {
+      id: 7,
+      title: 'Settings',
+      navigateTo: 'Settings',
+      icon: (color: string) => <Icon name="settings" size={24} color={color} />,
+      onPress: undefined,
+    },
+    {
+      id: 8,
+      title: 'Notes',
+      navigateTo: undefined,
+      icon: (color: string) => <Icon2 name="sticky-note-2" size={24} color={color} />,
+      onPress: () => setOpenNotes(true),
     },
   ];
 
@@ -79,6 +116,12 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
   const closeQuery = () => {
     setOpenQuery(false);
   };
+  const closeOrderOnlineQR = () => {
+    setOpenOrderOnlineQR(false);
+  };
+  const closeNotes = () => {
+    setOpenNotes(false);
+  };
 
   useEffect(() => {
     socket?.on('getOnlineUsers', d => console.log(d));
@@ -86,32 +129,8 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
     console.log(APP_VERSION);
   }, [socket]);
 
-  const dropDownOptions: DropDownOptionsType[] = [
-    {
-      id: 0,
-      name: 'Run A Query',
-      navigateTo: undefined,
-      icon: (color: string = '#000', size: number = 16) => (
-        <Icon6 color={color} name="code" size={size} />
-      ),
-      onPress: (cb?: () => void) => cb && cb(),
-      callback: () => setOpenQuery(true),
-    },
-    {
-      id: 1,
-      name: 'Help',
-      navigateTo: 'Settings',
-      icon: (color: string = '#000', size: number = 16) => (
-        <Icon1 color={color} name="help-circle" size={size} />
-      ),
-      onPress: cb => {
-        cb && cb();
-      },
-    },
-  ];
-
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
+    <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>
       <OpenMenuButton open={overScrolled} />
       <ScrollView
         style={{flex: 1}}
@@ -124,15 +143,34 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
           name={t('header_title')}
           menuButton
           titleColor={currentTheme.header.textColor}
+          headerBgColor={currentTheme.baseColor}
           customComponent={true}
+          curved
           renderItem={
-            <HeaderIcon label="Inbox" showAlertDot={newEventCount!==0} alertCount={newEventCount}>
+            <HeaderIcon
+              label="Inbox"
+              showAlertDot={eventData.newEventCount !== 0}
+              alertContent={eventData.newEventCount}>
               <Icon3 name="inbox" size={20} color={currentTheme.baseColor} />
             </HeaderIcon>
           }
+          renderItem1={
+            <HeaderIcon
+              label="Orders"
+              showAlertDot={orderData.newOrderCount !== 0}
+              alertContent={orderData.newOrderCount}>
+              <Icon5
+                name="cart-check"
+                size={20}
+                color={currentTheme.baseColor}
+              />
+            </HeaderIcon>
+          }
           customAction={() => navigate('Events')}
+          customAction1={() => navigate('Orders')}
+          customAction2={() => setOpenOrderOnlineQR(true)}
         />
-        {openDropDown && (
+        {/* {openDropDown && (
           <DropDownMenu
             visible={openDropDown}
             close={closeDropDown}
@@ -140,7 +178,7 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
             top={60}
             right={10}
           />
-        )}
+        )} */}
         {/* <Pressable
           style={{
             backgroundColor: 'white',
@@ -150,7 +188,7 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
             alignSelf: 'center',
             marginBottom: 6,
           }}
-          onPress={() => navigate('TermsAndConditions')}>
+          onPress={() => navigate('Test')}>
           <Text
             style={{
               color: currentTheme.baseColor,
@@ -161,6 +199,9 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
           </Text>
         </Pressable> */}
         {!user.email?.verified && <NotVerifiedAlert />}
+        <View style={{paddingHorizontal:10,marginTop:10}}>
+          <PromotionalCarousel />
+        </View>
         <View style={styles.contentContainer}>
           <DashboardHeader
             flex={false}
@@ -170,38 +211,69 @@ const {newEventCount} = useSelector((s:RootState)=>s.appData.app.eventData)
             <View
               style={{
                 backgroundColor: currentTheme.contrastColor,
-                paddingBottom: 10,
                 borderBottomRightRadius: 20,
                 borderBottomLeftRadius: 20,
+                height: deviceHeight * 0.25,
+                minHeight: 140,
+                maxHeight: 160,
+                overflow: 'hidden',
               }}>
-              <View style={styles.navigationBtnsContainer}>
-                {DashboardOptions.map(s => (
-                  <PressableContainer
-                    navigateTo={s.navigateTo}
-                    title={s.title}
-                    key={s.id}>
-                    {s.icon(currentTheme.header.textColor)}
-                  </PressableContainer>
-                ))}
-              </View>
+              <LinearGradient
+                colors={[
+                  currentTheme.fadeColor,
+                  currentTheme.contrastColor,
+                  currentTheme.contrastColor,
+                ]}
+                style={styles.navigationBtnsContainer}
+                start={{x: 0.5, y: 1}}
+                end={{x: 0.5, y: 0}}>
+                <ScrollView
+                  style={{flex: 1}}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    gap: 24,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}>
+                  {DashboardOptions.map(s => (
+                    <View key={s.id} style={{width: '18%'}}>
+                      <PressableContainer
+                        navigateTo={s.navigateTo}
+                        title={s.title}
+                        key={s.id}
+                        onPress={s.onPress}>
+                        {s.icon(currentTheme.baseColor)}
+                      </PressableContainer>
+                    </View>
+                  ))}
+                </ScrollView>
+              </LinearGradient>
             </View>
           </View>
           <View style={styles.graphContainer}>
-            <Text
-              style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
+            <Text style={[styles.graphLabel, {color: currentTheme.baseColor}]}>
               {t('d_todaybestseller_title')}
             </Text>
             <TodayBestSellerInfoGraph />
           </View>
           <View style={styles.graphContainer}>
-            <Text
-              style={[styles.graphLabel, {color: currentTheme.contrastColor}]}>
+            <Text style={[styles.graphLabel, {color: currentTheme.baseColor}]}>
               {t('d_weeklysalesinfograph_title')}
             </Text>
             <WeeklySalesInfoGraph />
           </View>
+          <SlideUpContainer
+            open={openOrderOnlineQR}
+            close={closeOrderOnlineQR}
+            height={deviceHeight * 0.6 < 460 ? 460 : deviceHeight * 0.6}>
+            <OrderPageRedirectQRCode />
+          </SlideUpContainer>
           <SlideUpContainer open={openQuery} close={closeQuery}>
             <QueryContainer close={closeQuery} />
+          </SlideUpContainer>
+          <SlideUpContainer open={openNotes} close={closeNotes} height={deviceHeight*0.62} usepadding={false}>
+            <NotesContainer close={closeNotes} />
           </SlideUpContainer>
         </View>
       </ScrollView>
@@ -213,6 +285,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingBottom: 90,
+    marginTop: 20,
   },
   navigationBtnsContainer: {
     alignItems: 'flex-start',
@@ -222,6 +295,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 10,
     paddingHorizontal: 10,
+    flex: 1,
   },
   inputText: {
     borderWidth: 2,

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SetStateAction} from 'react';
 import {Platform} from 'react-native';
 import {PLATFORM_SPECIFIED_CALLS} from '../../../enums';
+import {BASE_SERVER_URL} from '@env';
 
 export interface FetchReqPropType {
   route: string;
@@ -52,9 +53,8 @@ const FetchAPI = async ({
 }: FetchReqPropType) => {
   try {
     const headers = await APIheaders(secure, reqType);
-    const baseUrl = 'http://192.168.1.71:6900/api/app';
     const res = fetch(
-      baseUrl +
+      BASE_SERVER_URL +
         `${route}` +
         `${
           route.includes('?')

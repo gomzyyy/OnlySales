@@ -104,7 +104,7 @@ export const signupAPI = async (
       method: 'POST',
       body: formData,
     });
-    return await fetching.json() as SignupAPIReturnType;
+    return (await fetching.json()) as SignupAPIReturnType;
   } catch (error) {
     return {
       message:

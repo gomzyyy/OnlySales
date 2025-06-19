@@ -7,11 +7,10 @@ import CreateEmployee from '../../components/CreateEmployee';
 import EmptyListMessage from '../../components/EmptyListMessage';
 import SearchBar from './components/SearchBar';
 import CreateButton from '../../components/CreateButton';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/Octicons';
 import Tab from './components/tab';
 import {deviceHeight} from '../../utils/Constants';
+import HeaderIcon from '../../components/HeaderIcon';
 
 const Employees = () => {
   const {lightTap} = useHaptics();
@@ -27,14 +26,18 @@ const Employees = () => {
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: currentTheme.baseColor}]}>
+    <View style={[styles.container,{backgroundColor:currentTheme.contrastColor}]}>
       <Header
         name="Employees"
         backButton
         titleColor={currentTheme.header.textColor}
+        curved
+        headerBgColor={currentTheme.baseColor}
         customComponent
         renderItem={
-          <Icon name="plus" size={22} color={currentTheme.header.textColor} />
+          <HeaderIcon label="Add">
+            <Icon name="plus" size={20} color={currentTheme.baseColor} />
+          </HeaderIcon>
         }
         customAction={handleOpenCreateEmployee}
       />
@@ -45,12 +48,11 @@ const Employees = () => {
         )}
 
         <View style={styles.innerContent}>
-          <View style={styles.searchBarWrapper}>
-            <SearchBar
-              textColor={currentTheme.header.textColor}
-              enable={employees.length > 0}
-            />
-          </View>
+          {employees.length > 0 && (
+            <View style={styles.searchBarWrapper}>
+              <SearchBar textColor={currentTheme.header.textColor} />
+            </View>
+          )}
 
           {employees.length > 0 ? (
             <FlatList

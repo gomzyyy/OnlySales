@@ -31,6 +31,7 @@ import {
   OrderStatus,
   AcceptedByType,
   PaymentMethods,
+  ValidRoles,
 } from './enums';
 
 declare global {
@@ -96,10 +97,6 @@ export interface App {
   previousOwners: Owner[] | Partner[] | Employee[];
   deviceId?: string | undefined;
   appLocked: boolean;
-  eventData:{
-      events:Event[],
-      newEventCount:number
-    },
   lc_meta_data: {
     upi_id: {
       valid: boolean;
@@ -171,6 +168,8 @@ export interface Customer extends CommonProps {
   };
   address?: string;
   userId: string;
+  orders: string[];
+  role: ValidRoles;
   location: Location;
   businessOwner: Owner;
   buyedProducts: SoldProduct[];
@@ -365,23 +364,21 @@ export interface DeliveryInfo {
 }
 
 // Order Interface
-export interface Order {
-  _id?: Types.ObjectId;
-  ownerId: Types.ObjectId;
-  orderedBy: Types.ObjectId;
-  products: Types.ObjectId[];
+export interface Order extends CommonProps {
+  ownerId: CommonProps['_id'];
+  orderedBy: Customer;
+  products: {product: Product; count: number}[];
   totalAmount: number;
   acceptedByType?: AcceptedByType;
-  acceptedBy?: Types.ObjectId;
+  acceptedBy?: Owner | Partner | Employee;
   orderedAt?: Date;
   orderStatus?: OrderStatus;
   acceptedAt?: Date;
   deliveredAt?: Date;
   deliveryInfo?: DeliveryInfo;
   paymentMethod?: PaymentMethods;
+  maxLife: number;
   expiresAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export interface SoldProduct extends CommonProps {
@@ -479,7 +476,7 @@ export interface PaymentHistory extends CommonProps {
 export interface Event extends CommonProps {
   title: string;
   description: string;
-  owner:Owner['_id']
+  owner: Owner['_id'];
   refType: EventHistoryReference;
   reference: Owner | Partner | Employee | Customer | CommonProps['_id'];
   refDescription?: string;
@@ -530,4 +527,43 @@ interface TermsAndConditions extends LegalDocument {
 }
 interface PrivacyPolicy extends LegalDocument {
   pp: TermPrivacySection[];
+}
+
+export interface SlideItem {
+  media: string;
+  mediaType: 'IMAGE' | 'VIDEO';
+  title: string;
+  description: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+export interface PromoCorouselContext {
+  sponsorName: string;
+  sponsorLogo: string;
+  sponsorTagline: string;
+  campaignId: string;
+  context: SlideItem[];
+}
+
+export interface Note {
+  _id: User['_id'];
+  createdAt: Date;
+  updatedAt: Date;
+  title: string;
+  content: string;
+  media: {
+    url: string;
+    type: 'image' | 'video' | 'audio' | 'mixed';
+    alt?: string;
+  }[];
+  hashtags: string[];
+  isPinned: boolean;
+  isFavorite: boolean;
+  color?: string;
+  isArchived: boolean;
+  isDeleted: boolean;
+  isDraft:boolean;
+  deletedAt?: Date;
+  sharedWith: string[];
 }

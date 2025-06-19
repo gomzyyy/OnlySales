@@ -25,6 +25,24 @@ If you have any questions or need assistance, feel free to reach out. We're here
 
 _– from $$BUSINESS_NAME$$_`;
 
+export const WHATSAPP_QUICK_ORDER_BY_QR_PROMO_MESSAGE = `🙏 *Welcome to $$BUSINESS_NAME$$!* 🇮🇳
+
+🛒 *Shopping made super easy!*
+
+📱 *Just scan this QR code* to:
+1️⃣ Browse all our latest products  
+2️⃣ Add your favourite items to cart  
+3️⃣ Confirm your address & details  
+4️⃣ ✅ Place your order in seconds!
+
+💥 *No app needed* — works on any phone!  
+🔒 100% safe, fast & hassle-free
+
+🧾 Great prices • Fast service • Trusted seller
+
+👇 Start shopping with *$$BUSINESS_NAME$$* now!`;
+
+
 export interface OwnerPropertyObjType {
   id: number;
   key: string;

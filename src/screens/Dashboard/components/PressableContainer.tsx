@@ -5,31 +5,34 @@ import {navigate} from '../../../utils/nagivationUtils';
 
 type PressableContainerProps = PropsWithChildren<{
   title: string;
-  navigateTo: string;
+  navigateTo?: string;
+  onPress?:()=>void
 }>;
 
 const PressableContainer: React.FC<PressableContainerProps> = ({
   title,
   navigateTo,
   children,
+  onPress
 }) => {
   const {currentTheme} = useTheme();
   const {lightTap} = useHaptics();
   const handleNavigation = () => {
     lightTap();
-    navigate(navigateTo);
+    onPress && onPress()
+   navigateTo && navigate(navigateTo);
   };
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       style={[
         styles.pressableContainer,
-        {backgroundColor: currentTheme.baseColor},
       ]}
       onPress={handleNavigation}>
       {children}
       <Text
-        style={[styles.pressableText, {color: currentTheme.header.textColor}]}>
+      numberOfLines={1}
+        style={[styles.pressableText, {color: currentTheme.baseColor}]}>
         {title}
       </Text>
     </TouchableOpacity>
@@ -38,15 +41,13 @@ const PressableContainer: React.FC<PressableContainerProps> = ({
 
 const styles = StyleSheet.create({
   pressableContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     borderRadius: 16,
     height: 60,
-    width: '48%',
     justifyContent: 'center',
   },
-  pressableText: {fontSize: 18, fontWeight: 'bold'},
+  pressableText: {fontSize: 12, fontWeight: 'bold'},
 });
 
 export default PressableContainer;

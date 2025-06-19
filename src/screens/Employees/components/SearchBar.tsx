@@ -21,14 +21,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <View
         style={[
           styles.searchQueryInput,
-          {backgroundColor: currentTheme.contrastColor},
+          {
+            backgroundColor: currentTheme.fadeColor,
+            borderColor: currentTheme.baseColor,
+          },
         ]}>
         <Text
           style={[
             styles.searchQueryInputText,
             {color: currentTheme.baseColor},
           ]}>
-          {enable ? 'Search by name' : 'Click on Plus Icon to create.'}
+          {'Search by name'}
         </Text>
       </View>
     </Pressable>
@@ -38,7 +41,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 const styles = StyleSheet.create({
   searchQueryContainer: {},
   searchQueryInput: {
-    // borderWidth: 2,
     borderRadius: 8,
     height: 50,
     fontSize: 18,

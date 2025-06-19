@@ -23,14 +23,14 @@ type FilePickerProps = {
   setState: Dispatch<SetStateAction<string | undefined>>;
   callback?: () => void;
   enabled?: boolean;
-  type?: 'image' | 'video' | 'mixed';
+  type?: 'photo' | 'video' | 'mixed';
 };
 const FilePicker: React.FC<FilePickerProps> = ({
   value,
   setState,
   callback,
   enabled = true,
-  type='image',
+  type='photo',
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const getImageFromImageLiberary = async () => {
@@ -48,7 +48,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
     }
 
     const dynamicOptions: {
-      image: {mediaType: MediaType; quality: PhotoQuality};
+      photo: {mediaType: MediaType; quality: PhotoQuality};
       video: {mediaType: MediaType; videoQuality: AndroidVideoOptions};
       mixed: {
         mediaType: MediaType;
@@ -56,7 +56,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
         videoQuality: AndroidVideoOptions;
       };
     } = {
-      image: {
+      photo: {
         mediaType: 'photo',
         quality: 1,
       },
@@ -104,7 +104,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
       await openSettings('application');
     }
     const options: {mediaType: MediaType; quality: PhotoQuality} = {
-      mediaType: 'photo',
+      mediaType: type,
       quality: 1,
     };
     launchCamera(options, res => {
@@ -163,7 +163,7 @@ const FilePicker: React.FC<FilePickerProps> = ({
         <TouchableOpacity
           onPress={() => enabled && getImageFromImageLiberary()}
           style={[styles.getImageBtn, {backgroundColor: currentTheme.bgColor}]}
-          activeOpacity={0.7}>
+          activeOpacity={0.6}>
           <Icon3 name="photo" size={16} color={currentTheme.baseColor} />
           <Text
             style={[styles.getImageBtnText, {color: currentTheme.baseColor}]}>
@@ -173,11 +173,13 @@ const FilePicker: React.FC<FilePickerProps> = ({
         <TouchableOpacity
           onPress={() => enabled && takePhotoWithCamera()}
           style={[styles.getImageBtn, {backgroundColor: currentTheme.bgColor}]}
-          activeOpacity={0.7}>
+          activeOpacity={0.6}>
           <Icon1 name="camera" size={16} color={currentTheme.baseColor} />
           <Text
             style={[styles.getImageBtnText, {color: currentTheme.baseColor}]}>
-            Take Photo
+            {type === "photo" && 'Take Photo'}
+            {type === "video" && 'Shoot Video'}
+            {type === "mixed" && 'Shoot'}
           </Text>
         </TouchableOpacity>
       </View>

@@ -1,4 +1,3 @@
-import {AdminRole} from '../../enums';
 import {UploadPdfToCloudReturnType, UploadPdfToCloudAPIData} from './types.api';
 import {Dispatch, SetStateAction} from 'react';
 import {FetchAPI, handleBooleanState} from './helper/fn';

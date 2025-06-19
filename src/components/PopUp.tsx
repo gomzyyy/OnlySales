@@ -24,6 +24,7 @@ type PopupContainerProps = {
   bgcolor?: string;
   padding?: boolean;
   opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
+  usepadding?: boolean;
 } & ModalProps;
 
 const PopupContainer: React.FC<PopupContainerProps> = ({
@@ -33,6 +34,7 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
   bgcolor = `rgba(0,0,0,${'0.5'})`,
   padding = false,
   opacity = 0.6,
+  usepadding = true,
   ...props
 }): React.JSX.Element => {
   const childScale = useSharedValue(0);
@@ -66,7 +68,10 @@ const PopupContainer: React.FC<PopupContainerProps> = ({
       <Pressable
         style={[
           styles.childContainer,
-          {backgroundColor: bgcolor, paddingHorizontal: padding ? 20 : 10},
+          {
+            backgroundColor: bgcolor,
+            paddingHorizontal: usepadding ? (padding ? 20 : 10) : 0,
+          },
         ]}
         onPress={closeContainer}>
         <Pressable onPress={e => e.stopPropagation()}>
@@ -110,8 +115,7 @@ const Prompt: React.FC<CustomPromptProps> = ({
         style={[
           styles.InnerContainer,
           {backgroundColor: currentTheme.contrastColor},
-        ]}>
-      </View>
+        ]}></View>
     </PopupContainer>
   );
 };

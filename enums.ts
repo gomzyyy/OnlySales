@@ -12,10 +12,11 @@ export enum BusinessType {
   OTHER = 'Other',
 }
 export enum CurrencyType {
-  INR = 'INR',
+  INR = '₹',
 }
 export enum MeasurementType {
   SUBSCRIPTION = 'Subscription',
+  SERVICE = 'Service',
   ML = 'Ml',
   LITRE = 'Litre',
   KILOGRAM = 'Kilogram',
@@ -41,7 +42,12 @@ export enum AdminRole {
   EMPLOYEE = 'Employee',
   ADMIN = 'Admin',
 }
-
+export enum ValidRoles {
+  OWNER = 'Owner',
+  PARNER = 'Partner',
+  EMPLOYEE = 'Employee',
+  CUSTOMER = 'Customer',
+}
 export enum LocationRef {
   OWNER = 'Owner',
   PARTNER = 'Partner',
@@ -267,19 +273,20 @@ export enum OrderStatus {
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   FAILED = 'FAILED',
+  WAITING = 'WAITING',
 }
 
 export enum PaymentMethods {
-  CASH = "CASH",
-  UPI = "UPI",
-  CARD = "CARD",
-  NETBANKING = "NETBANKING",
-  WALLET = "WALLET",
+  CASH = 'CASH',
+  UPI = 'UPI',
+  CARD = 'CARD',
+  NETBANKING = 'NETBANKING',
+  WALLET = 'WALLET',
   // Add more as needed
 }
 
 export enum AcceptedByType {
-  OWNER = "owner",
-  PARTNER = "partner",
-  EMPLOYEE = "employee",
+  OWNER = 'owner',
+  PARTNER = 'partner',
+  EMPLOYEE = 'employee',
 }

@@ -14,13 +14,15 @@ export const getOwnerAPI = async (
       reqType: 'r',
       route: '/get/owner/info',
       method: 'GET',
+      secure: false,
     });
     return (await fetching.json()) as GetOwnerAPIReturnType;
   } catch (error) {
     return {
-      message: error instanceof Error
-      ? error.message
-      : 'Internal server Error occured while fetching',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Internal server Error occured while fetching',
       data: {
         owner: undefined,
       },

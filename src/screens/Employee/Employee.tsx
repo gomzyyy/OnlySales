@@ -2,23 +2,18 @@ import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
   TextInput,
-  TouchableOpacity,
   Button,
   KeyboardAvoidingView,
   Platform,
   Image,
-  DimensionValue,
-  FlexAlignType,
 } from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {Employee as EmployeeType, Partner} from '../../../types';
 import Header from '../../components/Header';
 import {useAnalytics, useHaptics, useTheme} from '../../hooks';
 import {colors} from '../../utils/Constants';
-import EmployementStatusPicker from '../../components/EmployementStatusPicker';
 import {modifyUserName, showToast} from '../../service/fn';
 import {isNumber} from '../../service/test';
 import {AdminRole, EmploymentStatus, Shift} from '../../../enums';
@@ -28,7 +23,6 @@ import SlideUpContainer from '../../components/SlideUpContainer';
 import FilePicker from '../../components/FilePicker';
 import {Pressable, ScrollView} from 'react-native-gesture-handler';
 const NoProfile = require('../../assets/images/no-profile.jpg');
-import Icon from 'react-native-vector-icons/AntDesign';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -36,6 +30,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Picker from '../../customComponents/Picker';
+import EmployeeProfileImage from './components/EmployeeProfileImage';
 
 type EmployeeParams = {
   employeeId: EmployeeType['_id'];
@@ -241,7 +236,7 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.parent}
+      style={[styles.parent,{backgroundColor:currentTheme.contrastColor}]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Header
         name={employee.name}
@@ -272,34 +267,12 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
         </View>
 
         <View style={styles.formContainer}>
-          <Pressable
-            style={styles.profileImageContainer}
-            onPress={handleOpenImagePicker}>
-            <Image
-              source={
-                image && image.trim().length !== 0 ? {uri: image} : NoProfile
-              }
-              style={styles.profileImage}
-            />
-          </Pressable>
-
-          {image && image.trim().length !== 0 ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
-              <Button title="Remove" onPress={() => setImage(undefined)} />
-            </View>
-          ) : (
-            <View
-              style={{
-                paddingHorizontal: 40,
-                alignItems: 'center',
-              }}>
-              <Button
-                title="Choose Profile Image"
-                onPress={() => setOpenImagePicker(true)}
-              />
-            </View>
-          )}
+          <EmployeeProfileImage
+            image={image}
+            onChooseImagePress={() => setOpenImagePicker(true)}
+            onImagePress={handleOpenImagePicker}
+            onRemovePress={() => setImage(undefined)}
+          />
 
           <View style={styles.inputTitleContainer}>
             <Text
@@ -423,7 +396,7 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
             </Text>
 
             {editable && (
-               <Picker
+              <Picker
                 value={status}
                 setState={setStatus}
                 enabled={editable}
@@ -568,7 +541,7 @@ const Employee: React.FC<EmployeeProps> = ({}): React.JSX.Element => {
               setState={setImage}
               callback={handleCloseImagePicker}
               enabled={editable}
-              type="image"
+              type="photo"
             />
           </SlideUpContainer>
         </View>

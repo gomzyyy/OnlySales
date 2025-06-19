@@ -8,14 +8,15 @@ const HeaderIcon = ({
   label,
   show = true,
   showAlertDot = false,
-  alertCount,
+  alertContent,
 }: {
   children: ReactNode;
   label?: string;
   show?: boolean;
   showAlertDot?: boolean;
-  alertCount?: number;
+  alertContent?: number;
 }) => {
+  console.log(alertContent)
   const {currentTheme} = useTheme();
   if (show) {
     return (
@@ -52,8 +53,8 @@ const HeaderIcon = ({
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {typeof alertCount === 'number' && (
-              <Text style={{fontSize: 6,fontWeight:'600', color: '#fff'}}>{alertCount}</Text>
+            {typeof alertContent === 'number' && (
+              <Text style={{fontSize: 6,fontWeight:'600', color: '#fff'}}>{alertContent}</Text>
             )}
           </View>
         )}

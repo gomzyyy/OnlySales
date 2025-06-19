@@ -7,9 +7,11 @@ import {PersistGate} from 'redux-persist/integration/react';
 import UserSliceFunction from './slices/business';
 import DeviceInfoSliceFunction from './slices/device';
 import CacheSliceFunction from './slices/cache';
+import EventSliceFunction from './slices/events';
+import NoteSliceFunction from './slices/notes';
 
 const persistConfig = {
-  key: 'eregaovrotbWwfetr',
+  key: 'eregavkwrnovrhvoCWBotEGUowebWwfetr',
   storage: mmkv,
   blacklist: ['deviceInfo'],
 };
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
   appData: UserSliceFunction,
   deviceInfo: DeviceInfoSliceFunction,
   cache: CacheSliceFunction,
+  events: EventSliceFunction,
+  notes: NoteSliceFunction,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

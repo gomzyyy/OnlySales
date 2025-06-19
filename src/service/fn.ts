@@ -138,7 +138,7 @@ export const formatNumber = (x: string | number): string => {
   if (num >= 1_000_000_000) {
     return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
   } else if (num >= 10_00_00_000) {
-    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M'; // fallback for large numbers not in billions
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
   } else if (num >= 1_000_000) {
     return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
   } else if (num >= 100_000) {
