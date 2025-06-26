@@ -12,9 +12,7 @@ export const createEmployeeAPI = async (
       const { createdBy, creatorId, role } = data.query;
       const {
         name,//
-        userId,//
         phoneNumber,//
-        password,//
         position,//
         positionDescription,
         email,//
@@ -36,8 +34,6 @@ export const createEmployeeAPI = async (
       const formData = new FormData();
   
       formData.append('name', name);
-      formData.append('userId', userId);
-      formData.append('password', password);
       formData.append('position', position);
       formData.append('email', email);
       formData.append('gender', gender);

@@ -13,12 +13,13 @@ import {TextInput} from 'react-native-gesture-handler';
 import {Product} from '../../../../types';
 import {Picker} from '@react-native-picker/picker';
 import {MeasurementType} from '../../../../enums';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../../store/store';
-import {Confirm, showToast} from '../../../service/fn';
-import {useTheme} from '../../../hooks/index';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../../../store/store';
+import {compareStrings, Confirm, showToast} from '../../../service/fn';
+import {useStorage, useTheme} from '../../../hooks/index';
 import {useTranslation} from 'react-i18next';
 import {global} from '../../../styles/global';
+import {UpdateProductAPIData} from '../../../api/types.api';
 
 type EditProductProps = {
   product: Product;
@@ -30,10 +31,9 @@ const EditProduct: React.FC<EditProductProps> = ({
   close,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
   const {t} = useTranslation('inventory');
-
-  // Store as string for controlled input
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const {product:p} =useStorage()
   const [name, setName] = useState<string>(product.name);
   const [price, setPrice] = useState<string>(product.basePrice.toString());
   const [discountedPrice, setDiscountedPrice] = useState<string>(
@@ -56,18 +56,26 @@ const EditProduct: React.FC<EditProductProps> = ({
       const res = await Confirm(t('i_confirm_zero_price'));
       if (!res) return;
     }
-
-    // const data = {
-    //   name: name.length !== 0 ? name : product.name,
-    //   basePrice: Number(price),
-    //   discountedPrice: Number(discountedPrice),
-    //   quantity: Number(quantity),
-    //   measurementType,
-    //   createdAt: product.createdAt,
-    //   updatedAt: Date.now().toString(),
-    //   totalSold: product.totalSold,
-    // };
-
+    const data: UpdateProductAPIData = {
+      query: {
+        role: user.role,
+        productId: product._id,
+        oid: product.businessOwner,
+      },
+      body: {
+          name: compareStrings(name, product.name),
+      basePrice: compareStrings(price, product.basePrice.toString()),
+      discountedPrice: compareStrings(
+        discountedPrice,
+        product.discountedPrice?.toString() ?? '0',
+      ),
+      quantity: compareStrings(quantity,product.quantity.toString()),
+      measurementType,
+      },
+      media:{}
+    };
+const res =await p.update(data);
+console.log(res)
     close();
     showToast({
       type: 'success',
@@ -86,7 +94,7 @@ const EditProduct: React.FC<EditProductProps> = ({
         {t('i_header_title')}: {product.name}
       </Text>
       <ScrollView
-        style={{flex: 1,marginBottom:10}}
+        style={{flex: 1, marginBottom: 10}}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>

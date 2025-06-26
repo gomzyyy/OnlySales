@@ -195,7 +195,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               value={image}
               setState={setImage}
               callback={closeImagePicker}
-              type='image'
+              type='photo'
             />
           </SlideUpContainer>
         </View>

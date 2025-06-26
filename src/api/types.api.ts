@@ -7,6 +7,7 @@ import {
   PaymentHistoryReferenceType,
   PaymentState,
   ProductType,
+  ServicePointStatus,
 } from '../../enums';
 import {
   Customer,
@@ -24,6 +25,7 @@ import {
   Event,
   Order,
   PromoCorouselContext,
+  ServicePoint,
 } from '../../types';
 
 export interface APIReturnType {
@@ -293,9 +295,7 @@ export interface CreateEmployeeAPIData {
   };
   body: {
     name: string;
-    userId: string;
     phoneNumber?: string;
-    password: string;
     position: string;
     positionDescription?: string;
     email: string;
@@ -306,7 +306,7 @@ export interface CreateEmployeeAPIData {
     salary: number;
     status: string;
     statusDescription?: string;
-    skills?: string[]; // assuming it's an array of skills
+    skills?: string[];
     shift: string;
     shiftDescription?: string;
     reportsToModel?: string;
@@ -486,4 +486,23 @@ export interface GetPromoForCorouselAPIReturnType extends APIReturnType {
 data:{
   context?:PromoCorouselContext
 }
+}
+export interface CreateServicePointAPIData {
+  query:{role:AdminRole,oid:CommonProps['_id']},
+  body:{pointName:string, metadata:Record<string,string>}
+}
+export interface CreateServicePointAPIReturnType extends APIReturnType {}
+export interface UpdateServicePointAPIData {
+  query:{role:AdminRole,oid:CommonProps['_id'],spid:CommonProps['_id']},
+  body:{qrUrl?:string, pointName?:string, metadata?:Record<string,string>,status?:ServicePointStatus}
+}
+export interface UpdateServicePointAPIReturnType extends APIReturnType {}
+
+export interface GetAllServicePointsAPIData {
+  query:{role:AdminRole,oid:CommonProps['_id']},
+}
+export interface GetAllServicePointsAPIReturnType extends APIReturnType {
+  data:{
+    sps?:ServicePoint[]
+  }
 }

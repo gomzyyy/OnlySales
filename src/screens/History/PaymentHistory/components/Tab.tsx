@@ -19,6 +19,7 @@ import {RootState} from '../../../../../store/store';
 import {getSinglePaymentHistory} from '../../../../api/api.history';
 import SoldProductPaymentDetailContainer from './SoldProductPaymentDetailContainer';
 import {useCache} from '../../../../hooks';
+import LinearGradient from 'react-native-linear-gradient';
 
 type TabProps = {
   i: PaymentHistory;
@@ -98,17 +99,19 @@ const Tab: React.FC<TabProps> = ({
     <LongPressEnabled
       longPressAction={() => {}}
       longPressCanceledAction={getPaymentHistory}>
-      <View
+     <LinearGradient
+                 colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
+                 start={{x: 0, y: 0}}
         style={[
           styles.container,
           {
             marginBottom: 8,
-            backgroundColor: currentTheme.tab.bg,
+             borderLeftColor: currentTheme.baseColor,
           },
         ]}>
         <View style={styles.infoContainer}>
-          <View style={{flexDirection: 'row', gap: 6, alignItems: 'center'}}>
-            <Text style={[styles.title, {color: currentTheme.tab.label}]}>
+          <View style={{flexDirection: 'row', gap: 2, alignItems: 'center'}}>
+            <Text numberOfLines={1} style={[styles.title, {color: currentTheme.tab.label}]}>
               {i.title}
             </Text>
             {i.paymentType === PaymentHistoryReferenceType.SOLD_PRODUCT && (
@@ -119,7 +122,7 @@ const Tab: React.FC<TabProps> = ({
                   backgroundColor: currentTheme.baseColor,
                   borderRadius: 4,
                 }}>
-                <Text style={{color: currentTheme.contrastColor, fontSize: 12}}>
+                <Text style={{color: currentTheme.contrastColor, fontSize: 8,fontWeight:'600'}}>
                   Sold Product
                 </Text>
               </View>
@@ -129,7 +132,7 @@ const Tab: React.FC<TabProps> = ({
           <Text
             textBreakStrategy="highQuality"
             numberOfLines={1}
-            style={[styles.shortnote, {color: currentTheme.tab.label}]}>
+            style={[styles.shortnote, {color: currentTheme.baseColor}]}>
             {i.shortNote}
           </Text>
         </View>
@@ -150,10 +153,7 @@ const Tab: React.FC<TabProps> = ({
             }${i.amount.toFixed(2)}`}
           </Text>
         </View>
-        <View style={styles.iconContainer}>
-          <Icon name="right" color={currentTheme.tab.icon} size={22} />
-        </View>
-      </View>
+      </LinearGradient>
       {openSoldProductHistoryDetails && (
         <SlideUpContainer
           open={openSoldProductHistoryDetails}
@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 8,
     gap: 10,
+     borderLeftWidth: 2,
   },
   absolute: {
     position: 'absolute',
@@ -183,11 +183,13 @@ const styles = StyleSheet.create({
   infoContainer: {flex: 7, gap: 4},
   title: {
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '600',
+    maxWidth:'60%'
   },
   shortnote: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '400',
+    maxWidth:'80%'
   },
   paymentDetailsContainer: {
     alignItems: 'flex-end',
@@ -198,7 +200,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  iconContainer: {alignItems: 'flex-end', justifyContent: 'center', flex: 1},
 });
 
 export default Tab;

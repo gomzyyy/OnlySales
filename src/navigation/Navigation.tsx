@@ -36,7 +36,6 @@ import VerifyPassword from '../screens/Auth/Login/screens/VerifyUserPassword';
 import SetPassword from '../screens/Auth/SignUp/screens/SetPassword';
 import RequestOTPEmail from '../screens/Auth/Validate/Email/RequestOTPEmail';
 import VerifyEmail from '../screens/Auth/Validate/Email/VerifyEmail';
-import EMICalculator from '../screens/Tools/EMICalculator/EMICalculator';
 import {colors} from '../utils/Constants';
 import {useNetInfo} from '@react-native-community/netinfo';
 import Animated, {
@@ -56,6 +55,7 @@ import TermsAndConditions from '../screens/Info/TermsAndConditions';
 import {setLockedState} from '../../store/slices/business';
 import Events from '../screens/Events/Events';
 import Orders from '../screens/Orders/Orders';
+import ServicePoints from '../screens/ServicePoints/ServicePoints';
 // import Orders from '../screens/Orders/Orders';
 
 const stack = createNativeStackNavigator();
@@ -128,6 +128,11 @@ const StackNav = () => {
         component={Login}
       />
       <stack.Screen
+        name="ServicePoints"
+        options={{gestureEnabled: false}}
+        component={ServicePoints}
+      />
+      <stack.Screen
         name="SignUp"
         options={{gestureEnabled: false}}
         component={SignUp}
@@ -166,11 +171,6 @@ const StackNav = () => {
         name="LoginOptions"
         options={{gestureEnabled: false}}
         component={LoginOptions}
-      />
-      <stack.Screen
-        name="EMICalculator"
-        options={{gestureEnabled: false}}
-        component={EMICalculator}
       />
       <stack.Screen
         name="ReservedKeywords"

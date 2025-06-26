@@ -15,35 +15,50 @@ import {deviceHeight} from '../utils/Constants';
 import {modifyUserName, showToast} from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {useHaptics, useTheme} from '../hooks/index';
+import {useAnalytics, useHaptics, useTheme} from '../hooks/index';
 import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
 import {AdminRole} from '../../enums';
 import {Employee, Partner} from '../../types';
 import {useStorage} from '../hooks';
-import { global } from '../styles/global';
+import {global} from '../styles/global';
+import {CreateServicePointAPIData} from '../api/types.api';
 
 type CreateCustomerProps = {
   callback: () => void;
 };
 
-const CreateCustomer: React.FC<CreateCustomerProps> = ({
+const CreateServicePoint: React.FC<CreateCustomerProps> = ({
   callback,
 }): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
   const {warning} = useHaptics();
   const {currentTheme} = useTheme();
- const {customer} = useStorage()
+  const user = useSelector((s: RootState) => s.appData.user)!;
+  const {owner} = useAnalytics();
+  const {user: u} = useStorage();
   const {role, _id} = useSelector((s: RootState) => s.appData.user)!;
-  const [name, setName] = useState<string>('');
-  const [phoneNumber, setphoneNumber] = useState<string>('');
-  const [image, setImage] = useState<string | undefined>();
-  const [address, setAddress] = useState<string>('');
-  const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
+  const [spName, setSpName] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [metaDataFields, setMetaDataFields] = useState<
+    {key: string; value: string}[]
+  >([{key: '', value: ''}]);
+
+  const handleAddField = () => {
+    setMetaDataFields(prev => [...prev, {key: '', value: ''}]);
+  };
+
+  const handleMetaChange = (
+    index: number,
+    field: 'key' | 'value',
+    text: string,
+  ) => {
+    const updated = [...metaDataFields];
+    updated[index][field] = text;
+    setMetaDataFields(updated);
+  };
 
   const handleSaveBtn = async () => {
-    if (name.trim().length === 0) {
+    if (spName.trim().length === 0) {
       warning();
       showToast({
         type: 'info',
@@ -52,54 +67,39 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       });
       return;
     }
-    const customerData = {
-      name,
-      phoneNumber,
-      address,
-      businessOwnerId:
-        (role === AdminRole.OWNER && _id) ||
-        (role === AdminRole.PARTNER &&
-          useSelector((s: RootState) => s.appData.user as Partner)!
-            .businessOwner._id) ||
-        (role === AdminRole.EMPLOYEE &&
-          useSelector((s: RootState) => s.appData.user as Employee)!
-            .businessOwner._id) ||
-        '',
-    };
-    const res = await customer.create(
-      {
-        query: {role, createdBy: role, creatorId: _id},
-        body: customerData,
-        media: {
-          image,
-        },
+
+    const metaObject: Record<string, string> = {};
+    metaDataFields.forEach(({key, value}) => {
+      if (key && value) {
+        metaObject[key] = value;
+      }
+    });
+
+    const spData: CreateServicePointAPIData = {
+      query: {oid: owner._id, role: user.role},
+      body: {
+        pointName: spName.trim(),
+        metadata: metaObject,
       },
+    };
+
+    const res = await u.createServicePoint(
+      spData,
       setLoading,
     );
-    if (res.success && res.data.customer) {
-        showToast({
-          type: 'success',
-          text1: res.message,
-          text2: 'Pleas add products to create Udhars.',
-        });
-        callback();
-        return;
+    if (res.success) {
+      showToast({
+        type: 'success',
+        text1: res.message,
+      });
+      callback();
+      return;
     }
     showToast({
       type: 'error',
       text1: res.message,
-      text2: 'Pleas add products to create Udhars.',
     });
     callback();
-  };
-
-  const cancelImagePicker = () => {
-    setImage(undefined);
-    setOpenImagePicker(false);
-  };
-
-  const closeImagePicker = () => {
-    setOpenImagePicker(false);
   };
 
   return (
@@ -110,75 +110,80 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
       ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={[styles.formTitle, {color: currentTheme.modal.title}]}>
-        Create Customer
+        Add Service point
       </Text>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Customer name
+              Give it a name.
             </Text>
             <TextInput
-              value={name}
-              onChangeText={v => setName(modifyUserName(v))}
+              value={spName}
+              onChangeText={setSpName}
               style={[
                 global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Enter name"
+              placeholder="point name"
               placeholderTextColor={'grey'}
             />
           </View>
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Customer phone number
-            </Text>
-            <TextInput
-              value={phoneNumber}
-              onChangeText={setphoneNumber}
-              style={[
-                global.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter phone number"
-              placeholderTextColor={'grey'}
-            />
-          </View>
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Customer address
-            </Text>
-            <TextInput
-              value={address}
-              onChangeText={setAddress}
-              style={[
-                global.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter address"
-              placeholderTextColor={'grey'}
-            />
-          </View>
-          {image && image.trim().length !== 0 ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{flex: 1}}>{`${image.slice(0, 40)}...`}</Text>
-              <Button title="Remove" onPress={() => setImage(undefined)} />
-            </View>
-          ) : (
+
+          <Text style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
+            {'Optional Info'}
+          </Text>
+
+          {metaDataFields.map((field, index) => (
             <View
-              style={{
-                paddingHorizontal: 40,
-                alignItems: 'center',
-              }}>
-              <Button
-                title="Choose Image"
-                onPress={() => setOpenImagePicker(true)}
+              key={index}
+              style={{flexDirection: 'row', gap: 6, marginBottom: 8}}>
+              <TextInput
+                placeholder="e.g., table no."
+                value={field.key}
+                onChangeText={text => handleMetaChange(index, 'key', text)}
+                style={[
+                  global.inputText,
+                  {
+                    flex: 1,
+                    borderColor: currentTheme.modal.inputBorder,
+                  },
+                ]}
+                placeholderTextColor={'grey'}
+              />
+              <TextInput
+                placeholder="e.g., 12"
+                value={field.value}
+                onChangeText={text => handleMetaChange(index, 'value', text)}
+                style={[
+                  global.inputText,
+                  {
+                    flex: 1,
+                    borderColor: currentTheme.modal.inputBorder,
+                  },
+                ]}
+                placeholderTextColor={'grey'}
               />
             </View>
-          )}
+          ))}
+
+          <TouchableOpacity
+            onPress={handleAddField}
+            activeOpacity={0.8}
+            style={{
+              alignSelf: 'flex-start',
+            }}>
+            <Text
+              style={{
+                color: currentTheme.baseColor,
+                fontWeight: '600',
+                fontSize: 14,
+              }}>
+              + Add more fields
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={[
               styles.saveButton,
@@ -216,18 +221,6 @@ const CreateCustomer: React.FC<CreateCustomerProps> = ({
               </Text>
             )}
           </TouchableOpacity>
-          <SlideUpContainer
-            opacity={0.2}
-            open={openImagePicker}
-            close={cancelImagePicker}
-            height={220}>
-            <FilePicker
-              value={image}
-              setState={setImage}
-              callback={closeImagePicker}
-              type="photo"
-            />
-          </SlideUpContainer>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -238,7 +231,7 @@ const styles = StyleSheet.create({
   createCustomerContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    height: deviceHeight * 0.58,
+    height: deviceHeight * 0.46,
     borderRadius: 20,
     marginBottom: 10,
     elevation: 30,
@@ -257,7 +250,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   inputLabel: {
-   paddingLeft: 8,
+    paddingLeft: 8,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -279,4 +272,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateCustomer;
+export default CreateServicePoint;

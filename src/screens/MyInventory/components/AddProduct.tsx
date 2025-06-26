@@ -355,7 +355,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
             value={image}
             setState={setImage}
             callback={closeImagePicker}
-            type="image"
+            type="photo"
           />
         </SlideUpContainer>
       </ScrollView>

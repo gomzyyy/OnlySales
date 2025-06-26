@@ -434,7 +434,7 @@ const Customer = () => {
         close={handleCloseSINGLESoldProductViewer}
         height={deviceHeight * 0.5}>
         <InvoicePDFViewer
-          soldProducts={customer.buyedProducts}
+          soldProducts={unpaidProductsByDate}
           customer={customer}
           closeViewer={() => setOpenSoldProductPDFView(false)}
         />

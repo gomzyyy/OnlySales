@@ -7,14 +7,12 @@ import Geolocation from '@react-native-community/geolocation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AppDispatch, RootState} from '../../../store/store';
 import {prepareNavigation, resetAndNavigate} from '../../utils/nagivationUtils';
-import {validateTokenAPI} from '../../api/api.auth';
 import {useStorage, useTheme} from '../../hooks';
 import {setLockedState, setUser} from '../../../store/slices/business';
 import {getFCMToken} from '../../api/fcm/fn';
 import {RequestUXPermission} from '../../service/permissions';
 import {updateUserLocationAPI} from '../../api/api.ucontrol';
 import LinearGradient from 'react-native-linear-gradient';
-import {showToast} from '../../service/fn';
 const COHERE_LOGO = require('../../assets/images/Cohere-Logo.png');
 const ONLYSALES_LOGO = require('../../assets/images/ONLYSALES_LOGO.png');
 
@@ -38,7 +36,6 @@ const SplashScreen = () => {
         prepareNavigation();
         if (user && user._id) {
           const res = await local.updateUser();
-          console.log(res);
           if (res.success && res.data && res.data.user) {
             if (
               res.data.user.isLocked &&
@@ -64,7 +61,6 @@ const SplashScreen = () => {
                       periodicLongitude: longitude,
                     },
                   };
-                  console.log(locationData);
                   await updateUserLocationAPI(locationData, setLoading);
                 }
               });

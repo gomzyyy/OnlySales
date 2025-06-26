@@ -7,11 +7,12 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {Order, Product} from '../../../../types';
-import {useTheme} from '../../../hooks';
+import {useStorage, useTheme} from '../../../hooks';
 import {colors, deviceHeight} from '../../../utils/Constants';
-import {OrderStatus} from '../../../../enums';
+import {OrderStatus, ProductType} from '../../../../enums';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {updateOrderStatusAPI} from '../../../api/api.orders';
@@ -19,14 +20,19 @@ import {sellProductAPI} from '../../../api/api.soldproduct';
 import {showToast} from '../../../service/fn';
 import {validateTokenAPI} from '../../../api/api.auth';
 import {setUser} from '../../../../store/slices/business';
+import {handleOrders} from '../../../../store/slices/events';
 const NoPhoto = require('../../../assets/images/no-profile.jpg');
 
 type Props = {
   order: Order;
+  close?: () => void;
+  onOrderStateChange: () => void | Promise<void>;
 };
 
-const OrderDetailsContainer: React.FC<Props> = ({order}) => {
+const OrderDetailsContainer: React.FC<Props> = ({order, close}) => {
+  const d = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
+  const {getOrders} = useStorage().user;
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
   const [loading, setLoading] = useState(false);
@@ -40,83 +46,124 @@ const OrderDetailsContainer: React.FC<Props> = ({order}) => {
   }) => (
     <View style={styles.productRow}>
       <Text style={styles.label}>{item.product.name}</Text>
-      <Text style={styles.value}>Qty: {item.count}</Text>
+      <Text style={styles.value}>
+        {item.product.productType === ProductType.PHYSICAL
+          ? `Qty: ${item.count * item.product.quantity}`
+          : `${item.count * item.product.quantity} Service(s)`}
+      </Text>
     </View>
   );
-  const CreateSoldProductCase = [OrderStatus.ACCEPTED];
-  const changeStatus = async (updatedStatus: OrderStatus) => {
-    let atLeastOneSuccess = false;
-    let spIds: string[] = [];
+
+  const fetchOrders = async () => {
     const data = {
       query: {
         role: user.role,
-        updatedStatus,
-      },
-      body: {
-        order: order._id,
+        oid: order.ownerId,
       },
     };
-    const res = await updateOrderStatusAPI(data, setLoading);
-    if (res.success && CreateSoldProductCase.includes(updatedStatus)) {
-      try {
-        for (const p of order.products) {
-          if (p.product && p.count > 0) {
-            const data = {
-              query: {
-                buyerId: order.orderedBy._id,
-                sellerId: user._id,
-                role: user.role,
-                orderStatus: OrderStatus.COMPLETED,
-              },
-              body: {productId: p.product._id, count: p.count},
-            };
-            const res = await sellProductAPI(data);
-            if (res.success) {
-              atLeastOneSuccess = true;
-              const soldId = res.data?.soldProduct?._id;
-              if (soldId) {
-                spIds.push(soldId);
-              }
-            } else {
-              showToast({
-                type: 'error',
-                text1: res.message,
-              });
-            }
-          } else {
-            showToast({
-              type: 'error',
-              text1: res.message,
-            });
-          }
-        }
-        if (atLeastOneSuccess) {
-          const userRes = await validateTokenAPI({role: user.role});
-          if (userRes.success && userRes.data?.user) {
-            dispatch(setUser(userRes.data.user));
-          }
-          close?.();
-          showToast({
-            type: 'success',
-            text1: 'Order created successfully.',
-          });
-        } else {
-          showToast({
-            type: 'info',
-            text1: 'Unknown error occured while accepting order.',
-          });
-        }
-      } catch (err) {
-        showToast({
-          type: 'error',
-          text1: 'Unknown error occured while accepting order.',
-        });
-      } finally {
-        setLoading(false);
-      }
+    const res = await getOrders(data, setLoading);
+    if (res.success && res.data && res.data.orders) {
+      d(handleOrders(res.data.orders));
     }
   };
 
+  const CreateSoldProductCase = [OrderStatus.ACCEPTED];
+  const changeStatus = async (updatedStatus: OrderStatus) => {
+    setLoading(true);
+    const spIds: string[] = [];
+    let atLeastOneSuccess = false;
+    try {
+      const res = await updateOrderStatusAPI(
+        {
+          query: {
+            role: user.role,
+            updatedStatus,
+          },
+          body: {
+            order: order._id,
+          },
+        },
+        setLoading,
+      );
+
+      if (!res.success) {
+        showToast({
+          type: 'error',
+          text1: res.message || 'Failed to update order status.',
+        });
+        return;
+      }
+      if (CreateSoldProductCase.includes(updatedStatus)) {
+        for (const p of order.products) {
+          if (!p.product || p.count <= 0) continue;
+
+          const sellData = {
+            query: {
+              buyerId: order.orderedBy._id,
+              sellerId: user._id,
+              role: user.role,
+              orderStatus: OrderStatus.COMPLETED,
+            },
+            body: {
+              productId: p.product._id,
+              count: p.count,
+            },
+          };
+          const sellRes = await sellProductAPI(sellData);
+          if (sellRes.success) {
+            atLeastOneSuccess = true;
+            const soldId = sellRes.data?.soldProduct?._id;
+            if (soldId) spIds.push(soldId);
+          } else {
+            console.warn('Failed to sell product:', p.product._id);
+          }
+        }
+        if (!atLeastOneSuccess) {
+          showToast({
+            type: 'info',
+            text1: 'Could not register sold products for this order.',
+          });
+          return;
+        }
+        showToast({
+          type: 'success',
+          text1: 'Order status updated successfully.',
+        });
+      } else {
+        await fetchOrders();
+        showToast({
+          type: 'success',
+          text1: 'Order status updated successfully.',
+        });
+      }
+      close && close();
+    } catch (error) {
+      showToast({
+        type: 'error',
+        text1: 'An unexpected error occurred while updating order.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case 'ACCEPTED':
+        return 'green';
+      case 'COMPLETED':
+        return 'green';
+      case 'REJECTED':
+        return 'red';
+      case 'WAITING':
+        return 'orange';
+      case 'FAILED':
+        return 'red';
+      case 'PENDING':
+        return 'orange';
+      default:
+        return '#666';
+    }
+  };
   return (
     <View style={[styles.container, {backgroundColor: currentTheme.bgColor}]}>
       <ScrollView style={{flex: 1, borderRadius: 16}} nestedScrollEnabled>
@@ -142,7 +189,6 @@ const OrderDetailsContainer: React.FC<Props> = ({order}) => {
           </View>
         </View>
 
-        {/* Order Info */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Order Info</Text>
           <Text style={styles.infoRow}>
@@ -155,7 +201,13 @@ const OrderDetailsContainer: React.FC<Props> = ({order}) => {
           </Text>
           <Text style={styles.infoRow}>
             <Text style={styles.label}>Status: </Text>
-            {order.orderStatus || 'N/A'}
+            <Text
+              style={{
+                color: getStatusColor(order.orderStatus || OrderStatus.PENDING),
+                fontWeight: '600',
+              }}>
+              {order.orderStatus || 'N/A'}
+            </Text>
           </Text>
           <Text style={styles.infoRow}>
             <Text style={styles.label}>Payment Method: </Text>
@@ -177,10 +229,6 @@ const OrderDetailsContainer: React.FC<Props> = ({order}) => {
               {new Date(order.deliveredAt).toLocaleString()}
             </Text>
           )}
-          <Text style={styles.infoRow}>
-            <Text style={styles.label}>Max Life (in hrs): </Text>
-            {order.maxLife}
-          </Text>
           {order.expiresAt && (
             <Text style={styles.infoRow}>
               <Text style={styles.label}>Expires At: </Text>
@@ -241,68 +289,97 @@ const OrderDetailsContainer: React.FC<Props> = ({order}) => {
           justifyContent: 'space-between',
           marginTop: 10,
         }}>
-        <TouchableOpacity
-          style={{
-            paddingVertical: 12,
-            backgroundColor: colors.oliveGreen,
-            paddingHorizontal: 6,
-            borderRadius: 12,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => changeStatus(OrderStatus.ACCEPTED)}
-          activeOpacity={0.6}>
-          <Text
-            style={{
-              fontWeight: '600',
-              fontSize: 16,
-              color: currentTheme.contrastColor,
-            }}>
-            Accept Order
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            paddingVertical: 12,
-            backgroundColor: colors.yellow,
-            paddingHorizontal: 6,
-            borderRadius: 12,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => changeStatus(OrderStatus.WAITING)}
-          activeOpacity={0.6}>
-          <Text
-            style={{
-              fontWeight: '600',
-              fontSize: 16,
-              color: '#000',
-            }}>
-            Keep aside
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            paddingVertical: 12,
-            backgroundColor: colors.danger,
-            paddingHorizontal: 6,
-            borderRadius: 12,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => changeStatus(OrderStatus.REJECTED)}
-          activeOpacity={0.6}>
-          <Text
-            style={{
-              fontWeight: '600',
-              fontSize: 16,
-              color: currentTheme.contrastColor,
-            }}>
-            Reject Order
-          </Text>
-        </TouchableOpacity>
+        <ScrollView
+          style={{flex: 1}}
+          contentContainerStyle={{gap: 18, justifyContent: 'space-evenly'}}
+          horizontal
+          showsHorizontalScrollIndicator={false}>
+          {order.orderStatus !== OrderStatus.ACCEPTED ||
+            (OrderStatus.REJECTED && (
+              <ActionButton
+                status={OrderStatus.ACCEPTED}
+                onStatusUpdate={changeStatus}
+                bgcolor={'green'}
+                textcolor={currentTheme.contrastColor}
+                text="Accept?"
+              />
+            ))}
+          {order.orderStatus !== OrderStatus.WAITING ||
+            (OrderStatus.REJECTED && (
+              <ActionButton
+                status={OrderStatus.WAITING}
+                onStatusUpdate={changeStatus}
+                bgcolor={'orange'}
+                textcolor={currentTheme.contrastColor}
+                text="Set to Waiting"
+              />
+            ))}
+          {order.orderStatus !== OrderStatus.READY ||
+            (OrderStatus.REJECTED && (
+              <ActionButton
+                status={OrderStatus.READY}
+                onStatusUpdate={changeStatus}
+                bgcolor={colors.oliveGreen}
+                textcolor={currentTheme.contrastColor}
+                text="Ready?"
+              />
+            ))}
+          {order.orderStatus !== OrderStatus.REJECTED && (
+            <ActionButton
+              status={OrderStatus.REJECTED}
+              onStatusUpdate={changeStatus}
+              bgcolor={colors.danger}
+              textcolor={currentTheme.contrastColor}
+              text="Reject?"
+            />
+          )}
+        </ScrollView>
       </View>
     </View>
+  );
+};
+
+type ButtonProps = {
+  onStatusUpdate: (updatedStatus: OrderStatus) => void | Promise<void>;
+  status: OrderStatus;
+  bgcolor: string;
+  textcolor: string;
+  text: string;
+  loading?: boolean;
+};
+const ActionButton: React.FC<ButtonProps> = ({
+  onStatusUpdate,
+  bgcolor,
+  textcolor,
+  status,
+  text,
+  loading = false,
+}) => {
+  return (
+    <TouchableOpacity
+      style={{
+        paddingVertical: 12,
+        backgroundColor: bgcolor,
+        paddingHorizontal: 6,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+        width: 120,
+      }}
+      onPress={() => onStatusUpdate(status)}
+      disabled={loading}
+      activeOpacity={0.6}>
+      <Text
+        style={{
+          fontWeight: '600',
+          fontSize: 16,
+          color: textcolor,
+        }}
+        numberOfLines={1}>
+        {text}
+      </Text>
+    </TouchableOpacity>
   );
 };
 

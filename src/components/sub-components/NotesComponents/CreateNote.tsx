@@ -5,83 +5,187 @@ import {
   Pressable,
   StyleSheet,
   ScrollView,
+  ToastAndroid,
+  Platform,
+  Alert,
+  Image,
+  FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NotesContainerViewType} from '../../NotesContainer';
 import {useTheme} from '../../../hooks';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import {createNote} from '../../../../store/slices/notes';
-import {Note} from '../../../../types';
+import {
+  createNote,
+  saveToDraft,
+  updateNote,
+} from '../../../../store/slices/notes';
+import {Note, NoteMedia} from '../../../../types';
 import Icon from 'react-native-vector-icons/Feather';
-import Icon1 from 'react-native-vector-icons/Entypo';
 import Icon2 from 'react-native-vector-icons/Ionicons';
+import Icon3 from 'react-native-vector-icons/Entypo';
+import Icon4 from 'react-native-vector-icons/FontAwesome';
 import SlideUpContainer from '../../SlideUpContainer';
 import FilePicker from '../../FilePicker';
+import {colors} from '../../../utils/Constants';
 
 type CreateNoteProps = {
   onRequestChangeState: (state: NotesContainerViewType) => void;
+  title: string;
+  setTitle: (val: string) => void;
+  content: string;
+  setContent: (val: string) => void;
+  hashtags: string[];
+  setHashtags: (tags: string[]) => void;
+  media: NoteMedia[];
+  setMedia: (media: NoteMedia[]) => void;
+  noteId?: Note['_id'];
+  setNoteId: (val: string | undefined) => void;
+  onResetState: () => void;
+  isArchived?: boolean;
+  isFavorite?: boolean;
 };
 
-const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
+const CreateNote: React.FC<CreateNoteProps> = ({
+  onRequestChangeState,
+  title,
+  setTitle,
+  content,
+  setContent,
+  hashtags,
+  setHashtags,
+  media,
+  setMedia,
+  noteId,
+  setNoteId,
+  onResetState,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [hashtags, setHashtags] = useState<string[]>([]);
-  const [media, setMedia] = useState<Note['media']>([]);
   const [newTag, setNewTag] = useState('');
-  const [openDocPicker, setOpenDocPicker] = useState<boolean>(false);
-  const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<string | undefined>();
-   const [openVideoPicker, setOpenVideoPicker] = useState<boolean>(false);
-  const [selectedVideo, setSelectedVideo] = useState<string | undefined>();
+  const [openImagePicker, setOpenImagePicker] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>();
   const {currentTheme} = useTheme();
 
+  const showValidationMessage = (msg: string) => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    } else {
+      Alert.alert('Validation Error', msg);
+    }
+  };
+
   const handleSubmitAction = () => {
-    dispatch(
-      createNote({uid: user._id, note: {title, content, hashtags, media}}),
-    );
-    onRequestChangeState('default');
+    const trimmedTitle = title.trim();
+    const trimmedContent = content.trim();
+
+    if (trimmedTitle.length === 0 || trimmedContent.length === 0) {
+      showValidationMessage('Title and content are required.');
+      return;
+    }
+
+    if (trimmedTitle.length < 4) {
+      showValidationMessage('Title must be at least 4 characters.');
+      return;
+    }
+
+    if (trimmedTitle.length > 64) {
+      showValidationMessage('Title must be under 64 characters.');
+      return;
+    }
+
+    const data = {title, content, hashtags, media};
+
+    if (noteId) {
+      dispatch(updateNote({uid: user._id, noteId, updates: data}));
+      setNoteId(undefined);
+    } else {
+      dispatch(createNote({uid: user._id, note: data}));
+    }
+
+    setTimeout(() => {
+      onResetState();
+      onRequestChangeState('default');
+    }, 0);
   };
 
   const handleAddTag = () => {
     if (newTag.trim() !== '') {
-      setHashtags(prev => [...prev, newTag.trim()]);
+      setHashtags([...hashtags, newTag.trim()]);
       setNewTag('');
     }
   };
+
   const cancelImagePicker = () => {
     setSelectedImage(undefined);
     setOpenImagePicker(false);
   };
 
-  const closeImagePicker = () => {
-    setOpenImagePicker(false);
-  };
-  const cancelVideoPicker = () => {
-    setSelectedImage(undefined);
-    setOpenVideoPicker(false);
+  const closeImagePicker = () => setOpenImagePicker(false);
+
+  const addMediaItem = (item: NoteMedia) => {
+    setMedia([...media, item]);
   };
 
-  const closeVideoPicker = () => {
-    setOpenVideoPicker(false);
-  };
+  useEffect(() => {
+    if (selectedImage) {
+      addMediaItem({type: 'image', url: selectedImage});
+      closeImagePicker();
+      setSelectedImage(undefined);
+    }
+  }, [selectedImage]);
+
+  useEffect(() => {
+    return () => {
+      const hasUnsavedInput =
+        title.trim().length > 0 || content.trim().length > 0;
+      const isValidTitleLength =
+        title.trim().length >= 4 && title.trim().length <= 64;
+      const shouldSaveDraft = hasUnsavedInput && !isValidTitleLength;
+
+      if (shouldSaveDraft) {
+        dispatch(
+          saveToDraft({
+            uid: user._id,
+            note: {
+              title,
+              content,
+              hashtags,
+              media,
+            },
+          }),
+        );
+      }
+    };
+  }, []);
 
   return (
     <View style={[styles.wrapper, {backgroundColor: currentTheme.fadeColor}]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: 16,
+          position: 'absolute',
+          right: 10,
+          top: 10,
+          backgroundColor: currentTheme.bgColor,
+          height:22,
+          width:'auto'
+        }}>
+        <Icon3 size={18} name="archive" color={currentTheme.baseColor} />
+        <Icon4 size={18} name="heart" color={colors.danger} />
+        <Icon4 size={18} name="heart-o" color={currentTheme.baseColor} />
+      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
         <TextInput
           value={title}
           onChangeText={setTitle}
           placeholder="Title"
           placeholderTextColor={currentTheme.baseColor}
-          style={[
-            styles.titleInput,
-            {
-              color: currentTheme.baseColor,
-            },
-          ]}
+          style={[styles.titleInput, {color: currentTheme.baseColor}]}
         />
 
         <TextInput
@@ -98,6 +202,7 @@ const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
             },
           ]}
         />
+
         <View style={styles.tagsSection}>
           <TextInput
             value={newTag}
@@ -119,8 +224,11 @@ const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
 
         <View style={styles.tagList}>
           {hashtags.map((tag, index) => (
-            <View
+            <Pressable
               key={index}
+              onPress={() =>
+                setHashtags(hashtags.filter((_, i) => i !== index))
+              }
               style={[
                 styles.tagItem,
                 {backgroundColor: currentTheme.baseColor + '20'},
@@ -128,9 +236,42 @@ const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
               <Text style={{color: currentTheme.baseColor, fontSize: 13}}>
                 {tag}
               </Text>
-            </View>
+            </Pressable>
           ))}
         </View>
+
+        {media.length > 0 && (
+          <View style={styles.mediaPreviewContainer}>
+            <Text
+              style={{
+                color: currentTheme.baseColor,
+                marginBottom: 6,
+                fontWeight: 'bold',
+              }}>
+              Attached Images:
+            </Text>
+            <FlatList
+              data={media}
+              horizontal
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({item, index}) =>
+                item.type === 'image' ? (
+                  <Pressable
+                    onPress={() =>
+                      setMedia(media.filter((_, i) => i !== index))
+                    }>
+                    <Image
+                      source={{uri: item.url}}
+                      style={styles.previewImage}
+                      resizeMode="cover"
+                    />
+                  </Pressable>
+                ) : null
+              }
+              contentContainerStyle={{gap: 10}}
+            />
+          </View>
+        )}
       </ScrollView>
 
       <View
@@ -138,18 +279,10 @@ const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
           styles.footer,
           {borderTopColor: currentTheme.baseColor + '30'},
         ]}>
-        <Pressable style={styles.footerIcon} onPress={() => setOpenDocPicker(true)}>
-          <Icon1 name="attachment" size={20} color={currentTheme.baseColor} />
-        </Pressable>
         <Pressable
           style={styles.footerIcon}
           onPress={() => setOpenImagePicker(true)}>
           <Icon2 name="image" size={20} color={currentTheme.baseColor} />
-        </Pressable>
-        <Pressable
-          style={styles.footerIcon}
-          onPress={() => setOpenVideoPicker(true)}>
-          <Icon2 name="videocam" size={20} color={currentTheme.baseColor} />
         </Pressable>
         <Pressable
           style={[styles.saveBtn, {backgroundColor: currentTheme.baseColor}]}
@@ -157,6 +290,7 @@ const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
           <Text style={{color: '#fff', fontWeight: 'bold'}}>Save</Text>
         </Pressable>
       </View>
+
       <SlideUpContainer
         opacity={0.2}
         open={openImagePicker}
@@ -169,18 +303,6 @@ const CreateNote: React.FC<CreateNoteProps> = ({onRequestChangeState}) => {
           type="photo"
         />
       </SlideUpContainer>
-      <SlideUpContainer
-        opacity={0.2}
-        open={openVideoPicker}
-        close={cancelVideoPicker}
-        height={220}>
-        <FilePicker
-          value={selectedVideo}
-          setState={setSelectedVideo}
-          callback={closeVideoPicker}
-          type="video"
-        />
-      </SlideUpContainer>
     </View>
   );
 };
@@ -190,6 +312,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 16,
     overflow: 'hidden',
+    position: 'relative',
   },
   scrollContent: {
     paddingHorizontal: 16,
@@ -261,6 +384,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
+  },
+  mediaPreviewContainer: {
+    marginVertical: 20,
+  },
+  previewImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
   },
 });
 

@@ -26,21 +26,32 @@ const Tab: React.FC<TabProps> = ({
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
-  const handleLongPressCancelAction = (route: string) => navigate(route);
+  const handleLongPressCancelAction = (
+    route?: string,
+    pressAction?: () => void,
+  ) => {
+    if (route) {
+      navigate(route);
+    } else if (pressAction) {
+      pressAction();
+    }
+  };
 
   return (
     <LongPressEnabled
-      longPressCanceledAction={() => handleLongPressCancelAction(i.navigateTo)}
+      longPressCanceledAction={() =>
+        handleLongPressCancelAction(i.navigateTo, i.onPress)
+      }
       longPressAction={() => {}}
       dummy={i.disabled}>
       <LinearGradient
         colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
-            start={{x: 0, y: 0}}
+        start={{x: 0, y: 0}}
         style={[
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-             borderLeftColor: currentTheme.baseColor,
+            borderLeftColor: currentTheme.baseColor,
           },
         ]}>
         <View>{i.icon(currentTheme.contrastColor)}</View>

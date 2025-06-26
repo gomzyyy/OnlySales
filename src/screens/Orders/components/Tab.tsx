@@ -16,6 +16,7 @@ type TabProps = {
   lastIndex?: boolean;
   dummy?: boolean;
   showThumbnail?: boolean;
+  onInfoChange:()=>void | Promise<void>
 };
 
 const Tab: React.FC<TabProps> = ({
@@ -23,13 +24,21 @@ const Tab: React.FC<TabProps> = ({
   lastIndex = false,
   dummy = false,
   showThumbnail = false,
+  onInfoChange
 }) => {
+  const {currency} = useSelector((s:RootState)=>s.appData.app)
   const {currentTheme} = useTheme();
   const [openDataContainer, setOpenDataContainer] = useState(false);
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: OrderStatus) => {
     switch (status) {
-      case 'SUCCESS':
+      case 'ACCEPTED':
         return 'green';
+         case 'COMPLETED':
+        return 'green';
+         case 'REJECTED':
+        return 'red';
+         case 'WAITING':
+        return 'orange';
       case 'FAILED':
         return 'red';
       case 'PENDING':
@@ -46,7 +55,7 @@ const Tab: React.FC<TabProps> = ({
     'No address';
   return (
     <LongPressEnabled
-      longPressCanceledAction={() => setOpenDataContainer(true)}
+      longPressCanceledAction={() =>setOpenDataContainer(true)}
       longPressAction={() => {}}
       dummy={dummy}>
       <View
@@ -64,14 +73,14 @@ const Tab: React.FC<TabProps> = ({
           <View
             style={[
               styles.statusDot,
-              {backgroundColor: getStatusColor(i.orderStatus || '')},
+              {backgroundColor: getStatusColor(i.orderStatus || OrderStatus.PENDING)},
             ]}
           />
         </View>
 
-        <Text style={styles.infoText}>Order ID: {i._id}</Text>
-        <Text style={styles.infoText}>Amount: ₹{i.totalAmount.toFixed(2)}</Text>
-        <Text style={styles.infoText}>Status: {i.orderStatus || 'N/A'}</Text>
+        <Text style={styles.infoText}>Order ID: order_#{i._id.slice(0,20)}...</Text>
+        <Text style={styles.infoText}>Amount: {currency}{i.totalAmount.toFixed(2)}</Text>
+        <Text style={[styles.infoText,]}>Status: <Text style={{color:getStatusColor(i.orderStatus || OrderStatus.PENDING),fontWeight:'600'}}>{i.orderStatus || 'N/A'}</Text></Text>
         <Text style={styles.infoText}>
           Ordered At: {new Date(i.orderedAt || '').toDateString()}
         </Text>
@@ -87,7 +96,7 @@ const Tab: React.FC<TabProps> = ({
         open={openDataContainer}
         close={() => setOpenDataContainer(false)}
         height={deviceHeight * 0.75}>
-        <OrderDetailsContainer order={i} />
+        <OrderDetailsContainer onOrderStateChange={onInfoChange} order={i} close={() => setOpenDataContainer(false)} />
       </SlideUpContainer>
     </LongPressEnabled>
   );

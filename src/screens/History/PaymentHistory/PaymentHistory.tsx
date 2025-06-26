@@ -7,6 +7,7 @@ import Tab from './components/Tab';
 import SearchBar from './components/SearchBar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {PaymentHistory as PaymentHistoryType} from '../../../../types';
+import FallbackMessage from '../../../components/FallbackMessage';
 
 const PaymentHistory = () => {
   const {currentTheme} = useTheme();
@@ -17,7 +18,7 @@ const PaymentHistory = () => {
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
     [],
   );
-  const {size,length,getRaw} = useCache();
+  const {size, length, getRaw} = useCache();
 
   useEffect(() => {
     setPaymentHistory(
@@ -25,7 +26,7 @@ const PaymentHistory = () => {
         .reverse()
         .slice((page - 1) * limit, page * limit),
     );
-    console.log(size(),length,getRaw);
+    console.log(size(), length, getRaw);
   }, [owner, page, limit]);
 
   useEffect(() => {
@@ -44,17 +45,18 @@ const PaymentHistory = () => {
   }, [query]);
 
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.baseColor}}>
+    <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>
       <Header
         name="Payments History"
         backButton={true}
-        titleColor={currentTheme.header.textColor}
+        titleColor={currentTheme.contrastColor}
+        curved
+        headerBgColor={currentTheme.baseColor}
       />
       <View style={styles.contentContainer}>
         <View style={{flex: 1}}>
           <View style={styles.searchBarContainer}>
             <SearchBar
-              textColor={currentTheme.header.textColor}
               enable={paymentHistory.length !== 0}
               value={query}
               setState={setQuery}
@@ -68,14 +70,13 @@ const PaymentHistory = () => {
               renderItem={({item, index}) => (
                 <Tab i={item} lastIndex={index === paymentHistory.length - 1} />
               )}
-              style={{flex: 1, marginBottom: 10, borderRadius: 10}}
+              style={{flex: 1, marginBottom: 10}}
               showsVerticalScrollIndicator={false}
             />
           ) : (
             <View style={{flex: 1}}>
-              <EmptyListMessage
-                textColor={currentTheme.header.textColor}
-                title="No Payment History yet!"
+              <FallbackMessage
+                text="No Payment History yet!"
               />
             </View>
           )}
@@ -85,6 +86,9 @@ const PaymentHistory = () => {
               paddingHorizontal: 10,
               flexDirection: 'row',
               justifyContent: 'space-evenly',
+              backgroundColor:currentTheme.fadeColor,
+              marginBottom:10,
+              borderRadius:12
             }}>
             <TouchableOpacity
               style={{
@@ -105,14 +109,14 @@ const PaymentHistory = () => {
               <Icon
                 name="arrow-back-ios"
                 size={16}
-                color={currentTheme.contrastColor}
+                color={currentTheme.baseColor}
               />
             </TouchableOpacity>
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: '600',
-                color: currentTheme.contrastColor,
+                color: currentTheme.baseColor,
               }}>
               {limit * page > owner.history.payments.length
                 ? owner.history.payments.length
@@ -130,7 +134,7 @@ const PaymentHistory = () => {
               <Icon
                 name="arrow-forward-ios"
                 size={16}
-                color={currentTheme.contrastColor}
+                color={currentTheme.baseColor}
               />
             </TouchableOpacity>
           </View>

@@ -2,11 +2,10 @@ import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import DashboardHeader from '../../components/DashboardHeader';
-import {navigate} from '../../utils/nagivationUtils';
+import {navigate, resetAndNavigate} from '../../utils/nagivationUtils';
 import {useTheme} from '../../hooks/index';
 import PressableContainer from './components/PressableContainer';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/AntDesign';
 import Icon5 from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -23,18 +22,49 @@ import OpenMenuButton from './components/animated/OpenMenuButton';
 import {useSocket} from '../../hooks/index';
 import {APP_VERSION} from '@env';
 import HeaderIcon from '../../components/HeaderIcon';
-import OrderPageRedirectQRCode from '../../components/OrderPageRedirectORCode';
 import {deviceHeight} from '../../utils/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import PromotionalCarousel from '../../components/animated/PromotionalCarousel';
 import NotesContainer from '../../components/NotesContainer';
+import EMICalculator from '../../components/Tools/EMICalculator/EMICalculator';
+import {useRoute} from '@react-navigation/native';
+import {onTruthy} from '../../service/fn';
+
+type DashboardParams = {
+  openEMICalcContainer?: boolean;
+  openNotesContainer?: boolean;
+  openInstaBuyContainer?: boolean;
+};
 
 const Dashboard = () => {
+  const user = useSelector((s: RootState) => s.appData.user);
+  if (!user) {
+    resetAndNavigate('GetStarted');
+    return null;
+  }
   const {t} = useTranslation('dashboard');
   const {socket} = useSocket();
+  const {currentTheme} = useTheme();
   const {eventData, orderData} = useSelector((s: RootState) => s.events);
-  const [openOrderOnlineQR, setOpenOrderOnlineQR] = useState<boolean>(false);
+
+  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
+  const [openQuery, setOpenQuery] = useState<boolean>(false);
+  const [overScrolled, setOverScrolled] = useState<boolean>(false);
   const [openNotes, setOpenNotes] = useState<boolean>(false);
+  const [openEMICalc, setOpenEMICalc] = useState<boolean>(false);
+  const {params} = useRoute();
+  const {openEMICalcContainer, openNotesContainer, openInstaBuyContainer} =
+    (params || {}) as DashboardParams;
+  const [hasHandledParams, setHasHandledParams] = useState(false);
+
+  useEffect(() => {
+    if (hasHandledParams) return;
+    onTruthy(openEMICalcContainer, () => setOpenEMICalc(true));
+    onTruthy(openNotesContainer, () => setOpenNotes(true));
+    // onTruthy(openInstaBuyContainer, () => setOpenOrderOnlineQR(true));
+    setHasHandledParams(true);
+  }, [hasHandledParams]);
+
   const DashboardOptions = [
     {
       id: 0,
@@ -48,9 +78,9 @@ const Dashboard = () => {
     {
       id: 5,
       title: t('d_options_insta_buy'),
-      navigateTo: undefined,
+      navigateTo: 'ServicePoints',
       icon: (color: string) => <Icon3 name="qrcode" size={24} color={color} />,
-      onPress: () => setOpenOrderOnlineQR(true),
+      onPress: undefined,
     },
     {
       id: 1,
@@ -104,23 +134,15 @@ const Dashboard = () => {
     },
   ];
 
-  const {currentTheme} = useTheme();
-  const user = useSelector((s: RootState) => s.appData.user)!;
-
-  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
-  const [openQuery, setOpenQuery] = useState<boolean>(false);
-  const [overScrolled, setOverScrolled] = useState<boolean>(false);
-
-  const closeDropDown = () => setOpenDropDown(false);
-
   const closeQuery = () => {
     setOpenQuery(false);
   };
-  const closeOrderOnlineQR = () => {
-    setOpenOrderOnlineQR(false);
-  };
+
   const closeNotes = () => {
     setOpenNotes(false);
+  };
+  const closeEMICalc = () => {
+    setOpenEMICalc(false);
   };
 
   useEffect(() => {
@@ -168,39 +190,10 @@ const Dashboard = () => {
           }
           customAction={() => navigate('Events')}
           customAction1={() => navigate('Orders')}
-          customAction2={() => setOpenOrderOnlineQR(true)}
         />
-        {/* {openDropDown && (
-          <DropDownMenu
-            visible={openDropDown}
-            close={closeDropDown}
-            dropDownOptions={dropDownOptions}
-            top={60}
-            right={10}
-          />
-        )} */}
-        {/* <Pressable
-          style={{
-            backgroundColor: 'white',
-            borderRadius: 10,
-            paddingHorizontal: 6,
-            paddingVertical: 2,
-            alignSelf: 'center',
-            marginBottom: 6,
-          }}
-          onPress={() => navigate('Test')}>
-          <Text
-            style={{
-              color: currentTheme.baseColor,
-              fontSize: 16,
-              fontWeight: '600',
-            }}>
-            Test UI
-          </Text>
-        </Pressable> */}
         {!user.email?.verified && <NotVerifiedAlert />}
         <View style={{paddingHorizontal: 10, marginTop: 10}}>
-          <PromotionalCarousel />
+          <PromotionalCarousel enabled={true} />
         </View>
         <View style={styles.contentContainer}>
           <DashboardHeader
@@ -263,7 +256,6 @@ const Dashboard = () => {
             </Text>
             <WeeklySalesInfoGraph />
           </View>
-
           <SlideUpContainer open={openQuery} close={closeQuery}>
             <QueryContainer close={closeQuery} />
           </SlideUpContainer>
@@ -274,11 +266,12 @@ const Dashboard = () => {
             usepadding={false}>
             <NotesContainer close={closeNotes} />
           </SlideUpContainer>
+         
           <SlideUpContainer
-            open={openOrderOnlineQR}
-            close={closeOrderOnlineQR}
-            height={deviceHeight * 0.6 < 460 ? 460 : deviceHeight * 0.6}>
-            <OrderPageRedirectQRCode />
+            open={openEMICalc}
+            close={closeEMICalc}
+            usepadding={false}>
+            <EMICalculator />
           </SlideUpContainer>
         </View>
       </ScrollView>
@@ -323,20 +316,3 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
-
-{
-  /* <SlideUpContainer
-        open={openQRCode}
-        close={handleCloseQRCode}
-        opacity={0.6}
-        height={deviceHeight * 0.5}>
-        <ScanQRToPay
-          cancel={handleCloseQRCode}
-          callback={() => {}}
-          currency={currency}
-          pa="gomzydhingra0001@okhdfcbank"
-          pn="Khata App"
-          payableAmount={payableAmount}
-        />
-      </SlideUpContainer> */
-}

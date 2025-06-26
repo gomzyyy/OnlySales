@@ -27,7 +27,7 @@ export const createCustomerAPI = async (
       const imageFile = {
         uri: data.media.image,
         type: 'image/jpeg',
-        name: 'profile.jpg',
+        name: 'customer_profile.jpg',
       };
       formData.append('img', imageFile as any);
     }

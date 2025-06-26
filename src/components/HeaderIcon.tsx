@@ -16,7 +16,6 @@ const HeaderIcon = ({
   showAlertDot?: boolean;
   alertContent?: number;
 }) => {
-  console.log(alertContent)
   const {currentTheme} = useTheme();
   if (show) {
     return (

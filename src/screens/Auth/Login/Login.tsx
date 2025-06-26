@@ -76,7 +76,7 @@ const Login = () => {
             <RolePicker
               value={selectedRole}
               setState={setSelectedRole}
-              enabled
+              enabled={false}
             />
           </View>
           <View style={styles.inputContainer}>

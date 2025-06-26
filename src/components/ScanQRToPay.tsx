@@ -7,12 +7,11 @@ import QRCode from 'react-native-qrcode-svg';
 import {randomId} from '../service/fn';
 import {CurrencyType} from '../../enums';
 import {colors, deviceHeight} from '../utils/Constants';
-import {App, SoldProduct} from '../../types';
+import {SoldProduct} from '../../types';
 import {global} from '../styles/global';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {setPymtId} from '../../store/slices/business';
-import {Pressable} from 'react-native';
 import SlideUpContainer from './SlideUpContainer';
 const UPI_LOGO = require('../assets/images/UPI_LOGO.png');
 

@@ -43,7 +43,7 @@ const NotVerifiedAlert = () => {
     <Animated.View
       style={[
         {
-          backgroundColor: currentTheme.contrastColor,
+          // backgroundColor: currentTheme.contrastColor,
           borderBottomRightRadius: 14,
           borderBottomLeftRadius: 14,
           marginBottom: 10,
@@ -53,7 +53,6 @@ const NotVerifiedAlert = () => {
           justifyContent: 'space-between',
           position: 'static',
           top: 0,
-          elevation: 10,
         },
         unverifiedAlertAnimatedStyles,
       ]}>

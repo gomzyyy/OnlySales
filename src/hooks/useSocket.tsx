@@ -5,17 +5,21 @@ import {AppDispatch, RootState} from '../../store/store';
 import {useAnalytics, useDevice, useStorage} from './index';
 import {PLATFORM_SPECIFIED_CALLS} from '../../enums';
 import {
+  addNewEvent,
+  addNewOrder,
   handleEventCount,
   handleEvents,
   handleOrderCount,
   handleOrders,
 } from '../../store/slices/events';
+// import { SERVER_URL } from '@env';
+import { Event, Order } from '../../types';
+import { BASE_SERVER_PORT } from '../service/fn';
+
 
 type UseSocketReturnType = {
   socket: Socket | null;
 };
-
-const SOCKET_URL = 'http://192.168.1.71:6900/';
 
 const useSocket = (): UseSocketReturnType => {
   const d = useDispatch<AppDispatch>();
@@ -56,7 +60,7 @@ const useSocket = (): UseSocketReturnType => {
 
     ipv4().then(ip => {
       if (!isMounted) return;
-      socketRef.current = io(SOCKET_URL, {
+      socketRef.current = io(`http://${BASE_SERVER_PORT}:6900`, {
         transports: ['websocket'],
         query: {
           uid: String(user._id),
@@ -75,11 +79,13 @@ const useSocket = (): UseSocketReturnType => {
       socketRef.current.on('disconnect', () => {
         console.log('Socket disconnected');
       });
-      socketRef.current.on('new_event', s => {
+      socketRef.current.on('new_event', (s:Event) => {
+        d(addNewEvent(s))
         d(handleEventCount(1));
         fetchEvents();
       });
-      socketRef.current.on('new_order', s => {
+      socketRef.current.on('new_order', (s:Order) => {
+        d(addNewOrder(s))
         d(handleOrderCount(1));
         fetchOrders();
       });

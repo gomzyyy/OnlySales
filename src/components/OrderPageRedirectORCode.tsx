@@ -18,11 +18,16 @@ import RNShare from 'react-native-share';
 import {WHATSAPP_QUICK_ORDER_BY_QR_PROMO_MESSAGE} from '../utils/data';
 import {BASE_WEB_URL} from '@env';
 import RNFS from 'react-native-fs';
+import { ServicePoint } from '../../types';
 
-const OrderPageRedirectORCode = () => {
+type OrderPageRedirectORCodeProps={
+  spid:ServicePoint['_id']
+}
+
+const OrderPageRedirectORCode:React.FC<OrderPageRedirectORCodeProps> = ({spid}) => {
+  if(!spid) return null;
   const {owner} = useAnalytics();
-
-  const qrUrl = `${BASE_WEB_URL}/home?redirect=place_order&oid=${owner._id}`;
+  const qrUrl = `${BASE_WEB_URL}/home?redirect=place_order&oid=${owner._id}&spid=${spid}&sec=0`;
   const qrRef = useRef<any>();
 
   const handleCapture = async () => {
@@ -61,7 +66,6 @@ const OrderPageRedirectORCode = () => {
         <Text style={styles.subHeader}>Share this QR with your customers</Text>
 
         <View style={styles.qrContainer}>
-          {/* Capture only this part */}
           <View ref={qrRef} collapsable={false} style={styles.qrCaptureOnly}>
             <QRCode value={qrUrl} size={200} />
             <Text style={styles.qrLabel}>Scan me to order</Text>
@@ -70,7 +74,6 @@ const OrderPageRedirectORCode = () => {
             </Pressable>
           </View>
 
-          {/* Excluded from screenshot */}
           <TouchableOpacity style={styles.button} onPress={handleCapture}>
             <Icon name="download" size={18} color="#fff" />
             <Text style={styles.buttonText}>Save or Share QR</Text>

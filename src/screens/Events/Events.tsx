@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
 import {useFocusEffect} from '@react-navigation/native';
 import {Event} from '../../../types';
-import {resetEventCount} from '../../../store/slices/business';
+import {resetEventCount} from '../../../store/slices/events';
 
 const Events = () => {
   const d = useDispatch<AppDispatch>();
@@ -25,7 +25,7 @@ const Events = () => {
   }
   const {getEvents} = useStorage().user;
   const [loading, setLoading] = useState<boolean>(false);
-  const {eventData} = useSelector((s: RootState) => s.appData.app);
+  const {eventData} = useSelector((s: RootState) => s.events);
   const fetchEvents = async () => {
     const data = {
       query: {

@@ -96,7 +96,6 @@ const Tab: React.FC<TabProps> = ({
     setAskConfirmPayment(false);
   };
   const handleCloseQRCode = () => {
-    // payment confirmation
     setWillingToPay(false);
   };
   const handleCloseSoldProductInvoiceViewer = () => {

@@ -20,7 +20,7 @@ import {
 } from '../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {useAnalytics, useHaptics, useTheme} from '../hooks/index';
+import {useAnalytics, useHaptics, useStorage, useTheme} from '../hooks/index';
 import FilePicker from './FilePicker';
 import SlideUpContainer from './SlideUpContainer';
 import {
@@ -38,7 +38,6 @@ import {createEmployeeAPI} from '../api/api.employee';
 import {ActivityIndicator} from 'react-native';
 import Picker from '../customComponents/Picker';
 import {global} from '../styles/global';
-import InputPasscode from '../customComponents/InputPasscode';
 type CreateEmployeeProps = {
   callback: () => void;
 };
@@ -48,9 +47,9 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
 }): React.JSX.Element => {
   const {warning} = useHaptics();
   const {currentTheme} = useTheme();
-  const dispatch = useDispatch<AppDispatch>();
   const currency = useSelector((s: RootState) => s.appData.app.currency);
   const user = useSelector((s: RootState) => s.appData.user)!;
+  const {employee} = useStorage()
   const {owner} = useAnalytics();
   const [name, setName] = useState<string>('');
   const [phoneNumber, setphoneNumber] = useState<string>('');
@@ -74,10 +73,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
     string | undefined
   >();
   const [skills, setSkills] = useState<string[]>([]);
-  const [employeeId, setEmployeeId] = useState<string>('');
   const [reportsTo, setReportsTo] = useState<AdminRole>(AdminRole.OWNER);
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -86,14 +82,6 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       showToast({
         type: 'error',
         text1: "Can't include Characters in Number input.",
-      });
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      showToast({
-        type: 'error',
-        text1: 'Passwords do not match!',
       });
       return;
     }
@@ -107,9 +95,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       address.trim().length === 0 ||
       !department ||
       !position ||
-      !reportsTo ||
-      !password ||
-      !confirmPassword
+      !reportsTo
     ) {
       warning();
       showToast({
@@ -119,25 +105,6 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       });
       return;
     }
-    if (password !== confirmPassword) {
-      warning();
-      showToast({
-        type: 'error',
-        text1: 'Password not matched.',
-        position: 'top',
-      });
-      return;
-    }
-    if (employeeId.trim().length < 4 || employeeId.trim().length > 16) {
-      warning();
-      showToast({
-        type: 'error',
-        text1: 'Employee ID should be 4-16 characters long.',
-        position: 'top',
-      });
-      return;
-    }
-
     const employeeData = {
       query: {
         createdBy: user.role,
@@ -146,9 +113,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
       },
       body: {
         name: name.trim(),
-        userId: employeeId,
         phoneNumber,
-        password,
         position,
         positionDescription,
         email,
@@ -174,7 +139,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
         image: undefined,
       },
     };
-    const res = await createEmployeeAPI(employeeData, setLoading);
+    const res = await employee.create(employeeData, setLoading);
     showToast({
       type: res.success ? 'success' : 'error',
       text1: res.message,
@@ -231,23 +196,6 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter phone number"
-              placeholderTextColor={'grey'}
-            />
-          </View>
-
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Assign your employee an ID...
-            </Text>
-            <TextInput
-              value={employeeId}
-              onChangeText={setEmployeeId}
-              style={[
-                global.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="Enter email"
               placeholderTextColor={'grey'}
             />
           </View>
@@ -315,39 +263,11 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
                   },
                 ]}>
                 {salary.trim().length !== 0 &&
-                  `Estimated annual salary: ${currency} ${formatNumberWithComma(
+                  `Estimated annual salary: ${currency}${formatNumberWithComma(
                     Number(salary),
                   )}`}
               </Text>
             }
-          </View>
-
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Password
-            </Text>
-            <InputPasscode
-              value={password}
-              setState={setPassword}
-              placeholder="Enter password"
-              placeholderTextColor={'grey'}
-              fill={true}
-            />
-          </View>
-
-          <View style={styles.inputTitleContainer}>
-            <Text
-              style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Confirm Password
-            </Text>
-            <InputPasscode
-              value={confirmPassword}
-              setState={setConfirmPassword}
-              placeholder="Confirm password"
-              placeholderTextColor={'grey'}
-              fill={true}
-            />
           </View>
 
           <View style={styles.inputTitleContainer}>
@@ -467,7 +387,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
               value={image}
               setState={setImage}
               callback={closeImagePicker}
-              type="image"
+              type="photo"
             />
           </SlideUpContainer>
         </View>

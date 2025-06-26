@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,18 +10,24 @@ import RolePicker from '../../components/RolePicker';
 import {AdminRole} from '../../../enums';
 import {deviceHeight} from '../../utils/Constants';
 import {navigate} from '../../utils/nagivationUtils';
-import {useTheme} from '../../hooks/index';
+import {useTheme, useUsage} from '../../hooks/index';
 
 const GetStarted = () => {
   const {currentTheme} = useTheme();
   const [role, setRole] = useState<AdminRole>(AdminRole.OWNER);
+  const {get} = useUsage();
+  const [multirole, setmultirole] = useState<boolean>(false);
+  useEffect(() => {
+    const ok = get('multi_role_app', {returnOnFail: {value: false}});
+    setmultirole(ok.value);
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Let us know who you are!</Text>
       <Text style={styles.subtitle}>
         Choose Either you are a Employee or Business Owner
       </Text>
-      <RolePicker value={role} setState={setRole} enabled />
+      <RolePicker value={role} setState={setRole} enabled={multirole} />
       <TouchableOpacity
         style={[
           styles.getStartedButton,

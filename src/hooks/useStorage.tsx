@@ -30,6 +30,12 @@ import {
   GetEventsAPIReturnType,
   GetOrdersByOwnerIdAPIData,
   GetOrdersByOwnerIdAPIReturnType,
+  CreateServicePointAPIData,
+  UpdateServicePointAPIData,
+  CreateServicePointAPIReturnType,
+  UpdateServicePointAPIReturnType,
+  GetAllServicePointsAPIData,
+  GetAllServicePointsAPIReturnType,
 } from '../api/types.api';
 import {
   createCustomerAPI,
@@ -55,7 +61,9 @@ import {
   updatePasscodeAPI,
 } from '../api/api.user';
 import {handleBooleanState} from '../api/helper/fn';
-import { getOrdersByOwnerIdAPI } from '../api/api.orders';
+import {getOrdersByOwnerIdAPI} from '../api/api.orders';
+import { createServicePointAPI, getAllServicePointsAPI, updateServicePointAPI } from '../api/api.servicePoint';
+import { setPoints } from '../../store/slices/servicePoint';
 
 export interface useStorageReturnType {
   customer: {
@@ -132,11 +140,24 @@ export interface useStorageReturnType {
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
     ) => Promise<GetEventsAPIReturnType>;
-    getOrders:(
+    getOrders: (
       data: GetOrdersByOwnerIdAPIData,
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
     ) => Promise<GetOrdersByOwnerIdAPIReturnType>;
+    createServicePoint: (
+      data: CreateServicePointAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+      onErrorSettingLocalState?: () => void,
+    ) => Promise<CreateServicePointAPIReturnType>;
+    updateServicePoint: (
+      data: UpdateServicePointAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+    ) => Promise<UpdateServicePointAPIReturnType>;
+    getAllServicePoints: (
+      data: GetAllServicePointsAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+    ) => Promise<GetAllServicePointsAPIReturnType>;
   };
   local: {
     updateUser: (
@@ -331,7 +352,7 @@ const useStorage = (): useStorageReturnType => {
       }
       return res;
     },
-     getOrders: async (
+    getOrders: async (
       data: GetOrdersByOwnerIdAPIData,
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
@@ -343,6 +364,30 @@ const useStorage = (): useStorageReturnType => {
       }
       return res;
     },
+    createServicePoint: async(
+      data: any,
+      setState?: Dispatch<SetStateAction<boolean>>,
+      onErrorSettingLocalState?: () => void,
+    ) => {
+      const res = await createServicePointAPI(data, setState);
+      if (res.success) {
+        await updateLocalUserState(onErrorSettingLocalState);
+      }
+      return res;
+    },
+    updateServicePoint: async(
+      data: UpdateServicePointAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+    ) => { const res = await updateServicePointAPI(data, setState);
+      return res},
+      getAllServicePoints: async(
+      data: GetAllServicePointsAPIData,
+      setState?: Dispatch<SetStateAction<boolean>>,
+    ) => { const res = await getAllServicePointsAPI(data, setState);
+      if (res.success && res.data && res.data.sps) {
+        d(setPoints(res.data.sps))
+      }
+      return res},
   };
   return {
     customer,

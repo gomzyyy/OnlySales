@@ -44,6 +44,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
     );
     if (yes) {
       const res = await deleteSoldProductAPI(data, setLoading);
+      console.log(res)
       if (res.success) {
         const userRes = await validateTokenAPI({role: user.role});
         if (userRes.success && userRes.data && userRes.data.user) {

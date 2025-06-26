@@ -7,6 +7,7 @@ import useCache from './useCache';
 import useSocket from './useSocket';
 import useStorage from './useStorage';
 import useDevice from './useDevice';
+import useUsage from './useUsage'
 
 export {
   useDevice,
@@ -17,5 +18,6 @@ export {
   useAnalytics,
   useCache,
   useSocket,
-  useStorage
+  useStorage,
+  useUsage
 };

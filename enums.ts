@@ -290,3 +290,11 @@ export enum AcceptedByType {
   PARTNER = 'partner',
   EMPLOYEE = 'employee',
 }
+
+export enum ServicePointStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  MAINTENANCE = "MAINTENANCE",
+  HIDDEN = "HIDDEN",
+}
+

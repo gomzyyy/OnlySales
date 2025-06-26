@@ -25,6 +25,7 @@ import {setUser} from '../../../../../store/slices/business';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {global} from '../../../../styles/global';
 import PopupContainer from '../../../../components/PopUp';
+import InputPasscode from '../../../../customComponents/InputPasscode';
 
 type SetPasswordParams = {
   name: string;
@@ -177,34 +178,21 @@ const SetPassword = () => {
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Choose a password.</Text>
-            <TextInput
+            <InputPasscode
               value={password}
-              onChangeText={setPassword}
-              style={[
-                styles.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
-              ]}
-              placeholder="password here."
-              placeholderTextColor={currentTheme.baseColor}
+              setState={setPassword}
+              placeholder="password"
             />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Confirm your password.</Text>
-            <TextInput
+            <InputPasscode
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              setState={setConfirmPassword}
               ref={confirmPasswordInputRef}
-              style={[
-                styles.inputText,
-                {
-                  borderColor: passwordMatched
-                    ? currentTheme.modal.inputBorder
-                    : colors.danger,
-                },
-              ]}
               placeholder="confirm here."
               placeholderTextColor={
-                passwordMatched ? currentTheme.baseColor : colors.danger
+                passwordMatched ? undefined : colors.danger
               }
               onFocus={() => setPasswordMatched(true)}
               onBlur={matchPassword}

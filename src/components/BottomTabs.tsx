@@ -91,7 +91,6 @@ const BottomTabs = () => {
       unsubscribe = navigationRef.addListener('state', () => {
         const current = navigationRef.getCurrentRoute()?.name || '';
         setRoute(current);
-
         const rootState = navigationRef.getRootState();
         const drawerRoute: any = rootState.history?.find(
           (s: any) => s.type === 'drawer',
@@ -141,8 +140,12 @@ const BottomTabs = () => {
         onPress: (cb?: () => void) => cb && cb(),
       },
     ];
+const moreContainerY = useSharedValue(-100);
+const moreContainerAnimatedStyles = useAnimatedStyle(()=>({
+
+}))
     return (
-      <Animated.View
+      <View
         style={[
           {
             width: 140,
@@ -156,33 +159,35 @@ const BottomTabs = () => {
             paddingHorizontal: 10,
           },
         ]}>
-        {moreOptions.map((s, i) => (
-          <TouchableOpacity
-            key={s.id}
-            style={{
-              borderBottomColor: '#ababab',
-              borderBottomWidth: i === moreOptions.length - 1 ? 0 : 1,
-              height: 30,
-              alignItems: 'center',
-              flexDirection: 'row',
-              gap: 6,
-              paddingLeft: 10,
-            }}
-            onPress={() => {
-              setOpenMoreMenu(false);
-              s.navigateTo
-                ? handleNavigation(s.navigateTo)
-                : s.onPress(
-                    () => s.name === 'More' && setOpenMoreMenu(!openMoreMenu),
-                  );
-            }}>
-            <View style={{flex: 1}}>{s.icon()}</View>
-            <Text style={{flex: 3, fontWeight: '600'}}>
-              {s.name.toLowerCase()}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </Animated.View>
+        <Animated.View>
+          {moreOptions.map((s, i) => (
+            <TouchableOpacity
+              key={s.id}
+              style={{
+                borderBottomColor: '#ababab',
+                borderBottomWidth: i === moreOptions.length - 1 ? 0 : 1,
+                height: 30,
+                alignItems: 'center',
+                flexDirection: 'row',
+                gap: 6,
+                paddingLeft: 10,
+              }}
+              onPress={() => {
+                setOpenMoreMenu(false);
+                s.navigateTo
+                  ? handleNavigation(s.navigateTo)
+                  : s.onPress(
+                      () => s.name === 'More' && setOpenMoreMenu(!openMoreMenu),
+                    );
+              }}>
+              <View style={{flex: 1}}>{s.icon()}</View>
+              <Text style={{flex: 3, fontWeight: '600'}}>
+                {s.name.toLowerCase()}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </Animated.View>
+      </View>
     );
   };
 

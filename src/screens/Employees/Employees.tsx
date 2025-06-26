@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/Octicons';
 import Tab from './components/tab';
 import {deviceHeight} from '../../utils/Constants';
 import HeaderIcon from '../../components/HeaderIcon';
+import FallbackMessage from '../../components/FallbackMessage';
 
 const Employees = () => {
   const {lightTap} = useHaptics();
@@ -26,7 +27,8 @@ const Employees = () => {
   };
 
   return (
-    <View style={[styles.container,{backgroundColor:currentTheme.contrastColor}]}>
+    <View
+      style={[styles.container, {backgroundColor: currentTheme.contrastColor}]}>
       <Header
         name="Employees"
         backButton
@@ -63,12 +65,7 @@ const Employees = () => {
               showsVerticalScrollIndicator={false}
             />
           ) : (
-            <View style={styles.emptyState}>
-              <EmptyListMessage
-                textColor={currentTheme.header.textColor}
-                title="No Employee data available"
-              />
-            </View>
+            <FallbackMessage text="No Employee data available" />
           )}
         </View>
       </View>

@@ -116,7 +116,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
           value={profileImageValue}
           setState={setProfileImageValue}
           callback={handleCloseImagePicker}
-          type="image"
+          type="photo"
         />
       </SlideUpContainer>
       <View

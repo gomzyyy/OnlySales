@@ -110,7 +110,7 @@ const ExpandButton: React.FC<ExpandButtonProps> = ({ btn, btn1, btn2, btn3, btn4
               }, animatedTranslations[index]]}
             >
               {button.icon}
-              <Text style={{ fontSize: 10, color: currentTheme.baseColor }}>{button.label}</Text>
+              <Text numberOfLines={1} style={{ fontSize: 10,fontWeight:'600', color: currentTheme.baseColor }}>{button.label}</Text>
             </Animated.View>
           </Pressable>
         ))}

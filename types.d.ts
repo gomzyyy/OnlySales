@@ -32,6 +32,7 @@ import {
   AcceptedByType,
   PaymentMethods,
   ValidRoles,
+  ServicePointStatus,
 } from './enums';
 
 declare global {
@@ -137,7 +138,6 @@ export interface User extends CommonProps {
     verified: boolean;
   };
   address?: string;
-  userId: string;
   accessPasscode: string;
   isLocked: boolean;
   location: Location;
@@ -235,7 +235,21 @@ export interface ISupportTicket extends CommonProps {
   resolvedAt?: Date;
 }
 
+export interface ServicePoint extends CommonProps {
+  ownerId:Owner['_id'];
+  pointName: string;
+  qrUrl: string;
+  isActive: boolean;
+  orderLimitPerDay: number;
+  status: ServicePointStatus;
+  lastOrderAt: Date;
+  isOccupied: boolean;
+  qrScanCount: number;
+  metadata?: Record<string, string>;
+}
+
 export interface Owner extends User {
+  userId: string;
   referralCode: string;
   credits: number;
   reviews: Review[];
@@ -249,7 +263,7 @@ export interface Owner extends User {
     value: string;
     verified: boolean;
   };
-  orders: string[];
+  servicePoints:string[];
   businessPartners: Partner[];
   gstNumber: string;
   accountType: AccountType;
@@ -303,6 +317,7 @@ export interface UserPermissions {
 }
 
 export interface Partner extends User {
+  userId: string;
   businessOwner: Owner;
   password: string;
   equity: number;
@@ -313,6 +328,7 @@ export interface Partner extends User {
 export interface Employee extends User {
   businessOwner: Owner;
   gender: string;
+  userId?: string;
   password: string;
   department: Department;
   departmentDescription?: string;
@@ -335,7 +351,7 @@ export interface Employee extends User {
 
 export interface Product extends CommonProps {
   name: string;
-  businessOwner: Owner;
+  businessOwner: string;
   productType: ProductType;
   image?: string;
   disabled: boolean;
@@ -371,6 +387,7 @@ export interface Order extends CommonProps {
   totalAmount: number;
   acceptedByType?: AcceptedByType;
   acceptedBy?: Owner | Partner | Employee;
+  isDeleted:boolean;
   orderedAt?: Date;
   orderStatus?: OrderStatus;
   acceptedAt?: Date;
@@ -536,6 +553,10 @@ export interface SlideItem {
   description: string;
   ctaText: string;
   ctaLink: string;
+  rel: {
+    promoType: 'self' | 'third_party';
+    relWithFeature: string;
+  };
 }
 
 export interface PromoCorouselContext {
@@ -545,25 +566,25 @@ export interface PromoCorouselContext {
   campaignId: string;
   context: SlideItem[];
 }
-
+export interface NoteMedia {
+  url: string;
+  type: 'image' | 'video' | 'audio' | 'mixed';
+  alt?: string;
+}
 export interface Note {
   _id: User['_id'];
   createdAt: Date;
   updatedAt: Date;
   title: string;
   content: string;
-  media: {
-    url: string;
-    type: 'image' | 'video' | 'audio' | 'mixed';
-    alt?: string;
-  }[];
+  media: NoteMedia[];
   hashtags: string[];
   isPinned: boolean;
   isFavorite: boolean;
   color?: string;
   isArchived: boolean;
   isDeleted: boolean;
-  isDraft:boolean;
+  isDraft: boolean;
   deletedAt?: Date;
   sharedWith: string[];
 }

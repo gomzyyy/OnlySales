@@ -1,8 +1,6 @@
 import {View, StyleSheet, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from './components/Header';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
 import {useTheme} from '../../hooks';
 import {Text} from 'react-native';
 import {ToolsIconContainer} from '../Dashboard/constants/constants';
@@ -11,15 +9,16 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/FontAwesome5';
 import Icon5 from 'react-native-vector-icons/FontAwesome6';
 import Tab from './components/Tab';
-import {Employee, Owner, Partner} from '../../../types';
+import {navigate} from '../../utils/nagivationUtils';
 
 export type ToolsData = {
   id: number;
   title: string;
-  navigateTo: string;
+  navigateTo?: string;
   icon: (color?: string) => React.JSX.Element;
   keywords: string[];
   disabled: boolean;
+  onPress?: () => void;
 };
 
 const SearchFeatures = () => {
@@ -29,10 +28,11 @@ const SearchFeatures = () => {
     {
       id: 0,
       title: 'EMI Calculator',
-      navigateTo: 'EMICalculator',
+      navigateTo: undefined,
       icon: () => <ToolsIconContainer label="EMI" />,
       keywords: ['emi', 'calculator', 'interest', 'loan'],
-      disabled: true,
+      disabled: false,
+      onPress: () => navigate('Dashboard', {openEMICalcContainer: true}),
     },
     {
       id: 1,
@@ -45,6 +45,7 @@ const SearchFeatures = () => {
       ),
       keywords: ['history', 'payment', 'payments', 'product', 'sell', 'p'],
       disabled: false,
+      onPress: undefined,
     },
     {
       id: 2,
@@ -57,6 +58,7 @@ const SearchFeatures = () => {
       ),
       keywords: ['customer', 'sell', 'product', 'customers', 'c'],
       disabled: false,
+      onPress: undefined,
     },
     {
       id: 3,
@@ -69,6 +71,7 @@ const SearchFeatures = () => {
       ),
       keywords: ['employee', 'partner', 'worker', 'work', 'e'],
       disabled: false,
+      onPress: undefined,
     },
     {
       id: 4,
@@ -91,6 +94,7 @@ const SearchFeatures = () => {
         'a',
       ],
       disabled: false,
+      onPress: undefined,
     },
     {
       id: 5,
@@ -114,6 +118,7 @@ const SearchFeatures = () => {
         'lock',
       ],
       disabled: false,
+      onPress: undefined,
     },
     {
       id: 6,
@@ -135,19 +140,30 @@ const SearchFeatures = () => {
         'any',
       ],
       disabled: false,
+      onPress:undefined,
+    },
+    {
+      id: 7,
+      title: 'Sticky Notes',
+      navigateTo: undefined,
+      icon: color => (
+        <ToolsIconContainer>
+          <Icon2 name="sticky-note-2" size={24} color={color} />
+        </ToolsIconContainer>
+      ),
+      keywords: [
+        'notes',
+        'sticky',
+        'note',
+        'book',
+        'copy',
+      ],
+      disabled: false,
+      onPress: () => navigate('Dashboard', {openNotesContainer: true}),
     },
   ];
-  const user = useSelector((s: RootState) => s.appData.user)!;
   const [searchResults, setSearchResults] = useState<ToolsData[]>([]);
   const [query, setQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [ownerResult, setOwnerResult] = useState<Owner | undefined>(undefined);
-  const [employeeResult, setEmployeeResult] = useState<Employee | undefined>(
-    undefined,
-  );
-  const [partnerResult, setPartnerResult] = useState<Partner | undefined>(
-    undefined,
-  );
   const handleSearchQuery = () => {
     if (query.trim().length !== 0) {
       setSearchResults(
@@ -194,7 +210,6 @@ const SearchFeatures = () => {
           <View
             style={{
               height: 'auto',
-              // backgroundColor: currentTheme.fadeColor,
               borderRadius: 20,
               padding: 15,
               gap: 10,
@@ -231,45 +246,3 @@ const styles = StyleSheet.create({
   },
 });
 export default SearchFeatures;
-
-//  const handleAdvanceQuerySearch = async () => {
-//     let reqFor: AdminRole | undefined = undefined;
-//     let userId: string = '';
-//     if (query.trim().length > 5) {
-//       if (query.startsWith('@', 0) && query.trim().length > 5) {
-//         reqFor = AdminRole.OWNER;
-//         userId = query.slice(1);
-//       }
-//       if (reqFor && userId.trim().length >= 4) {
-//         const data = {
-//           query: {
-//             userId,
-//             reqFor,
-//             role: user.role,
-//           },
-//         };
-//         const res = await getUserByIdAPI(data, setLoading);
-//         if (res.success && res.data && res.data.user && res.data.userType) {
-//           if (res.data.userType === AdminRole.OWNER) {
-//             setOwnerResult(res.data.user as Owner);
-//           } else if (res.data.userType === AdminRole.EMPLOYEE) {
-//             setEmployeeResult(res.data.user as Employee);
-//           } else if (res.data.userType === AdminRole.PARTNER) {
-//             setPartnerResult(res.data.user as Partner);
-//           } else {
-//             setOwnerResult(undefined);
-//             setEmployeeResult(undefined);
-//             setPartnerResult(undefined);
-//           }
-//         } else {
-//           setOwnerResult(undefined);
-//           setEmployeeResult(undefined);
-//           setPartnerResult(undefined);
-//         }
-//       }
-//     } else {
-//       setOwnerResult(undefined);
-//       setEmployeeResult(undefined);
-//       setPartnerResult(undefined);
-//     }
-//   };

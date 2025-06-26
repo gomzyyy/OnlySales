@@ -83,6 +83,22 @@ const noteSlice = createSlice({
         updatedAt: new Date(),
       };
     },
+ restoreNote: (
+      state,
+      action: PayloadAction<{uid: string; noteId: string}>,
+    ) => {
+      const {uid, noteId} = action.payload;
+      const userNotes = state.notes[uid];
+      if (!userNotes || !userNotes.data) return;
+
+      const note = userNotes.data.find(n => n._id === noteId);
+      if (!note || !note.isDeleted) return;
+
+      note.isDeleted = false;
+      note.deletedAt = undefined;
+      note.updatedAt = new Date();
+    },
+
     setToFavorite: (
       state,
       action: PayloadAction<{uid: string; noteId: string; favorite: boolean}>,
@@ -126,21 +142,7 @@ const noteSlice = createSlice({
       note.isArchived = archived;
       note.updatedAt = new Date();
     },
-    restoreNote: (
-      state,
-      action: PayloadAction<{uid: string; noteId: string}>,
-    ) => {
-      const {uid, noteId} = action.payload;
-      const userNotes = state.notes[uid];
-      if (!userNotes || !userNotes.data) return;
-
-      const note = userNotes.data.find(n => n._id === noteId);
-      if (!note || !note.isDeleted) return;
-
-      note.isDeleted = false;
-      note.deletedAt = undefined;
-      note.updatedAt = new Date();
-    },
+   
     permanentlyDeleteNote: (
       state,
       action: PayloadAction<{uid: string; noteId: string}>,
@@ -165,15 +167,89 @@ const noteSlice = createSlice({
       }>,
     ) => {
       const {uid, noteId, updates} = action.payload;
-
       const userNotes = state.notes[uid];
+
       if (!userNotes || !userNotes.data) return;
 
-      const note = userNotes.data.find(n => n._id === noteId);
-      if (!note) return;
+      const index = userNotes.data.findIndex(note => note._id === noteId);
+      if (index === -1) return;
+      const originalNote = userNotes.data[index];
+      const updatedNote: Note = {
+        ...originalNote,
+        ...updates,
+        updatedAt: new Date(),
+        createdAt: originalNote.createdAt,
+      };
+      userNotes.data.splice(index, 1);
+      userNotes.data.unshift(updatedNote);
+    },
 
-      Object.assign(note, updates);
-      note.updatedAt = new Date();
+    saveToDraft: (
+      state,
+      action: PayloadAction<{
+        uid: string;
+        note: {
+          title: string;
+          content: string;
+          hashtags?: string[];
+          media?: {
+            url: string;
+            type: 'image' | 'video' | 'audio' | 'mixed';
+            alt?: string;
+          }[];
+        };
+      }>,
+    ) => {
+      const {uid, note} = action.payload;
+      const userNotes = state.notes[uid]?.data;
+      if (!userNotes) {
+        state.notes[uid] = {
+          data: [
+            {
+              ...note,
+              _id: randomId(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              isArchived: false,
+              isDeleted: false,
+              isFavorite: false,
+              isPinned: false,
+              isDraft: true,
+              deletedAt: undefined,
+              sharedWith: [],
+              media: note.media || [],
+              hashtags: note.hashtags || [],
+            },
+          ],
+        };
+        return;
+      }
+      const existingDraft = userNotes.find(
+        n => n.title.trim() === note.title.trim() && n.isDraft,
+      );
+
+      if (existingDraft) {
+        existingDraft.content = note.content;
+        existingDraft.hashtags = note.hashtags || [];
+        existingDraft.media = note.media || [];
+        existingDraft.updatedAt = new Date();
+      } else {
+        userNotes.unshift({
+          ...note,
+          _id: randomId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isArchived: false,
+          isDeleted: false,
+          isFavorite: false,
+          isPinned: false,
+          isDraft: true,
+          deletedAt: undefined,
+          sharedWith: [],
+          media: note.media || [],
+          hashtags: note.hashtags || [],
+        });
+      }
     },
   },
 });
@@ -187,6 +263,8 @@ export const {
   pinNote,
   createNote,
   setToFavorite,
+  saveToDraft,
+  restoreNote
 } = noteSlice.actions;
 export default noteSlice.reducer;
 

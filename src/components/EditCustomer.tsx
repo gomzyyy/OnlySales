@@ -128,7 +128,6 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
               onChangeText={setAddress}
               style={[
                 global.inputText,
-                {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Enter address"
               placeholderTextColor={'grey'}
@@ -198,7 +197,7 @@ const EditCustomer: React.FC<EditCustomerProps> = ({
             value={image}
             setState={setImage}
             callback={closeImagePicker}
-            type="image"
+            type="photo"
           />
         </SlideUpContainer>
       </ScrollView>

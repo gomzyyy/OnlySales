@@ -3,6 +3,10 @@ import Toast from 'react-native-toast-message';
 import {v4 as uuidv4} from 'uuid';
 import {User} from '../../types';
 import Clipboard from '@react-native-clipboard/clipboard';
+import Crypto from 'crypto-js'
+import { CRYPTO_ENCRYPTION_KEY } from '@env';
+
+export const BASE_SERVER_PORT = '192.168.255.12'
 
 type ShowToastFunction = {
   type: 'success' | 'error' | 'info';
@@ -132,8 +136,14 @@ export function isValidEmail(email: string): boolean {
   return emailRegex.test(email.trim());
 }
 
-export const formatNumber = (x: string | number): string => {
+export const formatNumber = (
+  x: string | number,
+  opts?: {formated?: boolean},
+): string => {
   if (Number.isNaN(x)) return '';
+  if (opts && !opts.formated) {
+    return x.toString();
+  }
   const num = Number(x);
   if (num >= 1_000_000_000) {
     return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
@@ -209,4 +219,46 @@ export function throttle<T extends (...args: any[]) => void>(
       lastArgs = args;
     }
   };
+}
+
+export const showValidationMessage = (msg: string) => {
+  if (Platform.OS === 'android') {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  } else {
+    Alert.alert('Validation Error', msg);
+  }
+};
+
+export const compareStrings = (
+  a: string,
+  b: string,
+  options?: {returnOnFail?: any},
+) => {
+  if (a.trim() === b.trim()) {
+    return options?.returnOnFail;
+  } else {
+    return a.trim();
+  }
+};
+
+export const onTruthy = (
+  a?: boolean,
+  fn?: () => void,
+  options?: {returnOnFail?: any},
+) => {
+  if (a) {
+    fn?.();
+    return;
+  }
+  return options?.returnOnFail;
+};
+
+export const encrypt=(str:string):string | null=>{
+  if(!CRYPTO_ENCRYPTION_KEY) return null;
+  return Crypto.AES.encrypt(str,CRYPTO_ENCRYPTION_KEY).toString()
+}
+export const decrypt=(encryptedUri:string):string | null=>{
+  if(!CRYPTO_ENCRYPTION_KEY) return null;
+  const bytes = Crypto.AES.decrypt(encryptedUri,CRYPTO_ENCRYPTION_KEY);
+  return bytes.toString(Crypto.enc.Utf8)
 }

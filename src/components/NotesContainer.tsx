@@ -1,58 +1,20 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TextInput,
-  Pressable,
-} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../utils/Constants';
 import Header from './Header';
 import {useTheme} from '../hooks';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../store/store';
 import FallbackMessage from './FallbackMessage';
 import ExpandButton from './animated/ExpandButton';
 import Icon from 'react-native-vector-icons/Entypo';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import Icon3 from 'react-native-vector-icons/Feather';
+import Icon4 from 'react-native-vector-icons/MaterialIcons';
 import {Note} from '../../types';
-import LinearGradient from 'react-native-linear-gradient';
-import LongPressEnabled from '../customComponents/LongPressEnabled';
 import HeaderIcon from './HeaderIcon';
 import CreateNote from './sub-components/NotesComponents/CreateNote';
-
-type NoteTabProps = {
-  note: Note;
-  lastIndex?: boolean;
-  dummy?: boolean;
-};
-
-const Tab: React.FC<NoteTabProps> = ({note, dummy, lastIndex}) => {
-  const {currentTheme} = useTheme();
-  return (
-    <LongPressEnabled
-      longPressCanceledAction={() => {}}
-      longPressAction={() => {}}
-      dummy={dummy}>
-      <LinearGradient
-        colors={[currentTheme.fadeColor, currentTheme.contrastColor]}
-        start={{x: 0, y: 0}}
-        style={[
-          tabStyles.container,
-          {
-            marginBottom: lastIndex ? 70 : 6,
-            borderLeftColor: currentTheme.baseColor,
-          },
-        ]}>
-        <Text style={[tabStyles.title, {color: currentTheme.baseColor}]}>
-          {note.title}
-        </Text>
-      </LinearGradient>
-    </LongPressEnabled>
-  );
-};
+import Tab from './sub-components/NotesComponents/Tab';
 
 type NotesContainerProps = {
   close: () => void;
@@ -76,7 +38,12 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
   const data = useSelector(
     (s: RootState) => s.notes.notes[user._id]?.data ?? [],
   );
-
+  const dispatch = useDispatch<AppDispatch>();
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [media, setMedia] = useState<Note['media']>([]);
+  const [noteId, setNoteId] = useState<Note['_id'] | undefined>();
   const [componentState, setComponentState] = useState<ComponentState>({
     state: 'default',
     headerName: 'Sticky Notes',
@@ -96,32 +63,67 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
   const filteredData = (state: NotesContainerViewType) => {
     switch (state) {
       case 'favorite':
-        return data.filter(d => d.isFavorite);
+        return data.filter(d => d.isFavorite && !d.isDeleted && !d.isArchived);
       case 'archived':
-        return data.filter(d => d.isArchived);
+        return data.filter(d => d.isArchived && !d.isDeleted);
       case 'trash':
         return data.filter(d => d.isDeleted);
       default:
-        return data;
+        return data.filter(s => !s.isDeleted && !s.isArchived);
     }
+  };
+
+  const resetLocalState = () => {
+    setTitle('');
+    setContent('');
+    setHashtags([]);
+    setMedia([]);
   };
 
   const renderBody = () => {
     if (componentState.state === 'create')
-      return <CreateNote onRequestChangeState={updateComponentState} />;
+      return (
+        <CreateNote
+          onRequestChangeState={updateComponentState}
+          title={title}
+          setTitle={setTitle}
+          media={media}
+          setMedia={setMedia}
+          setHashtags={setHashtags}
+          hashtags={hashtags}
+          content={content}
+          setContent={setContent}
+          noteId={noteId}
+          setNoteId={setNoteId}
+          onResetState={resetLocalState}
+        />
+      );
 
     const renderNotes = filteredData(componentState.state);
-
     if (!renderNotes || renderNotes.length === 0) {
       return <FallbackMessage text="No Records found." />;
     }
-
+    const handleOnTabPress = (note: Note) => {
+      if (note.isDeleted) {
+        return;
+      }
+      setTitle(note.title);
+      setContent(note.content);
+      setMedia(note.media);
+      setHashtags(note.hashtags);
+      setNoteId(note._id);
+      updateComponentState('create');
+    };
     return (
       <FlatList
         data={renderNotes}
-        keyExtractor={s => s._id}
+        keyExtractor={item => item._id}
         renderItem={({item, index}) => (
-          <Tab note={item} lastIndex={renderNotes.length - 1 === index} />
+          <Tab
+            onPress={handleOnTabPress}
+            note={item}
+            lastIndex={index === renderNotes.length - 1}
+          />
         )}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
@@ -135,16 +137,25 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
       <ExpandButton
         btn={{
           icon: <Icon2 name="arrow-back" size={14} color={'rgba(0,0,0,0.8)'} />,
-          label: 'back',
-          onPress: () =>
+          label: 'Back',
+          onPress: () => {
             componentState.state === 'default'
               ? close()
-              : updateComponentState('default'),
+              : updateComponentState('default');
+            resetLocalState();
+          },
         }}
         btn1={{
           icon: <Icon3 name="plus" size={14} color={'rgba(0,0,0,0.8)'} />,
-          label: 'new',
+          label: 'New',
           onPress: () => updateComponentState('create'),
+        }}
+        btn2={{
+          icon: (
+            <Icon4 name="auto-delete" size={14} color={'rgba(0,0,0,0.8)'} />
+          ),
+          label: 'Trash',
+          onPress: () => updateComponentState('trash'),
         }}
       />
 
@@ -167,7 +178,6 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
         }
         customAction1={() => updateComponentState('archived')}
       />
-
       <View style={styles.content}>{renderBody()}</View>
     </View>
   );
@@ -217,21 +227,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     marginTop: 12,
-  },
-});
-
-const tabStyles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderLeftWidth: 2,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 

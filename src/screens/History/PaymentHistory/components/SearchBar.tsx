@@ -24,21 +24,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <TextInput
         style={[
           styles.searchQueryInput,
-          {backgroundColor: currentTheme.contrastColor},
+          {backgroundColor: currentTheme.fadeColor},
         ]}
         value={value}
         onChangeText={setState}
         placeholder={enable ? 'Search History' : 'No History yet.'}
         placeholderTextColor={currentTheme.baseColor}
         />
-        {/* <Text
-          style={[
-            styles.searchQueryInputText,
-            {color: currentTheme.baseColor},
-          ]}>
-          {enable ? 'Search History' : 'No History yet.'}
-        </Text>
-      </View> */}
     </Pressable>
   );
 };

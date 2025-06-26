@@ -1,6 +1,7 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import {useTheme} from '../hooks';
+import { deviceHeight } from '../utils/Constants';
 
 type FallbackMessage = {
   text: string;
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 10,
     alignSelf: 'center',
-    marginTop: 40,
+    marginTop: deviceHeight*0.1 > 120 ? 120 : deviceHeight*0.1,
   },
   assistText: {
     textAlign: 'center',

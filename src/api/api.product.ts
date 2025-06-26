@@ -122,17 +122,19 @@ export const updateProductAPI = async (
       );
     }
     if (data.media.image) {
-      formData.append('img', {
+        const imageFile = {
         uri: data.media.image,
         type: 'image/jpeg',
         name: 'product.jpg',
-      } as any);
+      };
+      formData.append('img', imageFile as any);
     }
 
     const fetching = await FetchAPI({
-      route: `/update/product?role=${data.query.role}&productId=${data.query.productId}`,
-      reqType: 'cud',
+      route: `/update/product?role=${data.query.role}&productId=${data.query.productId}&oid=${data.query.oid}`,
+      reqType: 'media',
       method: 'POST',
+      body:formData
     });
 
     return (await fetching.json()) as UpdateProductAPIReturnType;

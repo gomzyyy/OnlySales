@@ -30,7 +30,7 @@ import SlideUpContainer from '../../../../components/SlideUpContainer';
 import FeatureInfoContainer from '../../../../components/FeatureInfoContainer';
 import {OWNER_PROPERTIES, OwnerPropertyObjType} from '../../../../utils/data';
 import {navigate} from '../../../../utils/nagivationUtils';
-
+import { BASE_WEB_URL } from '@env';
 const OwnerProfile = () => {
   const {currentTheme} = useTheme();
   const owner = useSelector((s: RootState) => s.appData.user) as Owner;
@@ -200,7 +200,7 @@ const OwnerProfile = () => {
         }
         customAction={() =>
           navigate('WebViewScreen', {
-            uri: 'http://192.168.1.71:3000/home?redirect=update_owner',
+            uri:`${BASE_WEB_URL}/home?redirect=update_owner&sec=1`,
           })
         }
         customAction1={openNotice}
