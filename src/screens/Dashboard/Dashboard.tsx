@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingBottom: 90,
-    marginTop: 20,
+    marginTop: 10,
   },
   navigationBtnsContainer: {
     alignItems: 'flex-start',

@@ -8,6 +8,7 @@ import useSocket from './useSocket';
 import useStorage from './useStorage';
 import useDevice from './useDevice';
 import useUsage from './useUsage'
+import { useTTS } from './TTSProvider';
 
 export {
   useDevice,
@@ -19,5 +20,6 @@ export {
   useCache,
   useSocket,
   useStorage,
-  useUsage
+  useUsage,
+  useTTS
 };

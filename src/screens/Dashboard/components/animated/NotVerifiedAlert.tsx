@@ -16,7 +16,10 @@ import {RootState} from '../../../../../store/store';
 const NotVerifiedAlert = () => {
   const {currentTheme} = useTheme();
   const {t} = useTranslation('dashboard');
-  const user = useSelector((s: RootState) => s.appData.user)!;
+  const user = useSelector((s: RootState) => s.appData.user);
+  if (!user) {
+    return null;
+  }
   const unverifiedAlertHeight = useSharedValue(0);
   const unverifiedAlertAnimatedStyles = useAnimatedStyle(() => {
     return {
@@ -43,16 +46,16 @@ const NotVerifiedAlert = () => {
     <Animated.View
       style={[
         {
-          // backgroundColor: currentTheme.contrastColor,
-          borderBottomRightRadius: 14,
-          borderBottomLeftRadius: 14,
-          marginBottom: 10,
+          borderRadius:14,
+          marginVertical: 4,
+          marginHorizontal:4,
           alignItems: 'center',
           flexDirection: 'row',
           paddingHorizontal: 10,
           justifyContent: 'space-between',
           position: 'static',
           top: 0,
+          backgroundColor:currentTheme.fadeColor,
         },
         unverifiedAlertAnimatedStyles,
       ]}>

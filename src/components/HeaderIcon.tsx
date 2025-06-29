@@ -1,33 +1,42 @@
-import {ReactNode} from 'react';
+import {ReactNode,PropsWithChildren} from 'react';
 import {useTheme} from '../hooks';
 import {Text, View} from 'react-native';
 import {colors} from '../utils/Constants';
 
-const HeaderIcon = ({
+type HeaderIconProps=PropsWithChildren<{
+  label?: string;
+  show?: boolean;
+  showAlertDot?: boolean;
+  alertContent?: number;
+  paddingHorizontal?:number;
+   paddingVertical?:number;
+   horizontal?:boolean;
+}>
+
+const HeaderIcon:React.FC<HeaderIconProps> = ({
   children,
   label,
   show = true,
   showAlertDot = false,
   alertContent,
-}: {
-  children: ReactNode;
-  label?: string;
-  show?: boolean;
-  showAlertDot?: boolean;
-  alertContent?: number;
-}) => {
+  paddingHorizontal=5,
+  paddingVertical=3,
+  horizontal=false
+} ) => {
   const {currentTheme} = useTheme();
   if (show) {
     return (
       <View
         style={{
           backgroundColor: currentTheme.contrastColor,
-          paddingVertical: 3,
-          paddingHorizontal: 5,
+          paddingVertical,
+          paddingHorizontal,
           borderRadius: 10,
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
+          maxWidth:60,
+          flexDirection: horizontal ? 'row' : 'column'
         }}>
         {children}
         <Text
@@ -35,7 +44,10 @@ const HeaderIcon = ({
             fontSize: 8,
             fontWeight: '900',
             color: currentTheme.baseColor,
-          }}>
+            textAlign:'center'
+          }}
+          numberOfLines={2}
+          >
           {label}
         </Text>
         {showAlertDot && (

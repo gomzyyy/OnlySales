@@ -4,13 +4,17 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {ReactNode} from 'react';
+import Icon from 'react-native-vector-icons/Feather';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {back} from '../utils/nagivationUtils';
-import {useAnalytics, useTheme} from '../hooks/index';
+import {useTheme, useTTS} from '../hooks/index';
+import HeaderIcon from './HeaderIcon';
+import AILoader from './shared/AILoader';
 
 type HeaderProps = {
   name?: string;
@@ -61,8 +65,9 @@ const Header: React.FC<HeaderProps> = ({
   customAction2,
 }): React.JSX.Element => {
   const navigation = useNavigation();
+  const {currentTheme} = useTheme();
   const openMenu = () => navigation.dispatch(DrawerActions.openDrawer());
-
+  const {isPlaying, pause} = useTTS();
   return (
     <View
       style={{
@@ -96,37 +101,41 @@ const Header: React.FC<HeaderProps> = ({
                 fontWeight: 'bold',
                 color: titleColor,
               }}>
-              {name.slice(0,16)}
+              {name.slice(0, 16)}
             </Text>
           )}
         </View>
       )}
       <View style={[styles.rightCustomBtn, {right: 20}]}>
-        {customComponent && (
+        {!isPlaying && customComponent && (
           <TouchableOpacity
             activeOpacity={customComponentActiveOpacity}
-            onPress={customAction}
-            // style={[styles.rightCustomBtn, {right: 20}]}
-          >
+            onPress={customAction}>
             {renderItem}
           </TouchableOpacity>
         )}
-        {customComponent && renderItem1 && (
+        {!isPlaying && customComponent && renderItem1 && (
           <TouchableOpacity
             activeOpacity={customComponentActiveOpacity}
-            onPress={customAction1}
-            // style={[styles.rightCustomBtn, {right: 60}]}
-          >
+            onPress={customAction1}>
             {renderItem1}
           </TouchableOpacity>
         )}
-        {customComponent && renderItem2 && (
+        {!isPlaying && customComponent && renderItem2 && (
           <TouchableOpacity
             activeOpacity={customComponentActiveOpacity}
-            onPress={customAction2}
-            // style={[styles.rightCustomBtn, {right: 100}]}
-          >
+            onPress={customAction2}>
             {renderItem2}
+          </TouchableOpacity>
+        )}
+        {isPlaying && (
+          <TouchableOpacity
+            activeOpacity={customComponentActiveOpacity}
+            onPress={() => pause()}>
+            <HeaderIcon horizontal label="Playing audio" paddingHorizontal={12}>
+              {/* <Icon name="pause" size={20} color={currentTheme.baseColor} /> */}
+              <ActivityIndicator size={20} color={currentTheme.baseColor} />
+            </HeaderIcon>
           </TouchableOpacity>
         )}
       </View>

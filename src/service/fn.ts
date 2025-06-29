@@ -6,7 +6,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import Crypto from 'crypto-js'
 import { CRYPTO_ENCRYPTION_KEY } from '@env';
 
-export const BASE_SERVER_PORT = '192.168.255.12'
+export const BASE_SERVER_PORT = '192.168.82.12'
 
 type ShowToastFunction = {
   type: 'success' | 'error' | 'info';

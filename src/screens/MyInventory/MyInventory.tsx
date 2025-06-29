@@ -1,14 +1,12 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import React, {useState} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
 import Icon from 'react-native-vector-icons/Octicons';
 import {deviceHeight} from '../../utils/Constants';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../store/store';
 import Tab from './components/Tab';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddProduct from './components/AddProduct';
-import {useAnalytics, useTheme} from '../../hooks/index';
+import {useAnalytics, useTheme, useTTS} from '../../hooks/index';
 import {useTranslation} from 'react-i18next';
 import HeaderIcon from '../../components/HeaderIcon';
 import FallbackMessage from '../../components/FallbackMessage';
@@ -16,9 +14,17 @@ import FallbackMessage from '../../components/FallbackMessage';
 const MyInventory = () => {
   const {currentTheme} = useTheme();
   const {t} = useTranslation('inventory');
+  const {getLanguages} = useTTS();
   const {owner} = useAnalytics();
   const [openAddProduct, setOpenAddProduct] = useState<boolean>(false);
   const handleAddButton = () => setOpenAddProduct(true);
+
+  useEffect(() => {
+    (async () => {
+      const res = await getLanguages();
+      console.log(res);
+    })();
+  }, []);
 
   return (
     <View
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 10,
     flex: 1,
-    alignItems:'center'
+    alignItems: 'center',
   },
   listContainer: {
     // justifyContent: 'space-evenly',

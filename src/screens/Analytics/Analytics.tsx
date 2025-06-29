@@ -1,24 +1,37 @@
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from 'react-native';
-import React from 'react';
+import {View, StyleSheet, ScrollView, Image} from 'react-native';
+import React, {useState} from 'react';
 import Header from '../../components/Header';
 import {useAnalytics, useTheme} from '../../hooks';
 import TodayAnalyticsCard from './components/TodayAnalyticsCard';
 import WeeklySalesAnalysisCard from './components/WeeklySalesAnalysisCard';
 import MonthlySalesAnalysisCard from './components/MonthlySalesAnalyticsCard';
-const COHERE_LOGO_WHITE = require('../../assets/images/Cohere-Logo-White.png');
+import {analyseBusinessAIAPI} from '../../api/api.ai';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store/store';
+import {AIResponseLengthType} from '../../../enums';
+import HeaderIcon from '../../components/HeaderIcon';
+const COHERE_LOGO = require('../../assets/images/Cohere-Logo0.png');
 
 const Analytics = () => {
   const {currentTheme} = useTheme();
-  const {mergedweeklySales, soldThisMonth} = useAnalytics();
+  const {mergedweeklySales, soldThisMonth, _id} = useAnalytics();
+  const user = useSelector((s: RootState) => s.appData.user);
+  if (!user) {
+    return null;
+  }
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getBusinessAnalytics = async () => {
+    const res = await analyseBusinessAIAPI(
+      {query: {role: user.role, oid: _id, rl: AIResponseLengthType.lg}},
+      setLoading,
+    );
+    console.log(res);
+  };
 
   const AIbtn = () => (
     <View>
-      <Image source={COHERE_LOGO_WHITE} style={{height: 20, width: 20}} />
+      <Image source={COHERE_LOGO} style={{height: 20, width: 20}} />
     </View>
   );
 
@@ -29,7 +42,12 @@ const Analytics = () => {
         name="Analytics"
         headerBgColor={currentTheme.baseColor}
         backButton={true}
-        renderItem={<AIbtn/>}
+        renderItem={
+          <HeaderIcon label='Analyse'>
+            <AIbtn />
+          </HeaderIcon>
+        }
+        customAction={getBusinessAnalytics}
         customComponent={true}
       />
       <View style={{flex: 1, paddingHorizontal: 10}}>

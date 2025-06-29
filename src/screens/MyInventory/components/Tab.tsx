@@ -141,6 +141,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     setShowAIResponse(false);
     setAskAnalyticsPrefrence(true);
   };
+  
   const ProductInfo = () => {
     const netProfit =
       i.productCost &&
@@ -369,7 +370,6 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
             </ScrollView>
           </View>
         ) : (
-          // <View />
           <ProductInfo />
         )}
         <PopupContainer open={openEditing} close={handleCloseEditing}>

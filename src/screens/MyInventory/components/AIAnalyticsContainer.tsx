@@ -1,13 +1,12 @@
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Pressable,
   TouchableOpacity,
 } from 'react-native';
-import {useTheme} from '../../../hooks';
+import {useTheme, useTTS} from '../../../hooks';
 import {deviceHeight} from '../../../utils/Constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/Feather';
@@ -19,13 +18,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-type Props = {
+interface Props {
   response: string | undefined;
   close: () => void;
   setResponse: Dispatch<SetStateAction<string | undefined>>;
   reload: ({rl}: {rl?: AIResponseLengthType}) => Promise<void>;
   changePrefrence: any;
-};
+}
 
 const AIAnalyticsContainer: React.FC<Props> = ({
   response,
@@ -35,6 +34,8 @@ const AIAnalyticsContainer: React.FC<Props> = ({
   changePrefrence,
 }) => {
   const {currentTheme} = useTheme();
+  const {isPlaying, speak, pause} =
+    useTTS();
 
   const textContainerOpacity = useSharedValue(0);
 
@@ -65,13 +66,27 @@ const AIAnalyticsContainer: React.FC<Props> = ({
         <Text style={[styles.label, {color: currentTheme.baseColor}]}>
           AI Analytics
         </Text>
-        <TouchableOpacity onPress={changePrefrence} activeOpacity={0.8}>
-          {response ? (
-            <Icon1 name="refresh-cw" size={22} />
-          ) : (
-            <View style={{height: 22, width: 22}} />
-          )}
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', gap: 6}}>
+          <TouchableOpacity
+            onPress={() =>
+              isPlaying
+                ? pause()
+                : speak(
+                    response || 'No Analytics report available at the moment.',
+                  )
+            }
+            activeOpacity={0.8}>
+            {response ? (
+              isPlaying ? (
+                <Icon1 name="pause" size={22} />
+              ) : (
+                <Icon1 name="play" size={22} />
+              )
+            ) : (
+              <View style={{height: 22, width: 22}} />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {response ? (

@@ -47,7 +47,8 @@ const Login = () => {
       });
       return;
     }
-    const res = await findUserAPI({userId, role}, setLoading);
+    const res = await findUserAPI({userId:userId.trim(), role}, setLoading);
+    console.log(res)
     if (res.success) {
       navigate('VerifyPassword', {
         name: res.data.name,

@@ -87,7 +87,7 @@ const generateInvoiceHTML = ({
             margin-top: 15px;
           }
           th, td {
-            border: 2px solid #ccc;
+            border: 1px solid #ccc;
             padding: 10px 8px;
             text-align: center;
           }
