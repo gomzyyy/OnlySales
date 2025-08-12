@@ -7,14 +7,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {ReactNode} from 'react';
-import Icon from 'react-native-vector-icons/Feather';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {back} from '../utils/nagivationUtils';
 import {useTheme, useTTS} from '../hooks/index';
 import HeaderIcon from './HeaderIcon';
-import AILoader from './shared/AILoader';
+import {colors} from '../utils/Constants';
 
 type HeaderProps = {
   name?: string;
@@ -44,6 +43,10 @@ type HeaderProps = {
     | 1;
   curved?: boolean;
   customTitle?: ReactNode;
+  showAlertDotOnScreenName?: boolean;
+  screenNameAlertDotColor?: string;
+  screenNameAlertContent?: number | string;
+  borderBottomColor?: string;
 };
 
 const Header: React.FC<HeaderProps> = ({
@@ -63,6 +66,10 @@ const Header: React.FC<HeaderProps> = ({
   renderItem2,
   customAction1,
   customAction2,
+  showAlertDotOnScreenName,
+  screenNameAlertDotColor,
+  screenNameAlertContent,
+  borderBottomColor,
 }): React.JSX.Element => {
   const navigation = useNavigation();
   const {currentTheme} = useTheme();
@@ -79,6 +86,8 @@ const Header: React.FC<HeaderProps> = ({
         backgroundColor: headerBgColor ?? '',
         borderBottomRightRadius: curved ? 10 : 0,
         borderBottomLeftRadius: curved ? 10 : 0,
+        borderBottomColor,
+        borderBottomWidth: borderBottomColor ? 1.8 : 0,
       }}>
       {!backButton && menuButton && (
         <Pressable style={styles.leftActionBtn} onPress={openMenu}>
@@ -91,7 +100,19 @@ const Header: React.FC<HeaderProps> = ({
         </Pressable>
       )}
       {showTitle && (
-        <View style={{alignItems: 'center', gap: 4}}>
+        <View style={{alignItems: 'center', gap: 4, position: 'relative'}}>
+          {showAlertDotOnScreenName && (
+            <View
+              style={{
+                position: 'absolute',
+                backgroundColor: screenNameAlertDotColor || colors.danger,
+                height: 9,
+                width: 9,
+                borderRadius: 5,
+                right: -8,
+                top: 0,
+              }}></View>
+          )}
           {customTitle ? (
             customTitle
           ) : (

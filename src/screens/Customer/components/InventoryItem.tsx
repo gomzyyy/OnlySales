@@ -58,7 +58,7 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
         styles.parent,
         {
           borderColor:
-            product.stock === 0 ? colors.danger : currentTheme.baseColor,
+            !product.inStock ? colors.danger : currentTheme.baseColor,
         },
       ]}>
       <View style={styles.innerContainer}>
@@ -68,7 +68,7 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
               name="plus"
               size={20}
               color={
-                product.stock === 0 ? colors.danger : currentTheme.baseColor
+                !product.inStock ? colors.danger : currentTheme.baseColor
               }
             />
           )}
@@ -79,7 +79,7 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
             styles.itemText,
             {
               color:
-                product.stock === 0 ? colors.danger : currentTheme.baseColor,
+                !product.inStock ? colors.danger : currentTheme.baseColor,
             },
           ]}>{`${count}  ${product.name}`}</Text>
         <TouchableOpacity onPress={() => handlePlusMinus('MINUS')}>
@@ -88,7 +88,7 @@ const InventoryItem: React.FC<InventoryItemProps> = ({
               name="minus"
               size={20}
               color={
-                product.stock === 0 ? colors.danger : currentTheme.baseColor
+                !product.inStock ? colors.danger : currentTheme.baseColor
               }
             />
           )}

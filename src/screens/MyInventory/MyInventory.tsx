@@ -63,7 +63,9 @@ const MyInventory = () => {
         <SlideUpContainer
           open={openAddProduct}
           close={() => setOpenAddProduct(false)}
-          height={deviceHeight * 0.62}>
+          height={deviceHeight * 0.62}
+          usepadding={false}
+          >
           <AddProduct close={() => setOpenAddProduct(false)} />
         </SlideUpContainer>
       )}

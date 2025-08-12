@@ -116,6 +116,7 @@ export interface CommonProps {
 }
 
 export interface Review extends CommonProps {
+  SID: number;
   reviewRef: string;
   reviewRefType: ReviewRefType;
   userRef: string;
@@ -127,6 +128,7 @@ export interface Review extends CommonProps {
 }
 
 export interface User extends CommonProps {
+  SID: number;
   name: string;
   phoneNumber?: {
     value: string;
@@ -159,6 +161,7 @@ export interface Location extends CommonProps {
 }
 
 export interface Customer extends CommonProps {
+  SID: number;
   name: string;
   phoneNumber?: string;
   image?: string | undefined;
@@ -236,7 +239,8 @@ export interface ISupportTicket extends CommonProps {
 }
 
 export interface ServicePoint extends CommonProps {
-  ownerId:Owner['_id'];
+  SID: number;
+  ownerId: Owner['_id'];
   pointName: string;
   qrUrl: string;
   isActive: boolean;
@@ -251,6 +255,11 @@ export interface ServicePoint extends CommonProps {
 export interface Owner extends User {
   userId: string;
   referralCode: string;
+  fiscal: {
+    yearEndMonth: number;
+    yearEndDay: number;
+    lastSheetFor: number;
+  };
   credits: number;
   reviews: Review[];
   recommendations: Customer[];
@@ -263,7 +272,7 @@ export interface Owner extends User {
     value: string;
     verified: boolean;
   };
-  servicePoints:string[];
+  servicePoints: string[];
   businessPartners: Partner[];
   gstNumber: string;
   accountType: AccountType;
@@ -350,6 +359,7 @@ export interface Employee extends User {
 }
 
 export interface Product extends CommonProps {
+  SID: number;
   name: string;
   businessOwner: string;
   productType: ProductType;
@@ -362,10 +372,10 @@ export interface Product extends CommonProps {
   quantity: number;
   measurementType: MeasurementType;
   measurementTypeDescription?: string;
-  stock?: number;
   productCost: number;
   createdBy: Owner | Partner | Employee;
   createdByModel: AdminRole;
+  inStock: boolean;
 }
 
 // Delivery Info Interface
@@ -381,13 +391,14 @@ export interface DeliveryInfo {
 
 // Order Interface
 export interface Order extends CommonProps {
+  SID: number;
   ownerId: CommonProps['_id'];
   orderedBy: Customer;
   products: {product: Product; count: number}[];
   totalAmount: number;
   acceptedByType?: AcceptedByType;
   acceptedBy?: Owner | Partner | Employee;
-  isDeleted:boolean;
+  isDeleted: boolean;
   orderedAt?: Date;
   orderStatus?: OrderStatus;
   acceptedAt?: Date;
@@ -399,6 +410,7 @@ export interface Order extends CommonProps {
 }
 
 export interface SoldProduct extends CommonProps {
+  SID: number;
   product: Product;
   buyer: Customer;
   state: PaymentState;
@@ -513,7 +525,7 @@ export interface Event extends CommonProps {
   thumbnail?: string;
   metaData: CommonProps['_id'];
   status: EventStatus;
-  locatedAt: string | Location;
+  locatedAt?: {long: number; lat: number};
 }
 export interface History {
   payments: PaymentHistory[];

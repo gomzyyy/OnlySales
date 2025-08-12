@@ -264,7 +264,7 @@ const CreateEmployee: React.FC<CreateEmployeeProps> = ({
                 ]}>
                 {salary.trim().length !== 0 &&
                   `Estimated annual salary: ${currency}${formatNumberWithComma(
-                    Number(salary),
+                    Number(salary)*12,
                   )}`}
               </Text>
             }

@@ -62,8 +62,12 @@ import {
 } from '../api/api.user';
 import {handleBooleanState} from '../api/helper/fn';
 import {getOrdersByOwnerIdAPI} from '../api/api.orders';
-import { createServicePointAPI, getAllServicePointsAPI, updateServicePointAPI } from '../api/api.servicePoint';
-import { setPoints } from '../../store/slices/servicePoint';
+import {
+  createServicePointAPI,
+  getAllServicePointsAPI,
+  updateServicePointAPI,
+} from '../api/api.servicePoint';
+import {addServicePoint, setPoints} from '../../store/slices/servicePoint';
 
 export interface useStorageReturnType {
   customer: {
@@ -364,30 +368,36 @@ const useStorage = (): useStorageReturnType => {
       }
       return res;
     },
-    createServicePoint: async(
+    createServicePoint: async (
       data: any,
       setState?: Dispatch<SetStateAction<boolean>>,
       onErrorSettingLocalState?: () => void,
     ) => {
       const res = await createServicePointAPI(data, setState);
-      if (res.success) {
-        await updateLocalUserState(onErrorSettingLocalState);
+      if (res.success && res.data && res.data.servicePoint) {
+        d(addServicePoint(res.data.servicePoint));
+      } else {
+        onErrorSettingLocalState && onErrorSettingLocalState();
       }
       return res;
     },
-    updateServicePoint: async(
+    updateServicePoint: async (
       data: UpdateServicePointAPIData,
       setState?: Dispatch<SetStateAction<boolean>>,
-    ) => { const res = await updateServicePointAPI(data, setState);
-      return res},
-      getAllServicePoints: async(
+    ) => {
+      const res = await updateServicePointAPI(data, setState);
+      return res;
+    },
+    getAllServicePoints: async (
       data: GetAllServicePointsAPIData,
       setState?: Dispatch<SetStateAction<boolean>>,
-    ) => { const res = await getAllServicePointsAPI(data, setState);
+    ) => {
+      const res = await getAllServicePointsAPI(data, setState);
       if (res.success && res.data && res.data.sps) {
-        d(setPoints(res.data.sps))
+        d(setPoints(res.data.sps));
       }
-      return res},
+      return res;
+    },
   };
   return {
     customer,

@@ -13,7 +13,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useTheme} from '../../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {colors, deviceHeight} from '../../../../utils/Constants';
-import {navigate} from '../../../../utils/nagivationUtils';
+import {navigate, resetAndNavigate} from '../../../../utils/nagivationUtils';
 import {AdminRole, BusinessType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
 import {showToast} from '../../../../service/fn';
@@ -112,7 +112,7 @@ const SetPassword = () => {
       await AsyncStorage.setItem('accessToken', res.data.token);
       dispatch(setUser(res.data.user));
       showToast({type: 'success', text1: 'Signup success.'});
-      navigate('Dashboard');
+      resetAndNavigate('Dashboard');
       setOpenTpPrompt(false);
       return;
     } else {

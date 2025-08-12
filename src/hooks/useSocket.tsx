@@ -92,6 +92,9 @@ const useSocket = (): UseSocketReturnType => {
       socketRef.current.on('order_status_updated', s => {
         console.log(s);
       });
+      socketRef.current.on('balance_sheet_created', s => {
+        console.log(s);
+      });
       socketRef.current.on('connect_error', err => {
         console.log('Socket connection error:', err.message);
       });
@@ -116,4 +119,5 @@ export default useSocket;
 export enum useSocketEvents {
   NEW_CUSTOMER = 'new_customer',
   NEW_EVENT = 'new_event',
+  BALANCE_SHEET_CREATED = 'balance_sheet_created'
 }

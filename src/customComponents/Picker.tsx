@@ -3,19 +3,20 @@ import React, {Dispatch, SetStateAction} from 'react';
 import {Picker as P} from '@react-native-picker/picker';
 import {useTheme} from '../hooks/index';
 
-type PickerProps = {
+/** Picker Component Props */
+type PickerProps<T extends string | number> = {
   enabled?: boolean;
-  setState: Dispatch<SetStateAction<any>>;
-  value: any;
-  data: {[key: string | number]: string | number};
+  setState: Dispatch<SetStateAction<T>>;
+  value: T;
+  data: Record<string, T>;
 };
 
-const Picker: React.FC<PickerProps> = ({
+const Picker = <T extends string | number>({
   enabled = false,
   setState,
   value,
   data,
-}): React.JSX.Element => {
+}: PickerProps<T>): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
   return (
@@ -29,15 +30,13 @@ const Picker: React.FC<PickerProps> = ({
       ]}
       enabled={enabled}
       selectedValue={value}
-      onValueChange={(value: any) => setState(value)}
+      onValueChange={(v: T) => setState(v)}
       dropdownIconColor={currentTheme?.modal.pickerText}>
-      {Object.keys(data).map(key => (
+      {Object.entries(data).map(([key, val]) => (
         <P.Item
           key={key}
-          label={`${data[key as keyof typeof data]} ${
-            enabled === false ? '(disabled)' : ''
-          }`}
-          value={data[key as keyof typeof data]}
+          label={`${val} ${enabled === false ? '(disabled)' : ''}`}
+          value={val}
         />
       ))}
     </P>

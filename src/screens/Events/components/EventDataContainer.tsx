@@ -14,6 +14,7 @@ import {Event} from '../../../../types';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import {useTheme} from '../../../hooks/index';
+import Map from '../../../customComponents/Map';
 
 type EventDataContainerProps = {
   event: Event;
@@ -31,7 +32,7 @@ const EventDataContainer: React.FC<EventDataContainerProps> = ({
       style={[styles.parent, {backgroundColor: currentTheme.contrastColor}]}>
       <Text style={styles.title}>{event.title || 'Untitled Event'}</Text>
 
-      <ScrollView style={{flex:1}} contentContainerStyle={{paddingBottom: 20}}>
+      <ScrollView style={{flex: 1}} nestedScrollEnabled>
         <View style={styles.section}>
           <Text style={styles.label}>Description:</Text>
           <Text style={styles.value}>{event.description || 'N/A'}</Text>
@@ -54,14 +55,24 @@ const EventDataContainer: React.FC<EventDataContainerProps> = ({
           <Text style={[styles.value, {color: '#007BFF'}]}>{event.status}</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>Located At:</Text>
-          <Text style={styles.value}>
-            {typeof event.locatedAt === 'string'
-              ? event.locatedAt
-              : 'Location object'}
-          </Text>
-        </View>
+        {event.locatedAt  && (
+          <View style={[styles.section, {gap: 10}]}>
+            <Text style={styles.label}>Located At:</Text>
+            <View
+              style={{
+                height: 200,
+                width: '60%',
+                maxWidth: 200,
+                borderRadius: 20,
+                overflow: 'hidden',
+              }}>
+              <Map
+                longitude={event.locatedAt.long}
+                latitude={event.locatedAt.lat}
+              />
+            </View>
+          </View>
+        )}
 
         {event.files?.length > 0 && (
           <View style={styles.section}>
@@ -69,6 +80,7 @@ const EventDataContainer: React.FC<EventDataContainerProps> = ({
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
+              nestedScrollEnabled
               style={{marginTop: 6}}>
               {event.files.map((uri, i) => (
                 <Image

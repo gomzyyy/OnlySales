@@ -3,10 +3,10 @@ import Toast from 'react-native-toast-message';
 import {v4 as uuidv4} from 'uuid';
 import {User} from '../../types';
 import Clipboard from '@react-native-clipboard/clipboard';
-import Crypto from 'crypto-js'
-import { CRYPTO_ENCRYPTION_KEY } from '@env';
+import Crypto from 'crypto-js';
+import {CRYPTO_ENCRYPTION_KEY} from '@env';
 
-export const BASE_SERVER_PORT = '192.168.82.12'
+export const BASE_SERVER_PORT = '10.33.11.12';
 
 type ShowToastFunction = {
   type: 'success' | 'error' | 'info';
@@ -232,7 +232,7 @@ export const showValidationMessage = (msg: string) => {
 export const compareStrings = (
   a: string,
   b: string,
-  options?: {returnOnFail?: any},
+  options?: { returnOnFail?: any },
 ) => {
   if (a.trim() === b.trim()) {
     return options?.returnOnFail;
@@ -241,6 +241,34 @@ export const compareStrings = (
   }
 };
 
+export const compare = (
+  a: string,
+  b: string,
+  options?: { returnOnFail?: any; datatype?: 'string' | 'number' | 'boolean' },
+) => {
+  const datatype = options?.datatype ?? 'string';
+
+  switch (datatype) {
+    case 'number': {
+      const numA = Number(a);
+      const numB = Number(b);
+      if (Number.isNaN(numA) || Number.isNaN(numB)) return options?.returnOnFail;
+      return numA === numB ? options?.returnOnFail : a;
+    }
+
+    case 'boolean': {
+      const boolA = a === 'true' || a === '1';
+      const boolB = b === 'true' || b === '1';
+      return boolA === boolB ? options?.returnOnFail : a;
+    }
+
+    case 'string':
+      return compareStrings(a, b, { returnOnFail: options?.returnOnFail });
+
+    default:
+      throw new Error(`ERROR_CODE: INVALID_DATA_TYPE; ${options?.datatype}`);
+  }
+};
 export const onTruthy = (
   a?: boolean,
   fn?: () => void,
@@ -253,12 +281,12 @@ export const onTruthy = (
   return options?.returnOnFail;
 };
 
-export const encrypt=(str:string):string | null=>{
-  if(!CRYPTO_ENCRYPTION_KEY) return null;
-  return Crypto.AES.encrypt(str,CRYPTO_ENCRYPTION_KEY).toString()
-}
-export const decrypt=(encryptedUri:string):string | null=>{
-  if(!CRYPTO_ENCRYPTION_KEY) return null;
-  const bytes = Crypto.AES.decrypt(encryptedUri,CRYPTO_ENCRYPTION_KEY);
-  return bytes.toString(Crypto.enc.Utf8)
-}
+export const encrypt = (str: string): string | null => {
+  if (!CRYPTO_ENCRYPTION_KEY) return null;
+  return Crypto.AES.encrypt(str, CRYPTO_ENCRYPTION_KEY).toString();
+};
+export const decrypt = (encryptedUri: string): string | null => {
+  if (!CRYPTO_ENCRYPTION_KEY) return null;
+  const bytes = Crypto.AES.decrypt(encryptedUri, CRYPTO_ENCRYPTION_KEY);
+  return bytes.toString(Crypto.enc.Utf8);
+};

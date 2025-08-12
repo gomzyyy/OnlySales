@@ -25,7 +25,9 @@ import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import FeatureInfoContainer from '../../../components/FeatureInfoContainer';
 import {AIResponseLengthType} from '../../../../enums';
-import {deviceHeight, deviceWidth} from '../../../utils/Constants';
+import {colors, deviceHeight, deviceWidth} from '../../../utils/Constants';
+import ProductPreview from './ProductPreview';
+import LinearGradient from 'react-native-linear-gradient';
 const COHERE_LOGO0 = require('../../../assets/images/Cohere-Logo0.png');
 const NoPhoto = require('../../../assets/images/no_product_image.jpg');
 
@@ -84,15 +86,15 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [openEditing, setOpenEditing] = useState<boolean>(false);
+  const [openPreview,setOpenPreview]=useState<boolean>(false);
   const [askAnalysisPrefrence, setAskAnalyticsPrefrence] =
     useState<boolean>(false);
   const [openLongPressOptions, setOpenLongPressOptions] =
     useState<boolean>(false);
-
   const handleClickingTab = () => {
-    setOpenEditing(true);
+    setOpenPreview(true);
   };
-
+  const handleClosePreview=()=>setOpenPreview(false)
   const handleOpenLongPressOptions = () => setOpenLongPressOptions(true);
   const handleCloseLongPressOptions = () => setOpenLongPressOptions(false);
   const handleCloseEditing = () => setOpenEditing(false);
@@ -141,7 +143,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
     setShowAIResponse(false);
     setAskAnalyticsPrefrence(true);
   };
-  
+
   const ProductInfo = () => {
     const netProfit =
       i.productCost &&
@@ -154,94 +156,132 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
 
     return (
       <>
-        <View
-          style={[styles.tabLabel, {backgroundColor: currentTheme.baseColor}]}>
-          <Text style={[styles.productName, {color: currentTheme.tab.text}]}>
-            {i.name}
-          </Text>
-
+        <LinearGradient colors={[colors.yellowFade,currentTheme.contrastColor]} start={{x: 0, y: 0}} style={styles.tabLabel}>
+          <Text style={[styles.productName]}>{i.name}</Text>
           <TouchableOpacity
             style={{
               flexDirection: 'row',
               columnGap: 4,
               paddingHorizontal: 4,
               borderRadius: 10,
-              backgroundColor: currentTheme.contrastColor,
+              backgroundColor: colors.yellowFade,
               alignItems: 'center',
             }}
             activeOpacity={0.8}
             onPress={() => setAskAnalyticsPrefrence(true)}>
             <Image source={COHERE_LOGO0} style={{height: 13, width: 13}} />
-            <Text numberOfLines={1}
+            <Text
+              numberOfLines={1}
               style={{fontSize: 12, fontWeight: '900', fontStyle: 'italic'}}>
               Analyse
             </Text>
           </TouchableOpacity>
-        </View>
-
+        </LinearGradient>
         <View
           style={[
             styles.productInfoContainer,
-            {backgroundColor: currentTheme?.baseColor},
+            {backgroundColor: currentTheme.contrastColor},
           ]}>
-          <View style={styles.imageContainer}>
+          <View
+            style={[
+              styles.imageContainer,
+              {
+                borderColor: colors.yellow,
+                borderTopLeftRadius: 10,
+                borderBottomLeftRadius: 10,
+                overflow: 'hidden',
+              },
+            ]}>
             <Image
-              source={i.image && i.image.trim().length !==0 ? {uri: i.image} : NoPhoto}
+              source={
+                i.image && i.image.trim().length !== 0
+                  ? {uri: i.image}
+                  : NoPhoto
+              }
               style={{
-                height: 120,
-                width: 120,
-                borderRadius: 20,
+                height: '100%',
+                width: '100%',
+                borderTopLeftRadius: 8,
+                borderBottomLeftRadius: 8,
                 borderWidth: 1,
                 borderColor: currentTheme?.contrastColor || '#000',
               }}
             />
           </View>
-
-          <View>
-            <View style={styles.infoContainer}>
-              <Text numberOfLines={1} style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-                {t('i_tab_price')}: {currency} {i.basePrice}
-              </Text>
+          <View
+            style={{
+              flex: 1,
+              height: '100%',
+              borderTopWidth: 2,
+              borderBottomWidth: 2,
+              borderRightWidth: 2,
+              borderColor: colors.yellow,
+              borderTopRightRadius: 10,
+              borderBottomRightRadius: 10,
+              paddingLeft: 8,
+            }}>
+            <View
+              style={[
+                styles.infoContainer,
+                {flexDirection: 'row', alignItems: 'flex-end'},
+              ]}>
+                 <Text
+                  style={
+                    styles.infoText
+                  }>
+                  {"Price: "}
+                </Text>
+ {(typeof i.discountedPrice === 'number' ||
+                typeof i.discountedPrice === 'string') &&
+              i.discountedPrice ? (
+                <Text
+                  style={[
+                    styles.infoText,
+                    {fontSize: 8, textDecorationLine: 'line-through'},
+                  ]}>
+                  {i.basePrice.toString()}
+                </Text>
+              ) : null}
+              <Text style={styles.infoText}>{i.basePrice}</Text>
             </View>
-
-            {i.discountedPrice && (
+            {(typeof i.discountedPrice === 'number' ||
+              typeof i.discountedPrice === 'string') &&
+            i.discountedPrice ? (
               <View style={styles.infoContainer}>
-                <Text numberOfLines={1}
-                  style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-                  {t('i_tab_discountedPrice')}: {currency} {i.discountedPrice}
+                <Text numberOfLines={1} style={[styles.infoText]}>
+                  {`${String(t('i_tab_discountedPrice'))}: ${String(
+                    currency,
+                  )} ${String(i.discountedPrice)}`}
                 </Text>
               </View>
-            )}
+            ) : null}
 
             <View style={styles.infoContainer}>
-              <Text numberOfLines={1} style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+              <Text numberOfLines={1} style={[styles.infoText]}>
                 {t('i_tab_includes')}: {i.quantity} item
               </Text>
             </View>
-
             <View style={styles.infoContainer}>
-              <Text numberOfLines={1} style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+              <Text numberOfLines={1} style={[styles.infoText]}>
                 {t('i_tab_totalSold')}: {i.totalSold}
               </Text>
             </View>
 
-            {i.stock !== undefined && (
+            {i.inStock && (
               <View style={styles.infoContainer}>
-                <Text numberOfLines={1}
-                  style={[styles.infoText, {color: currentTheme?.tab.text}]}>
-                  {t('i_tab_stock')}: {i.stock}
+                <Text numberOfLines={1} style={[styles.infoText]}>
+                  {t('i_tab_stock')}: {i.inStock ? 'IN_STOCK' : 'OUT_OF_STOCK'}
                 </Text>
               </View>
             )}
 
             <View style={styles.infoContainer}>
-              <Text numberOfLines={1} style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+              <Text numberOfLines={1} style={[styles.infoText]}>
                 {t('i_tab_productCost')}: {currency} {i.productCost}
               </Text>
             </View>
-
             <View style={styles.infoContainer}>
-              <Text numberOfLines={1} style={[styles.infoText, {color: currentTheme?.tab.text}]}>
+              <Text numberOfLines={1} style={[styles.infoText]}>
                 {`${t('i_tab_netProfit')}: ${netProfit}%`}
               </Text>
             </View>
@@ -260,7 +300,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           styles.container,
           {
             marginBottom: lastIndex ? 70 : 6,
-            backgroundColor: currentTheme.baseColor,
+            backgroundColor: currentTheme.contrastColor,
           },
         ]}>
         {askAnalysisPrefrence ? (
@@ -283,9 +323,8 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
                 style={{justifyContent: 'center'}}>
                 <Icon1 name="chevron-back" size={20} />
               </Pressable>
-
               <Text
-              numberOfLines={1}
+                numberOfLines={1}
                 style={{
                   textAlign: 'center',
                   fontSize: 18,
@@ -323,7 +362,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
                     activeOpacity={0.8}>
                     <View>
                       <Text
-                      numberOfLines={1}
+                        numberOfLines={1}
                         style={{
                           fontSize: 16,
                           fontWeight: '600',
@@ -387,6 +426,14 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           height={deviceHeight * 0.35}>
           <FeatureInfoContainer info={prefrenceInfo} />
         </SlideUpContainer>
+        <SlideUpContainer
+          open={openPreview}
+          close={handleClosePreview}
+          height={deviceHeight * 0.65}
+          usepadding={false}
+          >
+          <ProductPreview product={i} />
+        </SlideUpContainer>
       </View>
     </LongPressEnabled>
   );
@@ -412,8 +459,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 6,
     borderRadius: 16,
-    width:deviceWidth*0.9,
-    maxWidth:380,
+    width: deviceWidth * 0.9,
+    maxWidth: 380,
     height: 240,
   },
   tabLabel: {
@@ -424,21 +471,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   productName: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '600',
+    fontStyle: 'italic',
   },
   productInfoContainer: {
     flex: 1,
     marginTop: 4,
     borderRadius: 10,
-    padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:'center'
+    alignItems: 'center',
   },
   imageContainer: {
     flex: 1,
+    width: '100%',
     justifyContent: 'center',
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderLeftWidth: 2,
   },
   infoContainer: {
     marginTop: 2,

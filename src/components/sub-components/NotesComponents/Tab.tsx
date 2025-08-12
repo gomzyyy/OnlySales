@@ -138,6 +138,7 @@ const Tab: React.FC<NoteTabProps> = ({note, dummy, lastIndex, onPress}) => {
         }
       }
     });
+
   return (
     <LongPressEnabled
       longPressCanceledAction={() => onPress(note)}
@@ -261,7 +262,7 @@ const Tab: React.FC<NoteTabProps> = ({note, dummy, lastIndex, onPress}) => {
                   )}
                 </View>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <View style={{width: 'auto',maxWidth:'50%'}}>
+                  <View style={{width: 'auto', maxWidth: '50%'}}>
                     <Text
                       numberOfLines={1}
                       style={[

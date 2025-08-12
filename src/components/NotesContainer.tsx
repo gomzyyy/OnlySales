@@ -1,6 +1,6 @@
 import {View, StyleSheet, FlatList} from 'react-native';
 import React, {useState} from 'react';
-import {deviceHeight} from '../utils/Constants';
+import {colors, deviceHeight} from '../utils/Constants';
 import Header from './Header';
 import {useTheme} from '../hooks';
 import {useDispatch, useSelector} from 'react-redux';
@@ -38,7 +38,6 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
   const data = useSelector(
     (s: RootState) => s.notes.notes[user._id]?.data ?? [],
   );
-  const dispatch = useDispatch<AppDispatch>();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [hashtags, setHashtags] = useState<string[]>([]);
@@ -160,20 +159,45 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
       />
 
       <Header
-        curved
-        headerBgColor={currentTheme.fadeColor}
         name={componentState.headerName}
         titleColor={currentTheme.baseColor}
         customComponent={componentState.state === 'default'}
+        borderBottomColor={currentTheme.fadeColor}
         renderItem={
-          <HeaderIcon label="favorites">
-            <Icon name="heart" size={20} color={currentTheme.baseColor} />
+          <HeaderIcon
+            label="favorites"
+            labelColor={colors.danger}
+            iconColor="rgba(0,0,0,0)"
+            showAlertDot={
+              data.filter(d => d.isFavorite && !d.isDeleted && !d.isArchived)
+                .length !== 0
+            }
+            alertContent={
+              data.filter(d => d.isFavorite && !d.isDeleted && !d.isArchived)
+                .length < 100
+                ? data.filter(
+                    d => d.isFavorite && !d.isDeleted && !d.isArchived,
+                  ).length
+                : '99+'
+            }>
+            <Icon name="heart" size={20} color={colors.danger} />
           </HeaderIcon>
         }
         customAction={() => updateComponentState('favorite')}
         renderItem1={
-          <HeaderIcon label="archived">
-            <Icon name="archive" size={20} color={currentTheme.baseColor} />
+          <HeaderIcon
+            label="archived"
+            labelColor={colors.oliveGreen}
+            iconColor="rgba(0,0,0,0)"
+            showAlertDot={
+              data.filter(d => d.isArchived && !d.isDeleted).length !== 0
+            }
+            alertContent={
+              data.filter(d => d.isArchived && !d.isDeleted).length < 100
+                ? data.filter(d => d.isArchived && !d.isDeleted).length
+                : '99+'
+            }>
+            <Icon name="archive" size={20} color={colors.oliveGreen} />
           </HeaderIcon>
         }
         customAction1={() => updateComponentState('archived')}

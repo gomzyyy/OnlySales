@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceHeight} from '../../../utils/Constants';
@@ -15,7 +16,7 @@ import {Picker} from '@react-native-picker/picker';
 import {MeasurementType} from '../../../../enums';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import {compareStrings, Confirm, showToast} from '../../../service/fn';
+import {compare, compareStrings, Confirm, showToast} from '../../../service/fn';
 import {useStorage, useTheme} from '../../../hooks/index';
 import {useTranslation} from 'react-i18next';
 import {global} from '../../../styles/global';
@@ -33,7 +34,8 @@ const EditProduct: React.FC<EditProductProps> = ({
   const {currentTheme} = useTheme();
   const {t} = useTranslation('inventory');
   const user = useSelector((s: RootState) => s.appData.user)!;
-  const {product:p} =useStorage()
+  const {product: p} = useStorage();
+  const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>(product.name);
   const [price, setPrice] = useState<string>(product.basePrice.toString());
   const [discountedPrice, setDiscountedPrice] = useState<string>(
@@ -63,24 +65,33 @@ const EditProduct: React.FC<EditProductProps> = ({
         oid: product.businessOwner,
       },
       body: {
-          name: compareStrings(name, product.name),
-      basePrice: compareStrings(price, product.basePrice.toString()),
-      discountedPrice: compareStrings(
-        discountedPrice,
-        product.discountedPrice?.toString() ?? '0',
-      ),
-      quantity: compareStrings(quantity,product.quantity.toString()),
-      measurementType,
+        name: compare(name, product.name),
+        basePrice: compare(price, product.basePrice.toString()),
+        discountedPrice: compare(
+          discountedPrice,
+          product.discountedPrice?.toString() ?? '0',
+        ),
+        quantity: compare(quantity, product.quantity.toString()),
+        measurementType:
+          measurementType !== product.measurementType
+            ? measurementType
+            : undefined,
       },
-      media:{}
+      media: {},
     };
-const res =await p.update(data);
-console.log(res)
+    const res = await p.update(data, setLoading);
+    if (res.success) {
+      showToast({
+        type: 'success',
+        text1: `${t('i_toast_success')}`,
+      });
+    } else {
+      showToast({
+        type: 'info',
+        text1: res.message,
+      });
+    }
     close();
-    showToast({
-      type: 'success',
-      text1: `${t('i_product_edited_successfully')}: ${product.name}`,
-    });
   };
 
   return (
@@ -215,7 +226,11 @@ console.log(res)
         style={[styles.saveButton, {backgroundColor: currentTheme.baseColor}]}
         activeOpacity={0.8}
         onPress={handleOnSubmit}>
-        <Text style={styles.saveButtonText}>{t('i_button_save')}</Text>
+        {loading ? (
+          <ActivityIndicator size={30} color={currentTheme.contrastColor} />
+        ) : (
+          <Text style={styles.saveButtonText}>{t('i_button_save')}</Text>
+        )}
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -256,8 +271,10 @@ const styles = StyleSheet.create({
   },
   dropdown: {},
   saveButton: {
-    paddingVertical: 16,
-    borderRadius: 8,
+    height: 60,
+    borderRadius:8,
+    justifyContent:'center',
+    alignItems:'center'
   },
   saveButtonText: {
     textAlign: 'center',

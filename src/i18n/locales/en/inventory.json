@@ -68,6 +68,6 @@
   "i_measurement_pack": "Pack",
   "i_measurement_dozen": "Dozen",
   "i_button_save": "Save",
-  "i_toast_success": "Product Edited successfully: ",
+  "i_toast_success": "Product Edited successfully",
   "i_confirm_price_zero": "Are you sure to put the price 0?"
 }

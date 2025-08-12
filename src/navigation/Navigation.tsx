@@ -120,7 +120,7 @@ const StackNav = () => {
       <stack.Screen name="WebViewScreen" component={WebViewScreen} />
       <stack.Screen name="Invoices" component={Invoices} />
       <stack.Screen name="Events" component={Events} />
-       <stack.Screen name="Orders" component={Orders} />
+      <stack.Screen name="Orders" component={Orders} />
       <stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
       <stack.Screen
         name="Login"
@@ -197,6 +197,7 @@ const Navigation = () => {
   });
 
   useEffect(() => {
+    console.log(isConnected);
     if (!isConnected) {
       setTimeout(() => (bottomNetworkStateContainerHeight.value = 18), 2000);
       setPrevIsConnected(false);

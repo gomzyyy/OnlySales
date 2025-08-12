@@ -36,7 +36,6 @@ const CreateServicePoint: React.FC<CreateCustomerProps> = ({
   const user = useSelector((s: RootState) => s.appData.user)!;
   const {owner} = useAnalytics();
   const {user: u} = useStorage();
-  const {role, _id} = useSelector((s: RootState) => s.appData.user)!;
   const [spName, setSpName] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [metaDataFields, setMetaDataFields] = useState<

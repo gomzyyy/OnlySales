@@ -1,10 +1,10 @@
-import {Modal, StyleSheet, Pressable, View} from 'react-native';
+import {Modal, StyleSheet, Pressable, View, StatusBar} from 'react-native';
 import React, {PropsWithChildren, useEffect} from 'react';
 import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
-  runOnJS,
+  runOnJS
 } from 'react-native-reanimated';
 import {deviceHeight} from '../utils/Constants';
 import {
@@ -85,36 +85,36 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   }, [open, height]);
 
   return (
-    <Modal
-      animationType="fade"
-      transparent
-      statusBarTranslucent
-      visible={open}
-      onRequestClose={closeSlideUpContainer}
-      hardwareAccelerated>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <Pressable
-          style={[
-            styles.childContainer,
-            {
-              backgroundColor: `rgba(0,0,0,0.6)`,
-              paddingHorizontal: usepadding ? (padding ? 14 : 10) : 0,
-            },
-          ]}
-          onPress={closeSlideUpContainer}>
-          <Pressable onPress={e => e.stopPropagation()}>
-            <Animated.View style={childAnimatedStyles}>
-              <GestureDetector gesture={dragTabGesture}>
-                <View style={styles.dragTabContainer}>
-                  <View style={styles.dragTab} />
-                </View>
-              </GestureDetector>
-              {children}
-            </Animated.View>
+      <Modal
+        animationType="fade"
+        transparent
+        statusBarTranslucent
+        visible={open}
+        onRequestClose={closeSlideUpContainer}
+        hardwareAccelerated>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <Pressable
+            style={[
+              styles.childContainer,
+              {
+                backgroundColor: `rgba(0,0,0,0.6)`,
+                paddingHorizontal: usepadding ? (padding ? 14 : 10) : 0,
+              },
+            ]}
+            onPress={closeSlideUpContainer}>
+            <Pressable onPress={e => e.stopPropagation()}>
+              <Animated.View style={childAnimatedStyles}>
+                <GestureDetector gesture={dragTabGesture}>
+                  <View style={styles.dragTabContainer}>
+                    <View style={styles.dragTab} />
+                  </View>
+                </GestureDetector>
+                {children}
+              </Animated.View>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </GestureHandlerRootView>
-    </Modal>
+        </GestureHandlerRootView>
+      </Modal>
   );
 };
 

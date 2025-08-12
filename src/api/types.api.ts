@@ -483,26 +483,35 @@ export interface UpdateOrderStatusAPIData {
 }
 export interface UpdateOrderStatusAPIReturnType extends APIReturnType {}
 export interface GetPromoForCorouselAPIReturnType extends APIReturnType {
-data:{
-  context?:PromoCorouselContext
-}
+  data: {
+    context?: PromoCorouselContext;
+  };
 }
 export interface CreateServicePointAPIData {
-  query:{role:AdminRole,oid:CommonProps['_id']},
-  body:{pointName:string, metadata:Record<string,string>}
+  query: {role: AdminRole; oid: CommonProps['_id']};
+  body: {pointName: string; metadata: Record<string, string>};
 }
-export interface CreateServicePointAPIReturnType extends APIReturnType {}
+export interface CreateServicePointAPIReturnType extends APIReturnType {
+  data: {
+    servicePoint?: ServicePoint;
+  };
+}
 export interface UpdateServicePointAPIData {
-  query:{role:AdminRole,oid:CommonProps['_id'],spid:CommonProps['_id']},
-  body:{qrUrl?:string, pointName?:string, metadata?:Record<string,string>,status?:ServicePointStatus}
+  query: {role: AdminRole; oid: CommonProps['_id']; spid: CommonProps['_id']};
+  body: {
+    qrUrl?: string;
+    pointName?: string;
+    metadata?: Record<string, string>;
+    status?: ServicePointStatus;
+  };
 }
 export interface UpdateServicePointAPIReturnType extends APIReturnType {}
 
 export interface GetAllServicePointsAPIData {
-  query:{role:AdminRole,oid:CommonProps['_id']},
+  query: {role: AdminRole; oid: CommonProps['_id']};
 }
 export interface GetAllServicePointsAPIReturnType extends APIReturnType {
-  data:{
-    sps?:ServicePoint[]
-  }
+  data: {
+    sps?: ServicePoint[];
+  };
 }

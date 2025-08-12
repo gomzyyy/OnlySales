@@ -48,7 +48,6 @@ const SplashScreen = () => {
               return;
             }
             const {fine_location_permissions} = await RequestUXPermission();
-
             if (fine_location_permissions) {
               Geolocation.getCurrentPosition(async curr => {
                 const latitude = curr.coords.latitude;
@@ -61,7 +60,8 @@ const SplashScreen = () => {
                       periodicLongitude: longitude,
                     },
                   };
-                  await updateUserLocationAPI(locationData, setLoading);
+                 const g = await updateUserLocationAPI(locationData, setLoading);
+                 console.log(g)
                 }
               });
             }

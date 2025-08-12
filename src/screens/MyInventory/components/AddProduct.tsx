@@ -369,8 +369,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     height: deviceHeight * 0.6,
-    borderRadius: 20,
-    marginBottom: 10,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
     elevation: 30,
   },
   formTitle: {

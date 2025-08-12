@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import React from 'react';
 import {
   DrawerContentScrollView,
@@ -10,6 +17,7 @@ const NoProfile = require('../../assets/images/no-profile.jpg');
 import {useTheme} from '../../hooks/index';
 import LogoutButton from '../../screens/Settings/components/LogoutButton';
 import MenuTab, {AppSettingsData, ManagementData, ToolsData} from './menu_data';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const MenuContent: React.FC<DrawerContentComponentProps> = (
   props,
@@ -83,20 +91,22 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
             <Text style={[styles.profileName, {color: currentTheme.baseColor}]}>
               {user?.name || 'Anonymous'}
             </Text>
-            {user.email?.value && (
-              <View style={styles.emailContainer}>
-                <Text
-                  ellipsizeMode="tail"
-                  style={[styles.email, {color: currentTheme.baseColor}]}
-                  numberOfLines={1}>
-                  {`${user.email.value.slice(0, 3)}***@***.${
-                    user.email.value.split('.')[
-                      user.email.value.split('.').length - 1
-                    ]
-                  }`}
-                </Text>
-              </View>
-            )}
+            <Pressable
+              style={styles.sidContainer}
+              onPress={() => Clipboard.setString(user.SID.toString())}>
+              <Text
+                ellipsizeMode="tail"
+                style={[styles.sid, {color: currentTheme.baseColor}]}
+                numberOfLines={1}>
+                {`SID: `}
+              </Text>
+              <Text
+                ellipsizeMode="tail"
+                style={[styles.sid, {color: currentTheme.baseColor}]}
+                numberOfLines={1}>
+                {user.SID}
+              </Text>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -227,13 +237,13 @@ const styles = StyleSheet.create({
     height: '80%',
     flex: 1,
   },
-  emailContainer: {
+  sidContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingRight: 30,
   },
-  email: {
-    fontSize: 14,
+  sid: {
+    fontSize: 12,
     textAlignVertical: 'center',
   },
 });

@@ -1,6 +1,5 @@
 import {Text, StyleSheet, View, Image, Pressable} from 'react-native';
 import React, {useState} from 'react';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {useTheme} from '../../../hooks';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
 import SlideUpContainer from '../../../components/SlideUpContainer';
