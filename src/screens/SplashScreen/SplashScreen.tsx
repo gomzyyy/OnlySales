@@ -93,7 +93,7 @@ const SplashScreen = () => {
   };
 
   useEffect(() => {
-    SystemNavigationBar.setNavigationColor(currentTheme.baseColor);
+    SystemNavigationBar.setNavigationColor(currentTheme.contrastColor);
     getFireAppToken();
   }, []);
 

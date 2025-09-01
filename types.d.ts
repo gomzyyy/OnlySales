@@ -33,6 +33,10 @@ import {
   PaymentMethods,
   ValidRoles,
   ServicePointStatus,
+  MediaType,
+  FileLabel,
+  AddressLocaitonType,
+  WeekDays,
 } from './enums';
 
 declare global {
@@ -152,10 +156,20 @@ export interface Location extends CommonProps {
     live: {
       longitude: number;
       latitude: number;
+      updatedAt: Date;
+      geo: {
+        type: 'Point';
+        coordinates: [number, number]; // [longitude, latitude]
+      };
     };
     periodic: {
       longitude: number;
       latitude: number;
+      updatedAt: Date;
+      geo: {
+        type: 'Point';
+        coordinates: [number, number]; // [longitude, latitude]
+      };
     };
   };
 }
@@ -191,6 +205,7 @@ export interface AccountType extends CommonProps {
 
 export interface OwnerProperties {
   searchable: boolean;
+  isOpenToday: boolean;
   isDisabled: boolean;
   accessBusinessInfo: boolean;
   isPrivate: boolean;
@@ -209,13 +224,14 @@ export interface OwnerProperties {
     lastLogin: Date;
     loginAttempts: number;
   };
-}
-
-export interface Document {
-  name: string;
-  url: string;
-  uploadedAt: Date;
-  verified: boolean;
+  business: {
+    currencyType: string;
+  };
+  doscoverability: {
+    categories: string[];
+    tags: string[];
+    keywords: string[];
+  };
 }
 
 export interface ISupportTicket extends CommonProps {
@@ -252,6 +268,39 @@ export interface ServicePoint extends CommonProps {
   metadata?: Record<string, string>;
 }
 
+export interface Address extends CommonProps {
+  uid: CommonProps['_id'];
+  ref: ValidRoles;
+  displayAreaName: string;
+  completeAddress: string;
+  location: {
+    type: 'Point';
+    coordinates: number[];
+  };
+  localityName?: string;
+  landmark?: string;
+  pincode?: string;
+  city: string;
+  state: string;
+  country: string;
+  isPrimary: boolean;
+}
+
+export interface BusinessTiming extends CommonProps {
+  oid: Owner['_id'];
+  day: WeekDays;
+  slots: {open: string; close: string}[];
+  isClosed: boolean;
+}
+export interface HolidaySlot extends CommonProps {
+  oid: Owner['_id'];
+  date: Date;
+  from: string;
+  to: string;
+  fullDay: boolean;
+  reason: string;
+}
+
 export interface Owner extends User {
   userId: string;
   referralCode: string;
@@ -261,11 +310,13 @@ export interface Owner extends User {
     lastSheetFor: number;
   };
   credits: number;
+  businessTiming: BusinessTiming[];
+  holidaySlots: HolidaySlot[];
   reviews: Review[];
   recommendations: Customer[];
   password: string;
   otp: OTP | undefined;
-  businessAddress: string;
+  businessAddresses: Address[];
   equity: number;
   businessName: string;
   businessPhoneNumber: {
@@ -274,7 +325,8 @@ export interface Owner extends User {
   };
   servicePoints: string[];
   businessPartners: Partner[];
-  gstNumber: string;
+  legalDocuments: File[];
+  gstNumber?: File;
   accountType: AccountType;
   history: History;
   properties: OwnerProperties;
@@ -298,8 +350,20 @@ export interface Owner extends User {
       version: string;
     };
   };
-  documents: Document[];
+  documents: File[];
   supportThreads: ISupportTicket[];
+}
+
+export interface File extends CommonProps {
+  url: string;
+  refId: CommonProps['_id'];
+  refModel: ValidRoles;
+  mediaType: MediaType;
+  label: FileLabel;
+  fileId?: string;
+  shortNote?: string;
+  description?: string;
+  verified: boolean;
 }
 
 export interface OTP {

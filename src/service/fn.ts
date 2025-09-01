@@ -6,9 +6,9 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import Crypto from 'crypto-js';
 import {CRYPTO_ENCRYPTION_KEY} from '@env';
 
-export const BASE_SERVER_PORT = '10.33.11.12';
+export const BASE_SERVER_PORT = '10.166.41.12';
 
-type ShowToastFunction = {
+export interface ERROR_NOTIFICATION_DATA_OBJ_TYPE {
   type: 'success' | 'error' | 'info';
   text1: string;
   text2?: string;
@@ -22,7 +22,7 @@ export const showToast = ({
   text2,
   position = 'bottom',
   pressAction = () => {},
-}: ShowToastFunction) => {
+}: ERROR_NOTIFICATION_DATA_OBJ_TYPE) => {
   Toast.show({
     type,
     text1,

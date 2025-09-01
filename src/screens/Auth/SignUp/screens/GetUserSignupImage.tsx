@@ -154,7 +154,7 @@ const GetUserSignupImage = () => {
           value={image}
           setState={setImage}
           callback={closeImagePicker}
-          type="image"
+          type="photo"
         />
       </SlideUpContainer>
     </KeyboardAvoidingView>

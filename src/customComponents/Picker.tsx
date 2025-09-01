@@ -3,8 +3,7 @@ import React, {Dispatch, SetStateAction} from 'react';
 import {Picker as P} from '@react-native-picker/picker';
 import {useTheme} from '../hooks/index';
 
-/** Picker Component Props */
-type PickerProps<T extends string | number> = {
+type PickerProps<T> = {
   enabled?: boolean;
   setState: Dispatch<SetStateAction<T>>;
   value: T;

@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {ReactNode} from 'react';
-import Icon1 from 'react-native-vector-icons/AntDesign';
+import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/Feather';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {back} from '../utils/nagivationUtils';
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({
     <View
       style={{
         height: 70,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 20,
@@ -89,45 +89,48 @@ const Header: React.FC<HeaderProps> = ({
         borderBottomColor,
         borderBottomWidth: borderBottomColor ? 1.8 : 0,
       }}>
-      {!backButton && menuButton && (
-        <Pressable style={styles.leftActionBtn} onPress={openMenu}>
-          <Icon2 name="menu" size={24} color={titleColor} />
-        </Pressable>
-      )}
-      {backButton && !menuButton && (
-        <Pressable style={styles.leftActionBtn} onPress={() => back()}>
-          <Icon1 name="left" size={24} color={titleColor} />
-        </Pressable>
-      )}
-      {showTitle && (
-        <View style={{alignItems: 'center', gap: 4, position: 'relative'}}>
-          {showAlertDotOnScreenName && (
-            <View
-              style={{
-                position: 'absolute',
-                backgroundColor: screenNameAlertDotColor || colors.danger,
-                height: 9,
-                width: 9,
-                borderRadius: 5,
-                right: -8,
-                top: 0,
-              }}></View>
-          )}
-          {customTitle ? (
-            customTitle
-          ) : (
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: 'bold',
-                color: titleColor,
-              }}>
-              {name.slice(0, 16)}
-            </Text>
-          )}
-        </View>
-      )}
-      <View style={[styles.rightCustomBtn, {right: 20}]}>
+      <View style={{flexDirection:'row', alignItems:'center', gap:20}}>
+        {!backButton && menuButton && (
+          <Pressable style={styles.leftActionBtn} onPress={openMenu}>
+            <Icon2 name="menu" size={24} color={titleColor} />
+          </Pressable>
+        )}
+        {backButton && !menuButton && (
+          <Pressable style={styles.leftActionBtn} onPress={() => back()}>
+            <Icon1 name="chevron-back-circle" size={32} color={titleColor} />
+          </Pressable>
+        )}
+        {showTitle && (
+          <View style={{alignItems: 'center', gap: 4, position: 'relative'}}>
+            {showAlertDotOnScreenName && (
+              <View
+                style={{
+                  position: 'absolute',
+                  backgroundColor: screenNameAlertDotColor || colors.danger,
+                  height: 9,
+                  width: 9,
+                  borderRadius: 5,
+                  right: -8,
+                  top: 0,
+                }}></View>
+            )}
+            {customTitle ? (
+              customTitle
+            ) : (
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  color: titleColor,
+                }}>
+                {name.trim().length > 16 ? `${name.trim().slice(0, 16)}...` : name.trim().slice(0, 16)}
+              </Text>
+            )}
+          </View>
+        )}
+      </View>
+
+      <View style={[styles.rightCustomBtn]}>
         {!isPlaying && customComponent && (
           <TouchableOpacity
             activeOpacity={customComponentActiveOpacity}
@@ -166,11 +169,11 @@ const Header: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   leftActionBtn: {
-    position: 'absolute',
-    left: 20,
+    // position: 'absolute',
+    // left: 20,
   },
   rightCustomBtn: {
-    position: 'absolute',
+    // position: 'absolute',
     flexDirection: 'row',
     gap: 8,
   },

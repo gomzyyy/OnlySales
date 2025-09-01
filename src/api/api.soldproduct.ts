@@ -50,7 +50,7 @@ export const deleteSoldProductAPI = async (
     const fetching = await FetchAPI({
       route: `/delete/sold-product?soldProductId=${soldProductId}&role=${role}`,
       reqType: 'cud',
-      method: 'POST',
+      method: 'DELETE',
     });
     return (await fetching.json()) as DeleteSoldProductAPIReturnType;
   } catch (error) {
@@ -80,7 +80,7 @@ export const updateSoldProductStateAPI = async (
     const fetching = await FetchAPI({
       route: `/update/sold-product/state?role=${role}&updatedState=${updatedState}`,
       reqType: 'cud',
-      method: 'POST',
+      method: 'PUT',
       body,
     });
     return (await fetching.json()) as UpdateSoldProductStateReturnType;

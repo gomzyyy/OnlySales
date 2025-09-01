@@ -56,6 +56,7 @@ import {setLockedState} from '../../store/slices/business';
 import Events from '../screens/Events/Events';
 import Orders from '../screens/Orders/Orders';
 import ServicePoints from '../screens/ServicePoints/ServicePoints';
+import OpenClose from '../screens/Settings/screens/OpenClose'
 // import Orders from '../screens/Orders/Orders';
 
 const stack = createNativeStackNavigator();
@@ -110,6 +111,7 @@ const StackNav = () => {
       <stack.Screen name="SearchEmployee" component={SearchEmployee} />
       <stack.Screen name="MyInventory" component={MyInventory} />
       <stack.Screen name="MyProfile" component={MyProfile} />
+      <stack.Screen name="OpenClose" component={OpenClose} />
       <stack.Screen name="AppInfo" component={AppInfo} />
       <stack.Screen name="GetStarted" component={GetStarted} />
       <stack.Screen name="VerifyPassword" component={VerifyPassword} />

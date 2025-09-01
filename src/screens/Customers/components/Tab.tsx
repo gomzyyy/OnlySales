@@ -1,14 +1,11 @@
 import {Text, StyleSheet, View, Image} from 'react-native';
 import React, {useState} from 'react';
-import {Customer, Employee} from '../../../../types';
-import Icon from 'react-native-vector-icons/AntDesign';
+import {Customer} from '../../../../types';
 import {navigate} from '../../../utils/nagivationUtils';
 import {useTheme} from '../../../hooks/index';
 import LongPressEnabled from '../../../customComponents/LongPressEnabled';
-import SlideUpContainer from '../../../components/SlideUpContainer';
 import PopupContainer from '../../../components/PopUp';
 import TabLongPressOptions from './TabLongPressOptions';
-import {deviceHeight} from '../../../utils/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 const NoPhoto = require('../../../assets/images/no-profile.jpg');
 
@@ -122,8 +119,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   customerName: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
 

@@ -56,7 +56,9 @@ const ProductPreview: React.FC<ProductPreviewContainerProps> = ({
           </View>
         </LinearGradient>
       </View>
-      <View style={{}}></View>
+      <View style={{}}>
+        
+      </View>
     </View>
   );
 };

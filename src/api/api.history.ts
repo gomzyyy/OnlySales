@@ -1,7 +1,6 @@
 import {SetStateAction} from 'react';
 import {FetchAPI, handleBooleanState} from './helper/fn';
 import {
-  GetUserAPIReturnType,
   GetSinglePaymentHistoryAPIData,
   GetSinglePaymentHistoryAPIReturnType,
 } from './types.api';

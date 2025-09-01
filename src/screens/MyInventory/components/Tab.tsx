@@ -85,7 +85,6 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
   const [openAnalyticsPrefrenceDetails, setOpenAnalyticsPrefrenceDetails] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [openEditing, setOpenEditing] = useState<boolean>(false);
   const [openPreview,setOpenPreview]=useState<boolean>(false);
   const [askAnalysisPrefrence, setAskAnalyticsPrefrence] =
     useState<boolean>(false);
@@ -97,7 +96,6 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
   const handleClosePreview=()=>setOpenPreview(false)
   const handleOpenLongPressOptions = () => setOpenLongPressOptions(true);
   const handleCloseLongPressOptions = () => setOpenLongPressOptions(false);
-  const handleCloseEditing = () => setOpenEditing(false);
 
   const requestAIAnalysis4SingleProduct = async ({
     rl,
@@ -411,9 +409,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
         ) : (
           <ProductInfo />
         )}
-        <PopupContainer open={openEditing} close={handleCloseEditing}>
-          <EditProduct product={i} close={handleCloseEditing} />
-        </PopupContainer>
+       
         <PopupContainer
           open={openLongPressOptions}
           close={handleCloseLongPressOptions}

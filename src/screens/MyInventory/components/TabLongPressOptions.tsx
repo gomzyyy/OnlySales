@@ -14,6 +14,8 @@ import {AppDispatch, RootState} from '../../../../store/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useStorage, useTheme} from '../../../hooks/index';
 import {useTranslation} from 'react-i18next';
+import PopupContainer from '../../../components/PopUp';
+import EditProduct from './EditProduct';
 
 type TabLongPressOptionsProps = {
   i: Product;
@@ -31,25 +33,26 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   const user = useSelector((s: RootState) => s.appData.user)!;
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [openEditing, setOpenEditing] = useState<boolean>(false);
 
-  const handleDeleteCustomer = async (): Promise<void> => {
-    const res = await Confirm(
+  const handleCloseEditing = () => setOpenEditing(false);
+
+  const handleDeleteProduct = async (): Promise<void> => {
+    const r = await Confirm(
       'Are you sure you want to remove this product?',
       'this action cannot be reversed, records will remain in history only.',
     );
 
-    if (res) {
-      const deleteProductData = {
-        query: {
-          uid: user._id,
-          role: user.role,
-          productId: i._id,
-        },
-      };
-      const res = await product.delete(deleteProductData, setLoading);
-      showToast({type: res.success ? 'success' : 'error', text1: res.message});
-      return;
-    }
+    if (!r) return;
+    const deleteProductData = {
+      query: {
+        uid: user._id,
+        role: user.role,
+        productId: i._id,
+      },
+    };
+    const res = await product.delete(deleteProductData, setLoading);
+    showToast({type: res.success ? 'success' : 'error', text1: res.message});
   };
 
   return (
@@ -60,7 +63,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
         <TouchableOpacity
           style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
           activeOpacity={0.8}
-          onPress={handleDeleteCustomer}>
+          onPress={handleDeleteProduct}>
           <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
             {t('i_tab_options_delete')}
           </Text>
@@ -71,6 +74,9 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           )}
         </TouchableOpacity>
       </View>
+      <PopupContainer open={openEditing} close={handleCloseEditing}>
+        <EditProduct product={i} close={handleCloseEditing} />
+      </PopupContainer>
     </View>
   );
 };

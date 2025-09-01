@@ -270,8 +270,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 3},
     shadowRadius: 8,
     overflow: 'hidden',
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
     maxWidth: 600,
   },
   formContainer: {

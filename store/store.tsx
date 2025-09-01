@@ -11,9 +11,10 @@ import EventSliceFunction from './slices/events';
 import NoteSliceFunction from './slices/notes';
 import UsageSliceFunction from './slices/usage';
 import ServicePointSliceFunction from './slices/servicePoint';
+import OpenCloseSliceFunction from './slices/openClose'
 
 const persistConfig = {
-  key: 'eregavkwrnovrhoCWBotEGUowebWwfetr',
+  key: 'eregavkwrnovrhoCWBotEGUliqeowebWwfetr',
   storage: mmkv,
   blacklist: ['deviceInfo'],
 };
@@ -24,8 +25,9 @@ const rootReducer = combineReducers({
   cache: CacheSliceFunction,
   events: EventSliceFunction,
   notes: NoteSliceFunction,
-  usage:UsageSliceFunction,
-  servicePoints:ServicePointSliceFunction
+  usage: UsageSliceFunction,
+  servicePoints: ServicePointSliceFunction,
+  openClose: OpenCloseSliceFunction
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

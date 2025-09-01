@@ -64,7 +64,7 @@ const bottomTabs = [
   },
   {
     id: 5,
-    name: 'More',
+    name: 'Settings',
     navigateTo: undefined,
     icon: (color: string = '#000', size: number = 20) => (
       <Icon3 color={color} name="dots-horizontal-circle-outline" size={size} />

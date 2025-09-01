@@ -107,7 +107,7 @@ const Tab: React.FC<TabProps> = ({
   ) => {
     try {
       setChangingState(true);
-      await updateSoldProductStateAPI({
+      const res = await updateSoldProductStateAPI({
         query: {
           role: user.role,
           updatedState: state,
@@ -116,6 +116,7 @@ const Tab: React.FC<TabProps> = ({
           soldProducts: [i],
         },
       });
+      console.log(res);
       await updateUser();
       closeContainer && closeParent();
     } catch (error) {
@@ -294,10 +295,7 @@ const Tab: React.FC<TabProps> = ({
                 changeSoldProductState(PaymentState.UNPAID);
               }}>
               {changingState ? (
-                <ActivityIndicator
-                  size={18}
-                  color={currentTheme.baseColor}
-                />
+                <ActivityIndicator size={18} color={currentTheme.baseColor} />
               ) : (
                 <Text
                   style={[

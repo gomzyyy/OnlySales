@@ -61,7 +61,7 @@ export const deleteCustomerAPI = async (
     const fetching = await FetchAPI({
       reqType: 'cud',
       route: `/delete/customer?role=${role}&customerId=${customerId}`,
-      method: 'POST',
+      method: 'DELETE',
     });
     return (await fetching.json()) as DeleteCustomerAPIReturnType;
   } catch (error) {
@@ -103,7 +103,7 @@ export const updateCustomerAPI = async (
     const fetching = await FetchAPI({
       reqType: 'media',
       route: `/update/customer?role=${role}&customerId=${customerId}&ownerId=${ownerId}`,
-      method: 'POST',
+      method: 'PUT',
       body: formData
     });
     return (await fetching.json()) as UpdateCustomerAPIReturnType;

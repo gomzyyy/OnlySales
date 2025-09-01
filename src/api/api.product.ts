@@ -73,7 +73,7 @@ export const deleteProductAPI = async (
     const fetching = await FetchAPI({
       route: `/delete/product?role=${data.query.role}&productId=${data.query.productId}&uid=${data.query.uid}`,
       reqType: 'cud',
-      method: 'POST',
+      method: 'DELETE',
     });
 
     return (await fetching.json()) as DeleteProductAPIReturnType;
@@ -133,7 +133,7 @@ export const updateProductAPI = async (
     const fetching = await FetchAPI({
       route: `/update/product?role=${data.query.role}&productId=${data.query.productId}&oid=${data.query.oid}`,
       reqType: 'media',
-      method: 'POST',
+      method: 'PUT',
       body:formData
     });
 

@@ -10,6 +10,7 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/AntDesign';
 import Icon5 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon7 from 'react-native-vector-icons/FontAwesome6';
+import Icon4 from 'react-native-vector-icons/MaterialIcons';
 import WeeklySalesInfoGraph from './components/WeeklySalesInfoGraph';
 import TodayBestSellerInfoGraph from './components/TodayBestSellerInfoGraph';
 import {useSelector} from 'react-redux';
@@ -29,6 +30,7 @@ import NotesContainer from '../../components/NotesContainer';
 import EMICalculator from '../../components/Tools/EMICalculator/EMICalculator';
 import {useRoute} from '@react-navigation/native';
 import {onTruthy} from '../../service/fn';
+import BusinessTiming from './components/BusinessTiming';
 
 type DashboardParams = {
   openEMICalcContainer?: boolean;
@@ -52,6 +54,8 @@ const Dashboard = () => {
   const [overScrolled, setOverScrolled] = useState<boolean>(false);
   const [openNotes, setOpenNotes] = useState<boolean>(false);
   const [openEMICalc, setOpenEMICalc] = useState<boolean>(false);
+  const [openBusinessTimingContainer, setOpenBusinessTimingContainer] =
+    useState<boolean>(false);
   const {params} = useRoute();
   const {openEMICalcContainer, openNotesContainer, openInstaBuyContainer} =
     (params || {}) as DashboardParams;
@@ -61,7 +65,6 @@ const Dashboard = () => {
     if (hasHandledParams) return;
     onTruthy(openEMICalcContainer, () => setOpenEMICalc(true));
     onTruthy(openNotesContainer, () => setOpenNotes(true));
-    // onTruthy(openInstaBuyContainer, () => setOpenOrderOnlineQR(true));
     setHasHandledParams(true);
   }, [hasHandledParams]);
 
@@ -143,6 +146,9 @@ const Dashboard = () => {
   };
   const closeEMICalc = () => {
     setOpenEMICalc(false);
+  };
+  const closeBusinessTimingContainer = () => {
+    setOpenBusinessTimingContainer(false);
   };
 
   useEffect(() => {
@@ -266,12 +272,18 @@ const Dashboard = () => {
             usepadding={false}>
             <NotesContainer close={closeNotes} />
           </SlideUpContainer>
-         
           <SlideUpContainer
             open={openEMICalc}
             close={closeEMICalc}
             usepadding={false}>
             <EMICalculator />
+          </SlideUpContainer>
+          <SlideUpContainer
+            open={openBusinessTimingContainer}
+            close={closeBusinessTimingContainer}
+            usepadding={false}
+            height={deviceHeight * 0.6}>
+            <BusinessTiming />
           </SlideUpContainer>
         </View>
       </ScrollView>

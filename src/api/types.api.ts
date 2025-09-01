@@ -8,6 +8,7 @@ import {
   PaymentState,
   ProductType,
   ServicePointStatus,
+  WeekDays,
 } from '../../enums';
 import {
   Customer,
@@ -26,6 +27,7 @@ import {
   Order,
   PromoCorouselContext,
   ServicePoint,
+  BusinessTiming,
 } from '../../types';
 
 export interface APIReturnType {
@@ -515,3 +517,24 @@ export interface GetAllServicePointsAPIReturnType extends APIReturnType {
     sps?: ServicePoint[];
   };
 }
+export interface CreateBusinessTimingAPIData {
+  query: {
+    role: AdminRole;
+    oid: Owner['_id'];
+  };
+  body: {
+    day: Number;
+    openingtime: string;
+    closingtime: string;
+    append?: number;
+  };
+}
+export interface CreateBusinessTimingAPIReturnType extends APIReturnType {}
+export interface DeleteBusinessTimingAPIData {
+  query: {
+    role: AdminRole;
+    oid: Owner['_id'];
+    btid:BusinessTiming['_id']
+  };
+}
+export interface DeleteBusinessTimingAPIReturnType extends APIReturnType {}

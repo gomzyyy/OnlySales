@@ -70,7 +70,7 @@ export const updateServicePointAPI = async (
     const fetching = await FetchAPI({
       route: `/update/user/service-point?role=${data.query.role}&oid=${data.query.oid}&spid=${data.query.spid}`,
       reqType: 'cud',
-      method: 'POST',
+      method: 'PUT',
       body
     });
 

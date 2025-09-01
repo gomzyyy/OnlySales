@@ -68,6 +68,7 @@ import {
   updateServicePointAPI,
 } from '../api/api.servicePoint';
 import {addServicePoint, setPoints} from '../../store/slices/servicePoint';
+import { COMMON_ERR_MSG_OBJ } from '../utils/Constants';
 
 export interface useStorageReturnType {
   customer: {
@@ -193,12 +194,7 @@ const useStorage = (): useStorageReturnType => {
     } else {
       onErrorSettingLocalState
         ? onErrorSettingLocalState()
-        : showToast({
-            type: 'info',
-            text1: 'Error occured while syncing app.',
-            text2:
-              'Causes:1). Token expired. 2). slow network 3). memory full; Fix: Restart the App.',
-          });
+        : showToast(COMMON_ERR_MSG_OBJ['err_app_sync']);
     }
     handleBooleanState(setState, false);
     return res as ValidateTokenReturnType;

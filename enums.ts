@@ -42,11 +42,28 @@ export enum AdminRole {
   EMPLOYEE = 'Employee',
   ADMIN = 'Admin',
 }
+
 export enum ValidRoles {
   OWNER = 'Owner',
   PARNER = 'Partner',
   EMPLOYEE = 'Employee',
   CUSTOMER = 'Customer',
+  ADMIN = 'Admin'
+}
+export enum AddressLocaitonType {
+  POINT = 'Point'
+}
+export enum MediaType {
+  IMAGE = 'image',
+  DOCUMENT = 'document',
+  VIDEO = 'video'
+}
+export enum FileLabel {
+  GSTIN = 'gstin',
+  GSTIN_DECLARATION = 'gstin_declaration',
+  FSSAI = 'fssai',
+  BALANCE_SHEET = 'balance_sheet',
+  OTHER = 'other'
 }
 export enum LocationRef {
   OWNER = 'Owner',
@@ -296,5 +313,14 @@ export enum ServicePointStatus {
   INACTIVE = "INACTIVE",
   MAINTENANCE = "MAINTENANCE",
   HIDDEN = "HIDDEN",
+}
+export enum WeekDays {
+  Monday = 'Monday',
+  Tuesday = 'Tuesday',
+  Wednesday = 'Wednesday',
+  Thursday = 'Thursday',
+  Friday = 'Friday',
+  Saturday = 'Saturday',
+  Sunday = 'Sunday'
 }
 

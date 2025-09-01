@@ -1,6 +1,7 @@
 import {Dimensions} from 'react-native';
 import {AppTheme} from '../../types';
 import {AppThemeName} from '../../enums';
+import { ERROR_NOTIFICATION_DATA_OBJ_TYPE } from '../service/fn';
 
 export const deviceHeight = Dimensions.get('window').height;
 export const deviceWidth = Dimensions.get('window').width;
@@ -14,6 +15,19 @@ export const customerHeaderTabs = [
   {name: 'This Month', data: {amount: '18273'}},
   {name: 'Today', data: {amount: '1297'}},
 ];
+
+export const WEEK_NUM_MAP = {
+  "Sunday": 0,
+  "Monday": 1,
+  "Tuesday": 2,
+  "Wednesday": 3,
+  "Thursday": 4,
+  "Friday": 5,
+  "Saturday": 6,
+};
+export const COMMON_ERR_MSG_OBJ:Record<string,ERROR_NOTIFICATION_DATA_OBJ_TYPE>={
+  err_app_sync:{type:'error',text1:'Error occured while syncing the app!',text2:'please try restarting the app.'}
+}
 
 export const Theme: AppTheme[] = [
   {

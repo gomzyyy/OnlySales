@@ -42,7 +42,7 @@ export const updateOrderStatusAPI = async (
     const fetching = await FetchAPI({
       route: `/update/order/status?role=${role}&updatedStatus=${updatedStatus}`,
       reqType: 'cud',
-      method: 'POST',
+      method: 'PUT',
       body,
     });
     return (await fetching.json()) as UpdateOrderStatusAPIReturnType;

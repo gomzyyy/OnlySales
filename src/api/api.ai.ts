@@ -15,7 +15,6 @@ export const analyseSingleProductAIAPI = async (
   handleBooleanState(setState, true);
   try {
     const {role,oid,productId,rl} = data.query;
-    console.log(data.query.rl)
     const fetching = await FetchAPI({
       reqType: 'r',
       route: `/ask-ai/4/analytics/product?role=${role}&oid=${oid}&productId=${productId}&rl=${rl}`,

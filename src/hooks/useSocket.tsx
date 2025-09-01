@@ -13,9 +13,9 @@ import {
   handleOrders,
 } from '../../store/slices/events';
 // import { SERVER_URL } from '@env';
-import { Event, Order } from '../../types';
-import { BASE_SERVER_PORT } from '../service/fn';
-
+import {BusinessTiming, Event, Order} from '../../types';
+import {BASE_SERVER_PORT} from '../service/fn';
+import {updateBusinessTimings} from '../../store/slices/openClose';
 
 type UseSocketReturnType = {
   socket: Socket | null;
@@ -79,18 +79,25 @@ const useSocket = (): UseSocketReturnType => {
       socketRef.current.on('disconnect', () => {
         console.log('Socket disconnected');
       });
-      socketRef.current.on('new_event', (s:Event) => {
-        d(addNewEvent(s))
+      socketRef.current.on('isopen_status_updated_success', s =>
+        console.log(s),
+      );
+      socketRef.current.on('new_event', (s: Event) => {
+        d(addNewEvent(s));
         d(handleEventCount(1));
         fetchEvents();
       });
-      socketRef.current.on('new_order', (s:Order) => {
-        d(addNewOrder(s))
+      socketRef.current.on('new_order', (s: Order) => {
+        d(addNewOrder(s));
         d(handleOrderCount(1));
         fetchOrders();
       });
       socketRef.current.on('order_status_updated', s => {
         console.log(s);
+      });
+      socketRef.current.on('business_timing_updated', (s: BusinessTiming[]) => {
+        d(updateBusinessTimings(s));
+        console.log(s)
       });
       socketRef.current.on('balance_sheet_created', s => {
         console.log(s);
@@ -119,5 +126,5 @@ export default useSocket;
 export enum useSocketEvents {
   NEW_CUSTOMER = 'new_customer',
   NEW_EVENT = 'new_event',
-  BALANCE_SHEET_CREATED = 'balance_sheet_created'
+  BALANCE_SHEET_CREATED = 'balance_sheet_created',
 }

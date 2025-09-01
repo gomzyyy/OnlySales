@@ -6,19 +6,24 @@ import {useTheme} from '../../../../hooks/index';
 type TabProps = {
   title: string;
   description?: string;
-  onPress?: () => void;
+  onPressNavigate?: () => void;
+  onPress?: () => void | Promise<void>;
 };
 
 const Tab: React.FC<TabProps> = ({
   title,
   onPress,
   description,
+  onPressNavigate,
 }): React.JSX.Element => {
   const {currentTheme} = useTheme();
 
   const handleOnPress = () => {
     if (onPress) {
       onPress();
+      return;
+    } else if (onPressNavigate) {
+      onPressNavigate();
     } else {
       return;
     }
@@ -29,7 +34,7 @@ const Tab: React.FC<TabProps> = ({
       activeOpacity={0.8}
       style={[styles.container, {marginBottom: 6, backgroundColor: '#f2f2f2'}]}
       onPress={handleOnPress}>
-      <View style={{width:'80%',gap:1}}>
+      <View style={{width: '80%', gap: 1}}>
         <Text style={[styles.label, {color: currentTheme.tab.label}]}>
           {title}
         </Text>

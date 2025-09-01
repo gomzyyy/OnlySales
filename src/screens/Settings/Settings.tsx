@@ -61,7 +61,7 @@ const Settings = () => {
         </View>
         <View style={[styles.sectionsContainer]}>
           <Text style={[styles.label, {color: currentTheme.baseColor}]}>
-            App
+            Business and Security
           </Text>
           <AppSettings />
         </View>
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 12,
   },
-  label: {fontSize: 30, fontWeight: 'bold', paddingHorizontal: 20},
+ label: {fontSize: 24, fontWeight: 'bold', paddingHorizontal: 20},
 });
 
 export default Settings;

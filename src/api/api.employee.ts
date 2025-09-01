@@ -93,7 +93,7 @@ export const createEmployeeAPI = async (
       const fetching = await FetchAPI({
         reqType: 'cud',
         route: `/delete/employee?role=${role}&employeeId=${employeeId}`,
-        method: 'POST',
+        method: 's',
       });
       return (await fetching.json()) as DeleteEmployeeReturnType;
     } catch (error) {

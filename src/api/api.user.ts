@@ -82,7 +82,7 @@ export const updatePasscodeAPI = async (
     const fetching = await FetchAPI({
       reqType: 'cud',
       route: `/user/passcode/update?role=${data.query.role}`,
-      method: 'POST',
+      method: 'PUT',
       body,
     });
     return (await fetching.json()) as UpdateUserPasscodeAPIReturnType;
@@ -111,7 +111,7 @@ export const updateAppLockStateAPI = async (
     const fetching = await FetchAPI({
       reqType: 'cud',
       route: `/user/security/app-lock/update?role=${data.query.role}`,
-      method: 'POST',
+      method: 'PUT',
       body,
     });
     return (await fetching.json()) as UpdateAppLockStateAPIReturnType;

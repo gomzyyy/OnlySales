@@ -16,7 +16,7 @@ export const updateUserLocationAPI = async (
     const res = await FetchAPI({
       reqType: 'cud',
       route: `/update/location?role=${role}`,
-      method: 'POST',
+      method: 'PUT',
       body,
     });
     return (await res.json()) as UpdateUserLocationReturnType;

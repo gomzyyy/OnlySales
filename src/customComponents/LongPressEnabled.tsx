@@ -7,18 +7,18 @@ type LongPressEnabledProps = {
   children: ReactNode;
   minPressDuration?: number;
   longPressCanceledAction?: () => void;
-  longPressAction: () => void;
+  longPressAction?: () => void;
   hapticsEnabled?: boolean;
   vibrationDuration?: number;
   opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
 };
 
-const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
+const LongPressEnabled: React. FC<LongPressEnabledProps> = ({
   dummy = false,
   children,
   minPressDuration = 400,
   longPressCanceledAction = () => {},
-  longPressAction,
+  longPressAction=()=>{},
   hapticsEnabled = true,
   opacity=0.8
 }): React.JSX.Element => {

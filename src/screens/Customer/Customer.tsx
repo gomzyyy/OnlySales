@@ -231,7 +231,6 @@ const Customer = () => {
       <View
         style={[
           styles.contentContainer,
-          // {backgroundColor:currentTheme.baseColor}
         ]}>
         <CustomerInfo customer={customer} />
         <View
