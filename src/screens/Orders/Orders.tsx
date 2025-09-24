@@ -13,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
 import {handleOrders, resetOrderCount} from '../../../store/slices/events';
 import FallbackMessage from '../../components/FallbackMessage';
+import HeaderIcon from '../../components/HeaderIcon';
 
 const Orders = () => {
   const d = useDispatch<AppDispatch>();
@@ -52,18 +53,17 @@ const Orders = () => {
         titleColor={currentTheme.contrastColor}
         curved
         backButton
+        customComponent={true}
+        renderItem={
+          <HeaderIcon iconColor={currentTheme.baseColor}>
+            {loading ? (
+              <ActivityIndicator size={28} color={currentTheme.contrastColor} />
+            ) : null}
+          </HeaderIcon>
+        }
       />
       <View style={styles.contentContainer}>
-        {loading ? (
-          <View
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <ActivityIndicator
-              size={50}
-              color={currentTheme.baseColor}
-              style={{marginBottom: 80}}
-            />
-          </View>
-        ) : orderData.orders.length === 0 ? (
+       {orderData.orders.length === 0 ? (
           <FallbackMessage text="No Recent orders..." />
         ) : (
           <View style={{flex: 1}}>

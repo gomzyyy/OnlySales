@@ -112,6 +112,7 @@ export interface DeleteCustomerData {
   query: {
     customerId: string;
     role: AdminRole;
+    oid:Owner['_id']
   };
 }
 

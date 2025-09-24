@@ -26,6 +26,8 @@ export const getUserAPI = async (
       route: `/get/user?role=${data.role}`,
       method: 'GET',
     });
+    console.log(await fetching.json());
+
     return (await fetching.json()) as GetUserAPIReturnType;
   } catch (error) {
     return {

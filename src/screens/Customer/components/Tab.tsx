@@ -116,8 +116,9 @@ const Tab: React.FC<TabProps> = ({
           soldProducts: [i],
         },
       });
-      console.log(res);
-      await updateUser();
+      res.success
+        ? await updateUser()
+        : showToast({type: 'info', text1: 'State was not updated.'});
       closeContainer && closeParent();
     } catch (error) {
       showToast({type: 'info', text1: 'unable to change product state.'});

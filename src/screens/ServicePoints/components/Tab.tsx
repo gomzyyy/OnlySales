@@ -1,36 +1,57 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ServicePoint} from '../../../../types';
 import SlideUpContainer from '../../../components/SlideUpContainer';
-import { deviceHeight } from '../../../utils/Constants';
+import {deviceHeight} from '../../../utils/Constants';
 import OrderPageRedirectQRCode from '../../../components/OrderPageRedirectORCode';
+import LongPressEnabled from '../../../customComponents/LongPressEnabled';
+import Options from './Options';
 
 type ServicePointTabProps = {
   sp: ServicePoint;
 };
 
 const Tab: React.FC<ServicePointTabProps> = ({sp}) => {
-      const [openOrderOnlineQR, setOpenOrderOnlineQR] = useState<boolean>(false);
+  const [openOrderOnlineQR, setOpenOrderOnlineQR] = useState<boolean>(false);
+    const [openOptions, setOpenOptions] = useState<boolean>(false);
   const closeOrderOnlineQR = () => {
     setOpenOrderOnlineQR(false);
   };
+
+    const handleOpenOptions = (val: boolean) => setOpenOptions(val);
   return (
-    <TouchableOpacity style={styles.tile} onPress={()=>setOpenOrderOnlineQR(true)} activeOpacity={0.8}>
-      <View style={{flex:1,alignItems:'center',justifyContent:'center',gap:10}}>
-        <Text style={styles.title} numberOfLines={1}>
-          {sp.pointName}
-        </Text>
-        <Text style={[styles.status, getStatusStyle(sp.status)]}>
-          {sp.status}
-        </Text>
-      </View>
+    <LongPressEnabled
+      longPressCanceledAction={()=>handleOpenOptions(true)}
+      opacity={0.8}>
+      <View style={styles.tile}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+          }}>
+          <Text style={styles.title} numberOfLines={1}>
+            {sp.pointName}
+          </Text>
+          <Text style={[styles.status, getStatusStyle(sp.status)]}>
+            {sp.status}
+          </Text>
+        </View>
         <SlideUpContainer
-              open={openOrderOnlineQR}
-              close={closeOrderOnlineQR}
-              height={deviceHeight * 0.6 < 460 ? 460 : deviceHeight * 0.6}>
-              <OrderPageRedirectQRCode spid={sp._id} />
-            </SlideUpContainer>
-    </TouchableOpacity>
+          open={openOrderOnlineQR}
+          close={closeOrderOnlineQR}
+          height={deviceHeight * 0.6 < 460 ? 460 : deviceHeight * 0.6}>
+          <OrderPageRedirectQRCode spid={sp._id} />
+        </SlideUpContainer>
+        <SlideUpContainer
+          open={openOptions}
+          close={() => handleOpenOptions(false)}
+          height={deviceHeight * 0.3}>
+          <Options />
+        </SlideUpContainer>
+      </View>
+    </LongPressEnabled>
   );
 };
 
@@ -51,8 +72,10 @@ const getStatusStyle = (status: string) => {
 
 const styles = StyleSheet.create({
   tile: {
-    width: 140,
-    height: 140,
+    width: '80%',
+    maxWidth: 320,
+    height: 280,
+    alignSelf: 'center',
     borderRadius: 12,
     padding: 12,
     backgroundColor: '#f5f5f5',
@@ -62,7 +85,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 1, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    margin: 8,
+    marginVertical: 14,
   },
   title: {
     fontSize: 22,

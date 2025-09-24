@@ -68,7 +68,7 @@ import {
   updateServicePointAPI,
 } from '../api/api.servicePoint';
 import {addServicePoint, setPoints} from '../../store/slices/servicePoint';
-import { COMMON_ERR_MSG_OBJ } from '../utils/Constants';
+import {COMMON_ERR_MSG_OBJ} from '../utils/Constants';
 
 export interface useStorageReturnType {
   customer: {

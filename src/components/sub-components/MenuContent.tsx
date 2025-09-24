@@ -24,7 +24,6 @@ const MenuContent: React.FC<DrawerContentComponentProps> = (
 ): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const user = useSelector((s: RootState) => s.appData.user);
-
   if (!user) {
     return (
       <View

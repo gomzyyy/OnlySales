@@ -57,10 +57,10 @@ export const deleteCustomerAPI = async (
 ) => {
   handleBooleanState(setState, true);
   try {
-    const {role, customerId} = data.query;
+    const {role, customerId, oid} = data.query;
     const fetching = await FetchAPI({
       reqType: 'cud',
-      route: `/delete/customer?role=${role}&customerId=${customerId}`,
+      route: `/delete/customer?role=${role}&customerId=${customerId}&oid=${oid}`,
       method: 'DELETE',
     });
     return (await fetching.json()) as DeleteCustomerAPIReturnType;
@@ -104,7 +104,7 @@ export const updateCustomerAPI = async (
       reqType: 'media',
       route: `/update/customer?role=${role}&customerId=${customerId}&ownerId=${ownerId}`,
       method: 'PUT',
-      body: formData
+      body: formData,
     });
     return (await fetching.json()) as UpdateCustomerAPIReturnType;
   } catch (error) {

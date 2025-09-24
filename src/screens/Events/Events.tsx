@@ -11,12 +11,14 @@ import {useTheme, useAnalytics, useStorage} from '../../hooks';
 import Tab from './components/Tab';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store/store';
-import {useFocusEffect} from '@react-navigation/native';
-import {Event} from '../../../types';
-import {resetEventCount} from '../../../store/slices/events';
+import {handleEvents, resetEventCount} from '../../../store/slices/events';
+import HeaderIcon from '../../components/HeaderIcon';
+import FallbackMessage from '../../components/FallbackMessage';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 const Events = () => {
   const d = useDispatch<AppDispatch>();
+  const {isConnected} = useNetInfo();
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
   const {user} = useSelector((s: RootState) => s.appData)!;
@@ -33,15 +35,20 @@ const Events = () => {
         oid: owner._id,
       },
     };
-    await getEvents(data, setLoading);
+    if (isConnected) {
+      await getEvents(data, setLoading);
+    } else {
+      return;
+    }
   };
   useEffect(() => {
     let isMount: boolean = true;
     if (isMount) {
+      d(handleEvents([]));
       d(resetEventCount());
     }
     fetchEvents();
-  }, []);
+  }, [isConnected]);
   return (
     <View style={styles.parent}>
       <Header
@@ -50,41 +57,28 @@ const Events = () => {
         titleColor={currentTheme.contrastColor}
         curved
         backButton
+        customComponent={true}
+        renderItem={
+          <HeaderIcon iconColor={currentTheme.baseColor}>
+            {loading ? (
+              <ActivityIndicator size={28} color={currentTheme.contrastColor} />
+            ) : null}
+          </HeaderIcon>
+        }
       />
       <View style={styles.contentContainer}>
-        {loading ? (
-          <View
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <ActivityIndicator
-              size={50}
-              color={currentTheme.baseColor}
-              style={{marginBottom: 80}}
-            />
-          </View>
-        ) : eventData.events.length === 0 ? (
-          <View
-            style={{
-              backgroundColor: currentTheme.fadeColor,
-              borderRadius: 20,
-              padding: 10,
-              gap: 10,
-              marginTop: 20,
-            }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: currentTheme.baseColor,
-                textAlign: 'center',
-              }}>
-              No recent messages...
-            </Text>
-          </View>
+        {eventData.events.length === 0 ? (
+          <FallbackMessage
+            text={
+              isConnected
+                ? 'Your inbox is empty!'
+                : 'Internet connection required.'
+            }
+          />
         ) : (
           <View style={{flex: 1}}>
             <View
               style={{
-                // backgroundColor: currentTheme.fadeColor,
                 borderRadius: 20,
                 padding: 2,
                 gap: 10,

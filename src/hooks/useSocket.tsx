@@ -84,12 +84,10 @@ const useSocket = (): UseSocketReturnType => {
       );
       socketRef.current.on('new_event', (s: Event) => {
         d(addNewEvent(s));
-        d(handleEventCount(1));
         fetchEvents();
       });
       socketRef.current.on('new_order', (s: Order) => {
         d(addNewOrder(s));
-        d(handleOrderCount(1));
         fetchOrders();
       });
       socketRef.current.on('order_status_updated', s => {

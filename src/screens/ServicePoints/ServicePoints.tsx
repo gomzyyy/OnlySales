@@ -4,6 +4,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../../components/Header';
@@ -20,10 +21,10 @@ import {showToast} from '../../service/fn';
 import {back} from '../../utils/nagivationUtils';
 import Tab from './components/Tab';
 import {useNetInfo} from '@react-native-community/netinfo';
+import Options from './components/Options';
 
 const ServicePoints = () => {
-  const netInfo = useNetInfo();
-  const [isOnline, setIsOnline] = useState<boolean>(false);
+  const {isConnected} = useNetInfo();
   const {currentTheme} = useTheme();
   const {user} = useSelector((s: RootState) => s.appData)!;
   const {lightTap} = useHaptics();
@@ -31,21 +32,12 @@ const ServicePoints = () => {
   const {getAllServicePoints} = useStorage().user;
   const [openCreateSp, setopenCreateSp] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const {points} = useSelector((s: RootState) => s.servicePoints);
 
   useEffect(() => {
-    if (netInfo.isConnected === null || netInfo.isInternetReachable === null)
-      return;
-    setIsOnline(netInfo.isConnected && netInfo.isInternetReachable);
-  }, [netInfo]);
-useEffect(() => {
-  console.log('NetInfo:', netInfo);
-}, [netInfo]);
-
-  useEffect(() => {
     const fetchPoints = async () => {
-      if (!user || !owner || !isOnline) return;
-
+      if (!user || !owner || !isConnected) return;
       const data = {
         query: {
           role: user.role,
@@ -58,9 +50,8 @@ useEffect(() => {
         back();
       }
     };
-
     fetchPoints();
-  }, [isOnline, user, owner]);
+  }, [isConnected, user, owner]);
 
   const handleCloseCreateSp = () => setopenCreateSp(false);
 
@@ -86,7 +77,7 @@ useEffect(() => {
         }}
       />
       <View style={styles.contentContainer}>
-        {!isOnline ? (
+        {!isConnected ? (
           <FallbackMessage text="You are Offline..." />
         ) : loading ? (
           <View style={styles.loader}>
@@ -108,20 +99,23 @@ useEffect(() => {
             <FlatList
               data={[...(points || [])].reverse()}
               keyExtractor={s => s._id}
-              renderItem={({item}) => <Tab sp={item} />}
+              renderItem={({item}) => (
+                <Tab sp={item} />
+              )}
+              style={{flex: 1}}
             />
           </View>
         )}
       </View>
 
-      {openCreateSp && (
+      {/* {openCreateSp && (
         <SlideUpContainer
           open={openCreateSp}
           close={handleCloseCreateSp}
           height={deviceHeight * 0.58}>
           <CreateServicePoint callback={handleCloseCreateSp} />
         </SlideUpContainer>
-      )}
+      )} */}
     </View>
   );
 };
@@ -135,6 +129,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  buttonDanger: {
+    borderRadius: 12,
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  buttonIconContainer: {
+    alignItems: 'center',
+  },
+  buttonDangerText: {
+    textAlign: 'center',
+    fontSize: 20,
   },
 });
 

@@ -37,6 +37,9 @@ import {
   FileLabel,
   AddressLocaitonType,
   WeekDays,
+  OrderSource,
+  BusinessScale,
+  IncomePer,
 } from './enums';
 
 declare global {
@@ -192,6 +195,7 @@ export interface Customer extends CommonProps {
   buyedProducts: SoldProduct[];
   createdBy: Owner | Partner | Employee;
   createdByModel: AdminRole;
+  isDeleted: boolean;
 }
 
 export interface AccountType extends CommonProps {
@@ -329,6 +333,10 @@ export interface Owner extends User {
   gstNumber?: File;
   accountType: AccountType;
   history: History;
+  businessScale:{
+    scale:BusinessScale;
+    incomePer:IncomePer
+  }
   properties: OwnerProperties;
   businessDescription?: string;
   businessType: BusinessType;
@@ -457,6 +465,7 @@ export interface DeliveryInfo {
 export interface Order extends CommonProps {
   SID: number;
   ownerId: CommonProps['_id'];
+  source:OrderSource;
   orderedBy: Customer;
   products: {product: Product; count: number}[];
   totalAmount: number;

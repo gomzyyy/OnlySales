@@ -12,11 +12,12 @@ import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useTheme} from '../../../hooks/index';
+import {useAnalytics, useTheme} from '../../../hooks/index';
 import {deleteCustomerAPI} from '../../../api/api.customer';
 import {validateTokenAPI} from '../../../api/api.auth';
 import {setUser} from '../../../../store/slices/business';
 import {useTranslation} from 'react-i18next';
+import {resetAndNavigate} from '../../../utils/nagivationUtils';
 
 type TabLongPressOptionsProps = {
   i: Customer;
@@ -31,8 +32,13 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
   const {currentTheme} = useTheme();
+  const {owner} = useAnalytics();
   const {t} = useTranslation('customers');
-  const user = useSelector((s: RootState) => s.appData.user)!;
+  const user = useSelector((s: RootState) => s.appData.user);
+  if (!user) {
+    resetAndNavigate('GetStarted');
+    return <></>;
+  }
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -46,6 +52,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
         query: {
           role: user.role,
           customerId: i._id,
+          oid: owner._id,
         },
       };
       const apiRes = await deleteCustomerAPI(data, setLoading);
@@ -55,6 +62,7 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           role: user.role,
         };
         const userRes = await validateTokenAPI(userData);
+        console.log(userRes);
         if (userRes.success && userRes.data && userRes.data.user) {
           dispatch(setUser(userRes.data.user));
         }
@@ -72,30 +80,33 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
       <Text style={styles.label}>{i.name}</Text>
       <View style={styles.optionsContainer}>
         <TouchableOpacity
-          style={[styles.buttonDanger, {backgroundColor: colors.dangerFade}]}
+          style={[styles.buttonDanger, {backgroundColor: colors.danger}]}
           activeOpacity={0.8}
           onPress={handleDeleteEmployee}>
-          <Text style={[styles.buttonDangerText, {color: colors.danger}]}>
-            {loading ? t('cs_deleting') : t('cs_delete')}
-          </Text>
           {loading ? (
-            <ActivityIndicator size={18} color={colors.danger} />
+            <ActivityIndicator size={18} color={currentTheme.contrastColor} />
           ) : (
-            <Icon name="delete" size={18} color={colors.danger} />
+            <Text
+              style={[
+                styles.buttonDangerText,
+                {color: currentTheme.contrastColor},
+              ]}>
+              Delete
+            </Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.buttonEdit}
+          style={[styles.buttonEdit, {backgroundColor: currentTheme.baseColor}]}
           activeOpacity={0.8}
           onPress={triggerEdit}>
+          {/* <Icon name="edit" size={18} color={currentTheme.contrastColor} /> */}
           <Text
             style={[
               styles.buttonEditText,
-              {color: currentTheme.modal.inputText},
+              {color: currentTheme.contrastColor},
             ]}>
-            {t('cs_edit')}
+            Edit
           </Text>
-          <Icon name="edit" size={18} color={colors.iconBlack} />
         </TouchableOpacity>
       </View>
     </View>
@@ -121,7 +132,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   buttonDanger: {
-    borderRadius: 12,
+    borderRadius: 8,
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -133,12 +144,12 @@ const styles = StyleSheet.create({
   },
   buttonDangerText: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: '600',
   },
   buttonEdit: {
     height: 50,
-    borderRadius: 12,
-    borderWidth: 0.8,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -146,8 +157,8 @@ const styles = StyleSheet.create({
   },
   buttonEditText: {
     textAlign: 'center',
-
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

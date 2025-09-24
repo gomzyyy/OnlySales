@@ -8,6 +8,7 @@ export const navigationRef = createNavigationContainerRef();
 
 const prepareNavigation = () => navigationRef.isReady();
 
+
 const navigate = (routeName: string, params?: object) => {
   if (navigationRef.isReady()) {
     navigationRef.dispatch(StackActions.push(routeName, params));

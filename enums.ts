@@ -48,22 +48,22 @@ export enum ValidRoles {
   PARNER = 'Partner',
   EMPLOYEE = 'Employee',
   CUSTOMER = 'Customer',
-  ADMIN = 'Admin'
+  ADMIN = 'Admin',
 }
 export enum AddressLocaitonType {
-  POINT = 'Point'
+  POINT = 'Point',
 }
 export enum MediaType {
   IMAGE = 'image',
   DOCUMENT = 'document',
-  VIDEO = 'video'
+  VIDEO = 'video',
 }
 export enum FileLabel {
   GSTIN = 'gstin',
   GSTIN_DECLARATION = 'gstin_declaration',
   FSSAI = 'fssai',
   BALANCE_SHEET = 'balance_sheet',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 export enum LocationRef {
   OWNER = 'Owner',
@@ -307,12 +307,31 @@ export enum AcceptedByType {
   PARTNER = 'partner',
   EMPLOYEE = 'employee',
 }
-
+export enum OrderSource {
+  SERVICE_POINT = 'service_point',
+  DIRECT = 'direct',
+  THIRD_PARTY = 'third_party',
+  SELF_PLACED = 'self_placed',
+  VIA_BRANCH = 'via_branch',
+  VIA_SEARCH = 'via_search',
+  OTHER = 'other',
+}
+export enum BusinessScale{
+  SMALL = "Small",
+  SMALL_TO_MID="Small_to_mid",
+  MEDIUM = "Medium",
+  MEDIUM_TO_ENTERPRISE = "Medium_to_enterprise",
+  ENTERPRISE = "Enterprise"
+}
+export enum IncomePer{
+  MONTH = "Month",
+  YEAR = "Year"
+}
 export enum ServicePointStatus {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-  MAINTENANCE = "MAINTENANCE",
-  HIDDEN = "HIDDEN",
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  MAINTENANCE = 'MAINTENANCE',
+  HIDDEN = 'HIDDEN',
 }
 export enum WeekDays {
   Monday = 'Monday',
@@ -321,6 +340,5 @@ export enum WeekDays {
   Thursday = 'Thursday',
   Friday = 'Friday',
   Saturday = 'Saturday',
-  Sunday = 'Sunday'
+  Sunday = 'Sunday',
 }
-

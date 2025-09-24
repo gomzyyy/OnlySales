@@ -22,7 +22,7 @@ import SetPasscode from '../screens/Auth/AppLock/SetPasscode/SetPasscode';
 import Unlock from '../screens/Auth/AppLock/Unlock/Unlock';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {AppState, Text, View} from 'react-native';
+import {AppState, Text} from 'react-native';
 import LoginOptions from '../screens/Auth/LoginOptions/LoginOptions';
 import ChangeTheme from '../screens/Settings/screens/ChangeTheme';
 import {useTheme} from '../hooks/index';
@@ -57,7 +57,6 @@ import Events from '../screens/Events/Events';
 import Orders from '../screens/Orders/Orders';
 import ServicePoints from '../screens/ServicePoints/ServicePoints';
 import OpenClose from '../screens/Settings/screens/OpenClose'
-// import Orders from '../screens/Orders/Orders';
 
 const stack = createNativeStackNavigator();
 const drawer = createDrawerNavigator();
@@ -66,7 +65,6 @@ const StackNav = () => {
   const {currentTheme} = useTheme();
 
   const dispatch = useDispatch<AppDispatch>();
-  const {appLocked} = useSelector((s: RootState) => s.appData.app);
   const {user} = useSelector((s: RootState) => s.appData);
   // if (!user) {
   //   return null;
@@ -199,7 +197,6 @@ const Navigation = () => {
   });
 
   useEffect(() => {
-    console.log(isConnected);
     if (!isConnected) {
       setTimeout(() => (bottomNetworkStateContainerHeight.value = 18), 2000);
       setPrevIsConnected(false);
