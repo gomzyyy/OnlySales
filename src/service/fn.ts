@@ -6,7 +6,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import Crypto from 'crypto-js';
 import {CRYPTO_ENCRYPTION_KEY} from '@env';
 
-export const BASE_SERVER_PORT = '10.166.41.12';
+export const BASE_SERVER_PORT = '10.47.191.12'
 
 export interface ERROR_NOTIFICATION_DATA_OBJ_TYPE {
   type: 'success' | 'error' | 'info';

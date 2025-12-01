@@ -123,7 +123,7 @@ export interface CommonProps {
 }
 
 export interface Review extends CommonProps {
-  SID: number;
+  SID: string;
   reviewRef: string;
   reviewRefType: ReviewRefType;
   userRef: string;
@@ -135,7 +135,7 @@ export interface Review extends CommonProps {
 }
 
 export interface User extends CommonProps {
-  SID: number;
+  SID: string;
   name: string;
   phoneNumber?: {
     value: string;
@@ -178,7 +178,7 @@ export interface Location extends CommonProps {
 }
 
 export interface Customer extends CommonProps {
-  SID: number;
+  SID: string;
   name: string;
   phoneNumber?: string;
   image?: string | undefined;
@@ -259,7 +259,7 @@ export interface ISupportTicket extends CommonProps {
 }
 
 export interface ServicePoint extends CommonProps {
-  SID: number;
+  SID: string;
   ownerId: Owner['_id'];
   pointName: string;
   qrUrl: string;
@@ -431,7 +431,7 @@ export interface Employee extends User {
 }
 
 export interface Product extends CommonProps {
-  SID: number;
+  SID: string;
   name: string;
   businessOwner: string;
   productType: ProductType;
@@ -463,7 +463,7 @@ export interface DeliveryInfo {
 
 // Order Interface
 export interface Order extends CommonProps {
-  SID: number;
+  SID: string;
   ownerId: CommonProps['_id'];
   source:OrderSource;
   orderedBy: Customer;
@@ -483,7 +483,7 @@ export interface Order extends CommonProps {
 }
 
 export interface SoldProduct extends CommonProps {
-  SID: number;
+  SID: string;
   product: Product;
   buyer: Customer;
   state: PaymentState;

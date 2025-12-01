@@ -9,6 +9,7 @@ import {
 } from './types.api';
 import {SetStateAction} from 'react';
 import {FetchAPI, handleBooleanState} from './helper/fn';
+import { Owner } from '../../types';
 
 export const validateTokenAPI = async (
   data: ValidateTokenData,
@@ -55,7 +56,7 @@ export const findUserAPI = async (
     const res = await fetching.json();
     return res as {
       message: string;
-      data: {name: string | undefined; role: AdminRole | undefined};
+      data: {user: Owner | undefined; role: AdminRole | undefined};
       success: boolean;
     };
   } catch (error) {
@@ -64,13 +65,11 @@ export const findUserAPI = async (
         error instanceof Error
           ? error.message
           : 'Internal server Error occured while fetching',
-      data: {
-        name: undefined,
-      },
+      data: {},
       success: false,
     } as {
       message: string;
-      data: {name: string | undefined; role: AdminRole | undefined};
+      data: {user: Owner | undefined; role: AdminRole | undefined};
       success: boolean;
     };
   } finally {

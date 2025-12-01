@@ -66,9 +66,6 @@ const StackNav = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const {user} = useSelector((s: RootState) => s.appData);
-  // if (!user) {
-  //   return null;
-  // }
   useEffect(() => {
     const handleAppStateChange = (nextAppState: string) => {
       if (

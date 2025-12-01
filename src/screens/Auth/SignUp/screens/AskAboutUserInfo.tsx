@@ -19,7 +19,7 @@ import {BusinessType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
 import {isValidEmail, showToast} from '../../../../service/fn';
 import {ValidateReferralCodeOtpAPI} from '../../../../api/api.validate';
-import { global } from '../../../../styles/global';
+import {global} from '../../../../styles/global';
 
 type AskAboutUserInfoParams = {
   name: string;
@@ -37,9 +37,7 @@ const AskAboutUserInfo = () => {
   const [businessName, setBusinessName] = useState<string>('');
   const [askBusinessDescription, setAskBusinessDescription] =
     useState<boolean>(false);
-  const [businessDiscription, setBusinessDescription] = useState<string | null>(
-    null,
-  );
+  const [businessDescription, setBusinessDescription] = useState<string>("");
   const [businessAddress, setBusinessAddress] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [hasReferralCode, setHasReferralCode] = useState<boolean>(false);
@@ -72,14 +70,14 @@ const AskAboutUserInfo = () => {
     }
     if (
       (businessType === BusinessType.OTHER &&
-        businessDiscription &&
-        businessDiscription.trim().length === 0) ||
+        businessDescription &&
+        businessDescription.trim().length === 0) ||
       (businessType === BusinessType.OTHER &&
-        businessDiscription &&
-        businessDiscription.trim().length < 4) ||
+        businessDescription &&
+        businessDescription.trim().length < 4) ||
       (businessType === BusinessType.OTHER &&
-        businessDiscription &&
-        businessDiscription?.trim().length > 64)
+        businessDescription &&
+        businessDescription?.trim().length > 64)
     ) {
       showToast({
         type: 'error',
@@ -114,7 +112,7 @@ const AskAboutUserInfo = () => {
       userId,
       businessName,
       businessType,
-      businessDiscription,
+      businessDescription,
       businessPhoneNumber,
       businessAddress,
       email,
@@ -151,11 +149,11 @@ const AskAboutUserInfo = () => {
               value={businessName}
               onChangeText={setBusinessName}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Your business name here."
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={"grey"}
             />
           </View>
 
@@ -165,11 +163,11 @@ const AskAboutUserInfo = () => {
               value={email}
               onChangeText={setEmail}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="email here."
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={"grey"}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -178,11 +176,11 @@ const AskAboutUserInfo = () => {
               value={businessAddress}
               onChangeText={setBusinessAddress}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder="Your business address here."
-              placeholderTextColor={currentTheme.baseColor}
+              placeholderTextColor={"grey"}
             />
           </View>
           <View style={{flexDirection: 'row'}}>
@@ -254,11 +252,11 @@ const AskAboutUserInfo = () => {
                 value={referralCode}
                 onChangeText={v => setReferralCode(v.toUpperCase())}
                 style={[
-                  styles.inputText,
+                  global.inputText,
                   {borderColor: currentTheme.modal.inputBorder},
                 ]}
-                placeholder="Referral code here."
-                placeholderTextColor={currentTheme.baseColor}
+                placeholder="referral code"
+                placeholderTextColor={"grey"}
               />
               <Text style={{fontSize: 12, fontWeight: 400}}>
                 *Get Full Access with a 7-Day Premium Pass using Referral Code!
@@ -279,15 +277,20 @@ const AskAboutUserInfo = () => {
                 Please describe your business in few words:
               </Text>
               <TextInput
-                value={businessDiscription || ''}
+                value={businessDescription || ''}
                 onChangeText={setBusinessDescription}
                 style={[
-                  styles.inputText,
-                  {borderColor: currentTheme.modal.inputBorder},
+                  global.inputText,
+                  {borderColor: currentTheme.modal.inputBorder,height:200,paddingHorizontal:18,paddingVertical:18},
                 ]}
-                placeholder="Describe here."
-                placeholderTextColor={currentTheme.baseColor}
+                placeholder="describe your business in few words"
+                placeholderTextColor={"grey"}
+                textAlign="left"
+                textAlignVertical='top'
+                multiline
+                numberOfLines={100}
               />
+              <Text>{businessDescription.length}/300</Text>
             </View>
           )}
         </View>

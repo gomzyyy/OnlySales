@@ -108,14 +108,14 @@ const ServicePoints = () => {
         )}
       </View>
 
-      {/* {openCreateSp && (
+      {openCreateSp && (
         <SlideUpContainer
           open={openCreateSp}
           close={handleCloseCreateSp}
           height={deviceHeight * 0.58}>
           <CreateServicePoint callback={handleCloseCreateSp} />
         </SlideUpContainer>
-      )} */}
+      )}
     </View>
   );
 };

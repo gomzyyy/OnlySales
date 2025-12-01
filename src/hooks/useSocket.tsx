@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {io, Socket} from 'socket.io-client';
 import {AppDispatch, RootState} from '../../store/store';
@@ -7,18 +7,16 @@ import {PLATFORM_SPECIFIED_CALLS} from '../../enums';
 import {
   addNewEvent,
   addNewOrder,
-  handleEventCount,
   handleEvents,
-  handleOrderCount,
   handleOrders,
 } from '../../store/slices/events';
-// import { SERVER_URL } from '@env';
 import {BusinessTiming, Event, Order} from '../../types';
 import {BASE_SERVER_PORT} from '../service/fn';
 import {updateBusinessTimings} from '../../store/slices/openClose';
 
 type UseSocketReturnType = {
   socket: Socket | null;
+  isConnected:boolean;
 };
 
 const useSocket = (): UseSocketReturnType => {
@@ -26,6 +24,11 @@ const useSocket = (): UseSocketReturnType => {
   const {deviceId, deviceName, ipv4} = useDevice();
   const user = useSelector((s: RootState) => s.appData.user)!;
   const socketRef = useRef<Socket | null>(null);
+
+  // STATES
+
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+
   const {owner} = useAnalytics();
   const {getOrders, getEvents} = useStorage().user;
   const fetchOrders = async () => {
@@ -60,7 +63,7 @@ const useSocket = (): UseSocketReturnType => {
 
     ipv4().then(ip => {
       if (!isMounted) return;
-      socketRef.current = io(`http://${BASE_SERVER_PORT}:6900`, {
+     const {connected} = socketRef.current = io(`http://${BASE_SERVER_PORT}:6900`, {
         transports: ['websocket'],
         query: {
           uid: String(user._id),
@@ -71,7 +74,7 @@ const useSocket = (): UseSocketReturnType => {
           ipAddress: ip,
         },
       });
-
+      setIsConnected(connected)
       socketRef.current.on('connect', () => {
         console.log('Socket connected:', socketRef.current?.id);
       });
@@ -90,12 +93,15 @@ const useSocket = (): UseSocketReturnType => {
         d(addNewOrder(s));
         fetchOrders();
       });
+       socketRef.current.on('address_updated', (data) => {
+        console.log(data)
+      });
       socketRef.current.on('order_status_updated', s => {
         console.log(s);
       });
       socketRef.current.on('business_timing_updated', (s: BusinessTiming[]) => {
         d(updateBusinessTimings(s));
-        console.log(s)
+        console.log(s);
       });
       socketRef.current.on('balance_sheet_created', s => {
         console.log(s);
@@ -103,6 +109,8 @@ const useSocket = (): UseSocketReturnType => {
       socketRef.current.on('connect_error', err => {
         console.log('Socket connection error:', err.message);
       });
+      socketRef.current.on('get_online_users', (d) => console.log("CURRENT ONLINE USERS",d));
+      socketRef.current.on('get_online_users_meta_data', (d) => console.log("CURRENT ONLINE USER's META DATA",d));
     });
 
     return () => {
@@ -112,10 +120,11 @@ const useSocket = (): UseSocketReturnType => {
         socketRef.current = null;
       }
     };
-  }, [user?._id, deviceId, deviceName, user?.role]);
+  }, [user?._id, deviceId, deviceName, user?.role,isConnected]);
 
   return {
     socket: socketRef.current,
+    isConnected
   };
 };
 

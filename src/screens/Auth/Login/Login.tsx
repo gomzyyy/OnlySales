@@ -19,6 +19,7 @@ import {useRoute} from '@react-navigation/native';
 import {AdminRole} from '../../../../enums';
 import RolePicker from '../../../components/RolePicker';
 import {findUserAPI} from '../../../api/api.auth';
+import {global} from '../../../styles/global';
 
 const Login = () => {
   const {currentTheme} = useTheme();
@@ -47,11 +48,10 @@ const Login = () => {
       });
       return;
     }
-    const res = await findUserAPI({userId:userId.trim(), role}, setLoading);
-    console.log(res)
-    if (res.success) {
+    const res = await findUserAPI({userId: userId.trim(), role}, setLoading);
+    if (res.success && res.data.user) {
       navigate('VerifyPassword', {
-        name: res.data.name,
+        name: res.data.user.name,
         role: res.data.role,
         userId,
       });
@@ -89,6 +89,7 @@ const Login = () => {
               onChangeText={setUserId}
               style={[
                 styles.inputText,
+                // global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
               placeholder={`${roleLabel('s')} Id`}

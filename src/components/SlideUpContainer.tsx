@@ -4,7 +4,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
-  runOnJS
+  runOnJS,
 } from 'react-native-reanimated';
 import {deviceHeight} from '../utils/Constants';
 import {
@@ -35,86 +35,84 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   bottom = true,
   usepadding = true,
 }): React.JSX.Element => {
-  const childHeight = useSharedValue(0);
-  const translateY = useSharedValue(0);
+  const sheetHeight =
+    typeof heightLimit === "number" && height > heightLimit
+      ? heightLimit
+      : height;
+
+  const translateY = useSharedValue(sheetHeight);
 
   const closeSlideUpContainer = () => {
-    childHeight.value = withTiming(0, {duration: 200});
+    translateY.value = withTiming(sheetHeight, { duration: 200 });
     setTimeout(() => {
       close();
-      translateY.value = 0;
     }, 200);
   };
 
-  const childAnimatedStyles = useAnimatedStyle(() => {
+  const animatedStyles = useAnimatedStyle(() => {
     return {
-      height: childHeight.value,
-      transform: [{translateY: translateY.value}],
-      justifyContent: 'flex-end',
-      overflow: 'hidden',
+      transform: [
+        {
+          translateY: translateY.value,
+        },
+      ],
     };
   });
 
-  const dragTabGesture = Gesture.Pan()
-    .onUpdate(e => {
+  const dragGesture = Gesture.Pan()
+    .onUpdate((e) => {
       if (e.translationY > 0) {
         translateY.value = e.translationY;
       }
     })
-    .onEnd(e => {
+    .onEnd((e) => {
       if (e.translationY > 100) {
         runOnJS(closeSlideUpContainer)();
       } else {
-        translateY.value = withTiming(0, {duration: 150});
+        translateY.value = withTiming(0, { duration: 150 });
       }
     });
 
   useEffect(() => {
     if (open) {
-      childHeight.value = 0;
-      translateY.value = 0;
+      translateY.value = sheetHeight;
       setTimeout(() => {
-        childHeight.value = withTiming(
-          (typeof heightLimit === 'number' && height > heightLimit
-            ? heightLimit
-            : height) + 30,
-          {duration: 200},
-        );
-      }, 40);
+        translateY.value = withTiming(0, { duration: 200 });
+      }, 10);
     }
   }, [open, height]);
 
   return (
-      <Modal
-        animationType="fade"
-        transparent
-        statusBarTranslucent
-        visible={open}
-        onRequestClose={closeSlideUpContainer}
-        hardwareAccelerated>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <Pressable
-            style={[
-              styles.childContainer,
-              {
-                backgroundColor: `rgba(0,0,0,0.6)`,
-                paddingHorizontal: usepadding ? (padding ? 14 : 10) : 0,
-              },
-            ]}
-            onPress={closeSlideUpContainer}>
-            <Pressable onPress={e => e.stopPropagation()}>
-              <Animated.View style={childAnimatedStyles}>
-                <GestureDetector gesture={dragTabGesture}>
-                  <View style={styles.dragTabContainer}>
-                    <View style={styles.dragTab} />
-                  </View>
-                </GestureDetector>
+    <Modal
+      animationType="fade"
+      transparent
+      statusBarTranslucent
+      visible={open}
+      onRequestClose={closeSlideUpContainer}
+      hardwareAccelerated>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Pressable
+          style={[
+            styles.childContainer,
+            {
+              backgroundColor: `rgba(0,0,0,0.6)`,
+              paddingHorizontal: usepadding ? (padding ? 14 : 10) : 0,
+            },
+          ]}
+          onPress={closeSlideUpContainer}>
+          <Pressable onPress={e => e.stopPropagation()}>
+            <GestureDetector gesture={dragGesture}>
+              <Animated.View style={animatedStyles}>
+                <View style={styles.dragTabContainer}>
+                  <View style={styles.dragTab} />
+                </View>
                 {children}
               </Animated.View>
-            </Pressable>
+            </GestureDetector>
           </Pressable>
-        </GestureHandlerRootView>
-      </Modal>
+        </Pressable>
+      </GestureHandlerRootView>
+    </Modal>
   );
 };
 

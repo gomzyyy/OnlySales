@@ -4,18 +4,33 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  Dimensions,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import React, {ReactNode, useEffect} from 'react';
-import {deviceHeight} from '../utils/Constants';
-import {useTheme} from '../hooks/index';
+import React, {
+  forwardRef,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+} from 'react';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+// import { CircleCheck, Info, TriangleAlert } from 'lucide-react-native';
+import TriangleAlert from 'react-native-vector-icons/Feather'
+import Check from 'react-native-vector-icons/AntDesign'
+
+const PopupAnimationTiming = {
+  in: 200,
+  out: 200,
+};
+
+const deviceHeight = Dimensions.get('window').height;
 
 type PopupContainerProps = {
   children: ReactNode;
@@ -27,154 +42,244 @@ type PopupContainerProps = {
   usepadding?: boolean;
 } & ModalProps;
 
-const PopupContainer: React.FC<PopupContainerProps> = ({
-  children,
-  open,
-  close,
-  bgcolor = `rgba(0,0,0,${'0.5'})`,
-  padding = false,
-  opacity = 0.6,
-  usepadding = true,
-  ...props
-}): React.JSX.Element => {
-  const childScale = useSharedValue(0);
-  const childY = useSharedValue(0);
-  const childAnimation = useAnimatedStyle(() => ({
-    transform: [{translateY: childY.value}, {scale: childScale.value}],
-  }));
-  const closeContainer = () => {
-    childScale.value = withTiming(0, {duration: 260});
-    childY.value = withTiming(
-      deviceHeight * 0.6,
-      {duration: 300},
-      isFinished => {
-        if (isFinished) {
-          runOnJS(close)();
+export type PopupContainerRef = {
+  closeContainer: () => void;
+};
+
+const PopupContainer = forwardRef<PopupContainerRef, PopupContainerProps>(
+  (
+    {
+      children,
+      open,
+      close,
+      bgcolor = 'rgba(0,0,0,0.5)',
+      padding = false,
+      usepadding = true,
+      ...props
+    },
+    ref
+  ) => {
+    const childScale = useSharedValue(0.8);
+    const childY = useSharedValue(0);
+    const childOpacity = useSharedValue(0);
+
+    const childAnimation = useAnimatedStyle(() => ({
+      transform: [{ scale: childScale.value }],
+      opacity: childOpacity.value,
+    }));
+
+    const closeContainer = () => {
+      childScale.value = withTiming(0.4, {
+        duration: PopupAnimationTiming.out,
+      });
+      childOpacity.value = withTiming(0, {
+        duration: PopupAnimationTiming.out,
+      });
+      childY.value = withTiming(
+        deviceHeight * 0.6,
+        { duration: PopupAnimationTiming.out },
+        (isFinished) => {
+          if (isFinished) {
+            runOnJS(close)();
+          }
         }
-      },
-    );
-  };
-  useEffect(() => {
-    childScale.value = withTiming(1, {duration: 260});
-  }, []);
-  return (
-    <Modal
-      transparent={true}
-      statusBarTranslucent={true}
-      visible={open}
-      onRequestClose={closeContainer}
-      hardwareAccelerated={true}
-      {...props}>
-      <Pressable
-        style={[
-          styles.childContainer,
-          {
-            backgroundColor: bgcolor,
-            paddingHorizontal: usepadding ? (padding ? 20 : 10) : 0,
-          },
-        ]}
-        onPress={closeContainer}>
-        <Pressable onPress={e => e.stopPropagation()}>
-          <Animated.View style={childAnimation}>{children}</Animated.View>
+      );
+    };
+
+    useEffect(() => {
+      if (open) {
+        childScale.value = 0.8;
+        childY.value = deviceHeight * 0.6;
+        childOpacity.value = 0;
+
+        childOpacity.value = withTiming(1, {
+          duration: PopupAnimationTiming.in
+        });
+        childScale.value = withTiming(1, { duration: PopupAnimationTiming.in });
+        childY.value = withTiming(0, { duration: PopupAnimationTiming.in });
+      }
+    }, [open]);
+
+    // EXPOSED ANIMATED CLOSE METHOD
+    useImperativeHandle(ref, () => ({
+      closeContainer,
+    }));
+
+    return (
+      <Modal
+        transparent={true}
+        statusBarTranslucent={true}
+        visible={open}
+        onRequestClose={closeContainer}
+        hardwareAccelerated={true}
+        {...props}
+      >
+        <Pressable
+          style={[
+            styles.childContainer,
+            {
+              backgroundColor: bgcolor,
+              paddingHorizontal: usepadding ? (padding ? 20 : 10) : 0,
+            },
+          ]}
+          onPress={closeContainer}
+        >
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            <Animated.View style={childAnimation}>{children}</Animated.View>
+          </Pressable>
         </Pressable>
-      </Pressable>
-    </Modal>
-  );
-};
+      </Modal>
+    );
+  }
+);
 
-type CustomAlertProps = {open: boolean; close: () => void};
-
-const Alert: React.FC<CustomAlertProps> = ({
-  open,
-  close,
-}): React.JSX.Element => {
-  const {currentTheme} = useTheme();
-
-  return (
-    <PopupContainer open={open} close={close} padding>
-      <View
-        style={[
-          styles.InnerContainer,
-          {backgroundColor: currentTheme.contrastColor},
-        ]}></View>
-    </PopupContainer>
-  );
-};
-
-type CustomPromptProps = {open: boolean; close: () => void};
-
-const Prompt: React.FC<CustomPromptProps> = ({
-  open,
-  close,
-}): React.JSX.Element => {
-  const {currentTheme} = useTheme();
-
-  return (
-    <PopupContainer open={open} close={close} padding>
-      <View
-        style={[
-          styles.InnerContainer,
-          {backgroundColor: currentTheme.contrastColor},
-        ]}></View>
-    </PopupContainer>
-  );
-};
-
-type CustomConfirmProps = {
-  open: boolean;
-  close: () => void;
-  label?: string;
+interface AlertProps {
   title: string;
-  subTitle?: string;
-  btnLabel1?: string;
-  btnLabel2?: string;
-  secondButton?: boolean;
-};
+  body: string;
+  open: boolean;
+  closeAlert: PopupContainerProps['close'];
+  onAgree: () => void;
+  declineButton?: boolean;
+  onDecline: () => void;
+  loadingOnAgree?: boolean;
+  loadingOnDecline?: boolean;
+  // alertOptions?: AlertOptions;
+  alertOptions?:any
+}
 
-const Confirm: React.FC<CustomConfirmProps> = ({
-  open,
-  close,
-  label = 'Are you sure?',
-  title,
-  subTitle = '',
-  btnLabel1 = 'OK',
-  btnLabel2 = 'NO',
-  secondButton = true,
-}): React.JSX.Element => {
-  const {currentTheme} = useTheme();
-
-  return (
-    <PopupContainer open={open} close={close} padding>
-      <View
-        style={[
-          styles.InnerContainer,
-          {backgroundColor: currentTheme.contrastColor},
-        ]}>
-        <Text style={styles.label}>{label}</Text>
-        <View style={confirm.contentContainer}>
-          <View style={confirm.titleContainer}>
-            <Text style={confirm.title}>{title}</Text>
+const Alert = forwardRef<PopupContainerRef, AlertProps>(
+  (
+    {
+      title,
+      body,
+      open,
+      closeAlert,
+      onAgree,
+      declineButton,
+      onDecline = () => {},
+      loadingOnAgree,
+      loadingOnDecline,
+      alertOptions,
+    },
+    ref
+  ) => {
+    const IconsAsBehaiour: Record<string, ReactNode> = {
+      error: <TriangleAlert name='alert-triangle' color={'#8B0000'} size={60} />,
+      inform: <TriangleAlert name='info' color={'#0b80f5ff'} size={60} />,
+      success: <Check name='check' color={'#60b461'} size={60} />,
+    };
+    return (
+      <PopupContainer ref={ref} open={open} close={closeAlert} padding>
+        <View style={alert.alertContainer}>
+          <View style={alert.iconContainer}>
+            {IconsAsBehaiour[
+              (alertOptions?.config?.type ?? 'inform') as string
+            ] ?? IconsAsBehaiour['inform']}
           </View>
-          {subTitle.trim().length !== 0 && (
-            <View style={confirm.subTitleContainer}>
-              <Text style={confirm.subTitle}>{subTitle}</Text>
-            </View>
-          )}
-        </View>
-        <View style={confirm.submitContainer}>
-          <TouchableOpacity style={confirm.actionButton}>
-            <Text style={confirm.actionButtonText}>{btnLabel1}</Text>
-          </TouchableOpacity>
-          {secondButton && (
-            <TouchableOpacity>
-              <Text style={confirm.actionButtonText}>{btnLabel2}</Text>
+          <Text style={alert.title}>{title}</Text>
+          <Text style={alert.body}>{body}</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent:'space-between',
+              width:'100%',
+              paddingHorizontal:20
+            }}
+          >
+            {declineButton ? (
+              <TouchableOpacity
+                onPress={onDecline}
+                style={[
+                  alert.button,
+                  {
+                    backgroundColor: '#fff',
+                    borderWidth: 2,
+                    borderColor: '#8B0000',
+                  },
+                ]}
+              >
+                {loadingOnDecline ? (
+                  <ActivityIndicator size={16} color={'#8B0000'} />
+                ) : (
+                  <Text style={[alert.buttonText, { color: '#8B0000' }]}>
+                    {alertOptions?.decline
+                      ? alertOptions.decline.text
+                      : 'Cancel'}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            ) : (
+              <View />
+            )}
+            <TouchableOpacity
+              onPress={onAgree}
+              style={[
+                alert.button,
+                {
+                  backgroundColor: '#8B0000',
+                  borderWidth: 2,
+                  borderColor: 'transparent',
+                },
+              ]}
+            >
+              {loadingOnAgree ? (
+                <ActivityIndicator size={16} color={'#fff'} />
+              ) : (
+                <Text style={alert.buttonText}>
+                  {alertOptions?.agree ? alertOptions.agree.text : 'Ok'}
+                </Text>
+              )}
             </TouchableOpacity>
-          )}
+          </View>
         </View>
-      </View>
-    </PopupContainer>
-  );
-};
+      </PopupContainer>
+    );
+  }
+);
+
+// ===== STYLES =====
+const alert = StyleSheet.create({
+  alertContainer: {
+    height: 280,
+    minWidth:380,
+    maxWidth:400,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 25,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 10,
+  },
+  body: {
+    fontSize: 16,
+    flex: 1,
+    textAlign: 'center',
+  },
+  button: {
+    alignSelf: 'flex-end',
+    marginTop: 15,
+    paddingHorizontal: 20,
+    height: 40,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+});
 
 const styles = StyleSheet.create({
   childContainer: {
@@ -195,30 +300,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-const confirm = StyleSheet.create({
-  contentContainer: {
-    flex: 1,
-    marginTop: 10,
-  },
-  titleContainer: {paddingHorizontal: 18},
-  title: {fontSize: 20, fontWeight: 'bold'},
-  subTitleContainer: {},
-  subTitle: {},
-  submitContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 30,
-    marginBottom: 15,
-  },
-  actionButton: {},
-  actionButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-});
 
-export {Confirm, Alert, Prompt};
-
+export { Alert, PopupAnimationTiming };
 export default PopupContainer;

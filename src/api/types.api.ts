@@ -52,7 +52,7 @@ export interface LoginAPIReturnType extends APIReturnType {
   };
 }
 export interface SignupAPIReturnType extends APIReturnType {
-  data: {
+  data?: {
     user: Owner;
     token: string;
   };

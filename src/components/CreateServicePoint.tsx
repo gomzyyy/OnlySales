@@ -116,7 +116,7 @@ const CreateServicePoint: React.FC<CreateCustomerProps> = ({
           <View style={styles.inputTitleContainer}>
             <Text
               style={[styles.inputLabel, {color: currentTheme.modal.title}]}>
-              Give it a name.
+              Name your service point
             </Text>
             <TextInput
               value={spName}
@@ -139,7 +139,7 @@ const CreateServicePoint: React.FC<CreateCustomerProps> = ({
               key={index}
               style={{flexDirection: 'row', gap: 6, marginBottom: 8}}>
               <TextInput
-                placeholder="e.g., table no."
+                placeholder="e.g. branch no."
                 value={field.key}
                 onChangeText={text => handleMetaChange(index, 'key', text)}
                 style={[
@@ -152,7 +152,7 @@ const CreateServicePoint: React.FC<CreateCustomerProps> = ({
                 placeholderTextColor={'grey'}
               />
               <TextInput
-                placeholder="e.g., 12"
+                placeholder="e.g. branch add."
                 value={field.value}
                 onChangeText={text => handleMetaChange(index, 'value', text)}
                 style={[
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 20,
-    gap: 16,
+    gap: 10,
     marginBottom: 16,
   },
   inputTitleContainer: {

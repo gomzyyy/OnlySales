@@ -3,8 +3,8 @@ import React, {useState} from 'react';
 import {colors, deviceHeight} from '../utils/Constants';
 import Header from './Header';
 import {useTheme} from '../hooks';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../store/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
 import FallbackMessage from './FallbackMessage';
 import ExpandButton from './animated/ExpandButton';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -113,21 +113,24 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
       setNoteId(note._id);
       updateComponentState('create');
     };
-    return (
-      <FlatList
-        data={renderNotes}
-        keyExtractor={item => item._id}
-        renderItem={({item, index}) => (
-          <Tab
-            onPress={handleOnTabPress}
-            note={item}
-            lastIndex={index === renderNotes.length - 1}
-          />
-        )}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-      />
-    );
+   return (
+  <View style={{flex: 1}}>
+    <FlatList
+      data={renderNotes}
+      keyExtractor={item => item._id}
+      renderItem={({ item, index }) => (
+        <Tab
+          onPress={handleOnTabPress}
+          note={item}
+          lastIndex={index === renderNotes.length - 1}
+        />
+      )}
+      showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
+    />
+  </View>
+);
+
   };
 
   return (
@@ -208,18 +211,17 @@ const NotesContainer: React.FC<NotesContainerProps> = ({close}) => {
 };
 
 const styles = StyleSheet.create({
-  parent: {
-    height: deviceHeight * 0.62,
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 3},
-    shadowRadius: 8,
-    elevation: 6,
-    overflow: 'hidden',
-  },
+parent: {
+  flex: 1,
+  borderTopRightRadius: 16,
+  borderTopLeftRadius: 16,
+  backgroundColor: '#fff',
+  shadowColor: '#000',
+  shadowOpacity: 0.1,
+  shadowOffset: {width: 0, height: 3},
+  shadowRadius: 8,
+  elevation: 6,
+},
   content: {
     flex: 1,
     paddingHorizontal: 16,

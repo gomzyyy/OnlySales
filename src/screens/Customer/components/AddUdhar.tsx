@@ -16,7 +16,6 @@ import InventoryItem from './InventoryItem';
 import SearchBar from '../../SearchCustomer/components/subcomponents/SearchBar';
 import {Customer, Product} from '../../../../types';
 import {useAnalytics, useTheme} from '../../../hooks/index';
-import EmptyListMessage from '../../../components/EmptyListMessage';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {sellProductAPI} from '../../../api/api.soldproduct';
@@ -25,6 +24,7 @@ import {showToast} from '../../../service/fn';
 import {useTranslation} from 'react-i18next';
 import {validateTokenAPI} from '../../../api/api.auth';
 import {OrderStatus} from '../../../../enums';
+import FallbackMessage from '../../../components/FallbackMessage';
 
 type AddUdharProps = {
   close?: () => void;
@@ -60,9 +60,7 @@ const AddUdhar: React.FC<AddUdharProps> = ({
     product: Product;
     count: number;
   }) => {
-    const alreadyExist:
-      | {product: Product | undefined; count: number}
-      | undefined = selectedProducts.find(f => f.product?._id === product._id);
+    const alreadyExist = selectedProducts.find(f => f.product?._id === product._id);
     if (alreadyExist) {
       if (alreadyExist.count === 0) {
         return;
@@ -202,7 +200,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           width={0.9}
           autoFocus={false}
           shadow={3}
-          placeholderText={t('c_addproduct_title')}
+          // placeholderText={t('c_addproduct_title')}
+          placeholderText='Search product'
         />
       </View>
       <View style={styles.productsContainer}>
@@ -235,8 +234,8 @@ const AddUdhar: React.FC<AddUdharProps> = ({
           </ScrollView>
         ) : (
           <View style={{flex: 1}}>
-            <EmptyListMessage title={t('c_noproducts')} />
-          </View>
+            <FallbackMessage text={t('c_noproducts')} />
+            </View>
         )}
         <View style={{flexDirection: 'row', gap: 6, marginTop: 10}}>
           <TouchableOpacity
@@ -297,8 +296,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 10,
     height: deviceHeight * 0.6,
-    borderRadius: 20,
-    marginBottom: 10,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius:20,
   },
   title: {
     textAlign: 'center',

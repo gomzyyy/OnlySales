@@ -11,9 +11,9 @@ import {analyseBusinessAIAPI} from '../../api/api.ai';
 
 const Test = () => {
   const {currentTheme} = useTheme();  const {owner} = useAnalytics();
-  const getDeviceInfo = async () => {
-    console.log(d.getDeviceNameSync());
-  };
+  // const getDeviceInfo = async () => {
+  //   console.log(d.getDeviceNameSync());
+  // };
   //     const req = async()=>{
   //       const data={
   //         query:{
@@ -36,7 +36,7 @@ const Test = () => {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Button title="REQ" onPress={getDeviceInfo} />
+        <Button title='HELLO WOLRD' />
       </View>
     </SafeAreaView>
   );

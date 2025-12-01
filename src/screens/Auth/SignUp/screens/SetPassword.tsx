@@ -17,15 +17,14 @@ import {navigate, resetAndNavigate} from '../../../../utils/nagivationUtils';
 import {AdminRole, BusinessType} from '../../../../../enums';
 import {useRoute} from '@react-navigation/native';
 import {showToast} from '../../../../service/fn';
-import CurrencyPicker from '../../../../components/CurrencyPicker';
 import {signupAPI} from '../../../../api/api.auth';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../../../store/store';
 import {setUser} from '../../../../../store/slices/business';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {global} from '../../../../styles/global';
 import PopupContainer from '../../../../components/PopUp';
 import InputPasscode from '../../../../customComponents/InputPasscode';
+import { mmkv } from '../../../../storage/mmkv';
 
 type SetPasswordParams = {
   name: string;
@@ -56,13 +55,9 @@ const SetPassword = () => {
     image,
   } = params as SetPasswordParams;
   const {currentTheme} = useTheme();
-  let refCode: string | undefined;
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [passwordMatched, setPasswordMatched] = useState<boolean>(true);
-  const [passwordHidden, setPasswordHidden] = useState<boolean>(true);
-  const [confirmPasswordHidden, setConfirmPasswordHidden] =
-    useState<boolean>(true);
   const [acceptTnc, setAcceptTnc] = useState<boolean>(false);
   const [acceptPp, setAcceptPp] = useState<boolean>(false);
   const [openTpPrompt, setOpenTpPrompt] = useState<boolean>(false);
@@ -110,6 +105,7 @@ const SetPassword = () => {
     const res = await signupAPI(signupData, setLoading);
     if (res.success && res.data && res.data.user && res.data.token) {
       await AsyncStorage.setItem('accessToken', res.data.token);
+      mmkv.setItem('accessToken',res.data.token)
       dispatch(setUser(res.data.user));
       showToast({type: 'success', text1: 'Signup success.'});
       resetAndNavigate('Dashboard');
@@ -214,15 +210,11 @@ const SetPassword = () => {
               ]}>
               Proceed
             </Text>
-            {loading ? (
-              <ActivityIndicator color={currentTheme.contrastColor} size={18} />
-            ) : (
               <Icon
                 name="rightcircle"
                 size={22}
                 color={currentTheme.contrastColor}
               />
-            )}
           </TouchableOpacity>
         </View>
       </ScrollView>

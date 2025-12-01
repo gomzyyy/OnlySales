@@ -45,7 +45,7 @@ const Dashboard = () => {
     return null;
   }
   const {t} = useTranslation('dashboard');
-  const {socket} = useSocket();
+  const {socket,isConnected} = useSocket();
   const {currentTheme} = useTheme();
   const {eventData, orderData} = useSelector((s: RootState) => s.events);
 
@@ -152,10 +152,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    socket?.on('getOnlineUsers', d => console.log(d));
-    socket?.on('getOnlineUsers_meta_data', d => console.log(d));
     console.log(APP_VERSION);
-  }, [socket]);
+  }, []);
 
   return (
     <View style={{flex: 1, backgroundColor: currentTheme.contrastColor}}>

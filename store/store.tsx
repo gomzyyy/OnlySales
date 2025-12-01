@@ -14,7 +14,7 @@ import ServicePointSliceFunction from './slices/servicePoint';
 import OpenCloseSliceFunction from './slices/openClose'
 
 const persistConfig = {
-  key: 'eregavkwrnovrhoCWBotEGUliqeowebWwfetr',
+  key: 'eregavkwrnovrhoC249WBotEGUliqewebWwfetr',
   storage: mmkv,
   blacklist: ['deviceInfo'],
 };

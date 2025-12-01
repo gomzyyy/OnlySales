@@ -17,7 +17,6 @@ import Icon2 from 'react-native-vector-icons/Octicons';
 import {ToogleButton} from './components/Tab';
 import {ProductsByDate} from '../../components/shared/ProductByDate';
 import CustomerInfo from './components/CustomerInfo';
-import EmptyListMessage from '../../components/EmptyListMessage';
 import SlideUpContainer from '../../components/SlideUpContainer';
 import AddUdhar from './components/AddUdhar';
 import {formatNumber, toogleState} from '../../service/fn';
@@ -366,7 +365,9 @@ const Customer = () => {
       <SlideUpContainer
         open={addUdharVisible}
         close={() => setAddUdharVisible(false)}
-        height={deviceHeight * 0.6}>
+        height={deviceHeight * 0.6}
+        usepadding={false}
+        >
         <AddUdhar close={() => setAddUdharVisible(false)} customer={customer} />
       </SlideUpContainer>
 

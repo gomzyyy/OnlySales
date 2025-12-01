@@ -6,7 +6,7 @@ const global = StyleSheet.create({
     height: 56,
     fontSize: 18,
     paddingHorizontal: 12,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: 'rgba(230, 230, 230, 1)',
   },
   modalContainerTopRounded: {
     borderTopLeftRadius: 20,

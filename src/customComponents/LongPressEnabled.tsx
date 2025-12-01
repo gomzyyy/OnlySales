@@ -1,6 +1,6 @@
-import {TouchableOpacity} from 'react-native';
-import React, {ReactNode, useRef, useState} from 'react';
-import {useHaptics} from '../hooks/index';
+import { TouchableOpacity } from 'react-native';
+import React, { ReactNode, useRef, useState, useEffect } from 'react';
+import { useHaptics } from '../hooks';
 
 type LongPressEnabledProps = {
   dummy?: boolean;
@@ -10,50 +10,60 @@ type LongPressEnabledProps = {
   longPressAction?: () => void;
   hapticsEnabled?: boolean;
   vibrationDuration?: number;
-  opacity?: 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
+  opacity?: number;
 };
 
-const LongPressEnabled: React. FC<LongPressEnabledProps> = ({
+const LongPressEnabled: React.FC<LongPressEnabledProps> = ({
   dummy = false,
   children,
   minPressDuration = 400,
   longPressCanceledAction = () => {},
-  longPressAction=()=>{},
+  longPressAction = () => {},
   hapticsEnabled = true,
-  opacity=0.8
-}): React.JSX.Element => {
-  const {longPress} = useHaptics();
+  opacity = 0.8,
+}) => {
+  const { longPress } = useHaptics();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [longPressed, setLongPressed] = useState<boolean>(false);
+  const [longPressed, setLongPressed] = useState(false);
 
   const triggerLongPress = () => {
-    if (dummy) {
-      return;
-    }
+    if (dummy) return;
+
     timeoutRef.current = setTimeout(() => {
-      longPressAction();
       setLongPressed(true);
-      if (hapticsEnabled) {
-        longPress();
-      }
+      longPressAction();
+      if (hapticsEnabled) longPress();
     }, minPressDuration);
   };
+
   const cancelLongPress = () => {
-    if (dummy) {
-      return;
-    }
+    if (dummy) return;
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
-      setLongPressed(false);
+      timeoutRef.current = null;
     }
+
+    // Reset long press state for next touch
+    setLongPressed(false);
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <TouchableOpacity
       activeOpacity={opacity}
       onPress={() => !longPressed && !dummy && longPressCanceledAction()}
       onPressIn={triggerLongPress}
       onPressOut={cancelLongPress}
-      >
+    >
       {children}
     </TouchableOpacity>
   );

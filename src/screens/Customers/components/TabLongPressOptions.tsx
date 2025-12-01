@@ -6,18 +6,19 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
-import {colors, deviceHeight} from '../../../utils/Constants';
-import {Customer, Employee} from '../../../../types';
+import {colors} from '../../../utils/Constants';
+import {Customer} from '../../../../types';
 import {Confirm, showToast} from '../../../service/fn';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../../store/store';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {useAnalytics, useTheme} from '../../../hooks/index';
 import {deleteCustomerAPI} from '../../../api/api.customer';
 import {validateTokenAPI} from '../../../api/api.auth';
 import {setUser} from '../../../../store/slices/business';
 import {useTranslation} from 'react-i18next';
 import {resetAndNavigate} from '../../../utils/nagivationUtils';
+import PopupContainer,{Alert} from '../../../components/PopUp';
+import { usePopup } from '../../../../context/popupContext';
 
 type TabLongPressOptionsProps = {
   i: Customer;
@@ -31,10 +32,12 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   triggerEdit,
 }): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
+  const {alert} = usePopup()
   const {currentTheme} = useTheme();
   const {owner} = useAnalytics();
   const {t} = useTranslation('customers');
   const user = useSelector((s: RootState) => s.appData.user);
+
   if (!user) {
     resetAndNavigate('GetStarted');
     return <></>;
@@ -43,7 +46,8 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleDeleteEmployee = async (): Promise<void> => {
-    const res = await Confirm(
+    // setOpenDelete(true)
+     const res = await Confirm(
       'Are you sure?',
       `Do you really want to delete ${i.name}.`,
     );
@@ -109,6 +113,13 @@ const TabLongPressOptions: React.FC<TabLongPressOptionsProps> = ({
           </Text>
         </TouchableOpacity>
       </View>
+        {/* <Alert title='Hello world' body='This is testing' open={openDelete} closeAlert={()=>{
+          alert.close();
+          setOpenDelete(false)
+        }} onAgree={async()=>{
+         await alert.close();
+          setOpenDelete(false)
+        }} onDecline={()=>{}} /> */}
     </View>
   );
 };

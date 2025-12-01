@@ -9,28 +9,30 @@ import {
   Platform,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useTheme} from '../../../hooks/index';
+import {useStorage, useTheme} from '../../../hooks/index';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {navigate} from '../../../utils/nagivationUtils';
 import {modifyUserName, showToast} from '../../../service/fn';
 import {deviceHeight} from '../../../utils/Constants';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../../../../store/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../store/store';
 import {ScrollView} from 'react-native-gesture-handler';
 import {isNumber} from '../../../service/test';
-import {Owner} from '../../../../types';
 import {AdminRole} from '../../../../enums';
+import {findUserAPI} from '../../../api/api.auth';
+import {ActivityIndicator} from 'react-native';
 import { global } from '../../../styles/global';
-
 
 const SignUp = () => {
   const {currentTheme} = useTheme();
+  const {user: u} = useStorage();
   const prevUsers = useSelector((s: RootState) => s.appData.app.previousOwners);
   const [name, setName] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
   const [businessPhoneNumber, setBusinessPhoneNumber] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleCreateUser = () => {
+  const handleCreateUser = async () => {
     if (
       name.trim().length < 4 ||
       name.trim().length > 16 ||
@@ -61,6 +63,14 @@ const SignUp = () => {
         type: 'error',
         text1: 'Please enter a valid Phone Number.',
       });
+      return;
+    }
+    const res = await findUserAPI(
+      {userId: userId.trim(), role: AdminRole.OWNER},
+      setLoading,
+    );
+    if(res.success && res.data.user){
+      showToast({type:"info",text1:"User already exists, please try a different ID."});
       return;
     }
     navigate('AskAboutUserInfo', {
@@ -101,11 +111,11 @@ const SignUp = () => {
                 setName(modifyUserName(value));
               }}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="Your name here."
-              placeholderTextColor={currentTheme.baseColor}
+              placeholder="your name here."
+              placeholderTextColor={"grey"}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -114,11 +124,11 @@ const SignUp = () => {
               value={userId}
               onChangeText={setUserId}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="user Id."
-              placeholderTextColor={currentTheme.baseColor}
+              placeholder="choose a user id"
+              placeholderTextColor={"grey"}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -129,11 +139,11 @@ const SignUp = () => {
               value={businessPhoneNumber || ''}
               onChangeText={value => handlePhoneNumberChange(value)}
               style={[
-                styles.inputText,
+                global.inputText,
                 {borderColor: currentTheme.modal.inputBorder},
               ]}
-              placeholder="+91-"
-              placeholderTextColor={currentTheme.baseColor}
+              placeholder="only indian numbers"
+              placeholderTextColor={"grey"}
               keyboardType="number-pad"
             />
           </View>
@@ -151,11 +161,15 @@ const SignUp = () => {
               ]}>
               Next
             </Text>
-            <Icon
-              name="rightcircle"
-              size={22}
-              color={currentTheme.contrastColor}
-            />
+            {loading ? (
+              <ActivityIndicator size={22} color={currentTheme.contrastColor} />
+            ) : (
+              <Icon
+                name="rightcircle"
+                size={22}
+                color={currentTheme.contrastColor}
+              />
+            )}
           </TouchableOpacity>
           <View style={styles.bottomDescriptionContainer}>
             <Text style={styles.descriptionText}>
