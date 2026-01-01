@@ -20,7 +20,7 @@ export const createProductAPI = async (
     formData.append('basePrice', data.body.basePrice.toString());
     formData.append('quantity', data.body.quantity.toString());
     formData.append('measurementType', data.body.measurementType);
-    formData.append('stock', data.body.stock.toString());
+    // formData.append('stock', data.body.stock.toString());
     formData.append('productCost', data.body.productCost.toString());
     formData.append('productType', data.body.productType);
     if (data.body.discountedPrice) {

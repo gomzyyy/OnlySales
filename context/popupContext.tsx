@@ -66,7 +66,6 @@ const PopupProvider = ({ children }: PropsWithChildren) => {
     actions?: AlertActionsType,
     opts?: AlertOptions
   ) => {
-    console.log(opts)
     setAlertOptions(initialAlertOptions); // always reset the state to clear prev settings
     setAlertContent({ title, body: body ?? '' });
     setAlertActions(actions ?? [closeNative, undefined]); // always set new actions to make sure no prev action is triggered on press

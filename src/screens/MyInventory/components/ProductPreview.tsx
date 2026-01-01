@@ -66,9 +66,6 @@ const ProductPreview: React.FC<ProductPreviewContainerProps> = ({
 const styles = StyleSheet.create({
   parent: {
     height: deviceHeight * 0.65,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: 'hidden',
   },
 });
 

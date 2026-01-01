@@ -65,6 +65,7 @@ const MyInventory = () => {
           close={() => setOpenAddProduct(false)}
           height={deviceHeight * 0.62}
           usepadding={false}
+          gestureEnabled={false}
           >
           <AddProduct close={() => setOpenAddProduct(false)} />
         </SlideUpContainer>

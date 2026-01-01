@@ -427,6 +427,7 @@ const Tab: React.FC<TabProps> = ({i, lastIndex = false}): React.JSX.Element => {
           close={handleClosePreview}
           height={deviceHeight * 0.65}
           usepadding={false}
+          gestureEnabled={false}
           >
           <ProductPreview product={i} />
         </SlideUpContainer>

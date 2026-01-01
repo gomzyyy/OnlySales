@@ -112,7 +112,7 @@ const ServicePoints = () => {
         <SlideUpContainer
           open={openCreateSp}
           close={handleCloseCreateSp}
-          height={deviceHeight * 0.58}>
+          height={deviceHeight * 0.46} usepadding={false}>
           <CreateServicePoint callback={handleCloseCreateSp} />
         </SlideUpContainer>
       )}

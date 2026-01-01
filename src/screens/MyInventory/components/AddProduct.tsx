@@ -36,7 +36,6 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const {currentTheme} = useTheme();
   const {product} = useStorage();
   const {t} = useTranslation('inventory');
-  const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.appData.user)!;
   const {owner} = useAnalytics();
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,7 +43,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
   const [price, setPrice] = useState<string>('0');
   const [discountedPrice, setDiscountedPrice] = useState<string>('0');
   const [quantity, setQuantity] = useState<string>('1');
-  const [stock, setStock] = useState<string>('0');
+  // const [stock, setStock] = useState<string>('0');
   const [image, setImage] = useState<string | undefined>();
   const [openImagePicker, setOpenImagePicker] = useState<boolean>(false);
   const [productCost, setProductCost] = useState<string>('0');
@@ -62,10 +61,10 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       res3: isNumber(quantity),
     };
     const float = {
-      res1: isFloat(stock),
+      // res1: isFloat(stock),
       res2: isFloat(productCost),
     };
-    if (!float.res1 || !float.res2) {
+    if (!float.res2) {
       Alert.alert(
         'Invalid input!',
         "Numeric entities can't include alphabets and only include '.'",
@@ -90,13 +89,13 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       );
       return;
     }
-    if (quantifiableProductTypes.includes(productType) && Number(stock) === 0) {
-      const res = await Confirm(
-        "Stock value can't be zero!",
-        'stock is required to keep a record and analytical calculations.',
-      );
-      return;
-    }
+    // if (quantifiableProductTypes.includes(productType) && Number(stock) === 0) {
+    //   const res = await Confirm(
+    //     "Stock value can't be zero!",
+    //     'stock is required to keep a record and analytical calculations.',
+    //   );
+    //   return;
+    // }
     const newProductData = {
       query: {
         creatorId: user._id,
@@ -108,7 +107,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
         basePrice: Number(price),
         quantity: Number(quantity),
         measurementType,
-        stock: Number(stock),
+        // stock: Number(stock),
         productCost: Number(productCost),
         productType,
         discountedPrice:
@@ -119,6 +118,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
       },
     };
     const res = await product.create(newProductData, setLoading);
+    console.log(res)
     if (res.success && res.data.product) {
       showToast({
         type: 'success',
@@ -130,7 +130,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
         text1: res.message,
       });
     }
-    close();
+    // close();
   };
   const closeImagePicker = () => setOpenImagePicker(false);
   return (
@@ -233,7 +233,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
               keyboardType="numeric"
             />
           </View>
-          {quantifiableProductTypes.includes(productType) && (
+          {/* {quantifiableProductTypes.includes(productType) && (
             <View style={styles.inputTitleContainer}>
               <Text
                 style={[
@@ -254,7 +254,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
                 keyboardType="numeric"
               />
             </View>
-          )}
+          )} */}
           <View style={[styles.inputTitleContainer, {gap: 5}]}>
             <Text
               style={[
@@ -350,7 +350,7 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
           opacity={0.2}
           open={openImagePicker}
           close={closeImagePicker}
-          height={220}>
+          height={160}>
           <FilePicker
             value={image}
             setState={setImage}
@@ -365,12 +365,10 @@ const AddProduct: React.FC<EditProductProps> = ({close}): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   createCustomerContainer: {
-    paddingTop: 20,
+    paddingTop: 0,
     paddingHorizontal: 20,
     paddingVertical: 20,
     height: deviceHeight * 0.6,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
     elevation: 30,
   },
   formTitle: {

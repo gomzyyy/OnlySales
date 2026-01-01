@@ -1,17 +1,21 @@
-import {Modal, StyleSheet, Pressable, View, StatusBar} from 'react-native';
-import React, {PropsWithChildren, useEffect} from 'react';
+import { Modal, StyleSheet, Pressable, View, Dimensions } from 'react-native';
+import React, { PropsWithChildren, useEffect } from 'react';
 import Animated, {
   useAnimatedStyle,
   withTiming,
   useSharedValue,
   runOnJS,
 } from 'react-native-reanimated';
-import {deviceHeight} from '../utils/Constants';
 import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import ToastProvider from "react-native-toast-message"
+// import { toastConfig } from '@/config';
+
+const deviceHeight = Dimensions.get('window').height;
+const DEFAULT_MIN_Y_TO_CLOSE = 120
 
 type SlideUpContainerProps = PropsWithChildren<{
   open: boolean;
@@ -22,6 +26,10 @@ type SlideUpContainerProps = PropsWithChildren<{
   heightLimit?: number;
   bottom?: boolean;
   usepadding?: boolean;
+  gestureEnabled?: boolean;
+  showGestureTab?:boolean;
+  borderRounded?: boolean;
+  minY?:number;
 }>;
 
 const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
@@ -34,9 +42,13 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
   heightLimit,
   bottom = true,
   usepadding = true,
-}): React.JSX.Element => {
+  gestureEnabled = true,
+  showGestureTab = true,
+  borderRounded = true,
+  minY = DEFAULT_MIN_Y_TO_CLOSE
+}) => {
   const sheetHeight =
-    typeof heightLimit === "number" && height > heightLimit
+    typeof heightLimit === 'number' && height > heightLimit
       ? heightLimit
       : height;
 
@@ -44,34 +56,35 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
 
   const closeSlideUpContainer = () => {
     translateY.value = withTiming(sheetHeight, { duration: 200 });
-    setTimeout(() => {
-      close();
-    }, 200);
+    setTimeout(close, 200);
   };
 
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: translateY.value,
-        },
-      ],
-    };
-  });
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
-  const dragGesture = Gesture.Pan()
-    .onUpdate((e) => {
-      if (e.translationY > 0) {
-        translateY.value = e.translationY;
-      }
-    })
-    .onEnd((e) => {
-      if (e.translationY > 100) {
-        runOnJS(closeSlideUpContainer)();
-      } else {
-        translateY.value = withTiming(0, { duration: 150 });
-      }
-    });
+  // Gesture: simultaneous with native so FlatList can receive scroll touches.
+const dragGesture = Gesture.Pan()
+  .simultaneousWithExternalGesture(Gesture.Native())
+  .onUpdate((e) => {
+    // ⛔ Ignore upward swipe
+    if (e.translationY <= 0) return;
+
+    translateY.value = e.translationY;
+  })
+  .onEnd((e) => {
+    // ⛔ Ignore upward swipe completely
+    if (e.translationY <= 0) {
+      translateY.value = withTiming(0, { duration: 150 });
+      return;
+    }
+
+    if (e.translationY > minY) {
+      runOnJS(closeSlideUpContainer)();
+    } else {
+      translateY.value = withTiming(0, { duration: 150 });
+    }
+  });
 
   useEffect(() => {
     if (open) {
@@ -80,7 +93,16 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
         translateY.value = withTiming(0, { duration: 200 });
       }, 10);
     }
-  }, [open, height]);
+  }, [open, sheetHeight]);
+
+  const GestureEnabledView = ({ children }: PropsWithChildren) => {
+    if (gestureEnabled) {
+      return (
+        <GestureDetector gesture={dragGesture}>{children}</GestureDetector>
+      );
+    }
+    return <>{children}</>;
+  };
 
   return (
     <Modal
@@ -89,29 +111,42 @@ const SlideUpContainer: React.FC<SlideUpContainerProps> = ({
       statusBarTranslucent
       visible={open}
       onRequestClose={closeSlideUpContainer}
-      hardwareAccelerated>
-      <GestureHandlerRootView style={{flex: 1}}>
+      hardwareAccelerated
+    >
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <Pressable
           style={[
             styles.childContainer,
             {
-              backgroundColor: `rgba(0,0,0,0.6)`,
+              backgroundColor: `rgba(0,0,0,${opacity})`,
               paddingHorizontal: usepadding ? (padding ? 14 : 10) : 0,
             },
           ]}
-          onPress={closeSlideUpContainer}>
-          <Pressable onPress={e => e.stopPropagation()}>
-            <GestureDetector gesture={dragGesture}>
-              <Animated.View style={animatedStyles}>
-                <View style={styles.dragTabContainer}>
-                  <View style={styles.dragTab} />
+          onPress={closeSlideUpContainer}
+        >
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            <GestureEnabledView>
+              <Animated.View style={[animatedStyles, { height: sheetHeight }]}>
+                <View
+                  style={[
+                    styles.dragTabContainer,
+                    {
+                      borderTopRightRadius: borderRounded ? 18 : undefined,
+                      borderTopLeftRadius: borderRounded ? 18 : undefined,
+                    },
+                  ]}
+                >
+                  {gestureEnabled && (showGestureTab && <View style={styles.dragTab} />)}
                 </View>
-                {children}
+
+                {/* CRITICAL: children must be inside a flex container */}
+                <View style={styles.content}>{children}</View>
               </Animated.View>
-            </GestureDetector>
+            </GestureEnabledView>
           </Pressable>
         </Pressable>
       </GestureHandlerRootView>
+      {/* <ToastProvider config={toastConfig}/> */}
     </Modal>
   );
 };
@@ -125,13 +160,17 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingVertical: 10,
-    backgroundColor: '#ccc0',
+    backgroundColor: '#fff',
+    zIndex:999
   },
   dragTab: {
-    width: 40,
+    width: 60,
     height: 5,
     borderRadius: 10,
-    backgroundColor: '#ccc',
+    backgroundColor: '#898989ff',
+  },
+  content: {
+    flex: 1, // <-- REQUIRED so FlatList has room to scroll
   },
 });
 

@@ -166,7 +166,7 @@ export interface CreateProductAPIData {
     basePrice: number;
     quantity: number;
     measurementType: MeasurementType;
-    stock: number;
+    // stock: number;
     productCost: number;
     productType: ProductType;
     measurementTypeDescription?: string;

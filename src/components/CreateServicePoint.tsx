@@ -228,11 +228,10 @@ const CreateServicePoint: React.FC<CreateCustomerProps> = ({
 
 const styles = StyleSheet.create({
   createCustomerContainer: {
-    paddingTop: 20,
     paddingHorizontal: 20,
     height: deviceHeight * 0.46,
-    borderRadius: 20,
-    marginBottom: 10,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     elevation: 30,
   },
   formTitle: {

@@ -190,13 +190,8 @@ const FilePicker: React.FC<FilePickerProps> = ({
 const styles = StyleSheet.create({
   container: {
     gap: 12,
-    justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderRadius: 20,
-    marginBottom: 10,
-    height: 220,
-    alignItems:'center'
+    height: 160
   },
   imageContainer: {
     height: 100,
